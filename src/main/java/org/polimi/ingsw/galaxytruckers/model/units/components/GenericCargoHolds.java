@@ -16,6 +16,7 @@ public class GenericCargoHolds extends Component {
         super(name);
         this.special = special;
         this.nMaxContainers = nMaxContainers;
+        this.Goods = new ArrayList<>();
 
     }
 
@@ -29,22 +30,29 @@ public class GenericCargoHolds extends Component {
 
 
     public void loadGood(Good g) {
-        for (int i = 0; i < Goods.size(); i++) {
-            if (Goods.get(i).getColor().equals(g.getColor())) {
-                Goods.add(i + 1, new Good(g.getColor()));
-                break;
-            } else if (i == Goods.size() - 1) Goods.add(new Good(g.getColor()));
 
+        if (Goods == null) Goods.add(g);
+        else {
+            for (int i = 0; i < Goods.size(); i++) {
+                if (Goods.get(i).getColor().equals(g.getColor())) {
+                    Goods.add(i + 1, new Good(g.getColor()));
+                    break;
+                } else if (i == Goods.size() - 1) Goods.add(new Good(g.getColor()));
+
+            }
         }
     }
 
     public void removeGood(Good g) {
-        for (int i = 0; i < Goods.size(); i++) {
-            if (Goods.get(i).getColor().equals(g.getColor())) {
-                Goods.remove(i);
-                break;
+        if (Goods != null) {
+            for (int i = 0; i < Goods.size(); i++) {
+                if (Goods.get(i).getColor().equals(g.getColor())) {
+                    Goods.remove(i);
+                    break;
+                }
             }
         }
+
     }
 
 }
