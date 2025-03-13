@@ -1,0 +1,22 @@
+package org.polimi.ingsw.galaxytruckers.model.units;
+
+public abstract class Component {
+    private  Tile myTile;
+    private String Name;
+
+    public Component(String name){
+        Name = name;
+    }
+
+    public void setMyTile(Tile t){
+        myTile = t;
+    }
+
+    public Tile getMyTile(){
+        return myTile;
+    }
+
+    public String getName() {
+        return Name;
+    }
+}
