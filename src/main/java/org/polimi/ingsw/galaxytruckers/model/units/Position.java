@@ -1,0 +1,29 @@
+package org.polimi.ingsw.galaxytruckers.model.units;
+
+/**
+ * Used to manage position in a cartesian space
+ * Used for the position in the ship matrix
+ * ...
+ */
+public class Position {
+    private int x;
+    private int y;
+
+    public Position(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
+    public void setPos(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+}

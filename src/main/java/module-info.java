@@ -6,4 +6,6 @@ module org.polimi.ingsw.galaxytruckers {
 
     opens org.polimi.ingsw.galaxytruckers to javafx.fxml;
     exports org.polimi.ingsw.galaxytruckers;
+    exports org.polimi.ingsw.galaxytruckers.model.units;
+    opens org.polimi.ingsw.galaxytruckers.model.units to javafx.fxml;
 }
