@@ -8,6 +8,6 @@ module org.polimi.ingsw.galaxytruckers {
     exports org.polimi.ingsw.galaxytruckers;
     exports org.polimi.ingsw.galaxytruckers.model.units;
     opens org.polimi.ingsw.galaxytruckers.model.units to javafx.fxml;
-    exports org.polimi.ingsw.galaxytruckers.game;
-    opens org.polimi.ingsw.galaxytruckers.game to javafx.fxml;
+    exports org.polimi.ingsw.galaxytruckers.model.game;
+    opens org.polimi.ingsw.galaxytruckers.model.game to javafx.fxml;
 }
