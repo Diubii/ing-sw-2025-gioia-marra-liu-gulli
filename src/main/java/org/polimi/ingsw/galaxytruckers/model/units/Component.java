@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytruckers.model.units;
 
-public abstract class Component {
+public  class Component {
     private  Tile myTile;
     private String Name;
 

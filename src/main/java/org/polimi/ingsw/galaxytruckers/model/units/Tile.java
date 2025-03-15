@@ -2,9 +2,11 @@ package org.polimi.ingsw.galaxytruckers.model.units;
 
 public class Tile {
     private int Rotation;
+    protected Slot mySlot;
 
-    public Tile(int rotation) {
+    public Tile(int rotation, Slot slot) {
         Rotation = rotation;
+        mySlot = slot;
     }
     public int getRotation() {
         return Rotation;
