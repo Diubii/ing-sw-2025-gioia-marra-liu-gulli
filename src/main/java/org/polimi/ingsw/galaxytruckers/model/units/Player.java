@@ -16,11 +16,11 @@ public class Player {
 
     private HashMap<String, Integer> detailedScores;
 
-    public Player(String nickname, int nCredits, int placement) {
+    public Player(String nickname, int nCredits, int placement, Boolean leaningMatch) {
         this.nickname = nickname;
         this.nCredits = 0;
         this.placement = placement;
-        this.ship = new Ship(); //Rivedere
+        this.ship = new Ship(leaningMatch); //Rivedere
     }
 
     public String getNickName() {

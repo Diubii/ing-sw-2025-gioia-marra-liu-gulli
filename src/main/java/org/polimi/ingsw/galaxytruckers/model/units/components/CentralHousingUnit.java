@@ -7,6 +7,7 @@ public class CentralHousingUnit extends Component {
 
     private Color color;
     private int HumanCrewNumber;
+    private Boolean isColored = Boolean.TRUE;
 
     public CentralHousingUnit(String name, Color color, int HumanCrewNumber) {
         super(name);
