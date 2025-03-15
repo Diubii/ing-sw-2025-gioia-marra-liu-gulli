@@ -1,12 +1,18 @@
 package org.polimi.ingsw.galaxytruckers.model.units;
 
 public class Tile {
+    private int id;
     private int Rotation;
-    protected Slot mySlot;
+    private boolean isFaceUp;
 
-    public Tile(int rotation, Slot slot) {
+    public Tile(int id,int rotation) {
+        this.id = id;
         Rotation = rotation;
-        mySlot = slot;
+        this.isFaceUp = false;
+    }
+
+    public int getId() {
+        return id;
     }
     public int getRotation() {
         return Rotation;
@@ -15,5 +21,13 @@ public class Tile {
     public void rotate(int addRotation) {
         Rotation += addRotation;
         Rotation %= 360;
+    }
+
+    public boolean IsFaceUp(){
+        return isFaceUp;
+    }
+
+    public void flip(){
+        this.isFaceUp = !this.isFaceUp;
     }
 }
