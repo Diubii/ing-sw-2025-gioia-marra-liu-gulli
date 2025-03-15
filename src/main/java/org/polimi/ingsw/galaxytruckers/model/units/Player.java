@@ -23,5 +23,8 @@ public class Player {
         this.ship = new Ship(); //Rivedere
     }
 
+    public String getNickName() {
+        return nickname;
+    }
 
 }
