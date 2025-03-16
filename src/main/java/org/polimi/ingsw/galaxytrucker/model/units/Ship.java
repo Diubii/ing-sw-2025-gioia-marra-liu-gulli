@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.units;
 
 import javafx.util.Pair;
+import org.polimi.ingsw.galaxytrucker.enums.Connector;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,8 @@ public class Ship {
         }
     }
 
+
+    // GETTERS START ----------------------
     public Slot[][] getShipBoard(){
         return shipBoard.clone();
     }
@@ -104,6 +107,7 @@ public class Ship {
     public int getnCrew(){
         return nCrew;
     }
+    // GETTERS END ----------------------
 
 
     public ArrayList<Position> getInvalidPositions() {
@@ -156,6 +160,68 @@ public class Ship {
             shipBoard[pos.getY()][pos.getX()] = new Slot(pos, this);
         }
         shipBoard[pos.getY()][pos.getX()].putTile(tile);
+
+        //da aggiungere la logica che controlla che Tile e' stat inserita e l'aggiornamento delle varie pos
+    }
+
+    public void calcExposedConnectors(){
+        int tempSum;
+        for (int i = 0; i < 7; i++){
+            for (int j = 0; j < 5; j++){
+                ArrayList<Position> validPos = new ArrayList<Position>();
+                Position tempPos = new Position(i, j);
+                Tile myTile = shipBoard[i][j].getTile();
+                //calculate neihbours
+                Position nord = new Position(i-1, j);
+                Position sud = new Position(i+1, j);
+                Position est = new Position(i, j+1);
+                Position ovest = new Position(i, j-1);
+
+                //NORD
+                if (myTile.getSides().get(0) != Connector.EMPTY ){
+                    if (!invalidPositions.contains(nord)) {
+                        Tile tempTile = shipBoard[nord.getX()][nord.getY()].getTile();
+                        if (tempTile == null){
+                            nExposedConnector++;
+                        }
+                    }else nExposedConnector++;
+
+                }
+                //OVEST
+                if (myTile.getSides().get(1) != Connector.EMPTY ){
+                    if (!invalidPositions.contains(ovest)) {
+                        Tile tempTile = shipBoard[ovest.getX()][ovest.getY()].getTile();
+                        if (tempTile == null){
+                            nExposedConnector++;
+                        }
+                    }else nExposedConnector++;
+
+                }
+                //SUD
+                if (myTile.getSides().get(2) != Connector.EMPTY ){
+                    if (!invalidPositions.contains(sud)) {
+                        Tile tempTile = shipBoard[sud.getX()][sud.getY()].getTile();
+                        if (tempTile == null){
+                            nExposedConnector++;
+                        }
+                    }else nExposedConnector++;
+
+                }
+                //EST
+                if (myTile.getSides().get(3) != Connector.EMPTY ){
+                    if (!invalidPositions.contains(est)) {
+                        Tile tempTile = shipBoard[est.getX()][est.getY()].getTile();
+                        if (tempTile == null){
+                            nExposedConnector++;
+                        }
+                    }else nExposedConnector++;
+
+                }
+
+
+            }
+        }
+
     }
 
 

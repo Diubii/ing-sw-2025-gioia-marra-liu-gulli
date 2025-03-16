@@ -7,6 +7,7 @@ public class Slot {
     public Slot(Position position, Ship myShip) {
         this.position = position;
         this.myShip = myShip;
+        this.TileContainer = null;
     }
 
 
