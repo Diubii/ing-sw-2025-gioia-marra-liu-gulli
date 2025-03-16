@@ -1,13 +1,13 @@
-module org.polimi.ingsw.galaxytruckers {
+module org.polimi.ingsw.galaxytrucker {
     requires javafx.controls;
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
 
-    opens org.polimi.ingsw.galaxytruckers to javafx.fxml;
-    exports org.polimi.ingsw.galaxytruckers;
-    exports org.polimi.ingsw.galaxytruckers.model.units;
-    opens org.polimi.ingsw.galaxytruckers.model.units to javafx.fxml;
-    exports org.polimi.ingsw.galaxytruckers.model.game;
-    opens org.polimi.ingsw.galaxytruckers.model.game to javafx.fxml;
+    opens org.polimi.ingsw.galaxytrucker to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker;
+    exports org.polimi.ingsw.galaxytrucker.model.units;
+    opens org.polimi.ingsw.galaxytrucker.model.units to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker.model.game;
+    opens org.polimi.ingsw.galaxytrucker.model.game to javafx.fxml;
 }
