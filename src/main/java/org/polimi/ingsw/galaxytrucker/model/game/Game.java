@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.game;
 
+import org.polimi.ingsw.galaxytrucker.enums.GameStateType;
+import org.polimi.ingsw.galaxytrucker.exceptions.IllegalStateOperationException;
 import org.polimi.ingsw.galaxytrucker.model.CardStack;
 import org.polimi.ingsw.galaxytrucker.model.units.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.units.Player;
@@ -18,16 +20,15 @@ public class Game {
 
     private static final int nMaxPlayer = 4;
 
+    private final int gameID;
+    private GameState currentState;
 
-    private GameState gameState;
-    private GameState previousGameState;
-
-    private Map<String, Player> playerMap = new HashMap<String, Player>();
-    private Map<String, Ship> playerShip = new HashMap<String, Ship>();
+    private Map<String, Player> playerMap;
+    private Map<String, Ship> playerShip;
     private HashSet<String> usedNicknames;
 
 
-    private ArrayList<CardStack> decks = new ArrayList<CardStack>();
+    private ArrayList<CardStack> decks;
     private CardStack oneDeck;
     private CardStack twoDeck;
     private CardStack learningDeck;
@@ -35,60 +36,38 @@ public class Game {
     private FlightBoard flightBoard;
     private TileBunch tileBunch;
 
-    /**Not yet implemented
+    /**
+     * Not yet implemented
      * Consider generating deck-related member variables
      * at the beginning.
      */
 
 
-    public Game() {
-        this.gameState = GameState.LOBBY;
+    public Game(int gameid) {
 
-        this.playerMap = null;
-        this.playerShip = null;
-        this.usedNicknames = null;
+        this.gameID = gameid;
 
-        this.decks = null;
-        this.oneDeck = null;
-        this.twoDeck = null;
-        this.learningDeck = null;
+        this.playerMap = new HashMap<>();
+        this.playerShip = new HashMap<>();
+        this.usedNicknames = new HashSet<>();
+
+        this.decks = new ArrayList<>();
+
 
         this.tileBunch = new TileBunch();
-        this.flightBoard = null;
+        this.flightBoard = new FlightBoard(new ArrayList<>(), 1);
 
+        this.currentState = new LobbyState();
 
     }
 
-    public void nextState (){
-        if(gameState == GameState.PAUSED){
-            System.out.println("Game is paused");
-            return;
-        }
-        switch(gameState) {
-            case LOBBY:
-                gameState = GameState.BUILDING;
-                break;
-            case BUILDING:
-                gameState = GameState.FLIGHT;
-                break;
-            case FLIGHT:
-                gameState = GameState.ENDGAME;
-                break;
-            case ENDGAME:
-                System.out.println("Game ended");
-                return;
 
-        }
-    }
-    public Ship getPlayerShip(String nickname) {
-        return playerShip.get(nickname);
-    }
     public boolean isNicknameUsed(String nickname) {
         return usedNicknames.contains(nickname);
     }
 
     public void addPlayer(Player player) {
-        if(playerMap.size() >= nMaxPlayer || isNicknameUsed(player.getNickName())){
+        if (playerMap.size() >= nMaxPlayer || isNicknameUsed(player.getNickName())) {
             return;
         }
         playerMap.put(player.getNickName(), player);
@@ -100,8 +79,32 @@ public class Game {
 
     }
 
+    private GameState createStateByType(GameStateType type) {
+        switch (type) {
+            case LOBBY:
+                return new LobbyState();
+            case BUILDING:
+                return new BuildingState();
+            case FLIGHT:
+                return new FlightState();
+            case PAUSED:
+                return new PausedState();
+            case ENDGAME:
+                return new EndGameState();
+            default:
+                throw new IllegalArgumentException("unknown GameStateType ");
+        }
+    }
 
+    public void changeState(GameStateType newStateType) throws IllegalStateOperationException {
 
+        if (currentState != null) {
+            currentState.exit();
+        }
+
+        currentState = createStateByType(newStateType);
+        currentState.enter(this);
+    }
 
     public Map<String, Player> getPlayerMap() {
         return playerMap;
@@ -115,15 +118,24 @@ public class Game {
         return playerMap.size();
     }
 
-    public GameState getGameState() {
-        return gameState;
+
+    public void setCurrentState(GameState currentState) {
+        this.currentState = currentState;
     }
 
 
+    public GameState getCurrentState() {
+        return currentState;
+    }
+
+    public int getGameID() {
+        return gameID;
+    }
+
+
+    public Ship getPlayerShip(String nickname) {
+        return playerShip.get(nickname);
+    }
 
 }
-
-
-
-
 
