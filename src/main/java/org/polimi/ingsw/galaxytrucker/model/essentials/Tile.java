@@ -12,7 +12,7 @@ public class Tile {
     private int exposedConnectors;
     private Boolean used;
     private Boolean fixed;
-    private Slot mySlot;
+//    private Slot mySlot;
     private Component myComponent;
 
 
@@ -24,7 +24,7 @@ public class Tile {
         this.exposedConnectors = 0;
         this.used = false;
         this.fixed = false;
-        this.mySlot = null;
+//        this.mySlot = null;
         this.myComponent = c;
     }
     public Tile(Tile other) {
@@ -35,7 +35,7 @@ public class Tile {
         this.exposedConnectors = other.exposedConnectors;
         this.used = other.used;
         this.fixed = other.fixed;
-        this.mySlot = other.mySlot; // Se vuoi un riferimento al solito Slot, altrimenti escludilo
+//        this.mySlot = other.mySlot; // Se vuoi un riferimento al solito Slot, altrimenti escludilo
     }
 
     public void setMyComponent(Component myComponent1) {
@@ -50,10 +50,10 @@ public class Tile {
         this.fixed = fixed;
     }
 
-    public void setMySlot(Slot mySlot2) {
-
-        mySlot = mySlot2;
-    }
+//    public void setMySlot(Slot mySlot2) {
+//
+//        mySlot = mySlot2;
+//    }
 
     public void setUsed(Boolean used) {
         this.used = used;
@@ -79,9 +79,9 @@ public class Tile {
         exposedConnectors += i;
     }
 
-    public Slot getMySlot(){
-        return mySlot;
-    }
+//    public Slot getMySlot(){
+//        return mySlot;
+//    }
 
 //    public Boolean wellConnected(){
 //
