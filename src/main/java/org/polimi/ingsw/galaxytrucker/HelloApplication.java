@@ -33,10 +33,13 @@ public class HelloApplication extends Application {
 
 
         Ship ship = new Ship(true);
+        HelloController.myShip = ship;
         Tile tile = new Tile(1,0, sides,E );
         ship.putTile(tile, new Position(4,4));
         HelloController.messages.push(ship.toString());
         HelloController.messages.push(E.accept(new ComponentNameVisitor()));
+        HelloController.messages.push(ship.toString());
+
 
 
 

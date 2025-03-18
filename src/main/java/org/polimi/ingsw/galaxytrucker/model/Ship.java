@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class Ship {
 
-    private Slot[][] shipBoard = new Slot[7][5];
+    private Slot[][] shipBoard = new Slot[5][7];
     private Slot[] setAsideTiles = new Slot[2];
     private int nExposedConnector;
     private int destroyedTiles;
@@ -46,8 +46,8 @@ public class Ship {
     }
 
     public void generateSlot(){
-        for (int i = 0; i < 7; i++){
-            for (int j = 0; j < 5; j++){
+        for (int i = 0; i < 5; i++){
+            for (int j = 0; j < 7; j++){
                 shipBoard[i][j] = new Slot(new Position(i, j));
             }
         }
@@ -197,25 +197,35 @@ public class Ship {
 
     }
 
-    public void removeTile(Tile tile, Position pos, Slot slot){
+    public void removeTile(Tile tile, Position pos) {
         ComponentNameVisitor visitor = new ComponentNameVisitor();
 
+        if (tile != null && tile.getMyComponent() != null) {
 //LOGICA PER AGGIORNARE LE POSIZIONI AL PRIMO INSERIMENTO
-        switch (tile.getMyComponent().accept(visitor)){
-            case "BatterySlot": batteryPos.remove(pos); break;
-            case "CannonSlot": cannonPos.remove(pos); break;
-            case "EngineSlot": enginePos.remove(pos); break;
-            case "ModularHousingUnit": housingPos.remove(pos); break;
-            case "GenericCargoHolds": {
-                GenericCargoHolds test = (GenericCargoHolds) tile.getMyComponent();
-                Boolean s = test.isSpecial();
-                if (s){
-                    redStoragePos.remove(pos);
-                }else storagePos.remove(pos);
+            switch (tile.getMyComponent().accept(visitor)) {
+                case "BatterySlot":
+                    batteryPos.remove(pos);
+                    break;
+                case "CannonSlot":
+                    cannonPos.remove(pos);
+                    break;
+                case "EngineSlot":
+                    enginePos.remove(pos);
+                    break;
+                case "ModularHousingUnit":
+                    housingPos.remove(pos);
+                    break;
+                case "GenericCargoHolds": {
+                    GenericCargoHolds test = (GenericCargoHolds) tile.getMyComponent();
+                    Boolean s = test.isSpecial();
+                    if (s) {
+                        redStoragePos.remove(pos);
+                    } else storagePos.remove(pos);
+                }
             }
-        }
 
-        slot.putTile(null);
+            putTile(null, pos);
+        }
     }
 
     public void calcExposedConnectors(){
@@ -282,13 +292,19 @@ public class Ship {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 7; j++) {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
                     sb.append("[1] "); // Slot con Tile
                 } else {
-                    sb.append("[ ] "); // Slot vuoto
+                    int finalJ = j;
+                    int finalI = i;
+                    if (invalidPositions.stream().anyMatch(pos -> pos.getX() == finalJ && pos.getY() == finalI)) {
+                        sb.append("[X] ");
+                    }else {
+                    sb.append("[.] "); // Slot vuoto
                 }
+                    }
             }
             sb.append("\n"); // Vai a capo dopo ogni riga
         }
