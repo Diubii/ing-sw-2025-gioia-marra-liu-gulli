@@ -10,7 +10,7 @@ public class CentralHousingUnit extends Component {
     private Boolean isColored = Boolean.TRUE;
 
     public CentralHousingUnit(String name, Color color, int HumanCrewNumber) {
-        super(name);
+        super(name, false);
         this.color = color;
         this.HumanCrewNumber = HumanCrewNumber;
 
@@ -25,4 +25,9 @@ public class CentralHousingUnit extends Component {
     public void removeHumanCrewNumber() {
         HumanCrewNumber--;
     }
+    @Override
+    public String accept(ComponentNameVisitorInterface visitor) {
+        return visitor.visit(this); // this ora è di tipo Cannon!
+    }
+
 }

@@ -118,6 +118,7 @@ public class Ship {
         return invalidPositions;
     }
 
+    //carcamento da FILE?
     public ArrayList<Position> createIP(){
         if (learningMatch){
             invalidPositions.add(new Position(0,0));

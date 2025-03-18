@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.game;
 
-import org.polimi.ingsw.galaxytrucker.model.CardStack;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardStack;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
@@ -59,27 +59,27 @@ public class Game {
 
     }
 
-    public void nextState (){
-        if(gameState == GameState.PAUSED){
-            System.out.println("Game is paused");
-            return;
-        }
-        switch(gameState) {
-            case LOBBY:
-                gameState = GameState.BUILDING;
-                break;
-            case BUILDING:
-                gameState = GameState.FLIGHT;
-                break;
-            case FLIGHT:
-                gameState = GameState.ENDGAME;
-                break;
-            case ENDGAME:
-                System.out.println("Game ended");
-                return;
-
-        }
-    }
+//    public void nextState (){
+//        if(gameState == GameState.PAUSED){
+//            System.out.println("Game is paused");
+//            return;
+//        }
+//        switch(gameState) {
+//            case LOBBY:
+//                gameState = GameState.BUILDING;
+//                break;
+//            case BUILDING:
+//                gameState = GameState.FLIGHT;
+//                break;
+//            case FLIGHT:
+//                gameState = GameState.ENDGAME;
+//                break;
+//            case ENDGAME:
+//                System.out.println("Game ended");
+//                return;
+//
+//        }
+//    }
     public Ship getPlayerShip(String nickname) {
         return playerShip.get(nickname);
     }

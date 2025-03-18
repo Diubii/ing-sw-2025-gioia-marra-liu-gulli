@@ -7,7 +7,7 @@ public class Cannon extends Component {
     protected Float FirePower;
 
     public Cannon(String name, Float firePower) {
-        super(name);
+        super(name, false);
         this.FirePower = firePower;
     }
     public Float getFirePower() {
@@ -16,9 +16,14 @@ public class Cannon extends Component {
 
     public void calculateFP(){
 
-        Tile tempTile = getMyTile();
-        if (tempTile.getRotation() != 0) {
+        if (getRotation() != 0) {
             FirePower = FirePower/2;
         }
     }
+
+    @Override
+    public String accept(ComponentNameVisitorInterface visitor) {
+        return visitor.visit(this); // this ora è di tipo Cannon!
+    }
+
 }

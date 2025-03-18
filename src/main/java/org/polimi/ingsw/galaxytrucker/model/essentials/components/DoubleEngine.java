@@ -16,4 +16,9 @@ public class DoubleEngine extends Engine{
     public void setCharged(Boolean charged) {
         this.charged = charged;
     }
+    @Override
+    public String accept(ComponentNameVisitorInterface visitor) {
+        return visitor.visit(this); // this ora è di tipo Cannon!
+    }
+
 }

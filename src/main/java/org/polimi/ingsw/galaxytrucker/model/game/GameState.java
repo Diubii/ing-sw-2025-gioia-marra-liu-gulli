@@ -7,3 +7,6 @@ public enum GameState {
     PAUSED,
     ENDGAME
 }
+
+//STATE PATTERN
+

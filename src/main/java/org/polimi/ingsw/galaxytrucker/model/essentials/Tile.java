@@ -139,6 +139,8 @@ public class Tile {
     public void rotate(int addRotation) {
         Rotation += addRotation;
         Rotation %= 360;
+
+        myComponent.setRotation(Rotation);
     }
 
     public boolean isFlipped(){

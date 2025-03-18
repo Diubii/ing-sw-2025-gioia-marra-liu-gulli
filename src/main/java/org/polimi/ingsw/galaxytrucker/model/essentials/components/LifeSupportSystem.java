@@ -15,16 +15,18 @@ public class LifeSupportSystem extends Component {
     private ArrayList<Pair<Position, AlienColor>> nearMHU;
 
     public LifeSupportSystem(String name, Color color) {
-        super(name);
+        super(name, false);
         this.color = color;
-        this.nearMHU = new ArrayList<>();
     }
 
     public Color getColor() {
         return color;
     }
 
-    public void setNearMHU() {
-        Tile myTile = getMyTile();
+    @Override
+    public String accept(ComponentNameVisitorInterface visitor) {
+        return visitor.visit(this); // this ora è di tipo Cannon!
     }
+
+
 }

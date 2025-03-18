@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model;
+package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
 

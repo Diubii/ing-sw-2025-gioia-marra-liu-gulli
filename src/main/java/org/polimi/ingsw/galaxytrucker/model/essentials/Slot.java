@@ -4,11 +4,9 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 
 public class Slot {
     private Position position;
-    private Ship myShip;
     private Tile TileContainer;
-    public Slot(Position position, Ship myShip) {
+    public Slot(Position position) {
         this.position = position;
-        this.myShip = myShip;
         this.TileContainer = null;
     }
 
@@ -24,9 +22,6 @@ public class Slot {
 
     public Tile getTile(){
         return TileContainer;
-    }
-    public Ship getMyShip() {
-        return myShip;
     }
 
 

@@ -13,7 +13,7 @@ public class Engine extends Component {
 
     public Engine(String Name, int enginePower) {
 
-        super(Name);
+        super(Name, false);
         this.enginePower = enginePower;
     }
     public int getEnginePower() {
@@ -21,38 +21,16 @@ public class Engine extends Component {
     }
 
     public void calculatePower() {
-        Tile tempTile = getMyTile();
-        if (tempTile.getRotation() != 0) {
+        if (getRotation() != 0) {
             enginePower = 0;
         }
     }
 
-    public Boolean wellConnected(){
-        Boolean wellConnected = true;
-        Tile tempTile = getMyTile();
-        Ship myShip = tempTile.getMySlot().getMyShip();
-        ArrayList<Position> tempIP = myShip.getInvalidPositions();
-        Slot mySlot = tempTile.getMySlot();
-
-        //posizione nord
-        Position nord = new Position(mySlot.getPosition().getY() -1 , mySlot.getPosition().getX());
-        //posizione sud
-        Position sud = new Position(mySlot.getPosition().getY() +1 , mySlot.getPosition().getX());
-        //posizione est
-        Position est = new Position(mySlot.getPosition().getY() , mySlot.getPosition().getX() + 1);
-        //posizione ovest
-        Position ovest = new Position(mySlot.getPosition().getY() , mySlot.getPosition().getX() -1);
-
-        switch (tempTile.getRotation()){
-            case 0: if (!tempIP.contains(sud) &&  myShip.getShipBoard()[sud.getY()][sud.getX()].getTile() != null ) { wellConnected = false; break;}
-            case 90:if (!tempIP.contains(est) && myShip.getShipBoard()[est.getY()][est.getX()].getTile() != null) { wellConnected = false; break; }
-            case 180:if (!tempIP.contains(nord) && myShip.getShipBoard()[nord.getY()][nord.getX()].getTile() != null) { wellConnected = false; break;}
-            case 270:if (!tempIP.contains(ovest) && myShip.getShipBoard()[ovest.getY()][ovest.getX()].getTile() != null) { wellConnected = false; break;}
-        }
-
-        return wellConnected;
-
+    @Override
+    public String accept(ComponentNameVisitorInterface visitor) {
+        return visitor.visit(this); // this ora è di tipo Cannon!
     }
+
 
 
 }

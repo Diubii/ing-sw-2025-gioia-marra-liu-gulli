@@ -12,4 +12,6 @@ module org.polimi.ingsw.galaxytrucker {
     opens org.polimi.ingsw.galaxytrucker.model.game to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.model;
     opens org.polimi.ingsw.galaxytrucker.model to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker.model.adventurecards;
+    opens org.polimi.ingsw.galaxytrucker.model.adventurecards to javafx.fxml;
 }

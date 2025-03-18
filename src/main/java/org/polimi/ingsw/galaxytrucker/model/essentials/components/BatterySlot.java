@@ -6,7 +6,7 @@ public class BatterySlot extends Component {
 
     private int capacity;
     public BatterySlot(String name, int initialCapacity) {
-        super(name);
+        super(name, false);
         capacity = initialCapacity;
 
     }
@@ -17,6 +17,10 @@ public class BatterySlot extends Component {
 
     public void removeBattery(){
         capacity--;
+    }
+    @Override
+    public String accept(ComponentNameVisitorInterface visitor) {
+        return visitor.visit(this); // this ora è di tipo Cannon!
     }
 
 

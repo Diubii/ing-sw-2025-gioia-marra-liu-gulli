@@ -13,7 +13,7 @@ public class GenericCargoHolds extends Component {
 
 
     public GenericCargoHolds(String name, Boolean special, int nMaxContainers) {
-        super(name);
+        super(name, false);
         this.special = special;
         this.nMaxContainers = nMaxContainers;
         this.Goods = new ArrayList<>();
@@ -54,5 +54,12 @@ public class GenericCargoHolds extends Component {
         }
 
     }
+
+
+    @Override
+    public String accept(ComponentNameVisitorInterface visitor) {
+        return visitor.visit(this); // this ora è di tipo Cannon!
+    }
+
 
 }
