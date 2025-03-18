@@ -123,6 +123,7 @@ public class Ship {
 
     //carcamento da FILE?
     public ArrayList<Position> createIP(){
+        invalidPositions = new ArrayList<>();
         if (learningMatch){
             invalidPositions.add(new Position(0,0));
             invalidPositions.add(new Position(0,1));
@@ -275,6 +276,24 @@ public class Ship {
             }
         }
 
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
+                    sb.append("[1] "); // Slot con Tile
+                } else {
+                    sb.append("[ ] "); // Slot vuoto
+                }
+            }
+            sb.append("\n"); // Vai a capo dopo ogni riga
+        }
+
+        return sb.toString();
     }
 
 

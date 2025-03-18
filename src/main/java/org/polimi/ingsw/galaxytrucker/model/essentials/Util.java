@@ -33,57 +33,57 @@ public class Util {
 
     }
 
-    public static Boolean CheckLifeSupportSystem(Color color, Tile T, Ship P, Slot S)
-    {
-
-        Boolean wellConnected = true;
-        Tile tempTile = T;
-        Ship myShip = P;
-        ArrayList<Position> tempIP = myShip.getInvalidPositions();
-        Slot mySlot = S;
-        Slot[][] TempShipBoard = P.getShipBoard();
-        String s1;
-        String s2;
-        String s3;
-        String s4;
-
-
-        //UP TILE
-
-        if (mySlot.getPosition().getY() -1 < 0) {
-            s1 = TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile().getMyComponent().getName();
-        }
-        else {
-            s1  = null;
-        }
-
-        //LEFT
-
-        if (mySlot.getPosition().getX() -1 < 0) {
-
-
-            s2 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile().getMyComponent().getName();
-        } else  s2  = null;
-        //BOTTOM
-
-        if (mySlot.getPosition().getY() +1 > 6) {
-            s3 = TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile().getMyComponent().getName();
-        } else  s3 = null;
-
-        //RIGHT TILE
-
-        if (mySlot.getPosition().getX() +1 > 4) {
-            s4 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile().getMyComponent().getName();
-        }
-        else s4 = null;
-
-//        if (s1.equals("LifeSupportSystem") ||s2.equals("LifeSupportSystem") || s3.equals("LifeSupportSystem") || s4.equals("LifeSupportSystem")  ){
-//            return true;
+//    public static Boolean CheckLifeSupportSystem(Color color, Tile T, Ship P, Slot S)
+//    {
+//
+//        Boolean wellConnected = true;
+//        Tile tempTile = T;
+//        Ship myShip = P;
+//        ArrayList<Position> tempIP = myShip.getInvalidPositions();
+//        Slot mySlot = S;
+//        Slot[][] TempShipBoard = P.getShipBoard();
+//        String s1;
+//        String s2;
+//        String s3;
+//        String s4;
+//
+//
+//        //UP TILE
+//
+//        if (mySlot.getPosition().getY() -1 < 0) {
+//            s1 = TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile().getMyComponent().getName();
+//        }
+//        else {
+//            s1  = null;
 //        }
 //
-
-
-        return false;
-
-    }
+//        //LEFT
+//
+//        if (mySlot.getPosition().getX() -1 < 0) {
+//
+//
+//            s2 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile().getMyComponent().getName();
+//        } else  s2  = null;
+//        //BOTTOM
+//
+//        if (mySlot.getPosition().getY() +1 > 6) {
+//            s3 = TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile().getMyComponent().getName();
+//        } else  s3 = null;
+//
+//        //RIGHT TILE
+//
+//        if (mySlot.getPosition().getX() +1 > 4) {
+//            s4 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile().getMyComponent().getName();
+//        }
+//        else s4 = null;
+//
+////        if (s1.equals("LifeSupportSystem") ||s2.equals("LifeSupportSystem") || s3.equals("LifeSupportSystem") || s4.equals("LifeSupportSystem")  ){
+////            return true;
+////        }
+////
+//
+//
+//        return false;
+//
+//    }
 }
