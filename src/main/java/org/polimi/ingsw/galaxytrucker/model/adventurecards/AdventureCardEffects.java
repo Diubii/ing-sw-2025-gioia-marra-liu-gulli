@@ -3,7 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.enemies.Pirates;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.enemies.Slavers;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.enemies.Smugglers;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
 
 public class AdventureCardEffects implements AdventureCardActivator {
     @Override

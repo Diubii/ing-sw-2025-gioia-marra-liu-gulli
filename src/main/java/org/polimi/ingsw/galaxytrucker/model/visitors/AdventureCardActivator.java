@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model.adventurecards.visitors;
+package org.polimi.ingsw.galaxytrucker.model.visitors;
 
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.enemies.*;

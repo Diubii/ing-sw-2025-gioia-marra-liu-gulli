@@ -1,7 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards.enemies;
 
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.Enemy;
 
 import java.util.ArrayList;

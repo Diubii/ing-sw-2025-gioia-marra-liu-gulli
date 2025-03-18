@@ -2,7 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
 
 import java.util.ArrayList;
 

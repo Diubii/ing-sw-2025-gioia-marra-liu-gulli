@@ -25,7 +25,6 @@ public class LifeSupportSystem extends Component {
     }
 
     public void setNearMHU() {
-        Tile tempTile = getMyTile();
-
+        Tile myTile = getMyTile();
     }
 }

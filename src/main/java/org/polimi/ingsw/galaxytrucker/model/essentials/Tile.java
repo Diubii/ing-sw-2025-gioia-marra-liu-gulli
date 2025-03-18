@@ -16,7 +16,6 @@ public class Tile {
     private Component myComponent;
 
 
-
     public Tile(int id,int rotation, ArrayList<Connector> s, Component c) {
         this.id = id;
         Rotation = rotation;
@@ -55,8 +54,6 @@ public class Tile {
 
         mySlot = mySlot2;
     }
-
-
 
     public void setUsed(Boolean used) {
         this.used = used;
@@ -131,10 +128,6 @@ public class Tile {
 
         return false;
     }
-
-
-
-
 
     public int getId() {
         return id;
