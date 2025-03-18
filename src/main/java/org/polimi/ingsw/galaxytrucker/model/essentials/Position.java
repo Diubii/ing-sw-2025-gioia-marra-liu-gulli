@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model.units;
+package org.polimi.ingsw.galaxytrucker.model.essentials;
 
 /**
  * Used to manage position in a cartesian space

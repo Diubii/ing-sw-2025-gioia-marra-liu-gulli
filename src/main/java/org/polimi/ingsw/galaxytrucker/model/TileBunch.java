@@ -1,5 +1,7 @@
-package org.polimi.ingsw.galaxytrucker.model.units;
+package org.polimi.ingsw.galaxytrucker.model;
 
+
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
 import java.util.ArrayList;
 import java.util.Random;

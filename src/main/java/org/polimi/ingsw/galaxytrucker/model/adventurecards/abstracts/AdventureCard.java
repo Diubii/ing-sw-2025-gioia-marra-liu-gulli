@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts;
 
-import org.polimi.ingsw.galaxytrucker.model.units.Player;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 
 public abstract class AdventureCard {
     protected int id;

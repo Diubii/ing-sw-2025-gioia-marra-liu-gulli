@@ -1,8 +1,8 @@
-package org.polimi.ingsw.galaxytrucker.model.units.components;
+package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
-import org.polimi.ingsw.galaxytrucker.model.units.Component;
-import org.polimi.ingsw.galaxytrucker.model.units.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
 import java.util.ArrayList;
 

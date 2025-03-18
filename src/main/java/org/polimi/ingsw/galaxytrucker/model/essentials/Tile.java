@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model.units;
+package org.polimi.ingsw.galaxytrucker.model.essentials;
 
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 
