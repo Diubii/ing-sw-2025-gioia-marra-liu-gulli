@@ -62,5 +62,9 @@ public class GenericCargoHolds extends Component {
         return visitor.visit(this); // this ora è di tipo Cannon!
     }
 
+    public Boolean isSpecial() {
+        return special;
+    }
+
 
 }

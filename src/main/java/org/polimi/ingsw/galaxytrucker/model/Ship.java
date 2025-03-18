@@ -6,8 +6,11 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Ship {
 
@@ -25,12 +28,12 @@ public class Ship {
 
     private Boolean learningMatch;
 
-    private ArrayList<Position> storagePos;
-    private ArrayList<Position> redStoragePos;
-    private ArrayList<Position> housingPos;
-    private ArrayList<Position> batteryPos;
-    private ArrayList<Position> cannonPos;
-    private ArrayList<Position> enginePos;
+    private Set<Position> storagePos;
+    private Set<Position> redStoragePos;
+    private Set<Position> housingPos;
+    private Set<Position> batteryPos;
+    private Set<Position> cannonPos;
+    private Set<Position> enginePos;
     private ArrayList<Position> invalidPositions;
 
     public Ship(Boolean learningMatch) {
@@ -45,7 +48,7 @@ public class Ship {
     public void generateSlot(){
         for (int i = 0; i < 7; i++){
             for (int j = 0; j < 5; j++){
-                shipBoard[i][j] = new Slot(new Position(i, j), this);
+                shipBoard[i][j] = new Slot(new Position(i, j));
             }
         }
     }
@@ -161,12 +164,57 @@ public class Ship {
     }
 
     public void putTile(Tile tile, Position pos){
-        if (shipBoard[pos.getY()][pos.getX()] == null){
-            shipBoard[pos.getY()][pos.getX()] = new Slot(pos, this);
-        }
-        shipBoard[pos.getY()][pos.getX()].putTile(tile);
 
+
+
+        if (shipBoard[pos.getY()][pos.getX()] == null){
+            shipBoard[pos.getY()][pos.getX()] = new Slot(pos);
+        }
+
+        updateSets(pos, tile);
+        shipBoard[pos.getY()][pos.getX()].putTile(tile);
         //da aggiungere la logica che controlla che Tile e' stat inserita e l'aggiornamento delle varie pos
+    }
+
+    public void updateSets(Position pos, Tile tile){
+        ComponentNameVisitor visitor = new ComponentNameVisitor();
+
+//LOGICA PER AGGIORNARE LE POSIZIONI AL PRIMO INSERIMENTO
+        switch (tile.getMyComponent().accept(visitor)){
+            case "BatterySlot": batteryPos.add(pos); break;
+            case "CannonSlot": cannonPos.add(pos); break;
+            case "EngineSlot": enginePos.add(pos); break;
+            case "ModularHousingUnit": housingPos.add(pos); break;
+            case "GenericCargoHolds": {
+                GenericCargoHolds test = (GenericCargoHolds) tile.getMyComponent();
+                Boolean s = test.isSpecial();
+                if (s){
+                    redStoragePos.add(pos);
+                }else storagePos.add(pos);
+            }
+        }
+
+    }
+
+    public void removeTile(Tile tile, Position pos, Slot slot){
+        ComponentNameVisitor visitor = new ComponentNameVisitor();
+
+//LOGICA PER AGGIORNARE LE POSIZIONI AL PRIMO INSERIMENTO
+        switch (tile.getMyComponent().accept(visitor)){
+            case "BatterySlot": batteryPos.remove(pos); break;
+            case "CannonSlot": cannonPos.remove(pos); break;
+            case "EngineSlot": enginePos.remove(pos); break;
+            case "ModularHousingUnit": housingPos.remove(pos); break;
+            case "GenericCargoHolds": {
+                GenericCargoHolds test = (GenericCargoHolds) tile.getMyComponent();
+                Boolean s = test.isSpecial();
+                if (s){
+                    redStoragePos.remove(pos);
+                }else storagePos.remove(pos);
+            }
+        }
+
+        slot.putTile(null);
     }
 
     public void calcExposedConnectors(){
