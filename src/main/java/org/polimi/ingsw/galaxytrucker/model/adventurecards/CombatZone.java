@@ -1,12 +1,12 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
-import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.visitors.AdventureCardActivator;
 
 public class CombatZone extends AdventureCard {
     public CombatZone() {}
 
-    public void activateEffect(Player player) {
-
+    public void activateEffect(AdventureCardActivator aca) {
+        aca.activateCombatZone(this);
     }
 }

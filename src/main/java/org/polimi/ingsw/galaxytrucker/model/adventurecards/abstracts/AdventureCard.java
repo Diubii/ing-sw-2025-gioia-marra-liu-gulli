@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts;
 
-import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.visitors.AdventureCardActivator;
 
 public abstract class AdventureCard {
     protected int id;
@@ -12,7 +12,7 @@ public abstract class AdventureCard {
     protected boolean learningFlight;
     protected boolean affectsAll;
 
-    protected abstract void activateEffect(Player player);
+    protected abstract void activateEffect(AdventureCardActivator aca);
 
     public int getId() {
         return id;

@@ -1,7 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
-import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.visitors.AdventureCardActivator;
 
 public class AbandonedShip extends AdventureCard {
     private final int humansLost;
@@ -23,7 +23,7 @@ public class AbandonedShip extends AdventureCard {
         this.credits = credits;
     }
 
-    public void activateEffect(Player player) {
-
+    public void activateEffect(AdventureCardActivator aca) {
+        aca.activateAbandonedShip(this);
     }
 }

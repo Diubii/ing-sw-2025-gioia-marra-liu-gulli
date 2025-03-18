@@ -2,7 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
-import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.visitors.AdventureCardActivator;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class Planets extends AdventureCard {
         this.planets = planets;
     }
 
-    public void activateEffect(Player player){
-
+    public void activateEffect(AdventureCardActivator aca){
+        aca.activatePlanets(this);
     }
 }
