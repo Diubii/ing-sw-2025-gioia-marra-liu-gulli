@@ -1,7 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameVisitor;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
 
 public  class Component {
     private  Tile myTile;

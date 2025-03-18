@@ -1,12 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
-import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-
-import java.util.ArrayList;
+import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
 
 public class Engine extends Component {
     protected int enginePower;

@@ -1,6 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 
+import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
+
 public class DoubleCannon extends Cannon {
     private  Boolean charged;
 

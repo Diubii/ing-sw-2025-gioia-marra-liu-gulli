@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
 
 public class ModularHousingUnit extends CentralHousingUnit{
 

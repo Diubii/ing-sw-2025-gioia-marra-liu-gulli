@@ -1,6 +1,7 @@
-package org.polimi.ingsw.galaxytrucker.model.essentials.components;
+package org.polimi.ingsw.galaxytrucker.model.visitors;
 
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 
 public interface ComponentNameVisitorInterface {
     String visit(Component component);
