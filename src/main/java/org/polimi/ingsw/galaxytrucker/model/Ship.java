@@ -10,6 +10,8 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameV
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class Ship {
@@ -33,7 +35,7 @@ public class Ship {
     private Set<Position> housingPos;
     private Set<Position> batteryPos;
     private Set<Position> cannonPos;
-    private Set<Position> enginePos;
+    private Set<Position> enginePos = new LinkedHashSet<>();
     private ArrayList<Position> invalidPositions;
 
     public Ship(Boolean learningMatch) {
@@ -201,15 +203,16 @@ public class Ship {
         ComponentNameVisitor visitor = new ComponentNameVisitor();
 
         if (tile != null && tile.getMyComponent() != null) {
+            System.out.println("STO ELIMIMANDO" + pos.getY() + pos.getX());
 //LOGICA PER AGGIORNARE LE POSIZIONI AL PRIMO INSERIMENTO
             switch (tile.getMyComponent().accept(visitor)) {
                 case "BatterySlot":
                     batteryPos.remove(pos);
                     break;
-                case "CannonSlot":
+                case "Cannon":
                     cannonPos.remove(pos);
                     break;
-                case "EngineSlot":
+                case "Engine":
                     enginePos.remove(pos);
                     break;
                 case "ModularHousingUnit":
@@ -224,8 +227,9 @@ public class Ship {
                 }
             }
 
-            putTile(null, pos);
         }
+        getShipBoard()[pos.getY()][pos.getX()].removeTile();
+
     }
 
     public void calcExposedConnectors(){
@@ -295,16 +299,24 @@ public class Ship {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 7; j++) {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
-                    sb.append("[1] "); // Slot con Tile
-                } else {
+                    sb.append("[1] ");// Slot con Tile
+                    System.out.printf("FOUND %d %d\n", i, j);
+                }
+
+                else if (shipBoard[i][j] != null && shipBoard[i][j].getTile() == null) {
                     int finalJ = j;
                     int finalI = i;
                     if (invalidPositions.stream().anyMatch(pos -> pos.getX() == finalJ && pos.getY() == finalI)) {
                         sb.append("[X] ");
                     }else {
                     sb.append("[.] "); // Slot vuoto
-                }
+                        System.out.printf("%d %d [null]\n", i, j);
+
                     }
+                    }
+
+                else if (shipBoard[i][j] == null)  sb.append("[.] "); // Slot vuoto
+
             }
             sb.append("\n"); // Vai a capo dopo ogni riga
         }

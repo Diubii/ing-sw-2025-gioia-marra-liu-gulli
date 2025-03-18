@@ -26,8 +26,6 @@ public class Slot {
 
 
     public void putTile(Tile t){
-        if (t == null){
-            this.TileContainer = null;
-        } else this.TileContainer = new Tile(t);
+     this.TileContainer = new Tile(t);
     }
 }

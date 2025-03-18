@@ -30,6 +30,8 @@ public class HelloController {
             int x = Integer.parseInt(xField.getText());
             int y = Integer.parseInt(yField.getText());
             myShip.removeTile(myShip.getShipBoard()[y][x].getTile(), new Position(y,x));
+            System.out.println(myShip.toString());
+            messages.add(myShip.toString());
             System.out.println("Valori salvati: X = " + x + ", Y = " + y);
         } catch (NumberFormatException e) {
             System.out.println("Errore: inserire solo numeri interi!");
