@@ -1,11 +1,11 @@
-package org.polimi.ingsw.galaxytrucker.model.units.components;
+package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.model.units.Component;
-import org.polimi.ingsw.galaxytrucker.model.units.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import javafx.util.Pair;
-import org.polimi.ingsw.galaxytrucker.model.units.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
 import java.util.ArrayList;
 

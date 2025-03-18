@@ -1,9 +1,9 @@
-package org.polimi.ingsw.galaxytrucker.model.units.components;
+package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.model.units.Ship;
-import org.polimi.ingsw.galaxytrucker.model.units.Slot;
-import org.polimi.ingsw.galaxytrucker.model.units.Tile;
+import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
 public class ModulaHousingUnit extends CentralHousingUnit{
 

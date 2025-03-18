@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model.units;
+package org.polimi.ingsw.galaxytrucker.model.essentials;
 
 public  class Component {
     private  Tile myTile;

@@ -7,8 +7,10 @@ module org.polimi.ingsw.galaxytrucker {
     opens org.polimi.ingsw.galaxytrucker to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker;
     exports org.polimi.ingsw.galaxytrucker.enums;
-    exports org.polimi.ingsw.galaxytrucker.model.units;
-    opens org.polimi.ingsw.galaxytrucker.model.units to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker.model.essentials;
+    opens org.polimi.ingsw.galaxytrucker.model.essentials to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.model.game;
     opens org.polimi.ingsw.galaxytrucker.model.game to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker.model;
+    opens org.polimi.ingsw.galaxytrucker.model to javafx.fxml;
 }

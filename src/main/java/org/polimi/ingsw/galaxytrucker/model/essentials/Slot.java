@@ -1,4 +1,6 @@
-package org.polimi.ingsw.galaxytrucker.model.units;
+package org.polimi.ingsw.galaxytrucker.model.essentials;
+
+import org.polimi.ingsw.galaxytrucker.model.Ship;
 
 public class Slot {
     private Position position;

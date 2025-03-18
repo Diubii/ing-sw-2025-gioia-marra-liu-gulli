@@ -1,6 +1,6 @@
-package org.polimi.ingsw.galaxytrucker.model.units.components;
+package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
-import org.polimi.ingsw.galaxytrucker.model.units.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 
 public class BatterySlot extends Component {
 

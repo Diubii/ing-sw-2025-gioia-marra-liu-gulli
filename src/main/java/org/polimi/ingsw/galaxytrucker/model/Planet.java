@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
-import org.polimi.ingsw.galaxytrucker.model.units.Good;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 
 import java.util.ArrayList;
 

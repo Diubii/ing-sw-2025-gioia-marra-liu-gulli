@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model.units.components;
+package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 public class DoubleEngine extends Engine{
 

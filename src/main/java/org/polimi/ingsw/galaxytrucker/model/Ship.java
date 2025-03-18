@@ -1,7 +1,11 @@
-package org.polimi.ingsw.galaxytrucker.model.units;
+package org.polimi.ingsw.galaxytrucker.model;
 
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
 import java.util.ArrayList;
 

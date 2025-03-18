@@ -3,10 +3,10 @@ package org.polimi.ingsw.galaxytrucker.model.game;
 import org.polimi.ingsw.galaxytrucker.enums.GameStateType;
 import org.polimi.ingsw.galaxytrucker.exceptions.IllegalStateOperationException;
 import org.polimi.ingsw.galaxytrucker.model.CardStack;
-import org.polimi.ingsw.galaxytrucker.model.units.FlightBoard;
-import org.polimi.ingsw.galaxytrucker.model.units.Player;
-import org.polimi.ingsw.galaxytrucker.model.units.Ship;
-import org.polimi.ingsw.galaxytrucker.model.units.TileBunch;
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.TileBunch;
 
 import java.util.*;
 

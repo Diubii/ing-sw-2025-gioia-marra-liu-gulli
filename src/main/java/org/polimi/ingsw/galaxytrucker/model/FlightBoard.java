@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model.units;
+package org.polimi.ingsw.galaxytrucker.model;
 
 import java.util.HashMap;
 import java.util.List;
