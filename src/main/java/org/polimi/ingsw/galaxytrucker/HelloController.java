@@ -57,6 +57,7 @@ public class HelloController {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 7; j++) {
                 Rectangle rect = new Rectangle(50, 50, Color.DARKVIOLET);
+                rect.setOnMouseClicked(e -> rect.setFill(Color.GOLD));
                 rect.setStroke(Color.BLACK);  // Bordi separati
                 grid.add(rect, j, i);
             }
