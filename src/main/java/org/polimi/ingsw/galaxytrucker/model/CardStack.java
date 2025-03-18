@@ -8,7 +8,6 @@ public class CardStack {
     private ArrayList<AdventureCard> cards;
     public final boolean spyable;
 
-
     public ArrayList<AdventureCard> getCards() {
         return cards;
     }

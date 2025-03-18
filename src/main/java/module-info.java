@@ -6,7 +6,6 @@ module org.polimi.ingsw.galaxytrucker {
 
     opens org.polimi.ingsw.galaxytrucker to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker;
-    exports org.polimi.ingsw.galaxytrucker.enums;
     exports org.polimi.ingsw.galaxytrucker.model.essentials;
     opens org.polimi.ingsw.galaxytrucker.model.essentials to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.model.game;
