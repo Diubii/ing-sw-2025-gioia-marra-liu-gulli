@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+
 import java.util.*;
 
 /**
@@ -15,6 +17,9 @@ public class Player {
     private int placement;
 
     private HashMap<String, Integer> detailedScores;
+
+    private List<Good> ListOfGoods;
+    private List<Good> ListUnloadedGoods;
 
     public Player(String nickname, int nCredits, int placement, Boolean leaningMatch) {
         this.nickname = nickname;
