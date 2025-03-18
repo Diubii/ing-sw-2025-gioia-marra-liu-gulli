@@ -9,8 +9,12 @@ public class ModularHousingUnit extends CentralHousingUnit{
     private int nBrownAlien;
     private int nPurpleAlien;
 
-    public ModularHousingUnit(String name, Color color, int HumanCrewNumber) {
+    public ModularHousingUnit(String name, Color color, int HumanCrewNumber, int nBrownAlien, int nPurpleAlien) {
         super(name, color, HumanCrewNumber);
+
+        this.nBrownAlien = nBrownAlien;
+        this.nPurpleAlien = nPurpleAlien;
+
     }
 
     public void updateBrownAlien(){

@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
 
@@ -46,7 +48,10 @@ public class ComponentNameVisitor implements ComponentNameVisitorInterface {
 
     @Override
     public String visit(LifeSupportSystem component) {
-        return "LifeSupportSystem";
+        if (component.getColor().equals(AlienColor.PURPLE)){
+            return "PurpleLifeSupportSystem";
+        }
+        return "BrownLifeSupportSystem";
     }
 
     @Override

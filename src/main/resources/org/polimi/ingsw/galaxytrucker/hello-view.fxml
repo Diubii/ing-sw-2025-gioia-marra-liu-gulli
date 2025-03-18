@@ -13,10 +13,11 @@
     <Button text="Hello!" onAction="#onHelloButtonClick"/>
 
 
-    <TextField fx:id="xField" promptText="Inserisci X"/>
-    <TextField fx:id="yField" promptText="Inserisci Y"/>
+<!--    <TextField fx:id="xField" promptText="Inserisci X"/>-->
+<!--    <TextField fx:id="yField" promptText="Inserisci Y"/>-->
 
-    <Button text="RIMUOVI" onAction="#handleInvia"/>
+<!--    <Button text="RIMUOVI" onAction="#handleInvia"/>-->
+    <Button text="Apri Board" onAction="#openBoard"/>
 
 
 
