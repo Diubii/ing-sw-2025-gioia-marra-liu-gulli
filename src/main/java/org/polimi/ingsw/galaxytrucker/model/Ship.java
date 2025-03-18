@@ -8,6 +8,8 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Util;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -20,7 +22,7 @@ public class Ship {
     private Slot[] setAsideTiles = new Slot[2];
     private int nExposedConnector;
     private int destroyedTiles;
-    private  int nBatterieLeft;
+    private int nBatterieLeft;
     private int nCrew;
     private Boolean purpleAlien;
     private Boolean brownAlien;
@@ -47,9 +49,9 @@ public class Ship {
 
     }
 
-    public void generateSlot(){
-        for (int i = 0; i < 5; i++){
-            for (int j = 0; j < 7; j++){
+    public void generateSlot() {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 7; j++) {
                 shipBoard[i][j] = new Slot(new Position(i, j));
             }
         }
@@ -57,63 +59,63 @@ public class Ship {
 
 
     // GETTERS START ----------------------
-    public Slot[][] getShipBoard(){
+    public Slot[][] getShipBoard() {
         return shipBoard.clone();
     }
 
-    public ArrayList<Position> getStoragePos(){
+    public ArrayList<Position> getStoragePos() {
         return new ArrayList<Position>(storagePos);
     }
-    public ArrayList<Position> getRedStoragePos()
-    {
+
+    public ArrayList<Position> getRedStoragePos() {
         return new ArrayList<Position>(redStoragePos);
     }
 
-    public ArrayList<Position> getHousingPos(){
+    public ArrayList<Position> getHousingPos() {
         return new ArrayList<Position>(housingPos);
     }
 
-    public ArrayList<Position> getBatteryPos(){
+    public ArrayList<Position> getBatteryPos() {
         return new ArrayList<Position>(batteryPos);
     }
 
-    public ArrayList<Position> getCannonPos(){
+    public ArrayList<Position> getCannonPos() {
         return new ArrayList<Position>(cannonPos);
     }
 
-    public ArrayList<Position> getEnginePos(){
+    public ArrayList<Position> getEnginePos() {
         return new ArrayList<Position>(enginePos);
     }
 
-    public int getnExposedConnector(){
+    public int getnExposedConnector() {
         return nExposedConnector;
     }
 
-    public int getnBatterieLeft(){
+    public int getnBatterieLeft() {
         return nBatterieLeft;
     }
 
-    public int getDestroyedTiles(){
+    public int getDestroyedTiles() {
         return destroyedTiles;
     }
 
-    public int getnGoods(){
+    public int getnGoods() {
         return nGoods;
     }
 
-    public Boolean getPurpleAlien(){
+    public Boolean getPurpleAlien() {
         return purpleAlien;
     }
 
-    public Boolean getBrownAlien(){
+    public Boolean getBrownAlien() {
         return brownAlien;
     }
 
-    public Boolean getLearningMatch(){
+    public Boolean getLearningMatch() {
         return learningMatch;
     }
 
-    public int getnCrew(){
+    public int getnCrew() {
         return nCrew;
     }
     // GETTERS END ----------------------
@@ -122,55 +124,56 @@ public class Ship {
     public ArrayList<Position> getInvalidPositions() {
         return invalidPositions;
     }
+    // GETTERS END ----------------------
+
 
     //carcamento da FILE?
-    public ArrayList<Position> createIP(){
+    public ArrayList<Position> createIP() {
         invalidPositions = new ArrayList<>();
-        if (learningMatch){
-            invalidPositions.add(new Position(0,0));
-            invalidPositions.add(new Position(0,1));
-            invalidPositions.add(new Position(0,2));
-            invalidPositions.add(new Position(0,6));
-            invalidPositions.add(new Position(0,5));
-            invalidPositions.add(new Position(0,4));
+        if (learningMatch) {
+            invalidPositions.add(new Position(0, 0));
+            invalidPositions.add(new Position(0, 1));
+            invalidPositions.add(new Position(0, 2));
+            invalidPositions.add(new Position(0, 6));
+            invalidPositions.add(new Position(0, 5));
+            invalidPositions.add(new Position(0, 4));
             //-------------------------------------------
-            invalidPositions.add(new Position(1,1));
-            invalidPositions.add(new Position(1,0));
-            invalidPositions.add(new Position(1,5));
-            invalidPositions.add(new Position(1,6));
+            invalidPositions.add(new Position(1, 1));
+            invalidPositions.add(new Position(1, 0));
+            invalidPositions.add(new Position(1, 5));
+            invalidPositions.add(new Position(1, 6));
             //-------------------------------------------
 
-            invalidPositions.add(new Position(2,6));
-            invalidPositions.add(new Position(2,0));
+            invalidPositions.add(new Position(2, 6));
+            invalidPositions.add(new Position(2, 0));
             //-------------------------------------------
-            invalidPositions.add(new Position(3,0));
-            invalidPositions.add(new Position(3,6));
+            invalidPositions.add(new Position(3, 0));
+            invalidPositions.add(new Position(3, 6));
 
-            invalidPositions.add(new Position(4,0));
-            invalidPositions.add(new Position(4,6));
-            invalidPositions.add(new Position(4,3));
+            invalidPositions.add(new Position(4, 0));
+            invalidPositions.add(new Position(4, 6));
+            invalidPositions.add(new Position(4, 3));
 
-        }else {
-            invalidPositions.add(new Position(0,0));
-            invalidPositions.add(new Position(0,1));
-            invalidPositions.add(new Position(0,3));
-            invalidPositions.add(new Position(0,6));
-            invalidPositions.add(new Position(0,5));
+        } else {
+            invalidPositions.add(new Position(0, 0));
+            invalidPositions.add(new Position(0, 1));
+            invalidPositions.add(new Position(0, 3));
+            invalidPositions.add(new Position(0, 6));
+            invalidPositions.add(new Position(0, 5));
             //-------------------------------------------
-            invalidPositions.add(new Position(1,0));
-            invalidPositions.add(new Position(1,6));
+            invalidPositions.add(new Position(1, 0));
+            invalidPositions.add(new Position(1, 6));
             //------------------------------------------
-            invalidPositions.add(new Position(4,3));
+            invalidPositions.add(new Position(4, 3));
         }
 
         return new ArrayList<Position>(invalidPositions);
     }
 
-    public void putTile(Tile tile, Position pos){
+    public void putTile(Tile tile, Position pos) {
 
 
-
-        if (shipBoard[pos.getY()][pos.getX()] == null){
+        if (shipBoard[pos.getY()][pos.getX()] == null) {
             shipBoard[pos.getY()][pos.getX()] = new Slot(pos);
         }
 
@@ -179,21 +182,29 @@ public class Ship {
         //da aggiungere la logica che controlla che Tile e' stat inserita e l'aggiornamento delle varie pos
     }
 
-    public void updateSets(Position pos, Tile tile){
+    public void updateSets(Position pos, Tile tile) {
         ComponentNameVisitor visitor = new ComponentNameVisitor();
 
 //LOGICA PER AGGIORNARE LE POSIZIONI AL PRIMO INSERIMENTO
-        switch (tile.getMyComponent().accept(visitor)){
-            case "BatterySlot": batteryPos.add(pos); break;
-            case "CannonSlot": cannonPos.add(pos); break;
-            case "EngineSlot": enginePos.add(pos); break;
-            case "ModularHousingUnit": housingPos.add(pos); break;
+        switch (tile.getMyComponent().accept(visitor)) {
+            case "BatterySlot":
+                batteryPos.add(pos);
+                break;
+            case "CannonSlot":
+                cannonPos.add(pos);
+                break;
+            case "EngineSlot":
+                enginePos.add(pos);
+                break;
+            case "ModularHousingUnit":
+                housingPos.add(pos);
+                break;
             case "GenericCargoHolds": {
                 GenericCargoHolds test = (GenericCargoHolds) tile.getMyComponent();
                 Boolean s = test.isSpecial();
-                if (s){
+                if (s) {
                     redStoragePos.add(pos);
-                }else storagePos.add(pos);
+                } else storagePos.add(pos);
             }
         }
 
@@ -232,57 +243,57 @@ public class Ship {
 
     }
 
-    public void calcExposedConnectors(){
+    public void calcExposedConnectors() {
         int tempSum;
-        for (int i = 0; i < 7; i++){
-            for (int j = 0; j < 5; j++){
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 5; j++) {
                 ArrayList<Position> validPos = new ArrayList<Position>();
                 Position tempPos = new Position(i, j);
                 Tile myTile = shipBoard[i][j].getTile();
                 //calculate neihbours
-                Position nord = new Position(i-1, j);
-                Position sud = new Position(i+1, j);
-                Position est = new Position(i, j+1);
-                Position ovest = new Position(i, j-1);
+                Position nord = new Position(i - 1, j);
+                Position sud = new Position(i + 1, j);
+                Position est = new Position(i, j + 1);
+                Position ovest = new Position(i, j - 1);
 
                 //NORD
-                if (myTile.getSides().get(0) != Connector.EMPTY ){
+                if (myTile.getSides().get(0) != Connector.EMPTY) {
                     if (!invalidPositions.contains(nord)) {
                         Tile tempTile = shipBoard[nord.getX()][nord.getY()].getTile();
-                        if (tempTile == null){
+                        if (tempTile == null) {
                             nExposedConnector++;
                         }
-                    }else nExposedConnector++;
+                    } else nExposedConnector++;
 
                 }
                 //OVEST
-                if (myTile.getSides().get(1) != Connector.EMPTY ){
+                if (myTile.getSides().get(1) != Connector.EMPTY) {
                     if (!invalidPositions.contains(ovest)) {
                         Tile tempTile = shipBoard[ovest.getX()][ovest.getY()].getTile();
-                        if (tempTile == null){
+                        if (tempTile == null) {
                             nExposedConnector++;
                         }
-                    }else nExposedConnector++;
+                    } else nExposedConnector++;
 
                 }
                 //SUD
-                if (myTile.getSides().get(2) != Connector.EMPTY ){
+                if (myTile.getSides().get(2) != Connector.EMPTY) {
                     if (!invalidPositions.contains(sud)) {
                         Tile tempTile = shipBoard[sud.getX()][sud.getY()].getTile();
-                        if (tempTile == null){
+                        if (tempTile == null) {
                             nExposedConnector++;
                         }
-                    }else nExposedConnector++;
+                    } else nExposedConnector++;
 
                 }
                 //EST
-                if (myTile.getSides().get(3) != Connector.EMPTY ){
+                if (myTile.getSides().get(3) != Connector.EMPTY) {
                     if (!invalidPositions.contains(est)) {
                         Tile tempTile = shipBoard[est.getX()][est.getY()].getTile();
-                        if (tempTile == null){
+                        if (tempTile == null) {
                             nExposedConnector++;
                         }
-                    }else nExposedConnector++;
+                    } else nExposedConnector++;
 
                 }
 
@@ -301,21 +312,17 @@ public class Ship {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
                     sb.append("[1] ");// Slot con Tile
                     System.out.printf("FOUND %d %d\n", i, j);
-                }
-
-                else if (shipBoard[i][j] != null && shipBoard[i][j].getTile() == null) {
+                } else if (shipBoard[i][j] != null && shipBoard[i][j].getTile() == null) {
                     int finalJ = j;
                     int finalI = i;
                     if (invalidPositions.stream().anyMatch(pos -> pos.getX() == finalJ && pos.getY() == finalI)) {
                         sb.append("[X] ");
-                    }else {
-                    sb.append("[.] "); // Slot vuoto
+                    } else {
+                        sb.append("[.] "); // Slot vuoto
                         System.out.printf("%d %d [null]\n", i, j);
 
                     }
-                    }
-
-                else if (shipBoard[i][j] == null)  sb.append("[.] "); // Slot vuoto
+                } else if (shipBoard[i][j] == null) sb.append("[.] "); // Slot vuoto
 
             }
             sb.append("\n"); // Vai a capo dopo ogni riga
@@ -324,5 +331,28 @@ public class Ship {
         return sb.toString();
     }
 
+    public Boolean checkShip() {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
+                    if (!Util.wellConnectedConnectors(this, shipBoard[i][j], shipBoard[i][j].getTile())) {
+                        return false;
+                    } else {
+                        if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Engine")) {
+                            return Util.EngineWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+                        }
+                        if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
+                            ModularHousingUnit temp = (ModularHousingUnit) shipBoard[i][j].getTile().getMyComponent();
+
+                            return Util.CheckLifeSupportSystem(temp.getColor(), shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+
+    }
 
 }

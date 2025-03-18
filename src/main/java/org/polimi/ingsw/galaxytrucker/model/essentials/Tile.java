@@ -83,9 +83,9 @@ public class Tile {
 //        return mySlot;
 //    }
 
-//    public Boolean wellConnected(){
+//    public Boolean wellConnected(Ship s){
 //
-//        Slot[][] TempShipBoard = mySlot.getMyShip().getShipBoard();
+//        Slot[][] TempShipBoard = s.getShipBoard();
 //        Connector c1;
 //        Connector c2;
 //        Connector c3;
