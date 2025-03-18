@@ -4,16 +4,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.polimi.ingsw.galaxytrucker.enums.Connector;
-import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameVisitor;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.Engine;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
 
 public class HelloApplication extends Application {
     @Override
@@ -23,27 +15,6 @@ public class HelloApplication extends Application {
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
-        ArrayList<Connector> sides;
-        sides = new ArrayList<>();
-        sides.add(Connector.DOUBLE);
-        sides.add(Connector.DOUBLE);
-        sides.add(Connector.DOUBLE);
-        sides.add(Connector.DOUBLE);
-        Engine E = new Engine("Engine",0);
-
-
-        Ship ship = new Ship(true);
-        HelloController.myShip = ship;
-        Tile tile = new Tile(1,0, sides,E );
-        ship.putTile(tile, new Position(4,4));
-        ship.getShipBoard()[4][4].getTile().setMyComponent(E);
-        HelloController.messages.push(ship.toString());
-        HelloController.messages.push(E.accept(new ComponentNameVisitor()));
-        HelloController.messages.push(ship.toString());
-
-
-
-
     }
 
     public static void main(String[] args) {
