@@ -18,7 +18,7 @@ public class CentralHousingUnit extends Component {
 
     }
 
-    public AlienColor getColor() {
+    public Color getColor() {
         return color;
     }
     public int getHumanCrewNumber() {

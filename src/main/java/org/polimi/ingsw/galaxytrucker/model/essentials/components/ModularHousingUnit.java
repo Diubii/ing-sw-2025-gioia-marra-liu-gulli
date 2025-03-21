@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
 
@@ -9,8 +10,9 @@ public class ModularHousingUnit extends CentralHousingUnit{
     private int nBrownAlien;
     private int nPurpleAlien;
 
-    public ModularHousingUnit(String name, Color color, int HumanCrewNumber, int nBrownAlien, int nPurpleAlien) {
-        super(name, color, HumanCrewNumber);
+    public ModularHousingUnit(String name, AlienColor color, int HumanCrewNumber, int nBrownAlien, int nPurpleAlien) {
+
+        super(name, null, HumanCrewNumber);
 
         this.nBrownAlien = nBrownAlien;
         this.nPurpleAlien = nPurpleAlien;

@@ -11,15 +11,15 @@ import java.util.ArrayList;
 
 public class LifeSupportSystem extends Component {
 
-    private Color color;
+    private AlienColor color;
     private ArrayList<Pair<Position, AlienColor>> nearMHU;
 
-    public LifeSupportSystem(String name, Color color) {
+    public LifeSupportSystem(String name, AlienColor color) {
         super(name, false);
         this.color = color;
     }
 
-    public Color getColor() {
+    public AlienColor getColor() {
         return color;
     }
 

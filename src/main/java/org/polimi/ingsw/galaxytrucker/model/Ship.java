@@ -399,9 +399,13 @@ public class Ship {
 
                         }
                         if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
-                            ModularHousingUnit temp = (ModularHousingUnit) shipBoard[i][j].getTile().getMyComponent();
 
-                            Boolean result =  Util.CheckLifeSupportSystem(temp.getColor(), shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+                            AlienColor al = null;
+                            ModularHousingUnit temp = (ModularHousingUnit) shipBoard[i][j].getTile().getMyComponent();
+                            if (temp.getNBrownAlien() > temp.getNPurpleAlien() && temp.getHumanCrewNumber() == 0) al = AlienColor.BROWN;
+                            if (temp.getNPurpleAlien() > temp.getNBrownAlien() && temp.getHumanCrewNumber() == 0) al = AlienColor.PURPLE;
+
+                            Boolean result =  Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
                             shipBoard[i][j].getTile().setWellConnected(result);
                             return result;
 
