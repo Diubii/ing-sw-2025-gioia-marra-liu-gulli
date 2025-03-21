@@ -425,105 +425,94 @@ public class Ship {
      * @param positions Lista posizioni in cui sono stati distrutti dei Component
      */
 
-    public ArrayList<Slot[][]> truncateShip(ArrayList<Position> positions){
+    public ArrayList<Slot[][]> truncateShip(ArrayList<Position> positions) {
 
-        for (Position pos: positions) {
+    // Itera su tutte le posizioni fornite
+    for (Position pos : positions) {
 
+        // Lista dei vicini validi della posizione corrente
+        ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 
-            //controllo per ogni vicino se ci sono dei modi per raggiungere gli altri, creando classi di equivalenza
-            ArrayList<Pair<ProjectileDirection,Slot>> villagers = new ArrayList<>();
-
-
-
-            if (!invalidPositions.contains(new Position(pos.getY()-1,pos.getX())) && Util.inBoundaries(pos.getY()-1,pos.getX())){
-
-                villagers.add(new Pair<>(ProjectileDirection.FRONT,shipBoard[pos.getY()-1][pos.getX()]));
-
-            } if (!invalidPositions.contains(new Position(pos.getY(),pos.getX()-1)) && Util.inBoundaries(pos.getY(),pos.getX()-1)){
-
-                villagers.add(new Pair<>(ProjectileDirection.LEFT,shipBoard[pos.getY()][pos.getX()-1]));
-
-            }if (!invalidPositions.contains(new Position(pos.getY()+1,pos.getX())) && Util.inBoundaries(pos.getY()+1,pos.getX())){
-
-                villagers.add(new Pair<>(ProjectileDirection.BOTTOM,shipBoard[pos.getY()+1][pos.getX()]));
-
-            }if (!invalidPositions.contains(new Position(pos.getY(),pos.getX()+1)) && Util.inBoundaries(pos.getY(),pos.getX()+1)) {
-
-                villagers.add(new Pair<>(ProjectileDirection.RIGHT,shipBoard[pos.getY()][pos.getX()+1]));
-
-            }
-
-
-            //ho le posizioni dei vicini esistenti, per ognuno di loro controllo se esiste un path per arrivare all'altro
-            if (!villagers.isEmpty()) {
-
-                ArrayList<Pair<Integer, ArrayList<Integer>>> Nodes = new ArrayList<>();
-                ArrayList<Integer> tilesVisitedId = new ArrayList<>();
-                for (int i = 0; i < villagers.size() ; i++) {
-
-
-                        Nodes.add(new Pair<>(villagers.get(i).getValue().getTile().getId(), new ArrayList<>()));
-                        Tile myTile = villagers.get(i).getValue().getTile();
-
-                        //per ogni villager devo vedere se esiste un path per i rimanenti
-
-                        ArrayList<Integer> tilesID = new ArrayList<>();
-                        //creo l'insieme di slot nei path
-                        Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, this);
-
-
-                        for (int j = i + 1; j < villagers.size(); j++) {
-                            //calcolo path da villagers[i] a villagers[j]
-                            if (tilesID.contains(villagers.get(j).getValue().getTile().getId())) {
-
-                                Nodes.get(i).getValue().add(villagers.get(j).getValue().getTile().getId());
-                                tilesVisitedId.add(villagers.get(j).getValue().getTile().getId());
-                            }
-
-
-                        }
-
-                }
-                //dopo averli processati tutti devo trovare le classi di equivalenza
-                ArrayList<ArrayList<Integer>> equivalenceClasses = new ArrayList<>();
-                for (int i = 0; i < Nodes.size(); i++) {
-
-                    int finalI = i;
-                    if (equivalenceClasses.stream().noneMatch(list -> list.contains(Nodes.get(finalI).getKey()))) {
-                        equivalenceClasses.add(Nodes.get(i).getValue());
-                    }
-
-                }
-
-                //la lunghezza di equivalnce classes
-                int numTronconi = equivalenceClasses.size();
-
-                //creazione ship nuove
-                ArrayList<Slot[][]> ships = new ArrayList<>(numTronconi);
-
-                for (int i = 0; i < numTronconi; i++) {
-
-                    Slot[][] myshipBoard = new Slot[5][7];
-                    for (int j = 0; j<5; j++){
-                        for (int k = 0; k<7; k++){
-                            if ( equivalenceClasses.get(i).contains(shipBoard[j][k].getTile().getId()) && shipBoard[j][k].getTile() != null){
-                                myshipBoard[j][k] = shipBoard[j][k];
-                            }
-                        }
-                    }
-
-                    ships.add(myshipBoard);
-                }
-
-
-            return  ships;
-            }
+        // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
+        if (!invalidPositions.contains(new Position(pos.getY() - 1, pos.getX())) && Util.inBoundaries(pos.getY() - 1, pos.getX())) {
+            villagers.add(new Pair<>(ProjectileDirection.FRONT, shipBoard[pos.getY() - 1][pos.getX()]));
+        }
+        if (!invalidPositions.contains(new Position(pos.getY(), pos.getX() - 1)) && Util.inBoundaries(pos.getY(), pos.getX() - 1)) {
+            villagers.add(new Pair<>(ProjectileDirection.LEFT, shipBoard[pos.getY()][pos.getX() - 1]));
+        }
+        if (!invalidPositions.contains(new Position(pos.getY() + 1, pos.getX())) && Util.inBoundaries(pos.getY() + 1, pos.getX())) {
+            villagers.add(new Pair<>(ProjectileDirection.BOTTOM, shipBoard[pos.getY() + 1][pos.getX()]));
+        }
+        if (!invalidPositions.contains(new Position(pos.getY(), pos.getX() + 1)) && Util.inBoundaries(pos.getY(), pos.getX() + 1)) {
+            villagers.add(new Pair<>(ProjectileDirection.RIGHT, shipBoard[pos.getY()][pos.getX() + 1]));
         }
 
+        // Se ci sono vicini validi, verifica le connessioni tra di loro
+        if (!villagers.isEmpty()) {
 
-    return null;
+            // Lista di nodi (tile ID e i loro collegamenti)
+            ArrayList<Pair<Integer, ArrayList<Integer>>> Nodes = new ArrayList<>();
+            ArrayList<Integer> tilesVisitedId = new ArrayList<>();
+
+            // Per ogni vicino, controlla la sua connessione con gli altri
+            for (int i = 0; i < villagers.size(); i++) {
+
+                // Crea un nodo per il villager attuale
+                Nodes.add(new Pair<>(villagers.get(i).getValue().getTile().getId(), new ArrayList<>()));
+                Tile myTile = villagers.get(i).getValue().getTile();
+
+                // Lista delle tile raggiungibili da questo vicino
+                ArrayList<Integer> tilesID = new ArrayList<>();
+
+                // Esegue una visita per raccogliere tutte le tile raggiungibili
+                Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, this);
+
+                // Controlla quali altri vicini sono raggiungibili da questo
+                for (int j = i + 1; j < villagers.size(); j++) {
+                    if (tilesID.contains(villagers.get(j).getValue().getTile().getId())) {
+                        Nodes.get(i).getValue().add(villagers.get(j).getValue().getTile().getId());
+                        tilesVisitedId.add(villagers.get(j).getValue().getTile().getId());
+                    }
+                }
+            }
+
+            // Creazione delle classi di equivalenza (tronconi della nave)
+            ArrayList<ArrayList<Integer>> equivalenceClasses = new ArrayList<>();
+            for (int i = 0; i < Nodes.size(); i++) {
+                int finalI = i;
+                if (equivalenceClasses.stream().noneMatch(list -> list.contains(Nodes.get(finalI).getKey()))) {
+                    equivalenceClasses.add(Nodes.get(i).getValue());
+                }
+            }
+
+            // Numero di tronconi distinti
+            int numTronconi = equivalenceClasses.size();
+
+            // Creazione delle nuove navi separate
+            ArrayList<Slot[][]> ships = new ArrayList<>(numTronconi);
+            for (int i = 0; i < numTronconi; i++) {
+
+                // Crea una nuova nave vuota
+                Slot[][] myshipBoard = new Slot[5][7];
+                for (int j = 0; j < 5; j++) {
+                    for (int k = 0; k < 7; k++) {
+                        // Se la tile appartiene alla classe di equivalenza, viene inclusa nella nuova nave
+                        if (equivalenceClasses.get(i).contains(shipBoard[j][k].getTile().getId()) && shipBoard[j][k].getTile() != null) {
+                            myshipBoard[j][k] = shipBoard[j][k];
+                        }
+                    }
+                }
+
+                // Aggiunge la nuova nave alla lista delle navi separate
+                ships.add(myshipBoard);
+            }
+
+            return ships; // Restituisce l'elenco delle navi separate
+        }
     }
 
+    return null; // Se non ci sono sezioni da separare, restituisce null
+}
 
 
 
