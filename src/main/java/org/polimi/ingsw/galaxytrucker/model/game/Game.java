@@ -1,10 +1,14 @@
 package org.polimi.ingsw.galaxytrucker.model.game;
 
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAleadyExistsExcetion;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardStack;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
 
 import java.util.*;
 
@@ -16,18 +20,22 @@ import java.util.*;
  */
 public class Game {
 
-    private static final int nMaxPlayer = 4;
+    private final int nMaxPlayer;
 
+    private GameState currentState;
 
-    private GameState gameState;
-    private GameState previousGameState;
-
-    private Map<String, Player> playerMap = new HashMap<String, Player>();
-    private Map<String, Ship> playerShip = new HashMap<String, Ship>();
+    private Map<String, Player> playerMap;
+    private Map<Player,Ship> playerShip;
     private HashSet<String> usedNicknames;
+    private Map<Player,Integer> playerOrder;
 
 
-    private ArrayList<CardStack> decks = new ArrayList<CardStack>();
+    private Player gameHost;
+
+    private boolean gameStarted;
+    private boolean learningMatch;
+
+    private ArrayList<CardStack> decks;
     private CardStack oneDeck;
     private CardStack twoDeck;
     private CardStack learningDeck;
@@ -35,76 +43,85 @@ public class Game {
     private FlightBoard flightBoard;
     private TileBunch tileBunch;
 
+
     /**Not yet implemented
      * Consider generating deck-related member variables
      * at the beginning.
      */
 
 
-    public Game() {
-        this.gameState = GameState.LOBBY;
+    public Game(int nMaxPlayer) {
+        this.nMaxPlayer = nMaxPlayer;
+        this.playerMap = new HashMap<>();
+        this.playerShip = new HashMap<>();
+        this.usedNicknames = new HashSet<>();
+        this.playerOrder = new HashMap<>();
 
-        this.playerMap = null;
-        this.playerShip = null;
-        this.usedNicknames = null;
 
-        this.decks = null;
-        this.oneDeck = null;
-        this.twoDeck = null;
-        this.learningDeck = null;
+
+        this.decks = new ArrayList<>();
+
 
         this.tileBunch = new TileBunch();
-        this.flightBoard = null;
+        this.flightBoard = new FlightBoard(new ArrayList<>(), learningMatch);
+
+        this.currentState = GameState.LOBBY;
+
 
 
     }
 
-//    public void nextState (){
-//        if(gameState == GameState.PAUSED){
-//            System.out.println("Game is paused");
-//            return;
-//        }
-//        switch(gameState) {
-//            case LOBBY:
-//                gameState = GameState.BUILDING;
-//                break;
-//            case BUILDING:
-//                gameState = GameState.FLIGHT;
-//                break;
-//            case FLIGHT:
-//                gameState = GameState.ENDGAME;
-//                break;
-//            case ENDGAME:
-//                System.out.println("Game ended");
-//                return;
-//
-//        }
-//    }
-    public Ship getPlayerShip(String nickname) {
-        return playerShip.get(nickname);
-    }
+
     public boolean isNicknameUsed(String nickname) {
         return usedNicknames.contains(nickname);
     }
 
-    public void addPlayer(Player player) {
-        if(playerMap.size() >= nMaxPlayer || isNicknameUsed(player.getNickName())){
-            return;
+
+
+    public void addPlayer(Player player) throws TooManyPlayersException, PlayerAleadyExistsExcetion {
+        if(playerMap.size() >= nMaxPlayer ){
+            throw new TooManyPlayersException(nMaxPlayer);
+        }
+
+        if(isNicknameUsed(player.getNickName())){
+            throw new PlayerAleadyExistsExcetion(player.getNickName());
         }
         playerMap.put(player.getNickName(), player);
         usedNicknames.add(player.getNickName());
-        return;
-    }
 
-    public void removePlayer(String nickname) {
+        playerShip.put(player,new Ship(learningMatch));
 
     }
 
+    public void removePlayer(String nickname) throws PlayerNotFoundException {
+        Player player = playerMap.get(nickname);
+        if(player == null){
+            throw new PlayerNotFoundException(nickname);
+        }
+        playerMap.remove(nickname);
+        usedNicknames.remove(nickname);
+        playerShip.remove(player);
 
 
 
-    public Map<String, Player> getPlayerMap() {
-        return playerMap;
+    }
+    public void startCardEffect(AdventureCard card, Player leader) {
+
+    }
+    public void generatelvtwoDeckes(){
+
+    }
+
+
+
+
+    public List<Player> getPlayers() {
+        return new ArrayList<>(playerMap.values());
+    }
+
+    public Ship getPlayerShip(Player player) {
+
+        return playerShip.get(player);
     }
 
     public Player getPlayer(String nickname) {
@@ -116,7 +133,7 @@ public class Game {
     }
 
     public GameState getGameState() {
-        return gameState;
+        return currentState;
     }
 
 

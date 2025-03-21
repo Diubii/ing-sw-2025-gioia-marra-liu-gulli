@@ -6,22 +6,22 @@ import java.util.Map;
 
 public class FlightBoard {
 
-    private int level;
+    private boolean learningMatch;
     private int lapLength;
     private Map<String, Integer> playerPositions = new HashMap<String, Integer>();
     private Map<String, Integer> playerLap = new HashMap<String, Integer>();
     private Player leader;
     private List<Player> players;
 
-    public FlightBoard(List<Player> rankedplayers, int level) {
+    public FlightBoard(List<Player> rankedplayers, boolean leaderMatch) {
         this.players = rankedplayers;
-        this.level = level;
+        this.learningMatch = leaderMatch;
         this.leader = rankedplayers.get(0);
-        initializeFlightBoards(level);
+        initializeFlightBoards(learningMatch);
     }
 
-    private void initializeFlightBoards(int level) {
-        if (level == 1) {
+    private void initializeFlightBoards(boolean learningMatch) {
+        if (learningMatch) {
             lapLength = 18;
             int position = 0;
             for (int i = players.size() - 1; i >= 0; i--) {
@@ -34,7 +34,7 @@ public class FlightBoard {
                 position++;
             }
 
-        } else if (level == 2) {
+        } else if (learningMatch) {
             lapLength = 24;
             int positionTwo = 0;
             for (int i = players.size() - 1; i >= 0; i--) {

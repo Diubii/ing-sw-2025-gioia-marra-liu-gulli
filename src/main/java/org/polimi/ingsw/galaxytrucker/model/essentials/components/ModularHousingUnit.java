@@ -35,7 +35,7 @@ public class ModularHousingUnit extends CentralHousingUnit{
 
     @Override
     public String accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this); // this ora è di tipo Cannon!
+        return visitor.visit(this); 
     }
 
 
