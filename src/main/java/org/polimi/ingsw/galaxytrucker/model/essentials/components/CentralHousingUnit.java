@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
@@ -17,7 +18,7 @@ public class CentralHousingUnit extends Component {
 
     }
 
-    public Color getColor() {
+    public AlienColor getColor() {
         return color;
     }
     public int getHumanCrewNumber() {
