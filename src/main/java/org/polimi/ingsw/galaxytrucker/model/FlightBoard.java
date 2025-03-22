@@ -3,16 +3,36 @@ package org.polimi.ingsw.galaxytrucker.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Represents the flight board that tracks player positions during the game.
+ * It manages player movement, lap progression, and leader updates.
+ */
 public class FlightBoard {
 
+    /** Indicates whether the match is a learning match. */
     private boolean learningMatch;
+
+    /** The length of one lap in the flight track. */
     private int lapLength;
+
+    /** A map storing the player's name and their current position on the board. */
     private Map<String, Integer> playerPositions = new HashMap<String, Integer>();
+
+    /** A map storing the player's name and the number of laps completed. */
     private Map<String, Integer> playerLap = new HashMap<String, Integer>();
+
+    /** The current leader of the race. */
     private Player leader;
+
+    /** The list of players participating in the race. */
     private List<Player> players;
 
+    /**
+     * Constructs a FlightBoard instance and initializes player positions.
+     *
+     * @param rankedplayers The list of players ordered by rank.
+     * @param leaderMatch {@code true} if it is a learning match, otherwise {@code false}.
+     */
     public FlightBoard(List<Player> rankedplayers, boolean leaderMatch) {
         this.players = rankedplayers;
         this.learningMatch = leaderMatch;
@@ -20,6 +40,11 @@ public class FlightBoard {
         initializeFlightBoards(learningMatch);
     }
 
+    /**
+     * Initializes player positions and lap length based on the match type.
+     *
+     * @param learningMatch {@code true} if it is a learning match, otherwise {@code false}.
+     */
     private void initializeFlightBoards(boolean learningMatch) {
         if (learningMatch) {
             lapLength = 18;
@@ -56,14 +81,12 @@ public class FlightBoard {
     }
 
     /**
+     * Moves a player by a specified amount on the board.
+     * If the player completes a lap, their lap count is updated.
+     * Also updates the leader and checks for overlapping positions.
      *
      * @param nickname The name of the player who needs to move.
      * @param amount The number of steps to move.
-     *   Functionality:
-     * Move the player.
-     * Call updateLeader to update the leader.
-     * Call checkOverlapping to check if there is overlapping.
-     * Incomplete: If there is a player on the position during the movement, skip that position first.
      */
     public void moveBoard(String nickname, int amount) {
         if (!playerPositions.containsKey(nickname)) return;
@@ -89,22 +112,41 @@ public class FlightBoard {
     }
 
 
+    /**
+     * Updates the current leader based on player positions.
+     * (Implementation needed)
+     */
     private void updateLeader(){
         Player newLeader = null;
         return;
 
     }
 
-
+    /**
+     * Checks if a player is overlapping with another player on the board.
+     * (Implementation needed)
+     *
+     * @param nickname The name of the player to check.
+     */
     private void checkOverLapping(String nickname) {
             return ;
     }
 
-
+    /**
+     * Gets the board position of a specific player.
+     *
+     * @param nickname The player's name.
+     * @return The player's current position on the board.
+     */
     public int getBoardPosition(String nickname) {
         return playerPositions.get(nickname);
     }
 
+    /**
+     * Gets the current leader of the race.
+     *
+     * @return The leader player.
+     */
     public Player getLeader() {
         return leader;
     }

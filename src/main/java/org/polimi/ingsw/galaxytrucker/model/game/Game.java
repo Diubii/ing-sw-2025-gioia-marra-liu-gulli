@@ -50,7 +50,7 @@ public class Game {
      */
 
 
-    public Game(int nMaxPlayer) {
+    public Game(int nMaxPlayer,boolean learningMatch) {
         this.nMaxPlayer = nMaxPlayer;
         this.playerMap = new HashMap<>();
         this.playerShip = new HashMap<>();
@@ -102,9 +102,8 @@ public class Game {
         usedNicknames.remove(nickname);
         playerShip.remove(player);
 
-
-
     }
+
     public void startCardEffect(AdventureCard card, Player leader) {
 
     }
@@ -112,7 +111,9 @@ public class Game {
 
     }
 
+    public void reorderPlayer(){
 
+    }
 
 
     public List<Player> getPlayers() {
@@ -136,8 +137,13 @@ public class Game {
         return currentState;
     }
 
+    public TileBunch getTileBunch() {
+        return tileBunch;
+    }
 
-
+    public GameState getCurrentState() {
+        return currentState;
+    }
 }
 
 
