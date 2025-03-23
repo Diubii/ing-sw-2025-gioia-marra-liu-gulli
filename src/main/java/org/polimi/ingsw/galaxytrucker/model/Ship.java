@@ -12,8 +12,10 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameV
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Util;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -524,7 +526,28 @@ public class Ship {
     return null;
     }
 
+    public Set<ProjectileDirection> getProtectedSides(){
 
+        Set<ProjectileDirection> sides = new HashSet<>();
+
+        for (int i = 0; i<5; i++){
+            for (int j = 0; j<7; j++){
+                Tile tempTile = shipBoard[i][j].getTile();
+                Slot tempSlot = shipBoard[i][j];
+                if (!invalidPositions.contains(tempSlot.getPosition()) && Util.inBoundaries(i, j)){
+                    if (tempTile != null){
+                        if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("Shield")){
+                            sides.addAll(((Shield)tempTile.getMyComponent()).getProtectedSides());
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return sides;
+
+    }
 
 
 
