@@ -7,13 +7,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * is mainly used during the building phase.
- * Initialize all tiles in the tile bunch
- * and provide support for players to draw tiles.
+ * Manages the collection of tiles used during the building phase of the game.
+ * It initializes all tiles and provides functionality for players to draw and return tiles.
  */
 public class TileBunch {
+    /** The list of tiles available for drawing. */
     private ArrayList<Tile> tiles;
+    /** The list of face-up tiles available for selection. */
     private ArrayList<Tile>  faceUpTiles;
+
     Random rand = new Random();
 
     public TileBunch() {
@@ -23,10 +25,9 @@ public class TileBunch {
         getFaceUpTiles();
     }
 
-
     /**
-     * Initialize all tiles and
-     * store them in tiles at the end.
+     * Generates and initializes all tiles in the game.
+     * The tiles are stored in the {@code tiles} list.
      */
     private void generateTiles() {
         int tiles_size = 152;

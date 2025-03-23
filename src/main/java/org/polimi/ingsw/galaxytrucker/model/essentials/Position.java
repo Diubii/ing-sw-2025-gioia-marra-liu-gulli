@@ -1,13 +1,20 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
 /**
- * Used to manage position in a cartesian space
- * Used for the position in the ship matrix
+ * Represents a position in a 2D Cartesian space.
+ * This class is used for managing positions within the ship's matrix.
  * ...
  */
 public class Position {
     private int x;
     private int y;
+
+    /**
+     * Constructs a Position object with the specified x and y coordinates.
+     *
+     * @param y The y-coordinate of the position.
+     * @param x The x-coordinate of the position.
+     */
 
     public Position(int y, int x) {
         this.x = x;
@@ -25,6 +32,13 @@ public class Position {
         this.x = x;
         this.y = y;
     }
+
+    /**
+     * Compares this position to another object for equality.
+     *
+     * @param obj The object to compare with.
+     * @return {@code true} if the object is a Position and has the same x and y coordinates, otherwise {@code false}.
+     */
 
     @Override
     public boolean equals(Object obj) {
