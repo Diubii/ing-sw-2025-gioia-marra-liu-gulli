@@ -10,11 +10,9 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
+import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Rappresenta la nave del giocatore, composta da una griglia di {@link Slot}
@@ -45,7 +43,7 @@ public class Ship {
     private Set<Position> cannonPos;
     private Set<Position> enginePos = new LinkedHashSet<>();
     private ArrayList<Position> invalidPositions;
-    private ArrayList<Position> destroyedPositions;
+    Queue<Position> brokenPositions = new LinkedList<>();
 
 
     /**
@@ -60,6 +58,7 @@ public class Ship {
         invalidPositions = createIP();
         destroyedPositions = new ArrayList<>();
         generateSlot();
+        initializePos();
 
     }
 
@@ -72,6 +71,16 @@ public class Ship {
                 shipBoard[i][j] = new Slot(new Position(i, j));
             }
         }
+    }
+
+    public void initializePos() {
+        enginePos = new LinkedHashSet<>();
+        batteryPos = new LinkedHashSet<>();
+        cannonPos = new LinkedHashSet<>();
+        redStoragePos = new LinkedHashSet<>();
+        housingPos = new LinkedHashSet<>();
+        storagePos = new LinkedHashSet<>();
+
     }
 
 
@@ -206,13 +215,16 @@ public class Ship {
     public void putTile(Tile tile, Position pos) {
 
 
-        if (shipBoard[pos.getY()][pos.getX()] == null) {
-            shipBoard[pos.getY()][pos.getX()] = new Slot(pos);
-        }
+        if (Util.inBoundaries(pos.getY(), pos.getX()) && !invalidPositions.contains(pos)) {
 
-        updateSets(pos, tile);
-        shipBoard[pos.getY()][pos.getX()].putTile(tile);
-        //da aggiungere la logica che controlla che Tile e' stat inserita e l'aggiornamento delle varie pos
+
+            if (shipBoard[pos.getY()][pos.getX()] == null) {
+                shipBoard[pos.getY()][pos.getX()] = new Slot(pos);
+            }
+
+            updateSets(pos, tile);
+            shipBoard[pos.getY()][pos.getX()].putTile(tile);
+        }
     }
 
     /**
@@ -293,59 +305,61 @@ public class Ship {
      */
     public void calcExposedConnectors() {
         int tempSum;
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 7; j++) {
                 ArrayList<Position> validPos = new ArrayList<Position>();
                 Position tempPos = new Position(i, j);
-                Tile myTile = shipBoard[i][j].getTile();
-                //calculate neihbours
-                Position nord = new Position(i - 1, j);
-                Position sud = new Position(i + 1, j);
-                Position est = new Position(i, j + 1);
-                Position ovest = new Position(i, j - 1);
 
-                //NORD
-                if (myTile.getSides().get(0) != Connector.EMPTY) {
-                    if (!invalidPositions.contains(nord)) {
-                        Tile tempTile = shipBoard[nord.getX()][nord.getY()].getTile();
-                        if (tempTile == null) {
-                            nExposedConnector++;
-                        }
-                    } else nExposedConnector++;
+                if (shipBoard[i][j].getTile() != null) {
+                    Tile myTile = shipBoard[i][j].getTile();
+                    //calculate neihbours
+                    Position nord = new Position(i - 1, j);
+                    Position sud = new Position(i + 1, j);
+                    Position est = new Position(i, j + 1);
+                    Position ovest = new Position(i, j - 1);
+
+                    //NORD
+                    if (myTile.getSides().get(0) != Connector.EMPTY) {
+                        if (!invalidPositions.contains(nord) && Util.inBoundaries(nord.getY(), nord.getX())) {
+                            Tile tempTile = shipBoard[nord.getY()][nord.getX()].getTile();
+                            if (tempTile == null) {
+                                nExposedConnector++;
+                            }
+                        } else nExposedConnector++;
+
+                    }
+                    //OVEST
+                    if (myTile.getSides().get(1) != Connector.EMPTY) {
+                        if (!invalidPositions.contains(ovest) && Util.inBoundaries(ovest.getY(), ovest.getX())) {
+                            Tile tempTile = shipBoard[ovest.getY()][ovest.getX()].getTile();
+                            if (tempTile == null) {
+                                nExposedConnector++;
+                            }
+                        } else nExposedConnector++;
+
+                    }
+                    //SUD
+                    if (myTile.getSides().get(2) != Connector.EMPTY) {
+                        if (!invalidPositions.contains(sud) && Util.inBoundaries(sud.getY(), sud.getX())) {
+                            Tile tempTile = shipBoard[sud.getY()][sud.getX()].getTile();
+                            if (tempTile == null) {
+                                nExposedConnector++;
+                            }
+                        } else nExposedConnector++;
+
+                    }
+                    //EST
+                    if (myTile.getSides().get(3) != Connector.EMPTY) {
+                        if (!invalidPositions.contains(est) && Util.inBoundaries(est.getY(), est.getX())) {
+                            Tile tempTile = shipBoard[est.getY()][est.getX()].getTile();
+                            if (tempTile == null) {
+                                nExposedConnector++;
+                            }
+                        } else nExposedConnector++;
+
+                    }
 
                 }
-                //OVEST
-                if (myTile.getSides().get(1) != Connector.EMPTY) {
-                    if (!invalidPositions.contains(ovest)) {
-                        Tile tempTile = shipBoard[ovest.getX()][ovest.getY()].getTile();
-                        if (tempTile == null) {
-                            nExposedConnector++;
-                        }
-                    } else nExposedConnector++;
-
-                }
-                //SUD
-                if (myTile.getSides().get(2) != Connector.EMPTY) {
-                    if (!invalidPositions.contains(sud)) {
-                        Tile tempTile = shipBoard[sud.getX()][sud.getY()].getTile();
-                        if (tempTile == null) {
-                            nExposedConnector++;
-                        }
-                    } else nExposedConnector++;
-
-                }
-                //EST
-                if (myTile.getSides().get(3) != Connector.EMPTY) {
-                    if (!invalidPositions.contains(est)) {
-                        Tile tempTile = shipBoard[est.getX()][est.getY()].getTile();
-                        if (tempTile == null) {
-                            nExposedConnector++;
-                        }
-                    } else nExposedConnector++;
-
-                }
-
-
             }
         }
 
@@ -430,13 +444,58 @@ public class Ship {
 
     }
 
-    /**
-     * @param pos  posizione in cui e' stato distrutto un Component
-     */
 
-    public ArrayList<Slot[][]> truncateShip(Position pos) {
+    public ArrayList<Slot[][]> getTronc(){
 
-            Set<Position> newInvalidPos = new HashSet<>();
+
+        ArrayList<Slot[][]> tronconi = new ArrayList<>();
+        tronconi.add(this.getShipBoard());
+
+        while(!brokenPositions.isEmpty())
+
+    {
+
+        Position temp = brokenPositions.poll();
+
+
+
+        Iterator<Slot[][]> iterator = tronconi.iterator();
+        ArrayList<Slot[][]> targetSlot = new ArrayList<>();
+        int i = 0;
+
+        while (iterator.hasNext()) {
+            Slot[][] board = iterator.next();
+
+            for (int y = 0; y < board.length; y++) {
+                for (int x = 0; x < board[y].length; x++) {
+                    Slot slot = board[y][x];
+                    if (slot != null && slot.getPosition().equals(temp) && slot.getTile() != null) {
+//                        targetSlot.add(tronconi.get(i)); // Trovato lo Slot
+                        iterator.remove(); // Rimuove in modo sicuro durante l'iterazione
+                        ArrayList<Slot[][]>  result= truncateShip(temp,brokenPositions);
+                        tronconi.addAll(result);
+                        break;
+                    }
+                }
+            }
+
+            i++;
+        }
+
+
+
+
+    }
+        //ho finito di processare le posizioni
+    return tronconi;
+
+}
+
+
+
+    public ArrayList<Slot[][]> truncateShip(Position pos, Queue<Position> brokenPos) {
+
+            Queue<Position> newInvalidPos = brokenPos;
 
 
             checkShip();

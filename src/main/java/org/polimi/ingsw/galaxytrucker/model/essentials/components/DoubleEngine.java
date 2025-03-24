@@ -5,9 +5,9 @@ import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterfa
 public class DoubleEngine extends Engine{
 
     private Boolean charged;
-    public DoubleEngine(String Name, int EP, Boolean c) {
+    public DoubleEngine(int EP, Boolean c) {
 
-        super(Name, EP);
+        super(EP);
         this.charged = c;
     }
 

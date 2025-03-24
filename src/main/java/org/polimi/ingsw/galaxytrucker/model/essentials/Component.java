@@ -10,7 +10,7 @@ public  class Component {
     /** The tile associated with the component. */
     private  Tile myTile;
 
-    private final String Name;
+//    private final String Name;
 
     private Boolean Structural;
 
@@ -20,11 +20,10 @@ public  class Component {
     /**
      * Constructs a Component with the specified name and structural property.
      *
-     * @param name The name of the component.
      * @param structural .
      */
-    public Component(String name, Boolean structural) {
-        this.Name = name;
+    public Component(Boolean structural) {
+//        this.Name = name;
 
         Structural = structural;
 

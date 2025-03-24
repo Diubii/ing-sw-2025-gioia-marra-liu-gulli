@@ -3,14 +3,14 @@ package org.polimi.ingsw.galaxytrucker.model.utils;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
-import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
 
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -196,7 +196,7 @@ public class Util {
      * @param invalidPositions Lista delle posizioni non valide.
      * @param myShip          La nave in cui si sta effettuando la verifica.
      */
-    public static void visitTile(Tile tile, ArrayList<Integer> tilesID, Slot slot, ArrayList<Position> invalidPositions, Set<Position> newBrokenPos, Ship myShip) {
+    public static void visitTile(Tile tile, ArrayList<Integer> tilesID, Slot slot, ArrayList<Position> invalidPositions, Queue<Position> newBrokenPos, Ship myShip) {
         ComponentNameVisitor cnv = new ComponentNameVisitor();
 
         if (tile == null || tilesID.contains(tile.getId())) {
@@ -244,9 +244,7 @@ public class Util {
         if (connector1.equals(Connector.EMPTY)) return false;
         if (connector1.equals(connector2)) return true;
         if (connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY)) return true;
-        if (connector2.equals(Connector.UNIVERSAL)) return true;
-
-        return  false;
+        return connector2.equals(Connector.UNIVERSAL);
     }
 
 }

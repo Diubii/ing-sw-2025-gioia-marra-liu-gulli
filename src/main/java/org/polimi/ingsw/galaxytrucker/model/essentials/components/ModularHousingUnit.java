@@ -9,22 +9,28 @@ public class ModularHousingUnit extends CentralHousingUnit{
     private Boolean isColored = Boolean.FALSE;
     private int nBrownAlien;
     private int nPurpleAlien;
+    private AlienColor alienColor;
 
-    public ModularHousingUnit(String name, AlienColor color, int HumanCrewNumber, int nBrownAlien, int nPurpleAlien) {
+    public ModularHousingUnit( AlienColor color) {
 
-        super(name, null, HumanCrewNumber);
-
-        this.nBrownAlien = nBrownAlien;
-        this.nPurpleAlien = nPurpleAlien;
+        super(Color.EMPTY);
+        this.alienColor = color;
 
     }
 
-    public void updateBrownAlien(){
-        nBrownAlien += 1;
+
+    public void addBrownAlien(){
+
+        if (alienColor == AlienColor.BROWN) {
+            nBrownAlien += 1;
+        }
+
     }
 
-    public void updatePurpleAlien(){
-        nPurpleAlien += 1;
+    public void addPurpleAlien(){
+        if (alienColor == AlienColor.PURPLE) {
+            nPurpleAlien += 1;
+        }
     }
 
     public int getNBrownAlien() {
@@ -33,6 +39,15 @@ public class ModularHousingUnit extends CentralHousingUnit{
 
     public int getNPurpleAlien() {
         return nPurpleAlien;
+    }
+
+    public void removeBrownAlien(){
+        if (nBrownAlien > 0 && alienColor == AlienColor.BROWN) nBrownAlien -= 1;
+
+    }
+
+    public void removePurpleAlien(){
+        if (nPurpleAlien > 0 && alienColor == AlienColor.PURPLE) nPurpleAlien -= 1;
     }
 
     @Override

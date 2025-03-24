@@ -1,6 +1,5 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
-import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
@@ -11,10 +10,9 @@ public class CentralHousingUnit extends Component {
     private int HumanCrewNumber;
     private Boolean isColored = Boolean.TRUE;
 
-    public CentralHousingUnit(String name, Color color, int HumanCrewNumber) {
-        super(name, false);
+    public CentralHousingUnit(Color color) {
+        super(false);
         this.color = color;
-        this.HumanCrewNumber = HumanCrewNumber;
 
     }
 
@@ -24,8 +22,18 @@ public class CentralHousingUnit extends Component {
     public int getHumanCrewNumber() {
         return HumanCrewNumber;
     }
+    public void setHumanCrewNumber(int humanCrewNumber) {
+         if (humanCrewNumber > 0 && humanCrewNumber <= 2) {
+             HumanCrewNumber = humanCrewNumber;
+
+         } else throw new IllegalArgumentException("humanCrewNumber must be between 0 and 2");
+    }
+    public Boolean getIsColored() {
+        return isColored;
+    }
     public void removeHumanCrewNumber() {
-        HumanCrewNumber--;
+
+        if (HumanCrewNumber > 0) HumanCrewNumber--;
     }
     @Override
     public String accept(ComponentNameVisitorInterface visitor) {
