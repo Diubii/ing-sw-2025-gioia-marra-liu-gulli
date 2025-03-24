@@ -8,11 +8,8 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameVisitor;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Util;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,6 +50,7 @@ public class Ship {
 
     /**
      * Costruttore della nave.
+     *
      * @param learningMatch Indica se la partita è in modalità apprendimento.
      */
     public Ship(Boolean learningMatch) {
@@ -81,6 +79,7 @@ public class Ship {
 
     /**
      * Restituisce la board della nave.
+     *
      * @return Una matrice di {@link Slot} rappresentante la nave.
      */
     public Slot[][] getShipBoard() {
@@ -153,6 +152,7 @@ public class Ship {
 
     /**
      * Crea la lista delle posizioni invalide sulla nave in base alla modalità di gioco.
+     *
      * @return Lista delle posizioni invalide.
      */
     public ArrayList<Position> createIP() {
@@ -199,8 +199,9 @@ public class Ship {
 
     /**
      * Inserisce una tile in una posizione specifica della nave.
+     *
      * @param tile La tile da posizionare.
-     * @param pos La posizione in cui posizionare la tile.
+     * @param pos  La posizione in cui posizionare la tile.
      */
     public void putTile(Tile tile, Position pos) {
 
@@ -216,7 +217,8 @@ public class Ship {
 
     /**
      * Aggiorna le posizioni dei componenti all'interno della nave.
-     * @param pos La posizione della tile inserita.
+     *
+     * @param pos  La posizione della tile inserita.
      * @param tile La tile inserita.
      */
     public void updateSets(Position pos, Tile tile) {
@@ -249,8 +251,9 @@ public class Ship {
 
     /**
      * Rimuove una tile dalla nave.
+     *
      * @param tile La tile da rimuovere.
-     * @param pos La posizione della tile da rimuovere.
+     * @param pos  La posizione della tile da rimuovere.
      */
     public void removeTile(Tile tile, Position pos) {
         ComponentNameVisitor visitor = new ComponentNameVisitor();
@@ -284,6 +287,7 @@ public class Ship {
         getShipBoard()[pos.getY()][pos.getX()].removeTile();
 
     }
+
     /**
      * Calcola il numero di connettori esposti nella nave.
      */
@@ -350,6 +354,7 @@ public class Ship {
 
     /**
      * Rappresentazione testuale della nave.
+     *
      * @return Stringa che rappresenta la nave.
      */
     @Override
@@ -382,6 +387,7 @@ public class Ship {
 
     /**
      * Verifica se la nave è ben collegata e rispetta le regole di connessione.
+     *
      * @return {@code true} se la nave è valida, {@code false} altrimenti.
      */
     public Boolean checkShip() {
@@ -394,9 +400,9 @@ public class Ship {
                         return false;
                     } else {
                         if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Engine")) {
-                            Boolean temp =  Util.EngineWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+                            Boolean temp = Util.EngineWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
                             shipBoard[i][j].getTile().setWellConnected(temp);
-                            return  temp;
+                            return temp;
 
 
                         }
@@ -404,10 +410,12 @@ public class Ship {
 
                             AlienColor al = null;
                             ModularHousingUnit temp = (ModularHousingUnit) shipBoard[i][j].getTile().getMyComponent();
-                            if (temp.getNBrownAlien() > temp.getNPurpleAlien() && temp.getHumanCrewNumber() == 0) al = AlienColor.BROWN;
-                            if (temp.getNPurpleAlien() > temp.getNBrownAlien() && temp.getHumanCrewNumber() == 0) al = AlienColor.PURPLE;
+                            if (temp.getNBrownAlien() > temp.getNPurpleAlien() && temp.getHumanCrewNumber() == 0)
+                                al = AlienColor.BROWN;
+                            if (temp.getNPurpleAlien() > temp.getNBrownAlien() && temp.getHumanCrewNumber() == 0)
+                                al = AlienColor.PURPLE;
 
-                            Boolean result =  Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+                            Boolean result = Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
                             shipBoard[i][j].getTile().setWellConnected(result);
                             return result;
 
@@ -423,111 +431,151 @@ public class Ship {
     }
 
     /**
-     *
-     * @param positions Lista posizioni in cui sono stati distrutti dei Component
+     * @param pos  posizione in cui e' stato distrutto un Component
      */
 
-    public ArrayList<Slot[][]> truncateShip(ArrayList<Position> positions) {
+    public ArrayList<Slot[][]> truncateShip(Position pos) {
 
-    // Itera su tutte le posizioni fornite
-    for (Position pos : positions) {
+            Set<Position> newInvalidPos = new HashSet<>();
 
-        // Lista dei vicini validi della posizione corrente
-        ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 
-        // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
-        if (!invalidPositions.contains(new Position(pos.getY() - 1, pos.getX())) && Util.inBoundaries(pos.getY() - 1, pos.getX())) {
-            villagers.add(new Pair<>(ProjectileDirection.FRONT, shipBoard[pos.getY() - 1][pos.getX()]));
-        }
-        if (!invalidPositions.contains(new Position(pos.getY(), pos.getX() - 1)) && Util.inBoundaries(pos.getY(), pos.getX() - 1)) {
-            villagers.add(new Pair<>(ProjectileDirection.LEFT, shipBoard[pos.getY()][pos.getX() - 1]));
-        }
-        if (!invalidPositions.contains(new Position(pos.getY() + 1, pos.getX())) && Util.inBoundaries(pos.getY() + 1, pos.getX())) {
-            villagers.add(new Pair<>(ProjectileDirection.BOTTOM, shipBoard[pos.getY() + 1][pos.getX()]));
-        }
-        if (!invalidPositions.contains(new Position(pos.getY(), pos.getX() + 1)) && Util.inBoundaries(pos.getY(), pos.getX() + 1)) {
-            villagers.add(new Pair<>(ProjectileDirection.RIGHT, shipBoard[pos.getY()][pos.getX() + 1]));
-        }
+            checkShip();
+            // Lista dei vicini validi della posizione corrente
+            ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 
-        // Se ci sono vicini validi, verifica le connessioni tra di loro
-        if (!villagers.isEmpty()) {
+            // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
+            if (!invalidPositions.contains(new Position(pos.getY() - 1, pos.getX())) && Util.inBoundaries(pos.getY() - 1, pos.getX())) {
+                if (shipBoard[pos.getY() - 1][pos.getX()] != null && shipBoard[pos.getY() - 1][pos.getX()].getTile() != null) {
+                    if (shipBoard[pos.getY() - 1][pos.getX()].getTile().getWellConnected()){
+                        villagers.add(new Pair<>(ProjectileDirection.FRONT, shipBoard[pos.getY() - 1][pos.getX()]));
 
-            // Lista di nodi (tile ID e i loro collegamenti)
-            ArrayList<Pair<Integer, ArrayList<Integer>>> Nodes = new ArrayList<>();
-            ArrayList<Integer> tilesVisitedId = new ArrayList<>();
+                    }else {
+                        newInvalidPos.add(new Position(pos.getY() - 1, pos.getX()));
 
-            // Per ogni vicino, controlla la sua connessione con gli altri
-            for (int i = 0; i < villagers.size(); i++) {
-
-                // Crea un nodo per il villager attuale
-                Nodes.add(new Pair<>(villagers.get(i).getValue().getTile().getId(), new ArrayList<>()));
-                Tile myTile = villagers.get(i).getValue().getTile();
-
-                // Lista delle tile raggiungibili da questo vicino
-                ArrayList<Integer> tilesID = new ArrayList<>();
-
-                // Esegue una visita per raccogliere tutte le tile raggiungibili
-                Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, this);
-
-                // Controlla quali altri vicini sono raggiungibili da questo
-                for (int j = i + 1; j < villagers.size(); j++) {
-                    if (tilesID.contains(villagers.get(j).getValue().getTile().getId())) {
-                        Nodes.get(i).getValue().add(villagers.get(j).getValue().getTile().getId());
-                        tilesVisitedId.add(villagers.get(j).getValue().getTile().getId());
                     }
                 }
+
             }
 
-            // Creazione delle classi di equivalenza (tronconi della nave)
-            ArrayList<ArrayList<Integer>> equivalenceClasses = new ArrayList<>();
-            for (int i = 0; i < Nodes.size(); i++) {
-                int finalI = i;
-                if (equivalenceClasses.stream().noneMatch(list -> list.contains(Nodes.get(finalI).getKey()))) {
-                    equivalenceClasses.add(Nodes.get(i).getValue());
+            if (!invalidPositions.contains(new Position(pos.getY() , pos.getX() -1)) && Util.inBoundaries(pos.getY() , pos.getX() -1)) {
+                if (shipBoard[pos.getY()][pos.getX()-1] != null && shipBoard[pos.getY()][pos.getX()-1].getTile() != null) {
+                    if (shipBoard[pos.getY()][pos.getX()-1].getTile().getWellConnected()){
+                        villagers.add(new Pair<>(ProjectileDirection.LEFT, shipBoard[pos.getY() - 1][pos.getX()]));
+
+                    }else {
+                        newInvalidPos.add(new Position(pos.getY(), pos.getX()-1));
+
+                    }
                 }
+
             }
 
-            // Numero di tronconi distinti
-            int numTronconi = equivalenceClasses.size();
+            if (!invalidPositions.contains(new Position(pos.getY()+1 , pos.getX())) && Util.inBoundaries(pos.getY()+1 , pos.getX())) {
+                if (shipBoard[pos.getY()+1][pos.getX()] != null && shipBoard[pos.getY()+1][pos.getX()].getTile() != null) {
+                    if (shipBoard[pos.getY()+1][pos.getX()].getTile().getWellConnected()){
+                        villagers.add(new Pair<>(ProjectileDirection.BOTTOM, shipBoard[pos.getY()+1][pos.getX()]));
 
-            // Creazione delle nuove navi separate
-            ArrayList<Slot[][]> ships = new ArrayList<>(numTronconi);
-            for (int i = 0; i < numTronconi; i++) {
+                    }else {
+                        newInvalidPos.add(new Position(pos.getY()+1, pos.getX()));
 
-                // Crea una nuova nave vuota
-                Slot[][] myshipBoard = new Slot[5][7];
-                for (int j = 0; j < 5; j++) {
-                    for (int k = 0; k < 7; k++) {
-                        // Se la tile appartiene alla classe di equivalenza, viene inclusa nella nuova nave
-                        if (equivalenceClasses.get(i).contains(shipBoard[j][k].getTile().getId()) && shipBoard[j][k].getTile() != null) {
-                            myshipBoard[j][k] = shipBoard[j][k];
+                    }
+                }
+
+            }
+
+            if (!invalidPositions.contains(new Position(pos.getY() , pos.getX()+1)) && Util.inBoundaries(pos.getY() , pos.getX()+1)) {
+                if (shipBoard[pos.getY()][pos.getX()+1] != null && shipBoard[pos.getY()][pos.getX()+1].getTile() != null) {
+                    if (shipBoard[pos.getY()][pos.getX()+1].getTile().getWellConnected()){
+                        villagers.add(new Pair<>(ProjectileDirection.RIGHT, shipBoard[pos.getY()][pos.getX()+1]));
+
+                    }else {
+                        newInvalidPos.add(new Position(pos.getY(), pos.getX()+1));
+
+                    }
+                }
+
+            }
+
+
+            // Se ci sono vicini validi, verifica le connessioni tra di loro
+            if (!villagers.isEmpty()) {
+
+                // Lista di nodi (tile ID e i loro collegamenti)
+                ArrayList<Pair<Integer, ArrayList<Integer>>> Nodes = new ArrayList<>();
+                ArrayList<Integer> tilesVisitedId = new ArrayList<>();
+
+                // Per ogni vicino, controlla la sua connessione con gli altri
+                for (int i = 0; i < villagers.size(); i++) {
+
+                    // Crea un nodo per il villager attuale
+                    Nodes.add(new Pair<>(villagers.get(i).getValue().getTile().getId(), new ArrayList<>()));
+                    Tile myTile = villagers.get(i).getValue().getTile();
+
+                    // Lista delle tile raggiungibili da questo vicino
+                    ArrayList<Integer> tilesID = new ArrayList<>();
+
+                    // Esegue una visita per raccogliere tutte le tile raggiungibili
+                    Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, newInvalidPos, this);
+
+                    // Controlla quali altri vicini sono raggiungibili da questo
+                    for (int j = i + 1; j < villagers.size(); j++) {
+                        if (tilesID.contains(villagers.get(j).getValue().getTile().getId())) {
+                            Nodes.get(i).getValue().add(villagers.get(j).getValue().getTile().getId());
+                            tilesVisitedId.add(villagers.get(j).getValue().getTile().getId());
                         }
                     }
                 }
 
-                // Aggiunge la nuova nave alla lista delle navi separate
-                ships.add(myshipBoard);
+                // Creazione delle classi di equivalenza (tronconi della nave)
+                ArrayList<ArrayList<Integer>> equivalenceClasses = new ArrayList<>();
+                for (int i = 0; i < Nodes.size(); i++) {
+                    int finalI = i;
+                    if (equivalenceClasses.stream().noneMatch(list -> list.contains(Nodes.get(finalI).getKey()))) {
+                        equivalenceClasses.add(Nodes.get(i).getValue());
+                    }
+                }
+
+                // Numero di tronconi distinti
+                int numTronconi = equivalenceClasses.size();
+
+                // Creazione delle nuove navi separate
+                ArrayList<Slot[][]> ships = new ArrayList<>(numTronconi);
+                for (ArrayList<Integer> equivalenceClass : equivalenceClasses) {
+
+                    // Crea una nuova nave vuota
+                    Slot[][] myshipBoard = new Slot[5][7];
+                    for (int j = 0; j < 5; j++) {
+                        for (int k = 0; k < 7; k++) {
+                            // Se la tile appartiene alla classe di equivalenza, viene inclusa nella nuova nave
+                            if (equivalenceClass.contains(shipBoard[j][k].getTile().getId()) && shipBoard[j][k].getTile() != null) {
+                                myshipBoard[j][k] = shipBoard[j][k];
+                            }
+                        }
+                    }
+
+                    // Aggiunge la nuova nave alla lista delle navi separate
+                    ships.add(myshipBoard);
+                }
+
+                return ships; // Restituisce l'elenco delle navi separate
             }
 
-            return ships; // Restituisce l'elenco delle navi separate
-        }
+
+        return null; // Se non ci sono sezioni da separare, restituisce null
     }
 
-    return null; // Se non ci sono sezioni da separare, restituisce null
-}
-
-    public Set<ProjectileDirection> getProtectedSides(){
+    public Set<ProjectileDirection> getProtectedSides() {
 
         Set<ProjectileDirection> sides = new HashSet<>();
 
-        for (int i = 0; i<5; i++){
-            for (int j = 0; j<7; j++){
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 7; j++) {
                 Tile tempTile = shipBoard[i][j].getTile();
                 Slot tempSlot = shipBoard[i][j];
-                if (!invalidPositions.contains(tempSlot.getPosition()) && Util.inBoundaries(i, j)){
-                    if (tempTile != null){
-                        if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("Shield")){
-                            sides.addAll(((Shield)tempTile.getMyComponent()).getProtectedSides());
+                if (!invalidPositions.contains(tempSlot.getPosition()) && Util.inBoundaries(i, j)) {
+                    if (tempTile != null) {
+                        if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("Shield")) {
+                            sides.addAll(((Shield) tempTile.getMyComponent()).getProtectedSides());
                         }
                     }
                 }
@@ -537,6 +585,81 @@ public class Ship {
 
         return sides;
 
+    }
+
+    public Boolean activateShield(Position shieldPos, Position batteryPos) {
+
+        if (!invalidPositions.contains(shieldPos) && Util.inBoundaries(shieldPos.getY(), shieldPos.getX())) {
+            if (!invalidPositions.contains(batteryPos) && Util.inBoundaries(batteryPos.getY(), batteryPos.getX())) {
+                //sono sicuro che entrambe le tile esistano
+                /*
+                 * levo una batteria da pbatteryPos e carico shieldPos
+                 *
+                 */
+
+                BatterySlot battery = (BatterySlot) shipBoard[batteryPos.getY()][batteryPos.getX()].getTile().getMyComponent();
+                Shield shield = (Shield) shipBoard[shieldPos.getY()][shieldPos.getX()].getTile().getMyComponent();
+
+                if (battery.getBatteriesLeft() > 0) {
+                    battery.removeBattery();
+                    shield.setCharged(true);
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    public Boolean activateDoubleEngine(Position enginePos, Position batteryPos) {
+
+        if (!invalidPositions.contains(enginePos) && Util.inBoundaries(enginePos.getY(), enginePos.getX())) {
+            if (!invalidPositions.contains(batteryPos) && Util.inBoundaries(batteryPos.getY(), batteryPos.getX())) {
+                //sono sicuro che entrambe le tile esistano
+                /*
+                 * levo una batteria da pbatteryPos e carico enginePos
+                 *
+                 */
+
+                BatterySlot battery = (BatterySlot) shipBoard[batteryPos.getY()][batteryPos.getX()].getTile().getMyComponent();
+                DoubleEngine engine = (DoubleEngine) shipBoard[enginePos.getY()][enginePos.getX()].getTile().getMyComponent();
+
+                if (battery.getBatteriesLeft() > 0) {
+                    battery.removeBattery();
+                    engine.setCharged(true);
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    public Boolean activateDoubleCannon(Position cannonPos, Position batteryPos) {
+
+        if (!invalidPositions.contains(cannonPos) && Util.inBoundaries(cannonPos.getY(), cannonPos.getX())) {
+            if (!invalidPositions.contains(batteryPos) && Util.inBoundaries(batteryPos.getY(), batteryPos.getX())) {
+                //sono sicuro che entrambe le tile esistano
+                /*
+                 * levo una batteria da pbatteryPos e carico enginePos
+                 *
+                 */
+
+                BatterySlot battery = (BatterySlot) shipBoard[batteryPos.getY()][batteryPos.getX()].getTile().getMyComponent();
+                DoubleCannon cannon = (DoubleCannon) shipBoard[cannonPos.getY()][cannonPos.getX()].getTile().getMyComponent();
+
+                if (battery.getBatteriesLeft() > 0) {
+                    battery.removeBattery();
+                    cannon.setCharged(true);
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
     }
 
 

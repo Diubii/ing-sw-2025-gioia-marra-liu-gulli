@@ -1,12 +1,17 @@
-package org.polimi.ingsw.galaxytrucker.model.essentials;
+package org.polimi.ingsw.galaxytrucker.model.utils;
 
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
+import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ComponentNameVisitor;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Classe di utilità che fornisce metodi per verificare la connettività di componenti nella nave.
@@ -25,36 +30,33 @@ public class Util {
      */
     public static Boolean EngineWellConnected(Tile T, Ship P, Slot S) {
         Boolean wellConnected = true;
-        Tile tempTile = T;
-        Ship myShip = P;
-        ArrayList<Position> tempIP = myShip.getInvalidPositions();
-        Slot mySlot = S;
+        ArrayList<Position> tempIP = P.getInvalidPositions();
 
         // Posizioni adiacenti alla tile corrente
-        Position nord = new Position(mySlot.getPosition().getY() - 1, mySlot.getPosition().getX());
-        Position sud = new Position(mySlot.getPosition().getY() + 1, mySlot.getPosition().getX());
-        Position est = new Position(mySlot.getPosition().getY(), mySlot.getPosition().getX() + 1);
-        Position ovest = new Position(mySlot.getPosition().getY(), mySlot.getPosition().getX() - 1);
+        Position nord = new Position(S.getPosition().getY() - 1, S.getPosition().getX());
+        Position sud = new Position(S.getPosition().getY() + 1, S.getPosition().getX());
+        Position est = new Position(S.getPosition().getY(), S.getPosition().getX() + 1);
+        Position ovest = new Position(S.getPosition().getY(), S.getPosition().getX() - 1);
 
         // Controlla la connessione del motore in base alla rotazione della tile
-        switch (tempTile.getRotation()) {
+        switch (T.getRotation()) {
             case 0:
-                if (!tempIP.contains(sud) && myShip.getShipBoard()[sud.getY()][sud.getX()].getTile() != null) {
+                if (!tempIP.contains(sud) && P.getShipBoard()[sud.getY()][sud.getX()].getTile() != null) {
                     wellConnected = false;
                     break;
                 }
             case 90:
-                if (!tempIP.contains(est) && myShip.getShipBoard()[est.getY()][est.getX()].getTile() != null) {
+                if (!tempIP.contains(est) && P.getShipBoard()[est.getY()][est.getX()].getTile() != null) {
                     wellConnected = false;
                     break;
                 }
             case 180:
-                if (!tempIP.contains(nord) && myShip.getShipBoard()[nord.getY()][nord.getX()].getTile() != null) {
+                if (!tempIP.contains(nord) && P.getShipBoard()[nord.getY()][nord.getX()].getTile() != null) {
                     wellConnected = false;
                     break;
                 }
             case 270:
-                if (!tempIP.contains(ovest) && myShip.getShipBoard()[ovest.getY()][ovest.getX()].getTile() != null) {
+                if (!tempIP.contains(ovest) && P.getShipBoard()[ovest.getY()][ovest.getX()].getTile() != null) {
                     wellConnected = false;
                     break;
                 }
@@ -74,37 +76,34 @@ public class Util {
      */
     public static Boolean CheckLifeSupportSystem(AlienColor color, Tile T, Ship P, Slot S) {
         Boolean wellConnected = true;
-        Tile tempTile = T;
-        Ship myShip = P;
-        ArrayList<Position> tempIP = myShip.getInvalidPositions();
-        Slot mySlot = S;
+        ArrayList<Position> tempIP = P.getInvalidPositions();
         Slot[][] TempShipBoard = P.getShipBoard();
         String s1, s2, s3, s4;
 
         // Controlla la tile sopra
-        if (mySlot.getPosition().getY() - 1 >= 0) {
-            s1 = TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile().getMyComponent().accept(new ComponentNameVisitor());
+        if (S.getPosition().getY() - 1 >= 0) {
+            s1 = TempShipBoard[S.getPosition().getY() - 1][S.getPosition().getX()].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s1 = null;
         }
 
         // Controlla la tile a sinistra
-        if (mySlot.getPosition().getX() - 1 >= 0) {
-            s2 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
+        if (S.getPosition().getX() - 1 >= 0) {
+            s2 = TempShipBoard[S.getPosition().getY()][S.getPosition().getX() - 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s2 = null;
         }
 
         // Controlla la tile sotto
-        if (mySlot.getPosition().getY() + 1 <= 6) {
-            s3 = TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile().getMyComponent().accept(new ComponentNameVisitor());
+        if (S.getPosition().getY() + 1 <= 6) {
+            s3 = TempShipBoard[S.getPosition().getY() + 1][S.getPosition().getX()].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s3 = null;
         }
 
         // Controlla la tile a destra
-        if (mySlot.getPosition().getX() + 1 <= 4) {
-            s4 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
+        if (S.getPosition().getX() + 1 <= 4) {
+            s4 = TempShipBoard[S.getPosition().getY()][S.getPosition().getX() + 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s4 = null;
         }
@@ -117,10 +116,8 @@ public class Util {
             }
         }
         if (color.equals(AlienColor.BROWN)) {
-            if ("BrownLifeSupportSystem".equals(s1) || "BrownLifeSupportSystem".equals(s2) ||
-                    "BrownLifeSupportSystem".equals(s3) || "BrownLifeSupportSystem".equals(s4)) {
-                return true;
-            }
+            return "BrownLifeSupportSystem".equals(s1) || "BrownLifeSupportSystem".equals(s2) ||
+                    "BrownLifeSupportSystem".equals(s3) || "BrownLifeSupportSystem".equals(s4);
         }
 
         return false;
@@ -188,53 +185,7 @@ public class Util {
 
     }
 
-    /**
-     * Visita gli slot adiacenti a una determinata tile e verifica la loro connessione.
-     *
-     * @param s               La nave contenente le tile.
-     * @param mySlot          Lo slot di riferimento.
-     * @param T               La tile da verificare.
-     * @param tilesID         Lista degli ID delle tile già visitate.
-     * @param invalidPositions Lista delle posizioni non valide.
-     */
-    public static void visitHelper(Ship s, Slot mySlot, Tile T, ArrayList<Integer> tilesID, ArrayList<Position> invalidPositions) {
 
-        Slot[][] TempShipBoard = s.getShipBoard();
-
-        //UP TILE
-
-        if (mySlot.getPosition().getY() - 1 >= 0 && !s.getInvalidPositions().contains(mySlot.getPosition())) {
-
-            Tile temp = TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile();
-            visitTile(temp, tilesID, mySlot, invalidPositions, s);
-        }
-
-
-        //LEFT
-
-        if (mySlot.getPosition().getX() - 1 >= 0 && !s.getInvalidPositions().contains(mySlot.getPosition()) && mySlot.getTile() != null) {
-
-            Tile temp = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile();
-            visitTile(temp, tilesID, mySlot, invalidPositions, s);
-        }
-        //BOTTOM
-
-        if (mySlot.getPosition().getY() + 1 < 5 && !s.getInvalidPositions().contains(mySlot.getPosition()) && mySlot.getTile() != null) {
-            Tile temp = TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile();
-            visitTile(temp, tilesID, mySlot, invalidPositions, s);
-
-
-        }
-
-        //RIGHT TILE
-
-        if (mySlot.getPosition().getX() + 1 < 7 && !s.getInvalidPositions().contains(mySlot.getPosition()) && mySlot.getTile() != null) {
-            Tile temp = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile();
-            visitTile(temp, tilesID, mySlot, invalidPositions, s);
-
-        }
-
-    }
 
     /**
      * Visita una tile e verifica se è ben connessa ai sistemi di supporto vitale.
@@ -245,21 +196,31 @@ public class Util {
      * @param invalidPositions Lista delle posizioni non valide.
      * @param myShip          La nave in cui si sta effettuando la verifica.
      */
-    public static void visitTile(Tile tile, ArrayList<Integer> tilesID, Slot slot, ArrayList<Position> invalidPositions, Ship myShip) {
+    public static void visitTile(Tile tile, ArrayList<Integer> tilesID, Slot slot, ArrayList<Position> invalidPositions, Set<Position> newBrokenPos, Ship myShip) {
         ComponentNameVisitor cnv = new ComponentNameVisitor();
 
         if (tile == null || tilesID.contains(tile.getId())) {
             return;
         } else {
-            tilesID.add(tile.getId());
 
-            if ((tile.getMyComponent().accept(cnv).equals("PurpleLifeSupportSystem") && !Util.CheckLifeSupportSystem(AlienColor.PURPLE, tile, myShip, slot)) || ((tile.getMyComponent().accept(cnv).equals("BrownLifeSupportSystem") && !Util.CheckLifeSupportSystem(AlienColor.BROWN, tile, myShip, slot)))) {
-                invalidPositions.add(slot.getPosition());
+            if (!tile.getWellConnected()){
+                newBrokenPos.add(slot.getPosition());
                 return;
             } else {
-                Util.visitHelper(myShip, slot, tile, tilesID, invalidPositions);
-            }
+                tilesID.add(tile.getId());
+                //NORD
 
+                ArrayList<Position> positions = getAdjacentPositions(slot.getPosition());
+                for (int i = 0; i < positions.size(); i++) {
+                    if (!(invalidPositions.contains(positions.get(i)) || myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile() == null || compatible(myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile().getSides().get((i+2)%4), tile.getSides().get(i)))) {
+
+                        Tile tempTile = myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile();
+                        visitTile(tempTile,tilesID,myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()],invalidPositions, newBrokenPos,myShip);
+
+                    }
+                }
+
+            }
 
         }
     }
@@ -267,6 +228,25 @@ public class Util {
 
     public static Boolean inBoundaries(int y, int x){
         return  (y >= 0 && y <5) && (x >= 0 && x <7);
+    }
+
+    public static ArrayList<Position> getAdjacentPositions(Position pos) {
+        ArrayList<Position> adjacent = new ArrayList<>();
+        adjacent.add(new Position(pos.getY() - 1, pos.getX())); // Nord
+        adjacent.add(new Position(pos.getY(), pos.getX() - 1)); // Ovest
+        adjacent.add(new Position(pos.getY() + 1, pos.getX())); // Sud
+        adjacent.add(new Position(pos.getY(), pos.getX() + 1)); // Est
+        return adjacent;
+    }
+
+    public static Boolean compatible(Connector connector1, Connector connector2) {
+
+        if (connector1.equals(Connector.EMPTY)) return false;
+        if (connector1.equals(connector2)) return true;
+        if (connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY)) return true;
+        if (connector2.equals(Connector.UNIVERSAL)) return true;
+
+        return  false;
     }
 
 }
