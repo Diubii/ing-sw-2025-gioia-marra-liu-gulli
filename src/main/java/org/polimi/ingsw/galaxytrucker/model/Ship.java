@@ -56,7 +56,6 @@ public class Ship {
         listOfGoods = new ArrayList<>();
         this.learningMatch = learningMatch;
         invalidPositions = createIP();
-        destroyedPositions = new ArrayList<>();
         generateSlot();
         initializePos();
 
@@ -459,20 +458,20 @@ public class Ship {
 
 
 
-        Iterator<Slot[][]> iterator = tronconi.iterator();
-        ArrayList<Slot[][]> targetSlot = new ArrayList<>();
+        ListIterator<Slot[][]> iterator = tronconi.listIterator();
+//        ArrayList<Slot[][]> targetSlot = new ArrayList<>();
         int i = 0;
 
         while (iterator.hasNext()) {
             Slot[][] board = iterator.next();
 
-            for (int y = 0; y < board.length; y++) {
-                for (int x = 0; x < board[y].length; x++) {
-                    Slot slot = board[y][x];
+            for (Slot[] slots : board) {
+                for (int x = 0; x < slots.length; x++) {
+                    Slot slot = slots[x];
                     if (slot != null && slot.getPosition().equals(temp) && slot.getTile() != null) {
 //                        targetSlot.add(tronconi.get(i)); // Trovato lo Slot
                         iterator.remove(); // Rimuove in modo sicuro durante l'iterazione
-                        ArrayList<Slot[][]>  result= truncateShip(temp,brokenPositions);
+                        ArrayList<Slot[][]> result = truncateShip(temp, brokenPositions);
                         tronconi.addAll(result);
                         break;
                     }
@@ -495,10 +494,8 @@ public class Ship {
 
     public ArrayList<Slot[][]> truncateShip(Position pos, Queue<Position> brokenPos) {
 
-            Queue<Position> newInvalidPos = brokenPos;
 
-
-            checkShip();
+        checkShip();
             // Lista dei vicini validi della posizione corrente
             ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 
@@ -509,7 +506,7 @@ public class Ship {
                         villagers.add(new Pair<>(ProjectileDirection.FRONT, shipBoard[pos.getY() - 1][pos.getX()]));
 
                     }else {
-                        newInvalidPos.add(new Position(pos.getY() - 1, pos.getX()));
+                        brokenPos.add(new Position(pos.getY() - 1, pos.getX()));
 
                     }
                 }
@@ -522,7 +519,7 @@ public class Ship {
                         villagers.add(new Pair<>(ProjectileDirection.LEFT, shipBoard[pos.getY() - 1][pos.getX()]));
 
                     }else {
-                        newInvalidPos.add(new Position(pos.getY(), pos.getX()-1));
+                        brokenPos.add(new Position(pos.getY(), pos.getX()-1));
 
                     }
                 }
@@ -535,7 +532,7 @@ public class Ship {
                         villagers.add(new Pair<>(ProjectileDirection.BOTTOM, shipBoard[pos.getY()+1][pos.getX()]));
 
                     }else {
-                        newInvalidPos.add(new Position(pos.getY()+1, pos.getX()));
+                        brokenPos.add(new Position(pos.getY()+1, pos.getX()));
 
                     }
                 }
@@ -548,7 +545,7 @@ public class Ship {
                         villagers.add(new Pair<>(ProjectileDirection.RIGHT, shipBoard[pos.getY()][pos.getX()+1]));
 
                     }else {
-                        newInvalidPos.add(new Position(pos.getY(), pos.getX()+1));
+                        brokenPos.add(new Position(pos.getY(), pos.getX()+1));
 
                     }
                 }
@@ -561,7 +558,9 @@ public class Ship {
 
                 // Lista di nodi (tile ID e i loro collegamenti)
                 ArrayList<Pair<Integer, ArrayList<Integer>>> Nodes = new ArrayList<>();
-                ArrayList<Integer> tilesVisitedId = new ArrayList<>();
+                ArrayList<Pair<Integer, ArrayList<Integer>>> nodeLinkedTiles = new ArrayList<>();
+
+//                ArrayList<Integer> tilesVisitedId = new ArrayList<>();
 
                 // Per ogni vicino, controlla la sua connessione con gli altri
                 for (int i = 0; i < villagers.size(); i++) {
@@ -574,13 +573,14 @@ public class Ship {
                     ArrayList<Integer> tilesID = new ArrayList<>();
 
                     // Esegue una visita per raccogliere tutte le tile raggiungibili
-                    Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, newInvalidPos, this);
+                    Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, brokenPos, this);
+                    nodeLinkedTiles.add(new Pair<>(Nodes.getLast().getKey(), new ArrayList<>(tilesID)));
 
                     // Controlla quali altri vicini sono raggiungibili da questo
                     for (int j = i + 1; j < villagers.size(); j++) {
                         if (tilesID.contains(villagers.get(j).getValue().getTile().getId())) {
                             Nodes.get(i).getValue().add(villagers.get(j).getValue().getTile().getId());
-                            tilesVisitedId.add(villagers.get(j).getValue().getTile().getId());
+//                            tilesVisitedId.add(villagers.get(j).getValue().getTile().getId());
                         }
                     }
                 }
@@ -590,7 +590,7 @@ public class Ship {
                 for (int i = 0; i < Nodes.size(); i++) {
                     int finalI = i;
                     if (equivalenceClasses.stream().noneMatch(list -> list.contains(Nodes.get(finalI).getKey()))) {
-                        equivalenceClasses.add(Nodes.get(i).getValue());
+                        equivalenceClasses.add(nodeLinkedTiles.get(Nodes.get(i).getKey()).getValue());
                     }
                 }
 
