@@ -87,10 +87,55 @@ class ShipTest {
 
     @Test
     void checkShip() {
+        ArrayList<Connector> connectors = new ArrayList<>();
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+
+        BatterySlot myComponent = new BatterySlot(2);
+        Tile myTile1 = new Tile(0,0,connectors, myComponent);
+        Tile myTile2 = new Tile(1,0,connectors, myComponent);
+
+
+
+        myShip.putTile(myTile1, new Position(4,4));
+        myShip.putTile(myTile2, new Position(4,5));
+
+        assertTrue(myShip.checkShip());
     }
 
     @Test
     void truncateShip() {
+        ArrayList<Connector> connectors = new ArrayList<>();
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+
+        BatterySlot myComponent = new BatterySlot(2);
+        Tile myTile1 = new Tile(0,0,connectors, myComponent);
+        Tile myTile2 = new Tile(1,0,connectors, myComponent);
+        Tile myTile3 = new Tile(2,0,connectors, myComponent);
+
+
+
+        myShip.putTile(myTile1, new Position(4,4));
+        myShip.putTile(myTile2, new Position(4,5));
+        myShip.putTile(myTile2, new Position(3,4));
+        myShip.putTile(myTile3, new Position(3,5));
+//
+//        myShip.removeTile(myTile2,new Position(4,5));
+//        myShip.brokenPositions.add(new Position(4,5));
+        myShip.removeTile(myTile3,new Position(3,4));
+        myShip.brokenPositions.add(new Position(3,4));
+
+
+        ArrayList<Slot[][]> tronconi = myShip.getTronc();
+        myShip.updateShipBoard(tronconi.get(0));
+        System.out.println(myShip.toString());
+        assertEquals(1, tronconi.size());
+
     }
 
     @Test
@@ -107,5 +152,10 @@ class ShipTest {
 
     @Test
     void activateDoubleCannon() {
+    }
+
+    @Test
+    void getTronc(){
+
     }
 }

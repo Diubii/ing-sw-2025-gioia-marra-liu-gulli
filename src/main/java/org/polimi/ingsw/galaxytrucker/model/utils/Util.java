@@ -10,6 +10,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Queue;
 import java.util.Set;
 
@@ -144,7 +145,7 @@ public class Util {
 
         //UP TILE
 
-        if (mySlot.getPosition().getY() - 1 >= 0 && !s.getInvalidPositions().contains(mySlot.getPosition()) && mySlot.getTile() != null) {
+        if (mySlot.getPosition().getY() - 1 >= 0   &&  TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile() != null) {
             c1 = TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile().getSides().get(2);
             sum += 1;
         } else {
@@ -153,14 +154,14 @@ public class Util {
 
         //LEFT
 
-        if (mySlot.getPosition().getX() - 1 >= 0 && !s.getInvalidPositions().contains(mySlot.getPosition()) && mySlot.getTile() != null) {
+        if (mySlot.getPosition().getX() - 1 >= 0 &&    TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile()!= null) {
 
             sum += 1;
             c2 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile().getSides().get(3);
         } else c2 = null;
         //BOTTOM
 
-        if (mySlot.getPosition().getY() + 1 < 5 && !s.getInvalidPositions().contains(mySlot.getPosition()) && mySlot.getTile() != null) {
+        if (mySlot.getPosition().getY() + 1 < 5 && TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile() != null) {
             c3 = TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile().getSides().get(0);
             sum += 1;
 
@@ -169,7 +170,7 @@ public class Util {
 
         //RIGHT TILE
 
-        if (mySlot.getPosition().getX() + 1 < 7 && !s.getInvalidPositions().contains(mySlot.getPosition()) && mySlot.getTile() != null) {
+        if (mySlot.getPosition().getX() + 1 < 7 && TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile() != null) {
             c4 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile().getSides().get(1);
             sum += 1;
 
@@ -209,10 +210,9 @@ public class Util {
             } else {
                 tilesID.add(tile.getId());
                 //NORD
-
                 ArrayList<Position> positions = getAdjacentPositions(slot.getPosition());
                 for (int i = 0; i < positions.size(); i++) {
-                    if (!(invalidPositions.contains(positions.get(i)) || myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile() == null || compatible(myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile().getSides().get((i+2)%4), tile.getSides().get(i)))) {
+                    if (!( !inBoundaries(positions.get(i).getY(), positions.get(i).getX()) || invalidPositions.contains(positions.get(i)) || myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile() == null || compatible(myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile().getSides().get((i+2)%4), tile.getSides().get(i)))) {
 
                         Tile tempTile = myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile();
                         visitTile(tempTile,tilesID,myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()],invalidPositions, newBrokenPos,myShip);

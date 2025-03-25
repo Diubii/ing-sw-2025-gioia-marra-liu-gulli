@@ -590,7 +590,7 @@ public class Ship {
                 for (int i = 0; i < Nodes.size(); i++) {
                     int finalI = i;
                     if (equivalenceClasses.stream().noneMatch(list -> list.contains(Nodes.get(finalI).getKey()))) {
-                        equivalenceClasses.add(nodeLinkedTiles.get(Nodes.get(i).getKey()).getValue());
+                        equivalenceClasses.add(nodeLinkedTiles.get(i).getValue());
                     }
                 }
 
@@ -722,5 +722,7 @@ public class Ship {
     }
 
 
-
+    public void updateShipBoard(Slot[][] slots) {
+        shipBoard = slots;
+    }
 }
