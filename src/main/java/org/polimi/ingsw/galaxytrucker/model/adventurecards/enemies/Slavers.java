@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards.enemies;
 
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.Enemy;
 
@@ -13,7 +15,7 @@ public class Slavers extends Enemy {
         this.penalty = penalty;
     }
 
-    public void activateEffect(AdventureCardActivator aca) {
-        aca.activateSlavers(this);
+    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard) {
+        aca.activateSlavers(this, p, flightBoard);
     }
 }

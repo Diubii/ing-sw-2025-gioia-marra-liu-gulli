@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
@@ -30,9 +32,10 @@ public class AbandonedStation extends AdventureCard {
      * Activates the effect of the Abandoned Station card by triggering the effect
      * through the given {@link AdventureCardActivator}.
      *
-     * @param aca The activator responsible for triggering the Abandoned Station's effect.
+     * @param aca         The activator responsible for triggering the Abandoned Station's effect.
+     * @param flightBoard
      */
-    public void activateEffect(AdventureCardActivator aca) {
-        aca.activateAbandonedStation(this);
+    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard) {
+        aca.activateAbandonedStation(this, p, flightBoard);
     }
 }

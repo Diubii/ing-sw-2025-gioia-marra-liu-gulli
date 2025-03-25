@@ -1,9 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.model.game;
 
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAleadyExistsExcetion;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardStack;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
@@ -35,10 +35,10 @@ public class Game {
     private boolean gameStarted;
     private boolean learningMatch;
 
-    private ArrayList<CardStack> decks;
-    private CardStack oneDeck;
-    private CardStack twoDeck;
-    private CardStack learningDeck;
+    private ArrayList<CardDeck> decks;
+    private CardDeck oneDeck;
+    private CardDeck twoDeck;
+    private CardDeck learningDeck;
 
     private FlightBoard flightBoard;
     private TileBunch tileBunch;
@@ -78,13 +78,13 @@ public class Game {
 
 
 
-    public void addPlayer(Player player) throws TooManyPlayersException, PlayerAleadyExistsExcetion {
+    public void addPlayer(Player player) throws TooManyPlayersException, PlayerAlreadyExistsException {
         if(playerMap.size() >= nMaxPlayer ){
             throw new TooManyPlayersException(nMaxPlayer);
         }
 
         if(isNicknameUsed(player.getNickName())){
-            throw new PlayerAleadyExistsExcetion(player.getNickName());
+            throw new PlayerAlreadyExistsException(player.getNickName());
         }
         playerMap.put(player.getNickName(), player);
         usedNicknames.add(player.getNickName());
