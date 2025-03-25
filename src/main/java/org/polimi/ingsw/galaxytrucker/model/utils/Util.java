@@ -211,15 +211,20 @@ public class Util {
                 //NORD
 
                 ArrayList<Position> positions = getAdjacentPositions(slot.getPosition());
-                System.out.println(tile.getId() );
-                for (int i = 0; i < positions.size(); i++) {
-                    System.out.println("I: " + i);
-                    if (!(invalidPositions.contains(positions.get(i)) || myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile() == null || compatible(myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile().getSides().get((i+2)%4), tile.getSides().get(i)))) {
+                int s = positions.size();
+                for (int i = 0; i < s; i++) {
 
+if (inBoundaries(positions.get(i).getY(),positions.get(i).getX()) && myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile() != null &&  compatible(myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile().getSides().get((i+2)%4), tile.getSides().get(i))){
                         Tile tempTile = myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile();
+                        System.out.println("STO PER VISITARE : " + positions.get(i).getY() + positions.get(i).getX());
                         visitTile(tempTile,tilesID,myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()],invalidPositions, newBrokenPos,myShip);
 
+
+
                     }
+//                    System.out.println("[2]I: " + i + " " + positions.size());
+
+
                 }
 
             }

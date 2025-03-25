@@ -639,7 +639,7 @@ public class Ship {
 
                     System.out.println("TILES CONNESSE A " + myTile.getId());
                     for (int k = 0; k < tilesID.size(); k++){
-                        System.out.println(tilesID.get(k));
+                        System.out.println("LIST [+]" + tilesID.get(k));
                     }
 
 
