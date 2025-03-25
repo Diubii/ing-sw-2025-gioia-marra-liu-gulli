@@ -43,7 +43,7 @@ public class Ship {
     private Set<Position> cannonPos;
     private Set<Position> enginePos = new LinkedHashSet<>();
     private ArrayList<Position> invalidPositions;
-    public Queue<Position> brokenPositions = new LinkedList<>();
+    Queue<Position> brokenPositions = new LinkedList<>();
 
 
     /**
@@ -92,9 +92,6 @@ public class Ship {
      */
     public Slot[][] getShipBoard() {
         return shipBoard.clone();
-    }
-    public  void updateShipBoard(Slot[][] shipB){
-        this.shipBoard = shipB;
     }
 
     public ArrayList<Position> getStoragePos() {
@@ -461,51 +458,28 @@ public class Ship {
 
 
 
-
-
         ListIterator<Slot[][]> iterator = tronconi.listIterator();
 //        ArrayList<Slot[][]> targetSlot = new ArrayList<>();
+        int i = 0;
 
-
-        System.out.println("IF" + tronconi.size());
-        int size = tronconi.size();
-        boolean bigger = true;
-
-        for (int i = 0; i < tronconi.size() && bigger ; i++) {
-            ArrayList<Slot[][]> toRemove = new ArrayList<>();
-            ArrayList<Slot[][]> toAdd = new ArrayList<>();
-
-
-            Slot[][] board = tronconi.get(i);
-
+        while (iterator.hasNext()) {
+            Slot[][] board = iterator.next();
 
             for (Slot[] slots : board) {
-                for (Slot slot : slots) {
-
-                    if (slot.getPosition().equals(temp) && slot.getLastAction()) {
-
-                        toRemove.add(board); // Segna la board per la rimozione
-                        toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
-
+                for (int x = 0; x < slots.length; x++) {
+                    Slot slot = slots[x];
+                    if (slot != null && slot.getPosition().equals(temp) && slot.getTile() != null) {
+//                        targetSlot.add(tronconi.get(i)); // Trovato lo Slot
+                        iterator.remove(); // Rimuove in modo sicuro durante l'iterazione
+                        ArrayList<Slot[][]> result = truncateShip(temp, brokenPositions);
+                        tronconi.addAll(result);
                         break;
-                    }else {
-                        if (slot.getPosition().equals(temp)) System.out.println("EXTRA");
-
                     }
                 }
             }
 
-            // Rimuove gli elementi segnati
-            tronconi.removeAll(toRemove);
-        // Aggiunge i nuovi elementi
-            tronconi.addAll(toAdd);
-            if (size == tronconi.size()){
-                bigger = false;
-            }
-            size = tronconi.size();
+            i++;
         }
-
-
 
 
 
@@ -520,7 +494,6 @@ public class Ship {
 
     public ArrayList<Slot[][]> truncateShip(Position pos, Queue<Position> brokenPos) {
 
-        System.out.println("IF");
 
         checkShip();
             // Lista dei vicini validi della posizione corrente
@@ -543,7 +516,7 @@ public class Ship {
             if (!invalidPositions.contains(new Position(pos.getY() , pos.getX() -1)) && Util.inBoundaries(pos.getY() , pos.getX() -1)) {
                 if (shipBoard[pos.getY()][pos.getX()-1] != null && shipBoard[pos.getY()][pos.getX()-1].getTile() != null) {
                     if (shipBoard[pos.getY()][pos.getX()-1].getTile().getWellConnected()){
-                        villagers.add(new Pair<>(ProjectileDirection.LEFT, shipBoard[pos.getY() ][pos.getX()-1]));
+                        villagers.add(new Pair<>(ProjectileDirection.LEFT, shipBoard[pos.getY() - 1][pos.getX()]));
 
                     }else {
                         brokenPos.add(new Position(pos.getY(), pos.getX()-1));
@@ -601,8 +574,6 @@ public class Ship {
 
                     // Esegue una visita per raccogliere tutte le tile raggiungibili
                     Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, brokenPos, this);
-
-
                     nodeLinkedTiles.add(new Pair<>(Nodes.getLast().getKey(), new ArrayList<>(tilesID)));
 
                     // Controlla quali altri vicini sono raggiungibili da questo
@@ -617,10 +588,9 @@ public class Ship {
                 // Creazione delle classi di equivalenza (tronconi della nave)
                 ArrayList<ArrayList<Integer>> equivalenceClasses = new ArrayList<>();
                 for (int i = 0; i < Nodes.size(); i++) {
-                    final int  finalI = i;
-
+                    int finalI = i;
                     if (equivalenceClasses.stream().noneMatch(list -> list.contains(Nodes.get(finalI).getKey()))) {
-                        equivalenceClasses.add(nodeLinkedTiles.get(i).getValue());
+                        equivalenceClasses.add(nodeLinkedTiles.get(Nodes.get(i).getKey()).getValue());
                     }
                 }
 
@@ -632,13 +602,11 @@ public class Ship {
                 for (ArrayList<Integer> equivalenceClass : equivalenceClasses) {
 
                     // Crea una nuova nave vuota
-                    Ship myShip = new Ship(this.learningMatch);
-                    Slot[][] myshipBoard = myShip.getShipBoard();
-
+                    Slot[][] myshipBoard = new Slot[5][7];
                     for (int j = 0; j < 5; j++) {
                         for (int k = 0; k < 7; k++) {
                             // Se la tile appartiene alla classe di equivalenza, viene inclusa nella nuova nave
-                            if (shipBoard[j][k].getTile() != null && equivalenceClass.contains(shipBoard[j][k].getTile().getId()) || invalidPositions.contains(new Position(j,k)) ) {
+                            if (equivalenceClass.contains(shipBoard[j][k].getTile().getId()) && shipBoard[j][k].getTile() != null) {
                                 myshipBoard[j][k] = shipBoard[j][k];
                             }
                         }
@@ -652,9 +620,7 @@ public class Ship {
             }
 
 
-        ArrayList<Slot[][]> finalShips = new ArrayList<>();
-        finalShips.add(shipBoard);
-        return finalShips; // Se non ci sono sezioni da separare, restituisce null
+        return null; // Se non ci sono sezioni da separare, restituisce null
     }
 
     public Set<ProjectileDirection> getProtectedSides() {
