@@ -8,6 +8,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.Engine;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 
 import java.util.ArrayList;
@@ -115,8 +116,14 @@ class ShipTest {
 
         BatterySlot myComponent = new BatterySlot(2);
         Tile myTile1 = new Tile(0,0,connectors, myComponent);
+        myTile1.setMyComponent(myComponent);
         Tile myTile2 = new Tile(1,0,connectors, myComponent);
+        myTile2.setMyComponent(myComponent);
         Tile myTile3 = new Tile(2,0,connectors, myComponent);
+        myTile3.setMyComponent(myComponent);
+
+        Tile myTile4 = new Tile(3,0,connectors, myComponent);
+        myTile4.setMyComponent(new Engine(2));
 
 
 
@@ -124,6 +131,7 @@ class ShipTest {
         myShip.putTile(myTile2, new Position(4,5));
         myShip.putTile(myTile2, new Position(3,4));
         myShip.putTile(myTile3, new Position(3,5));
+        myShip.putTile(myTile4, new Position(2,4));
 //
 //        myShip.removeTile(myTile2,new Position(4,5));
 //        myShip.brokenPositions.add(new Position(4,5));
@@ -132,9 +140,9 @@ class ShipTest {
 
 
         ArrayList<Slot[][]> tronconi = myShip.getTronc();
-        myShip.updateShipBoard(tronconi.get(0));
+        myShip.updateShipBoard(tronconi.get(1));
         System.out.println(myShip.toString());
-        assertEquals(1, tronconi.size());
+        assertEquals(2, tronconi.size());
 
     }
 

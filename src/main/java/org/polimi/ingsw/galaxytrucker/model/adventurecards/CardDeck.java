@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * The stack contains a collection of {@link AdventureCard} objects and may be
  * either spyable or not, depending on the stack's configuration.
  */
-public class CardStack {
+public class CardDeck {
     /** The list of cards in the stack. */
     private ArrayList<AdventureCard> cards;
     /** Indicates whether the card stack is spyable (can be observed by players). */
@@ -29,7 +29,7 @@ public class CardStack {
      * @param cards A list of {@link AdventureCard} objects in the stack.
      * @param spyable A boolean value indicating if the stack is spyable.
      */
-    public CardStack(ArrayList<AdventureCard> cards, boolean spyable) {
+    public CardDeck(ArrayList<AdventureCard> cards, boolean spyable) {
         this.cards = cards;
         this.spyable = spyable;
     }
@@ -55,13 +55,13 @@ public class CardStack {
     }
 
 
-    public void /*CardStack*/ merge(CardStack cs) {}
+    public void /*CardStack*/ merge(CardDeck cs) {}
 
     /**
      * Shuffles the cards in the stack.
      * (Method to be implemented)
      *
-     * @return A new shuffled {@link CardStack}.
+     * @return A new shuffled {@link CardDeck}.
      */
     public void /*CardStack*/ shuffle(){}
 

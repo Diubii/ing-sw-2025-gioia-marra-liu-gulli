@@ -381,7 +381,7 @@ public class Ship {
             for (int j = 0; j < 7; j++) {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
                     sb.append("[1] ");// Slot con Tile
-                    System.out.printf("FOUND %d %d\n", i, j);
+//                    System.out.printf("FOUND %d %d\n", i, j);
                 } else if (shipBoard[i][j] != null && shipBoard[i][j].getTile() == null) {
                     int finalJ = j;
                     int finalI = i;
@@ -389,7 +389,7 @@ public class Ship {
                         sb.append("[X] ");
                     } else {
                         sb.append("[.] "); // Slot vuoto
-                        System.out.printf("%d %d [null]\n", i, j);
+//                        System.out.printf("%d %d [null]\n", i, j);
 
                     }
                 } else if (shipBoard[i][j] == null) sb.append("[.] "); // Slot vuoto
@@ -415,6 +415,7 @@ public class Ship {
                         shipBoard[i][j].getTile().setWellConnected(false);
                         return false;
                     } else {
+                        System.out.println("CHECKING : " + shipBoard[i][j].getPosition().getY() + " " + shipBoard[i][j].getPosition().getX());
                         if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Engine")) {
                             Boolean temp = Util.EngineWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
                             shipBoard[i][j].getTile().setWellConnected(temp);
@@ -467,7 +468,7 @@ public class Ship {
 //        ArrayList<Slot[][]> targetSlot = new ArrayList<>();
 
 
-        System.out.println("IF" + tronconi.size());
+        System.out.println("TRONCONI SIZE: " + tronconi.size());
         int size = tronconi.size();
         boolean bigger = true;
 
@@ -483,9 +484,16 @@ public class Ship {
                 for (Slot slot : slots) {
 
                     if (slot.getPosition().equals(temp) && slot.getLastAction()) {
+                        System.out.println("TILE DA RIM " + slot.getPosition().getY() + " " + slot.getPosition().getX());
 
                         toRemove.add(board); // Segna la board per la rimozione
                         toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
+
+                        Slot[][] t2 = toAdd.getLast();
+                        Ship tSh = new Ship(getLearningMatch());
+                        tSh.updateShipBoard(t2);
+                        System.out.println("GETTRONC + ADD : SIZE" + toAdd.size() );
+                        System.out.println(tSh.toString());
 
                         break;
                     }else {
@@ -497,8 +505,12 @@ public class Ship {
 
             // Rimuove gli elementi segnati
             tronconi.removeAll(toRemove);
-        // Aggiunge i nuovi elementi
+   System.out.println("[1]NEW : SIZE" + tronconi.size() );
+
+            // Aggiunge i nuovi elementi
             tronconi.addAll(toAdd);
+            System.out.println("[2]NEW : SIZE" + tronconi.size() );
+
             if (size == tronconi.size()){
                 bigger = false;
             }
@@ -528,8 +540,13 @@ public class Ship {
 
             // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
             if (!invalidPositions.contains(new Position(pos.getY() - 1, pos.getX())) && Util.inBoundaries(pos.getY() - 1, pos.getX())) {
+                System.out.println("VALIDA : " + new Position(pos.getY() - 1, pos.getX()).getY() + new Position(pos.getY() - 1, pos.getX()).getX() );
                 if (shipBoard[pos.getY() - 1][pos.getX()] != null && shipBoard[pos.getY() - 1][pos.getX()].getTile() != null) {
+                    System.out.println("1");
+
                     if (shipBoard[pos.getY() - 1][pos.getX()].getTile().getWellConnected()){
+                        System.out.println("OK");
+
                         villagers.add(new Pair<>(ProjectileDirection.FRONT, shipBoard[pos.getY() - 1][pos.getX()]));
 
                     }else {
@@ -540,9 +557,16 @@ public class Ship {
 
             }
 
+
             if (!invalidPositions.contains(new Position(pos.getY() , pos.getX() -1)) && Util.inBoundaries(pos.getY() , pos.getX() -1)) {
+                System.out.println("VALIDA : " + new Position(pos.getY() , pos.getX() -1).getY() + new Position(pos.getY() , pos.getX() -1).getX() );
+
                 if (shipBoard[pos.getY()][pos.getX()-1] != null && shipBoard[pos.getY()][pos.getX()-1].getTile() != null) {
+                    System.out.println("1");
+
                     if (shipBoard[pos.getY()][pos.getX()-1].getTile().getWellConnected()){
+                        System.out.println("OK");
+
                         villagers.add(new Pair<>(ProjectileDirection.LEFT, shipBoard[pos.getY() ][pos.getX()-1]));
 
                     }else {
@@ -554,8 +578,13 @@ public class Ship {
             }
 
             if (!invalidPositions.contains(new Position(pos.getY()+1 , pos.getX())) && Util.inBoundaries(pos.getY()+1 , pos.getX())) {
+                System.out.println("VALIDA : " + new Position(pos.getY()+1 , pos.getX()).getY() + new Position(pos.getY()+1 , pos.getX()).getX() );
+
                 if (shipBoard[pos.getY()+1][pos.getX()] != null && shipBoard[pos.getY()+1][pos.getX()].getTile() != null) {
+                    System.out.println("1");
                     if (shipBoard[pos.getY()+1][pos.getX()].getTile().getWellConnected()){
+                        System.out.println("OK");
+
                         villagers.add(new Pair<>(ProjectileDirection.BOTTOM, shipBoard[pos.getY()+1][pos.getX()]));
 
                     }else {
@@ -567,8 +596,13 @@ public class Ship {
             }
 
             if (!invalidPositions.contains(new Position(pos.getY() , pos.getX()+1)) && Util.inBoundaries(pos.getY() , pos.getX()+1)) {
+                System.out.println("VALIDA : " + new Position(pos.getY() , pos.getX()+1).getY() + new Position(pos.getY() , pos.getX()+1).getX() );
                 if (shipBoard[pos.getY()][pos.getX()+1] != null && shipBoard[pos.getY()][pos.getX()+1].getTile() != null) {
+                    System.out.println("1");
+
                     if (shipBoard[pos.getY()][pos.getX()+1].getTile().getWellConnected()){
+                        System.out.println("OK");
+
                         villagers.add(new Pair<>(ProjectileDirection.RIGHT, shipBoard[pos.getY()][pos.getX()+1]));
 
                     }else {
@@ -582,6 +616,7 @@ public class Ship {
 
             // Se ci sono vicini validi, verifica le connessioni tra di loro
             if (!villagers.isEmpty()) {
+                System.out.println("VILLAGERS SIZE: " + villagers.size());
 
                 // Lista di nodi (tile ID e i loro collegamenti)
                 ArrayList<Pair<Integer, ArrayList<Integer>>> Nodes = new ArrayList<>();
@@ -602,8 +637,13 @@ public class Ship {
                     // Esegue una visita per raccogliere tutte le tile raggiungibili
                     Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, brokenPos, this);
 
+                    System.out.println("TILES CONNESSE A " + myTile.getId());
+                    for (int k = 0; k < tilesID.size(); k++){
+                        System.out.println(tilesID.get(k));
+                    }
 
-                    nodeLinkedTiles.add(new Pair<>(Nodes.getLast().getKey(), new ArrayList<>(tilesID)));
+
+                    nodeLinkedTiles.add(new Pair<>(i, new ArrayList<>(tilesID)));
 
                     // Controlla quali altri vicini sono raggiungibili da questo
                     for (int j = i + 1; j < villagers.size(); j++) {
@@ -620,7 +660,8 @@ public class Ship {
                     final int  finalI = i;
 
                     if (equivalenceClasses.stream().noneMatch(list -> list.contains(Nodes.get(finalI).getKey()))) {
-                        equivalenceClasses.add(nodeLinkedTiles.get(i).getValue());
+
+                        equivalenceClasses.add(nodeLinkedTiles.get(finalI).getValue());
                     }
                 }
 

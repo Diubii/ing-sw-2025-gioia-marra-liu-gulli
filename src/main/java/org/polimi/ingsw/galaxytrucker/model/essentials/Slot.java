@@ -19,7 +19,7 @@ public class Slot {
 
     public void removeTile(){
         TileContainer = null;
-        setLastAction(Boolean.FALSE);
+        setLastAction(Boolean.TRUE);
     }
 
     public Tile getTile(){
