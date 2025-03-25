@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
 /**
@@ -29,10 +31,11 @@ public class AbandonedShip extends AdventureCard {
     /**
      * Activates the effect of the abandoned ship card.
      *
-     * @param aca The activator responsible for handling this card's effect.
+     * @param aca         The activator responsible for handling this card's effect.
+     * @param flightBoard
      */
-    public void activateEffect(AdventureCardActivator aca) {
-        aca.activateAbandonedShip(this);
+    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard) {
+        aca.activateAbandonedShip(this, p, flightBoard);
     }
     /**
      * Gets the number of humans lost.

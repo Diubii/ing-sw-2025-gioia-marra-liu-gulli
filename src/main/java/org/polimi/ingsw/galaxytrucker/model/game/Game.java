@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.game;
 
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAleadyExistsExcetion;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
@@ -78,13 +78,13 @@ public class Game {
 
 
 
-    public void addPlayer(Player player) throws TooManyPlayersException, PlayerAleadyExistsExcetion {
+    public void addPlayer(Player player) throws TooManyPlayersException, PlayerAlreadyExistsException {
         if(playerMap.size() >= nMaxPlayer ){
             throw new TooManyPlayersException(nMaxPlayer);
         }
 
         if(isNicknameUsed(player.getNickName())){
-            throw new PlayerAleadyExistsExcetion(player.getNickName());
+            throw new PlayerAlreadyExistsException(player.getNickName());
         }
         playerMap.put(player.getNickName(), player);
         usedNicknames.add(player.getNickName());

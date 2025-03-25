@@ -3,6 +3,8 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * Represents a stack of adventure cards in the game.
  * The stack contains a collection of {@link AdventureCard} objects and may be
@@ -34,43 +36,55 @@ public class CardDeck {
         this.spyable = spyable;
     }
 
+    private int getSize(){
+        return cards.size();
+    }
+
     /**
-     * Adds a new card to the stack.
-     *
-     * @param card The {@link AdventureCard} to add to the stack.
+     * Adds a card to che current {@link CardDeck}
+     * @param card The card to add
      */
     public void addCard(AdventureCard card) {
-
+        cards.addFirst(card);
     }
 
-    //TODO: cambia il tipo da void a quello commentato
     /**
-     * Removes and returns the top card from the stack.
-     * (Method to be implemented)
-     *
-     * @return The removed {@link AdventureCard} from the top of the stack.
+     * Pops the first {@link AdventureCard} from the stack.
+     * @return The popped {@link AdventureCard}
      */
-    public void /*AdventureCard*/ pop() {
-
+    public AdventureCard pop() {
+        AdventureCard popped = cards.getFirst();
+        cards.remove(popped);
+        return popped;
     }
 
-
-    public void /*CardStack*/ merge(CardDeck cs) {}
+    /**
+     * Merges a CardStack to the current one while clearing it.
+     * Returns itself to allow chaining.
+     * @author Alessandro Giuseppe Gioia
+     * @param cd The {@link CardDeck}
+     * @return {@link CardDeck}
+    */
+    public CardDeck merge(CardDeck cd) {
+        while(cd.getSize()!=0){
+            cards.addFirst(cd.pop());
+        }
+        return this;
+    }
 
     /**
-     * Shuffles the cards in the stack.
-     * (Method to be implemented)
-     *
-     * @return A new shuffled {@link CardDeck}.
+     * Shuffles the CardStack.
+     * @author Alessandro Giuseppe Gioia
      */
-    public void /*CardStack*/ shuffle(){}
+    public void shuffle(){
+        Collections.shuffle(cards);
+    }
 
     /**
-     * Gets the list of cards in the card stack.
-     *
-     * @return A list of {@link AdventureCard} objects in the stack.
+     * Clears the CardStack.
+     * @author Alessandro Giuseppe Gioia
      */
-    public ArrayList<AdventureCard> getCards() {
-        return cards;
+    public void clear(){
+        cards.clear();
     }
 }

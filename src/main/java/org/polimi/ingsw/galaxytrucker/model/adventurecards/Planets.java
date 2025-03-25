@@ -1,6 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
 
@@ -16,7 +18,7 @@ public class Planets extends AdventureCard {
         this.planets = planets;
     }
 
-    public void activateEffect(AdventureCardActivator aca){
-        aca.activatePlanets(this);
+    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard){
+        aca.activatePlanets(this, p, flightBoard);
     }
 }

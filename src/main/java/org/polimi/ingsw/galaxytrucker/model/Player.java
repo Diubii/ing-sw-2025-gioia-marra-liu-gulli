@@ -31,5 +31,8 @@ public class Player {
     public String getNickName() {
         return nickname;
     }
-
+    public Ship getShip() { return ship; }
+    public void addCredits(int credits){
+        nCredits += credits;
+    }
 }
