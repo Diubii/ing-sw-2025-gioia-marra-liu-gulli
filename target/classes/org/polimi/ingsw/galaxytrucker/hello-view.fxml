@@ -13,4 +13,6 @@
 
     <Label fx:id="welcomeText"/>
     <Button text="Hello!" onAction="#onHelloButtonClick"/>
+    <Button text="ConnectToServer (RMI)" onAction="#connectToServerRMI"/>
+    <Button text="ConnectToServer (Socket)" onAction="#connectToServerSocket"/>
 </VBox>
