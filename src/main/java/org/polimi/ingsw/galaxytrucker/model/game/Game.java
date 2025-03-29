@@ -105,15 +105,11 @@ public class Game {
 
 
     }
-    public void startCardEffect(AdventureCard card, Player leader) {
 
+
+    public ArrayList<CardStack> getDecks() {
+        return decks;
     }
-    public void generatelvtwoDeckes(){
-
-    }
-
-
-
 
     public List<Player> getPlayers() {
         return new ArrayList<>(playerMap.values());
