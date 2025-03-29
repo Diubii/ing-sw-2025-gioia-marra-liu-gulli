@@ -9,12 +9,12 @@ public class AdventureCardEffects implements AdventureCardActivator {
     @Override
     public void activateAbandonedShip(AbandonedShip abandonedShip, Player player, FlightBoard flightBoard){
         player.addCredits(abandonedShip.getCredits());
-        flightBoard.moveBoard(player.getNickName(), abandonedShip.getDaysLost());
+        flightBoard.moveBoard(player, abandonedShip.getDaysLost());
     }
 
     @Override
     public void activateAbandonedStation(AbandonedStation abandonedStation, Player player, FlightBoard flightBoard){
-        flightBoard.moveBoard(player.getNickName(), abandonedStation.getDaysLost());
+        flightBoard.moveBoard(player, abandonedStation.getDaysLost());
     }
 
     @Override
