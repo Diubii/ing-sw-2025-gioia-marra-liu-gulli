@@ -90,4 +90,12 @@ fabric.properties
 mvnw
 mvnw.*
 .mvn
-.mvn/*
+.mvn/
+# === Java compiled class files ===
+*.class
+
+# === Maven build output ===
+/target/
+
+# === IntelliJ build output ===
+/out/
