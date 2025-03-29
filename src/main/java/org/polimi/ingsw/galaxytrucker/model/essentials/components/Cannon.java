@@ -6,8 +6,8 @@ import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterfa
 public class Cannon extends Component {
     protected Float FirePower;
 
-    public Cannon(String name, Float firePower) {
-        super(name, false);
+    public Cannon( Float firePower) {
+        super(false);
         this.FirePower = firePower;
     }
     public Float getFirePower() {

@@ -14,8 +14,8 @@ public class LifeSupportSystem extends Component {
     private AlienColor color;
     private ArrayList<Pair<Position, AlienColor>> nearMHU;
 
-    public LifeSupportSystem(String name, AlienColor color) {
-        super(name, false);
+    public LifeSupportSystem(AlienColor color) {
+        super(false);
         this.color = color;
     }
 

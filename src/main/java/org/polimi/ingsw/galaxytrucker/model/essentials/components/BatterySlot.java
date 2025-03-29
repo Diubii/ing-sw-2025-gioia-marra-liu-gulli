@@ -6,8 +6,8 @@ import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterfa
 public class BatterySlot extends Component {
 
     private int capacity;
-    public BatterySlot(String name, int initialCapacity) {
-        super(name, false);
+    public BatterySlot( int initialCapacity) {
+        super(false);
         capacity = initialCapacity;
 
     }

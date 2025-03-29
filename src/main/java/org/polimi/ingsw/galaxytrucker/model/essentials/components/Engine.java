@@ -6,9 +6,9 @@ import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterfa
 public class Engine extends Component {
     protected int enginePower;
 
-    public Engine(String Name, int enginePower) {
+    public Engine(int enginePower) {
 
-        super(Name, false);
+        super(false);
         this.enginePower = enginePower;
     }
     public int getEnginePower() {

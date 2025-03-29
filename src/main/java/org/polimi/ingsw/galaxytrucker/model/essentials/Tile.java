@@ -25,7 +25,7 @@ public class Tile {
         this.exposedConnectors = 0;
         this.used = false;
         this.fixed = false;
-        this.wellConnected = false;
+        this.wellConnected = true;
 //        this.mySlot = null;
         this.myComponent = c;
     }
@@ -37,6 +37,8 @@ public class Tile {
         this.exposedConnectors = other.exposedConnectors;
         this.used = other.used;
         this.fixed = other.fixed;
+        this.wellConnected = other.wellConnected;
+        this.myComponent = other.myComponent;
 //        this.mySlot = other.mySlot; // Se vuoi un riferimento al solito Slot, altrimenti escludilo
     }
 

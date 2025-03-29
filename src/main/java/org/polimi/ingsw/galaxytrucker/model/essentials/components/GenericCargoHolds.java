@@ -13,8 +13,8 @@ public class GenericCargoHolds extends Component {
     private ArrayList<Good> Goods;
 
 
-    public GenericCargoHolds(String name, Boolean special, int nMaxContainers) {
-        super(name, false);
+    public GenericCargoHolds(Boolean special, int nMaxContainers) {
+        super(false);
         this.special = special;
         this.nMaxContainers = nMaxContainers;
         this.Goods = new ArrayList<>();

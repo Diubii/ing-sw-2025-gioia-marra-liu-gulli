@@ -6,8 +6,8 @@ import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterfa
 public class DoubleCannon extends Cannon {
     private  Boolean charged;
 
-    public DoubleCannon(Boolean charged, String name, Float firePower) {
-        super(name, firePower);
+    public DoubleCannon(Boolean charged,  Float firePower) {
+        super(firePower);
         this.charged = charged;
     }
 
