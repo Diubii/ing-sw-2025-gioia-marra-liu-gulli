@@ -3,6 +3,7 @@ module org.polimi.ingsw.galaxytrucker {
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
+    requires java.rmi;
 
     opens org.polimi.ingsw.galaxytrucker to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker;
@@ -18,4 +19,5 @@ module org.polimi.ingsw.galaxytrucker {
     opens org.polimi.ingsw.galaxytrucker.model.utils to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.view.Gui;
     opens org.polimi.ingsw.galaxytrucker.view.Gui to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker.network.common; // 👈 aggiungi questa riga!
 }

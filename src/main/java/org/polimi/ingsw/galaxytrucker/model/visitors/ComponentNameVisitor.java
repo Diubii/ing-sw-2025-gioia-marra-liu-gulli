@@ -3,6 +3,10 @@ package org.polimi.ingsw.galaxytrucker.model.visitors;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
 
 public class ComponentNameVisitor implements ComponentNameVisitorInterface {
     @Override
@@ -62,6 +66,26 @@ public class ComponentNameVisitor implements ComponentNameVisitorInterface {
     public String visit(Shield component) {
         return "Shield";
     }
+
+    @Override
+    public String visit(NICKNAME_REQUEST nicknameRequest) {
+        return "NICKNAME_REQUEST";
+    }
+
+    @Override
+    public String visit(NICKNAME_RESPONSE nicknameRequest) {
+        return "NICKNAME_RESPONSE";
+    }
+    @Override
+    public String visit(NetworkMessage nicknameRequest) {
+        return "NM";
+    }
+
+    @Override
+    public String visit(SERVER_INFO nicknameRequest) {
+        return "SERVER_INFO";
+    }
+
 }
 
 
