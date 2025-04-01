@@ -2,14 +2,13 @@ package org.polimi.ingsw.galaxytrucker.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.Engine;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 
 import java.util.ArrayList;
 
@@ -116,32 +115,43 @@ class ShipTest {
 
         BatterySlot myComponent = new BatterySlot(2);
         Tile myTile1 = new Tile(0,0,connectors, myComponent);
-        myTile1.setMyComponent(myComponent);
         Tile myTile2 = new Tile(1,0,connectors, myComponent);
-        myTile2.setMyComponent(myComponent);
         Tile myTile3 = new Tile(2,0,connectors, myComponent);
-        myTile3.setMyComponent(myComponent);
 
         Tile myTile4 = new Tile(3,0,connectors, myComponent);
-        myTile4.setMyComponent(new Engine(2));
+        Tile myTile5 = new Tile(3,0,connectors, new Shield(new ArrayList<>(), false));
 
 
 
         myShip.putTile(myTile1, new Position(4,4));
         myShip.putTile(myTile2, new Position(4,5));
+        myShip.getShipBoard()[4][5].getTile().setMyComponent(new LifeSupportSystem(AlienColor.BROWN));
+
         myShip.putTile(myTile2, new Position(3,4));
         myShip.putTile(myTile3, new Position(3,5));
+        myShip.getShipBoard()[3][5].getTile().setMyComponent(new ModularHousingUnit(AlienColor.PURPLE));
+        ((ModularHousingUnit)myShip.getShipBoard()[3][5].getTile().getMyComponent()).addPurpleAlien();
+
+
         myShip.putTile(myTile4, new Position(2,4));
+        myShip.putTile(myTile5, new Position(1,4));
 //
 //        myShip.removeTile(myTile2,new Position(4,5));
 //        myShip.brokenPositions.add(new Position(4,5));
-        myShip.removeTile(myTile3,new Position(3,4));
-        myShip.brokenPositions.add(new Position(3,4));
+
+        myShip.checkShip();
+        System.out.println(myShip.toString());
+
+        myShip.removeTile(myTile2,new Position(3,4));
 
 
         ArrayList<Slot[][]> tronconi = myShip.getTronc();
-        myShip.updateShipBoard(tronconi.get(1));
-        System.out.println(myShip.toString());
+
+        for (Slot[][] slots : tronconi) {
+            myShip.updateShipBoard(slots);
+            System.out.println(myShip.toString());
+        }
+
         assertEquals(2, tronconi.size());
 
     }

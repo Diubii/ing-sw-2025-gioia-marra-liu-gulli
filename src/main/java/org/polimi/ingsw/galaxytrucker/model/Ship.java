@@ -296,9 +296,10 @@ public class Ship {
                     } else storagePos.remove(pos);
                 }
             }
+            brokenPositions.add(pos);
+            getShipBoard()[pos.getY()][pos.getX()].removeTile();
 
         }
-        getShipBoard()[pos.getY()][pos.getX()].removeTile();
 
     }
 
@@ -380,7 +381,12 @@ public class Ship {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 7; j++) {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
-                    sb.append("[1] ");// Slot con Tile
+
+                    if (shipBoard[i][j].getTile().getWellConnected()){
+
+                        sb.append("[Y] ");// Slot con Tile
+
+                    }else sb.append("[N] ");
 //                    System.out.printf("FOUND %d %d\n", i, j);
                 } else if (shipBoard[i][j] != null && shipBoard[i][j].getTile() == null) {
                     int finalJ = j;

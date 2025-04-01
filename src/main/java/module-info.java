@@ -19,4 +19,5 @@ module org.polimi.ingsw.galaxytrucker {
     opens org.polimi.ingsw.galaxytrucker.model.utils to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.view.Gui;
     opens org.polimi.ingsw.galaxytrucker.view.Gui to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker.network.common; // 👈 aggiungi questa riga!
 }
