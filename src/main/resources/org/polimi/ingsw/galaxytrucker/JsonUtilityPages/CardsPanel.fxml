@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<VBox spacing="10" alignment="CENTER"  xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.polimi.ingsw.galaxytrucker.TileCardsJsonUtility">
+
+    <Label text="Gestione Carte" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+    <HBox spacing="20">
+        <VBox>
+            <Label text="Fronte Carta:"/>
+            <ImageView fx:id="imageViewFronte" fitWidth="150" fitHeight="200"/>
+            <Button text="Carica Fronte" onAction="#handleLoadFronte"/>
+        </VBox>
+
+        <VBox>
+            <Label text="Retro Carta:"/>
+            <ImageView fx:id="imageViewRetro" fitWidth="150" fitHeight="200"/>
+            <Button text="Carica Retro" onAction="#handleLoadRetro"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Nome Carta:"/>
+        <TextField fx:id="textFieldNomeCarta" promptText="Inserisci il nome..."/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Tipo Carta:"/>
+        <ComboBox fx:id="comboBoxTipoCarta">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Attacco"/>
+                    <String fx:value="Difesa"/>
+                    <String fx:value="Magia"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+
+    <Button text="Salva Carta" onAction="#handleSaveCarta"/>
+
+</VBox>

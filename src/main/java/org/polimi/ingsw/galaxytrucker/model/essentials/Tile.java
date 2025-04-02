@@ -1,21 +1,34 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Tile {
+public class Tile implements Serializable {
+
     private int id;
+
+
+
+    private String imagePath;
     private int Rotation;
     private boolean flipped;
     private ArrayList<Connector> sides;
     private int exposedConnectors;
     private Boolean used;
     private Boolean fixed;
-//    private Slot mySlot;
     private Component myComponent;
+    @JsonIgnore
+    //    private Slot mySlot;
     private Boolean wellConnected;
 
+
+    @JsonCreator
+    public Tile(){ }
 
     public Tile(int id,int rotation, ArrayList<Connector> s, Component c) {
         this.id = id;
@@ -41,6 +54,23 @@ public class Tile {
         this.myComponent = other.myComponent;
 //        this.mySlot = other.mySlot; // Se vuoi un riferimento al solito Slot, altrimenti escludilo
     }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setSides(ArrayList<Connector> sides) {
+        this.sides = sides;
+    }
+
 
     public void setMyComponent(Component myComponent1) {
         myComponent = myComponent1;
@@ -113,4 +143,18 @@ public class Tile {
     public void setWellConnected(Boolean wellConnected) {
         this.wellConnected = wellConnected;
     }
+
+
+
+    public void testPrint(){
+        System.out.print(this.id);
+        //System.out.print(this.myComponent.getName());
+        System.out.print(this.Rotation);
+        System.out.print(this.flipped);
+        System.out.print(this.sides);
+        System.out.print(this.exposedConnectors);
+        System.out.print(this.used);
+        System.out.println(this.fixed);
+    }
+
 }

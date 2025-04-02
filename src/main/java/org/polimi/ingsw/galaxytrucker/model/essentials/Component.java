@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
 
 /**
@@ -7,6 +9,7 @@ import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterfa
  * Each component has a name, a structural property, and a rotation value.
  */
 public  class Component {
+    @JsonIgnore
     /** The tile associated with the component. */
     private  Tile myTile;
 
@@ -16,6 +19,9 @@ public  class Component {
 
     /** The rotation of the component (in degrees). */
     protected int rotation = 0;
+
+    @JsonCreator
+    public Component() {}
 
     /**
      * Constructs a Component with the specified name and structural property.
