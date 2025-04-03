@@ -19,8 +19,6 @@ class ClientHandler implements Runnable {
     private Socket clientSocket;
     private ServerController serverController;
 
-
-
     public ClientHandler(Socket socket, GameNetworkModel model, ServerController controller) {
         this.clientSocket = socket;
         this.model = model;
@@ -31,7 +29,7 @@ class ClientHandler implements Runnable {
             this.output = new ObjectOutputStream(clientSocket.getOutputStream());
             this.input = new ObjectInputStream(clientSocket.getInputStream());
         } catch (IOException e) {
-            System.out.println("Error in ClientHandler");
+            System.out.println("Error in ClientHandler: " + e.getMessage());
         }
     }
 
@@ -39,26 +37,15 @@ class ClientHandler implements Runnable {
     public void run() {
         try {
             ConnectionManager();
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println("Client " + clientSocket.getInetAddress() + " connection dropped.");
         }
     }
 
-    private void ConnectionManager() throws IOException {
-        try {
-            while (!Thread.currentThread().isInterrupted()) {
-                synchronized (inputLock) {
-                    NetworkMessage message = (NetworkMessage) input.readObject();
-                    //logica per gestire i messaggi
-                    serverController.getMessageManager().handle(message);
-
-                }
-            }
-        } catch (ClassCastException | ClassNotFoundException e) {
-            System.out.println("Invalid stream from client");
-        } catch (TooManyPlayersException | PlayerAlreadyExistsException e) {
-            throw new RuntimeException(e);
+    private void ConnectionManager() throws IOException, ClassNotFoundException {
+        while(!Thread.currentThread().isInterrupted()) {
+            NetworkMessage nm = (NetworkMessage) input.readObject();
+            System.out.println(nm.toString());
         }
-        clientSocket.close();
     }
 }

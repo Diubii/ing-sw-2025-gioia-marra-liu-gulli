@@ -16,52 +16,21 @@ import java.util.concurrent.Executors;
 
 public class ClientController implements Observer {
 
-    private  Client client;
+    private  ClientSocket clientSocket;
     ClientPhaseController clientPhaseController;
-    private final ExecutorService taskQueue;
     private View view;
-
 
     public ClientController(View view) {
         this.view = view;
         clientPhaseController = new ClientPhaseController(this);
-        taskQueue = Executors.newSingleThreadExecutor();
     }
-
-
-
-
 
     @Override
     public void update(NetworkMessage message) throws IOException {
-        //da aggiungere l'if per RMI: uguale
-        System.out.println(message.accept(new ComponentNameVisitor()));
-        if (message.accept(new ComponentNameVisitor()).equals("SERVER_INFO")) {
-            System.out.println("SERVER_INFO SENT");
-            client = new ClientSocket(((SERVER_INFO)message).getAddress(),((SERVER_INFO)message).getPort());
-            ((ClientSocket)client).create(((SERVER_INFO)message).getAddress(),((SERVER_INFO)message).getPort() );
-            ((ClientSocket) client).addObserver(this);
-            ((ClientSocket) client).receiveMessage();
 
-        }
-
-
-        if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_REQUEST")) {
-            client.sendMessage(message);
-        }
-
-        if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_RESPONSE")) {
-            NICKNAME_RESPONSE nicknameResponse = (NICKNAME_RESPONSE) message;
-            if (nicknameResponse.getResponse().equals("VALID")){
-                clientPhaseController.handle();
-
-            }
-        }
     }
 
-    public Client getClient() {
-        return client;
+    public ClientSocket getClientSocket() {
+        return clientSocket;
     }
-
-
 }

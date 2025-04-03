@@ -17,13 +17,7 @@ public class MessageManager {
     }
     //logica
 
-    public  void handle(NetworkMessage message) throws TooManyPlayersException, PlayerAlreadyExistsException {
-        if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_REQUEST")) {
-            controller.nicknameRequest((NICKNAME_REQUEST) message);
-            ;
-        }
+    public void handle(NetworkMessage message) throws TooManyPlayersException, PlayerAlreadyExistsException {
+
     }
-
-
-
 }

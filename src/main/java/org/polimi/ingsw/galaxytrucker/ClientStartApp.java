@@ -35,7 +35,6 @@ public class ClientStartApp {
             ((Tui)myT).start(); //Cli
         }
 
-
         scanner.close();
     }
 

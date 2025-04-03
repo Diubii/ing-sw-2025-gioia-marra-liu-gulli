@@ -6,7 +6,7 @@ import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.enemies.*;
 
 public interface AdventureCardActivator {
-    void    activateAbandonedShip(AbandonedShip abandonedShip, Player player, FlightBoard flightBoard);
+    void    activateAbandonedShip(      AbandonedShip abandonedShip, Player player, FlightBoard flightBoard);
     void activateAbandonedStation(AbandonedStation abandonedStation, Player player, FlightBoard flightBoard);
     void       activateCombatZone(            CombatZone combatZone, Player player, FlightBoard flightBoard);
     void         activateEpidemic(                Epidemic epidemic, Player player, FlightBoard flightBoard);
