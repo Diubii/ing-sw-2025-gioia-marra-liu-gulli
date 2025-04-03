@@ -4,12 +4,13 @@ import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
+import java.io.Serializable;
 import java.net.Socket;
 
-public class NICKNAME_REQUEST extends NetworkMessage {
+public class NICKNAME_REQUEST extends NetworkMessage implements Serializable {
 
-    private String nickname;
-    private Socket socket;
+    private final String nickname;
+    private transient final Socket socket;
     private Boolean learningMatch = null;
 
     public NICKNAME_REQUEST(NetworkMessageType type, String nickname, Socket socket, Boolean flag) {

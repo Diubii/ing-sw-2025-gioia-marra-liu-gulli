@@ -5,6 +5,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class Observable {
 
@@ -18,7 +19,7 @@ public class Observable {
         observers.remove(observer);
     }
 
-    public void notifyObservers(NetworkMessage message) throws IOException {
+    public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException {
         for (Observer observer : observers) {
             observer.update(message);
         }

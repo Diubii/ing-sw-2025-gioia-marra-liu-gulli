@@ -9,6 +9,7 @@ import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,7 +47,7 @@ public class ClientSocket extends Observable implements Client {
                 }
                 try {
                     notifyObservers(message);
-                } catch (IOException e) {
+                } catch (IOException | ExecutionException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -60,6 +61,10 @@ public class ClientSocket extends Observable implements Client {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.readExecutionQueue = Executors.newSingleThreadExecutor();
+    }
+
+    public Socket getSocket(){
+        return socket;
     }
 
 

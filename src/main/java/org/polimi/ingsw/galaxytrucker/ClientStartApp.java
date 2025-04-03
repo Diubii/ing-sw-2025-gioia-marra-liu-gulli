@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 
 public class ClientStartApp {
 
-    public static void main(String[] args) throws ExecutionException, IOException {
+    public static void main(String[] args) throws ExecutionException, IOException, InterruptedException {
 
         //Aggiungere che se args contengono cli o gui ad esempio non chiede nemmeno e parte subito con quell'impostazione
         Scanner scanner = new Scanner(System.in);
@@ -31,12 +31,12 @@ public class ClientStartApp {
             controller = new ClientController(myT);
 
             myT = new Tui(System.out,flag, controller);
+            controller.setView(myT);
 
             ((Tui)myT).start(); //Cli
         }
 
 
-        scanner.close();
     }
 
 }

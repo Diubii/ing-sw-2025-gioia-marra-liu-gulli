@@ -1,28 +1,32 @@
 package org.polimi.ingsw.galaxytrucker.view.Tui;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
-import org.polimi.ingsw.galaxytrucker.view.Tui.util.ReadLine;
+import org.polimi.ingsw.galaxytrucker.observer.Observable;
+//import org.polimi.ingsw.galaxytrucker.view.Tui.util.ReadLine;
 import org.polimi.ingsw.galaxytrucker.view.View;
 
 
-public class Tui extends View {
+public class Tui extends Observable implements View {
 
 
+    private static final String STR_INPUT_CANCELED = "CAXX";
     private static PrintStream out;
-    private Thread inputThread;
-    private Boolean isSocket;
-    private ClientController clientController;
+    private final Boolean isSocket;
+    private final ClientController clientController;
+//    ReadLine readLine = new ReadLine();
+private static final Scanner scanner = new Scanner(System.in);
+    private static final Object inpuLock = new Object();
 
 
 
@@ -35,9 +39,29 @@ public class Tui extends View {
     }
 
 
+    public String readLine(String prompt) throws ExecutionException, InterruptedException {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        Future<String> future = executor.submit(() -> {
+            synchronized (inpuLock) {
+                System.out.print(prompt);
+                if (scanner.hasNextLine()) {
+                    return scanner.nextLine();
+                } else {
+                    throw new NoSuchElementException("Nessuna linea trovata.");
+                }
+            }
+        });
+
+        String input = future.get();
+        executor.shutdown();
+        return input;
+    }
 
 
-    public void start() throws ExecutionException, IOException {
+
+
+    public void start() throws ExecutionException, IOException, InterruptedException {
 
         String banner = "\033[1;34m" + // Colore Blu Chiaro
                 "   __    _   __    _   _  __ _  __  _____ ___  _ __  __  _    ___  ___    ___\n" +
@@ -48,10 +72,10 @@ public class Tui extends View {
 
         out.println(banner);
         if (isSocket) askSocketServerInfo();
-        else askRMIServerInfo();
+//        else askRMIServerInfo();
     }
 
-    public void askSocketServerInfo() throws ExecutionException, IOException {
+    public void askSocketServerInfo() throws ExecutionException, IOException, InterruptedException {
         Map<String, String> serverInfo = new HashMap<>();
         String defaultAddress = "localhost";
         String defaultPort = "5000";
@@ -59,9 +83,10 @@ public class Tui extends View {
 
         out.println("Please specify the following settings. The default value is shown between brackets.");
 
-        out.print("Enter the server address [" + defaultAddress + "]: ");
+    String prop = "Enter the server address [" + defaultAddress + "]: ";
 
-        String address = ReadLine.run(inputThread);
+
+        String address = readLine(prop);
 
         if (address.isEmpty()) {
             serverInfo.put("address", defaultAddress);
@@ -74,8 +99,10 @@ public class Tui extends View {
 //                validInput = false;
 //            }
 
-        out.print("Enter the server port [" + defaultPort + "]: ");
-        String port = ReadLine.run(inputThread);
+//        out.print("Enter the server port [" + defaultPort + "]: ");
+        String prompt = "Enter the server port [" + defaultPort + "]: ";
+        String port = readLine(prompt);
+
 
         if (port.equals("")) {
             serverInfo.put("port", defaultPort);
@@ -96,57 +123,64 @@ public class Tui extends View {
 
 
 
-    public void askRMIServerInfo() throws ExecutionException {
-        Map<String, String> serverInfo = new HashMap<>();
-        String defaultAddress = "localhost";
-        String defaultPort = "1099";
-        boolean validInput;
+//    public void askRMIServerInfo() throws ExecutionException {
+//        Map<String, String> serverInfo = new HashMap<>();
+//        String defaultAddress = "localhost";
+//        String defaultPort = "1099";
+//        boolean validInput;
+//
+//        out.println("Please specify the following settings. The default value is shown between brackets.");
+//
+//        out.print("Enter the server address [" + defaultAddress + "]: ");
+//
+//        String address = ReadLine.run();
+//
+//        if (address.isEmpty()) {
+//            serverInfo.put("address", defaultAddress);
+//        } else  {
+//            serverInfo.put("address", address);
+//        }
+////            else {
+////                out.println("Invalid address!");
+//////                clearCli();
+////                validInput = false;
+////            }
+//
+//        out.print("Enter the server port [" + defaultPort + "]: ");
+//        String port = ReadLine.run();
+//
+//        if (port.equals("")) {
+//            serverInfo.put("port", defaultPort);
+//            validInput = true;
+//        } else {
+//
+//            serverInfo.put("port", port);
+//            validInput = true;
+//        }
+//
+////                notifyObserver(obs -> obs.onUpdateServerInfo(serverInfo));
+//
+//
+//    }
 
-        out.println("Please specify the following settings. The default value is shown between brackets.");
 
-        out.print("Enter the server address [" + defaultAddress + "]: ");
+    public void askNickname() throws IOException, ExecutionException, InterruptedException {
+//        out.print("Enter your nickname: ");
 
-        String address = ReadLine.run(inputThread);
+//          BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+//        System.out.println("SI");
 
-        if (address.isEmpty()) {
-            serverInfo.put("address", defaultAddress);
-        } else  {
-            serverInfo.put("address", address);
-        }
-//            else {
-//                out.println("Invalid address!");
-////                clearCli();
-//                validInput = false;
-//            }
+              String nickname = readLine("Enter your nickname: ");
 
-        out.print("Enter the server port [" + defaultPort + "]: ");
-        String port = ReadLine.run(inputThread);
 
-        if (port.equals("")) {
-            serverInfo.put("port", defaultPort);
-            validInput = true;
-        } else {
 
-            serverInfo.put("port", port);
-            validInput = true;
-        }
+        NICKNAME_REQUEST nicknameRequest = new NICKNAME_REQUEST(NetworkMessageType.NICKNAME_REQUEST, nickname,clientController.getClient().getSocket(),true);
 
-//                notifyObserver(obs -> obs.onUpdateServerInfo(serverInfo));
-
+//            System.out.println(nicknameRequest.getNickname());
+            notifyObservers(nicknameRequest);
 
     }
 
-
-    public void askNickname(){
-        out.print("Enter your nickname: ");
-        try {
-            String nickname = ReadLine.run(inputThread);
-            NICKNAME_REQUEST nicknameRequest = new NICKNAME_REQUEST(NetworkMessageType.NICKNAME_REQUEST, nickname,clientController.)
-            notifyObservers(n);
-        } catch (ExecutionException e) {
-            out.println(STR_INPUT_CANCELED);
-        }
-    }
 
 }
 
