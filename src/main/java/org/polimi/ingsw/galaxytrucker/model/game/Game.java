@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class Game {
 
-    private final int nMaxPlayer;
+    private int nMaxPlayer;
 
     private GameState currentState;
 
@@ -63,7 +63,6 @@ public class Game {
 
 
         this.tileBunch = new TileBunch();
-        this.flightBoard = new FlightBoard(new ArrayList<>(), learningMatch);
 
         this.currentState = GameState.LOBBY;
 
@@ -71,6 +70,24 @@ public class Game {
 
     }
 
+    /*
+    * @authord nerd53
+    *
+    * creata funzione separata poiche non si sa se il gioco e' learningMatch fino a che il primo client non lo decide
+    * */
+
+    public void initFlightBoard(Boolean learningMatch){
+        this.flightBoard = new FlightBoard(new ArrayList<>(), learningMatch);
+
+    }
+
+    public void setLearningMatch(Boolean learningMatch){
+        this.learningMatch = learningMatch;
+    }
+
+    public void setnMaxPlayer(Integer nMaxPlayer){
+        this.nMaxPlayer = nMaxPlayer;
+    }
 
     public boolean isNicknameUsed(String nickname) {
         return usedNicknames.contains(nickname);

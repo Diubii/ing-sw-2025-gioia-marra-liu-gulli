@@ -1,8 +1,10 @@
 package org.polimi.ingsw.galaxytrucker.network.client.socket;
 
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
+import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.LOBBY_INFO;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 
@@ -30,8 +32,9 @@ public class ClientSocket extends Observable implements Client {
 
 @Override
  public void sendMessage(NetworkMessage message) throws IOException {
-     outputStream.writeObject(message);
-     outputStream.reset();
+    outputStream.writeObject(message);
+    outputStream.flush();  // << Aggiungi questo!
+    outputStream.reset();  // reset serve se mandi oggetti modificati
  }
 
     @Override
@@ -42,6 +45,14 @@ public class ClientSocket extends Observable implements Client {
                 NetworkMessage message = null;
                 try {
                     message = (NetworkMessage) inputStream.readObject();
+
+//                    if (message.accept(new ComponentNameVisitor()).equals("LOBBY_INFO")){
+//
+//                        LOBBY_INFO m2 = (LOBBY_INFO) message;
+//
+//                        System.out.println(m2.getIsFirst());
+//                    }
+
                 } catch (IOException | ClassNotFoundException e) {
                     readExecutionQueue.shutdownNow();
                 }

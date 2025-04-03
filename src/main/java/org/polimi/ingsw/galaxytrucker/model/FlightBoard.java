@@ -36,7 +36,9 @@ public class FlightBoard {
     public FlightBoard(List<Player> rankedplayers, boolean leaderMatch) {
         this.players = rankedplayers;
         this.learningMatch = leaderMatch;
-        this.leader = rankedplayers.get(0);
+
+        if (rankedplayers.size() > 0)         this.leader = rankedplayers.getFirst();
+        else this.leader = null;
         initializeFlightBoards(learningMatch);
     }
 

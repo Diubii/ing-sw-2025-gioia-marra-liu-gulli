@@ -19,7 +19,7 @@ public class MessageManager {
 
     public  void handle(NetworkMessage message) throws TooManyPlayersException, PlayerAlreadyExistsException {
         if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_REQUEST")) {
-            controller.nicknameRequest((NICKNAME_REQUEST) message);
+            controller.SocketNicknameRequest((NICKNAME_REQUEST) message);
             ;
         }
     }

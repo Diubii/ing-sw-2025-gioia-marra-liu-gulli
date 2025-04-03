@@ -22,6 +22,7 @@ public class ServerSocket implements Runnable {
             System.out.println("[Socket Server] In ascolto sulla porta " + PORT);
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
+                controller.addSocket(socket);
                 new Thread(new ClientHandler(socket, model,controller)).start();
             }
         } catch (IOException e) {

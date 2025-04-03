@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.concurrent.*;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
@@ -165,20 +166,27 @@ private static final Scanner scanner = new Scanner(System.in);
 
 
     public void askNickname() throws IOException, ExecutionException, InterruptedException {
-//        out.print("Enter your nickname: ");
-
-//          BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-//        System.out.println("SI");
 
               String nickname = readLine("Enter your nickname: ");
+        NICKNAME_REQUEST nicknameRequest = new NICKNAME_REQUEST(NetworkMessageType.NICKNAME_REQUEST, nickname,true);
 
-
-
-        NICKNAME_REQUEST nicknameRequest = new NICKNAME_REQUEST(NetworkMessageType.NICKNAME_REQUEST, nickname,clientController.getClient().getSocket(),true);
-
-//            System.out.println(nicknameRequest.getNickname());
             notifyObservers(nicknameRequest);
 
+    }
+
+
+
+
+    public void showGenericMessage(String message){
+        System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
+    }
+
+    @Override
+    public void askMaxPlayers() throws ExecutionException, InterruptedException, IOException {
+        String number = readLine("YOU ARE THE HOST \n INSERT MAX PLAYERS: ");
+//        NICKNAME_REQUEST nicknameRequest = new NICKNAME_REQUEST(NetworkMessageType.NICKNAME_REQUEST, nickname,true);
+
+        notifyObservers(number);
     }
 
 

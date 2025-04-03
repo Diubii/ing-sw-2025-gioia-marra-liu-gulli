@@ -14,7 +14,7 @@ public class ClientPhaseController {
         return phase;
     }
 
-    public void handle(){
+    public void nextPhase(){
         switch (phase){
             case START:
                 phase = PLAYER_PHASE.SERVER_INFO;

@@ -25,5 +25,11 @@ public class Observable {
         }
     }
 
+    public void notifyObservers(String message) throws IOException, ExecutionException {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+
 
 }

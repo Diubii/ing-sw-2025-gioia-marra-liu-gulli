@@ -27,4 +27,6 @@ public class SERVER_INFO extends NetworkMessage {
         return visitor.visit(this);
     }
 
+
+
 }

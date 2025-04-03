@@ -8,4 +8,6 @@ import java.util.concurrent.ExecutionException;
 public interface Observer {
 
     void update(NetworkMessage message) throws IOException, ExecutionException;
+    void update(String genericMessage);
+
 }
