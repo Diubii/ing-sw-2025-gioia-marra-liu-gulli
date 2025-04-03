@@ -15,13 +15,13 @@
     <HBox spacing="20">
         <VBox>
             <Label text="Fronte Carta:"/>
-            <ImageView fx:id="imageViewFronte" fitWidth="150" fitHeight="200"/>
+            <ImageView fx:id="imageViewFronte" fitWidth="331" fitHeight="508"/>
             <Button text="Carica Fronte" onAction="#handleLoadFronte"/>
         </VBox>
 
         <VBox>
             <Label text="Retro Carta:"/>
-            <ImageView fx:id="imageViewRetro" fitWidth="150" fitHeight="200"/>
+            <ImageView fx:id="imageViewRetro" fitWidth="331" fitHeight="508"/>
             <Button text="Carica Retro" onAction="#handleLoadRetro"/>
         </VBox>
     </HBox>

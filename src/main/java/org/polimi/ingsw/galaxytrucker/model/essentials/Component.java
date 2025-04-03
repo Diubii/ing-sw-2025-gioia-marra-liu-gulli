@@ -13,7 +13,7 @@ public  class Component {
     /** The tile associated with the component. */
     private  Tile myTile;
 
-//    private final String Name;
+    //private final String Name;
 
     private Boolean Structural;
 
@@ -21,7 +21,9 @@ public  class Component {
     protected int rotation = 0;
 
     @JsonCreator
-    public Component() {}
+    public Component() {
+
+    }
 
     /**
      * Constructs a Component with the specified name and structural property.
@@ -29,8 +31,6 @@ public  class Component {
      * @param structural .
      */
     public Component(Boolean structural) {
-//        this.Name = name;
-
         Structural = structural;
 
     }

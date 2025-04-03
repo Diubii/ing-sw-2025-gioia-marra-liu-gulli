@@ -10,11 +10,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Tile implements Serializable {
 
+    //Used even for finding the corresponding Image from 1 to 157
     private int id;
-
-
-
-    private String imagePath;
     private int Rotation;
     private boolean flipped;
     private ArrayList<Connector> sides;
@@ -55,13 +52,6 @@ public class Tile implements Serializable {
 //        this.mySlot = other.mySlot; // Se vuoi un riferimento al solito Slot, altrimenti escludilo
     }
 
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
 
     public void setId(int id) {
         this.id = id;
