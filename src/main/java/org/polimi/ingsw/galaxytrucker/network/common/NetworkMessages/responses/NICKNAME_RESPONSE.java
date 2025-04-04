@@ -1,11 +1,10 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses;
 
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.network.NetworkMessageVisitor;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.NetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 public class NICKNAME_RESPONSE extends NetworkMessage implements Serializable {
     private boolean available;
@@ -14,7 +13,7 @@ public class NICKNAME_RESPONSE extends NetworkMessage implements Serializable {
         this.available = available;
     }
 
-    public void accept(NetworkMessageVisitor visitor) {
+    public void accept(NetworkMessageVisitor visitor) throws RemoteException {
         visitor.getNicknameResponse(this);
     }
 }

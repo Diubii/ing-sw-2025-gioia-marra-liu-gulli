@@ -1,9 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.network.server;
 
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
-import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.network.NetworkMessageMethods;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.NetworkMessageMethods;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 

@@ -2,9 +2,7 @@ package org.polimi.ingsw.galaxytrucker.view.Tui;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
@@ -13,24 +11,28 @@ import java.util.concurrent.ExecutionException;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ConsoleColor;
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.NetworkMessageVisitor;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkingConstants;
 import org.polimi.ingsw.galaxytrucker.network.client.socket.ClientSocket;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
+import org.polimi.ingsw.galaxytrucker.network.server.ServerRMI;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.ReadLine;
 import org.polimi.ingsw.galaxytrucker.view.View;
-
 
 public class Tui extends View {
 
 
     private static PrintStream out;
     private Thread inputThread;
-    private Boolean isSocket;
+    private final Boolean isSocket;
     private ClientController clientController;
-    private Map<String, String> serverInfo = new HashMap<>();
+    private final Map<String, String> serverInfo = new HashMap<>();
     private ClientSocket clientSocket;
+    private ServerRMI serverRMI;
+    private NetworkMessageVisitor stub;
 
+    private final String defaultAddress;
+    private final String defaultPort;
 
 
     public Tui(PrintStream out, Boolean isSocket, ClientController controller) {
@@ -38,9 +40,12 @@ public class Tui extends View {
         this.isSocket = isSocket;
         this.clientController = controller;
         this.addObserver(clientController);
+
+        defaultAddress = isSocket ? NetworkingConstants.SOCKET_DEFAULT_ADDRESS : NetworkingConstants.RMI_DEFAULT_ADDRESS;
+        defaultPort = isSocket ? NetworkingConstants.SOCKET_DEFAULT_PORT : NetworkingConstants.RMI_DEFAULT_PORT;
     }
 
-    public void start() throws ExecutionException, IOException {
+    public void start() throws ExecutionException, IOException, NotBoundException {
         printBanner();
         askServerInfo();
         connectToServer();
@@ -57,16 +62,9 @@ public class Tui extends View {
 
         out.println(banner);
     }
-    private void askServerInfo() throws ExecutionException, IOException {
-        final String socketDefaultAddress = "localhost";
-        final String socketDefaultPort = "6969";
-
-        final String rmiDefaultAddress = "localhost";
-        final String rmiDefaultPort = "1009";
-
+    private void askServerInfo() throws ExecutionException {
         //Assegna l'indirizzo di default in base a Socket o RMI
-        final String defaultAddress = isSocket ? socketDefaultAddress : rmiDefaultAddress;
-        final String defaultPort = isSocket ? socketDefaultPort : rmiDefaultPort;
+
 
         out.println("Please specify the following settings. The default value is shown between brackets.");
 
@@ -86,20 +84,19 @@ public class Tui extends View {
         if (port.isEmpty()) serverInfo.put("port", defaultPort);
         else serverInfo.put("port", port);
     }
-    private void connectToServer() throws ExecutionException, IOException {
+    private void connectToServer() throws IOException, NotBoundException {
         if(isSocket){
             clientSocket = new ClientSocket(serverInfo.get("address"), Integer.parseInt(serverInfo.get("port")));
         }
         else{
             Registry registry = LocateRegistry.getRegistry(serverInfo.get("address"), Integer.parseInt(serverInfo.get("port")));
+            stub = (NetworkMessageVisitor) registry.lookup("server");
         }
     }
     private void askNickname() throws ExecutionException, IOException {
         out.print("Come ti chiami? ");
         String nickname = ReadLine.run(inputThread);
-        clientSocket.sendMessage(new NICKNAME_REQUEST(nickname));
+        if(isSocket) clientSocket.sendMessage(new NICKNAME_REQUEST(nickname));
+        else stub.getNicknameRequest(new NICKNAME_REQUEST(nickname));
     }
 }
-
-
-

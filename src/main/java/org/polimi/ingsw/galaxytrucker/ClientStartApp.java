@@ -7,12 +7,13 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.Tui;
 import org.polimi.ingsw.galaxytrucker.view.View;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 public class ClientStartApp {
 
-    public static void main(String[] args) throws ExecutionException, IOException {
+    public static void main(String[] args) throws ExecutionException, IOException, NotBoundException {
 
         //Aggiungere che se args contengono cli o gui ad esempio non chiede nemmeno e parte subito con quell'impostazione
         Scanner scanner = new Scanner(System.in);

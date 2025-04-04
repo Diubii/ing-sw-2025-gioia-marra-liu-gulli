@@ -1,9 +1,10 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
-import org.polimi.ingsw.galaxytrucker.network.NetworkMessageVisitor;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.NetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 public class NICKNAME_REQUEST extends NetworkMessage implements Serializable {
 
@@ -14,7 +15,7 @@ public class NICKNAME_REQUEST extends NetworkMessage implements Serializable {
     }
 
     @Override
-    public void accept(NetworkMessageVisitor visitor) {
+    public void accept(NetworkMessageVisitor visitor) throws RemoteException {
         visitor.getNicknameRequest(this);
     }
 
