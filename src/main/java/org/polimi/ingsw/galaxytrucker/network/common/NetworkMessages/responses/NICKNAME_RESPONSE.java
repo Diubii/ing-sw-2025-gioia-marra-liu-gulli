@@ -5,10 +5,13 @@ import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterfa
 import org.polimi.ingsw.galaxytrucker.network.NetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
-public class NICKNAME_RESPONSE extends NetworkMessage {
-    private String response;
-    public NICKNAME_RESPONSE(String response) {
-        this.response = response;
+import java.io.Serializable;
+
+public class NICKNAME_RESPONSE extends NetworkMessage implements Serializable {
+    private boolean available;
+
+    public NICKNAME_RESPONSE(boolean available) {
+        this.available = available;
     }
 
     public void accept(NetworkMessageVisitor visitor) {

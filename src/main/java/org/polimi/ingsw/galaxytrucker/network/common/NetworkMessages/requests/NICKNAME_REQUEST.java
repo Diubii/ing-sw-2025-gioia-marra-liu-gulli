@@ -3,7 +3,9 @@ package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 import org.polimi.ingsw.galaxytrucker.network.NetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
-public class NICKNAME_REQUEST extends NetworkMessage {
+import java.io.Serializable;
+
+public class NICKNAME_REQUEST extends NetworkMessage implements Serializable {
 
     private final String nickname;
 
@@ -14,5 +16,9 @@ public class NICKNAME_REQUEST extends NetworkMessage {
     @Override
     public void accept(NetworkMessageVisitor visitor) {
         visitor.getNicknameRequest(this);
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 }

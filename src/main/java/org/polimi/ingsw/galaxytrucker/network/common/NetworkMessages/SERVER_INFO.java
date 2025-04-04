@@ -4,14 +4,14 @@ import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
-public class SERVER_INFO extends NetworkMessage {
+public class SERVER_INFO /*extends NetworkMessage*/ {
 
     private final String address;
     private final int port;
 
 
     public SERVER_INFO(NetworkMessageType type,String address, int port) {
-        super(type);
+        super();
         this.address = address;
         this.port = port;
 

@@ -17,7 +17,7 @@ public class ServerController {
 
 
     public synchronized void nicknameRequest(NICKNAME_REQUEST message) throws TooManyPlayersException, PlayerAlreadyExistsException {
-        Boolean result = false;
+    /*    Boolean result = false;
         boolean flag = false;
 
         //get nickname & check
@@ -30,7 +30,7 @@ public class ServerController {
             System.out.println("[+] ADDED " + player.getNickName());
         }else  System.out.println("[+] NOT ADDED " + message.getNickname());
 
-
+        */
     }
 
     public MessageManager getMessageManager() {

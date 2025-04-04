@@ -16,6 +16,7 @@ import org.polimi.ingsw.galaxytrucker.enums.ConsoleColor;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.network.client.socket.ClientSocket;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.ReadLine;
 import org.polimi.ingsw.galaxytrucker.view.View;
 
@@ -28,6 +29,7 @@ public class Tui extends View {
     private Boolean isSocket;
     private ClientController clientController;
     private Map<String, String> serverInfo = new HashMap<>();
+    private ClientSocket clientSocket;
 
 
 
@@ -86,15 +88,16 @@ public class Tui extends View {
     }
     private void connectToServer() throws ExecutionException, IOException {
         if(isSocket){
-            new ClientSocket(serverInfo.get("address"), Integer.parseInt(serverInfo.get("port")));
+            clientSocket = new ClientSocket(serverInfo.get("address"), Integer.parseInt(serverInfo.get("port")));
         }
         else{
             Registry registry = LocateRegistry.getRegistry(serverInfo.get("address"), Integer.parseInt(serverInfo.get("port")));
         }
     }
-    private void askNickname() throws ExecutionException {
+    private void askNickname() throws ExecutionException, IOException {
         out.print("Come ti chiami? ");
         String nickname = ReadLine.run(inputThread);
+        clientSocket.sendMessage(new NICKNAME_REQUEST(nickname));
     }
 }
 

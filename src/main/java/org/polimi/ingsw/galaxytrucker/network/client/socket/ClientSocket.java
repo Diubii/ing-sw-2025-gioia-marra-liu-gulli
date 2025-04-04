@@ -32,6 +32,12 @@ public class ClientSocket extends Observable {
     }
 
     public void sendMessage(NetworkMessage message) throws IOException {
-        outputStream.writeObject(message);
+        try {
+            outputStream.writeObject(message);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            e.getMessage();
+        }
     }
 }
