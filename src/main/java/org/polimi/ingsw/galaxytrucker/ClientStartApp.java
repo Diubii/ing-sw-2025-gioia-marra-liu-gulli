@@ -28,7 +28,7 @@ public class ClientStartApp {
             GuiJavaFx.main(args); //JavaFx
         } else {
             Boolean flag = scelta2.equals("2");
-            controller = new ClientController(myT);
+            controller = new ClientController(myT, flag);
 
             myT = new Tui(System.out,flag, controller);
             controller.setView(myT);

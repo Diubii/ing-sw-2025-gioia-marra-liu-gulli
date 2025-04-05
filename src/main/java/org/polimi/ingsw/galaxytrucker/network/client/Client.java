@@ -6,13 +6,7 @@ import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import java.io.IOException;
 import java.net.Socket;
 
-public  interface Client  {
+public  interface Client {
 
-    void sendMessage(NetworkMessage message) throws IOException;
-
-    void receiveMessage();
-
-    void create(String address, int port) throws IOException;
-
-    public Socket getSocket();
+public void sendMessage(NetworkMessage message) throws IOException;
 }

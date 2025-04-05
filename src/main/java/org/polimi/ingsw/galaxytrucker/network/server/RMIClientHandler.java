@@ -1,0 +1,34 @@
+package org.polimi.ingsw.galaxytrucker.network.server;
+import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientInterfaceRMI;
+import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientRMI;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.view.Tui.Tui;
+import org.polimi.ingsw.galaxytrucker.view.Tui.TuiColor;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.concurrent.ExecutionException;
+
+public class RMIClientHandler implements ClientHandler {
+
+    private final ClientInterfaceRMI remoteClient;
+
+    public RMIClientHandler(ClientInterfaceRMI remoteClient) {
+        this.remoteClient = remoteClient;
+    }
+
+    @Override
+    public void sendMessage(NetworkMessage message) {
+        try {
+            remoteClient.receiveMessage(message);
+            System.out.println(TuiColor.BG_BLUE + "RESPONSE SENT " + message.accept(new ComponentNameVisitor()) + TuiColor.RESET );
+        } catch (RemoteException e) {
+            System.err.println("Errore nella comunicazione con il client RMI: " + e.getMessage());
+        } catch (IOException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+}

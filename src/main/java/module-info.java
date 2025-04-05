@@ -20,4 +20,7 @@ module org.polimi.ingsw.galaxytrucker {
     exports org.polimi.ingsw.galaxytrucker.view.Gui;
     opens org.polimi.ingsw.galaxytrucker.view.Gui to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.network.common; // 👈 aggiungi questa riga!
+    exports org.polimi.ingsw.galaxytrucker.network.server;
+    exports org.polimi.ingsw.galaxytrucker.network.client.rmi;
+    exports org.polimi.ingsw.galaxytrucker.observer;
 }

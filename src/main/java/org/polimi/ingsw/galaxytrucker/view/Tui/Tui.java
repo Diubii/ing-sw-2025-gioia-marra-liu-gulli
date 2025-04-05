@@ -2,23 +2,22 @@ package org.polimi.ingsw.galaxytrucker.view.Tui;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.*;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NUM_PLAYERS_REQUEST;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 //import org.polimi.ingsw.galaxytrucker.view.Tui.util.ReadLine;
+import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.View;
 
 
-public class Tui extends Observable implements View {
+public class Tui   implements View, Observable {
 
 
     private static final String STR_INPUT_CANCELED = "CAXX";
@@ -28,6 +27,8 @@ public class Tui extends Observable implements View {
 //    ReadLine readLine = new ReadLine();
 private static final Scanner scanner = new Scanner(System.in);
     private static final Object inpuLock = new Object();
+    private final ArrayList<Observer> observers = new ArrayList<>();
+
 
 
 
@@ -72,14 +73,17 @@ private static final Scanner scanner = new Scanner(System.in);
                 "\033[0m"; // Reset colore
 
         out.println(banner);
-        if (isSocket) askSocketServerInfo();
+            askServerInfo();
 //        else askRMIServerInfo();
     }
 
-    public void askSocketServerInfo() throws ExecutionException, IOException, InterruptedException {
+    public void askServerInfo() throws ExecutionException, IOException, InterruptedException {
         Map<String, String> serverInfo = new HashMap<>();
         String defaultAddress = "localhost";
         String defaultPort = "5000";
+
+        if (!isSocket) defaultPort = "1099";
+
         boolean validInput;
 
         out.println("Please specify the following settings. The default value is shown between brackets.");
@@ -94,13 +98,7 @@ private static final Scanner scanner = new Scanner(System.in);
         } else  {
             serverInfo.put("address", address);
         }
-//            else {
-//                out.println("Invalid address!");
-////                clearCli();
-//                validInput = false;
-//            }
 
-//        out.print("Enter the server port [" + defaultPort + "]: ");
         String prompt = "Enter the server port [" + defaultPort + "]: ";
         String port = readLine(prompt);
 
@@ -114,8 +112,6 @@ private static final Scanner scanner = new Scanner(System.in);
                 validInput = true;
             }
 
-//                notifyObserver(obs -> obs.onUpdateServerInfo(serverInfo));
-
         int numero = Integer.parseInt(serverInfo.get("port"));
         SERVER_INFO message = new SERVER_INFO(NetworkMessageType.SERVER_INFO, serverInfo.get("address"), numero );
                 notifyObservers(message);
@@ -124,45 +120,7 @@ private static final Scanner scanner = new Scanner(System.in);
 
 
 
-//    public void askRMIServerInfo() throws ExecutionException {
-//        Map<String, String> serverInfo = new HashMap<>();
-//        String defaultAddress = "localhost";
-//        String defaultPort = "1099";
-//        boolean validInput;
-//
-//        out.println("Please specify the following settings. The default value is shown between brackets.");
-//
-//        out.print("Enter the server address [" + defaultAddress + "]: ");
-//
-//        String address = ReadLine.run();
-//
-//        if (address.isEmpty()) {
-//            serverInfo.put("address", defaultAddress);
-//        } else  {
-//            serverInfo.put("address", address);
-//        }
-////            else {
-////                out.println("Invalid address!");
-//////                clearCli();
-////                validInput = false;
-////            }
-//
-//        out.print("Enter the server port [" + defaultPort + "]: ");
-//        String port = ReadLine.run();
-//
-//        if (port.equals("")) {
-//            serverInfo.put("port", defaultPort);
-//            validInput = true;
-//        } else {
-//
-//            serverInfo.put("port", port);
-//            validInput = true;
-//        }
-//
-////                notifyObserver(obs -> obs.onUpdateServerInfo(serverInfo));
-//
-//
-//    }
+
 
 
     public void askNickname() throws IOException, ExecutionException, InterruptedException {
@@ -183,13 +141,39 @@ private static final Scanner scanner = new Scanner(System.in);
 
     @Override
     public void askMaxPlayers() throws ExecutionException, InterruptedException, IOException {
-        String number = readLine("YOU ARE THE HOST \n INSERT MAX PLAYERS: ");
+        String number = readLine("You are the host \n Insert Max Players num: ");
+        String learningMatch  = readLine("Learning Match ?");
 //        NICKNAME_REQUEST nicknameRequest = new NICKNAME_REQUEST(NetworkMessageType.NICKNAME_REQUEST, nickname,true);
 
-        notifyObservers(number);
+        NUM_PLAYERS_REQUEST request = new NUM_PLAYERS_REQUEST(Integer.parseInt(number), Boolean.parseBoolean(learningMatch));
+        notifyObservers(request);
     }
 
 
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+
+    @Override
+    public void notifyObservers(String message) throws IOException, ExecutionException {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
 }
 
 

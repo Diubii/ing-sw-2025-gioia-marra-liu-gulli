@@ -7,11 +7,10 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.util.ArrayList;
 import java.util.Queue;
-import java.util.Set;
 
 /**
  * Classe di utilità che fornisce metodi per verificare la connettività di componenti nella nave.

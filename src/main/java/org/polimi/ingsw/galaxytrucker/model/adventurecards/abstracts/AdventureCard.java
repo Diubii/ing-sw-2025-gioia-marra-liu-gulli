@@ -2,7 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts;
 
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 /**
  * Represents an abstract adventure card with common properties and behavior.
  * Adventure cards may have various effects that influence gameplay.

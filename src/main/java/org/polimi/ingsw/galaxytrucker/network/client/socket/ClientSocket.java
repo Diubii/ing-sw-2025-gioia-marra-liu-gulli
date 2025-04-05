@@ -1,21 +1,19 @@
 package org.polimi.ingsw.galaxytrucker.network.client.socket;
 
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.LOBBY_INFO;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ClientSocket extends Observable implements Client {
+public class ClientSocket   implements Client, Observable {
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
@@ -23,6 +21,8 @@ public class ClientSocket extends Observable implements Client {
     String address;
     int port;
     private final ExecutorService taskQueue;
+    private final ArrayList<Observer> observers = new ArrayList<>();
+
 
     public ClientSocket(String address, Integer port) throws IOException {
     this.port = port;
@@ -30,14 +30,12 @@ public class ClientSocket extends Observable implements Client {
     taskQueue = Executors.newSingleThreadExecutor();
 }
 
-@Override
  public void sendMessage(NetworkMessage message) throws IOException {
     outputStream.writeObject(message);
     outputStream.flush();  // << Aggiungi questo!
     outputStream.reset();  // reset serve se mandi oggetti modificati
  }
 
-    @Override
     public void receiveMessage() {
         readExecutionQueue.execute(() -> {
 
@@ -65,7 +63,6 @@ public class ClientSocket extends Observable implements Client {
         });
     }
 
-    @Override
     public void create(String address, int port) throws IOException {
         this.socket = new Socket();
         this.socket.connect(new InetSocketAddress(address, port));
@@ -76,6 +73,30 @@ public class ClientSocket extends Observable implements Client {
 
     public Socket getSocket(){
         return socket;
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+
+    @Override
+    public void notifyObservers(String message) throws IOException, ExecutionException {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
     }
 
 

@@ -3,7 +3,7 @@ package org.polimi.ingsw.galaxytrucker.network.server;
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
@@ -17,9 +17,13 @@ public class MessageManager {
     }
     //logica
 
-    public  void handle(NetworkMessage message) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public  void handle(NetworkMessage message, ClientHandler clientHandler) {
         if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_REQUEST")) {
-            controller.SocketNicknameRequest((NICKNAME_REQUEST) message);
+            try {
+                controller.HandleNicknameRequest((NICKNAME_REQUEST) message,clientHandler);
+            } catch (TooManyPlayersException | PlayerAlreadyExistsException e) {
+                throw new RuntimeException(e);
+            }
             ;
         }
     }

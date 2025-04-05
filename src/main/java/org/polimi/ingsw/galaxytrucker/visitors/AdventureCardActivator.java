@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors;
 
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;

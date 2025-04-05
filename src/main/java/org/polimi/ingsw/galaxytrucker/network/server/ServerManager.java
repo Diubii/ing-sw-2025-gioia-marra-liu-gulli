@@ -12,7 +12,7 @@ public class ServerManager {
             ServerController serverController = new ServerController(model);
 
 
-            ServerRMI serverRMI = new ServerRMI(model, serverController);
+            ServerRMIInterface serverRMI = new ServerRMI(model, serverController);
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind("GameServer", serverRMI);
 

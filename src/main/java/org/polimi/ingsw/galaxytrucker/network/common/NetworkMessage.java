@@ -1,7 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.network.common;
 
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
