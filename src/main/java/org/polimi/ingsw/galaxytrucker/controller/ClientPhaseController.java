@@ -14,7 +14,7 @@ public class ClientPhaseController {
         return phase;
     }
 
-    public void handle(){
+    public void nextPhase(){
         switch (phase){
             case START:
                 phase = PLAYER_PHASE.SERVER_INFO;
@@ -25,6 +25,13 @@ public class ClientPhaseController {
                 break;
 
                 case NICKNAME_REQUEST:
+                    phase = PLAYER_PHASE.NUM_PLAYERS_REQ;
+                    break;
+
+                case NUM_PLAYERS_REQ:
+                    phase = PLAYER_PHASE.LOBBY;
+                    break;
+
         }    }
 
 

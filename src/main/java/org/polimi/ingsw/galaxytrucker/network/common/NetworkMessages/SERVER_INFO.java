@@ -1,7 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages;
 
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 public class SERVER_INFO /*extends NetworkMessage*/ {
@@ -26,5 +26,7 @@ public class SERVER_INFO /*extends NetworkMessage*/ {
     public String accept(ComponentNameVisitorInterface visitor) {
         return visitor.visit(this);
     }
+
+
 
 }

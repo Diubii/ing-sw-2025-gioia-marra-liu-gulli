@@ -1,171 +1,155 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+/**
+ * Represents the flight board that tracks player positions during the game.
+ * It manages player movement, lap progression, and leader updates.
+ */
 public class FlightBoard {
 
-    private final boolean learningMatch;
+    /** Indicates whether the match is a learning match. */
+    private boolean learningMatch;
+
+    /** The length of one lap in the flight track. */
     private int lapLength;
-    private Map<Player, Integer> playerPositions;
-    private Map<Player, Integer> playerLap;
+
+    /** A map storing the player's name and their current position on the board. */
+    private Map<String, Integer> playerPositions = new HashMap<String, Integer>();
+
+    /** A map storing the player's name and the number of laps completed. */
+    private Map<String, Integer> playerLap = new HashMap<String, Integer>();
+
+    /** The current leader of the race. */
     private Player leader;
+
+    /** The list of players participating in the race. */
     private List<Player> players;
-    private Set<String> gameoverPlayers;
 
-
-    public FlightBoard(List<Player> rankedplayers, boolean learningMatch) {
+    /**
+     * Constructs a FlightBoard instance and initializes player positions.
+     *
+     * @param rankedplayers The list of players ordered by rank.
+     * @param leaderMatch {@code true} if it is a learning match, otherwise {@code false}.
+     */
+    public FlightBoard(List<Player> rankedplayers, boolean leaderMatch) {
         this.players = rankedplayers;
-        this.learningMatch = learningMatch;
-        playerPositions = new HashMap<Player, Integer>();
-        playerLap = new HashMap<Player, Integer>();
-        initializeFlightBoards(learningMatch);
+        this.learningMatch = leaderMatch;
 
-        this.leader = rankedplayers.get(0);
-        gameoverPlayers = new HashSet<>();
+        if (rankedplayers.size() > 0)         this.leader = rankedplayers.getFirst();
+        else this.leader = null;
+        initializeFlightBoards(learningMatch);
     }
 
-
+    /**
+     * Initializes player positions and lap length based on the match type.
+     *
+     * @param learningMatch {@code true} if it is a learning match, otherwise {@code false}.
+     */
     private void initializeFlightBoards(boolean learningMatch) {
         if (learningMatch) {
             lapLength = 18;
             int position = 0;
             for (int i = players.size() - 1; i >= 0; i--) {
-                Player player = players.get(i);
+                String name = players.get(i).getNickName();
                 if (players.size() > 1 && i == 0) {
                     position++;
                 }
-                playerPositions.put(player, position);
-                playerLap.put(player, 0);
+                playerPositions.put(name, position);
+                playerLap.put(name, 0);
                 position++;
             }
 
-        } else
-        {
+        } else if (learningMatch) {
             lapLength = 24;
-            int position = 0;
+            int positionTwo = 0;
             for (int i = players.size() - 1; i >= 0; i--) {
-               Player player = players.get(i);
+                String name = players.get(i).getNickName();
                 if (players.size() > 1) {
                     if (i == 0) {
-                        position = position + 2;
+                        positionTwo = positionTwo + 2;
                     }
                     if (i == 1 && players.size() > 2) {
-                        position++;
+                        positionTwo++;
                     }
                 }
-                playerPositions.put(player, position);
-                playerLap.put(player, 0);
-                position++;
+                playerPositions.put(name, positionTwo);
+                playerLap.put(name, 0);
+                positionTwo++;
             }
         }
 
     }
 
     /**
+     * Moves a player by a specified amount on the board.
+     * If the player completes a lap, their lap count is updated.
+     * Also updates the leader and checks for overlapping positions.
      *
-     * @param player The player who needs to move.
+     * @param nickname The name of the player who needs to move.
      * @param amount The number of steps to move.
-     *   Functionality:
-     * Move the player.
-     * Call updateLeader to update the leader.
-     * Call checkOverlapping to check if there is overlapping.
-     * Incomplete: If there is a player on the position during the movement, skip that position first.
      */
-    public void moveBoard(Player player, int amount) {
-        if (!playerPositions.containsKey(player) )return;  // throw exception
+    public void moveBoard(String nickname, int amount) {
+        if (!playerPositions.containsKey(nickname)) return;
 
-        int currentPos = playerPositions.get(player);
-        int currentlap = playerLap.get(player);
-        int direction = amount >= 0 ? 1 : -1;
-        int stepsToMove = Math.abs(amount);
-        int movedSteps = 0;
-
-        while (movedSteps < stepsToMove) {
-            int nextPos = (currentPos + direction + lapLength) % lapLength;
-
-            // Check for lap change
-            if (direction > 0 && nextPos == 0) {
-                currentlap++;  // passed start point going forward
-            } else if (direction < 0 && currentPos == 0) {
-                currentlap--;  // passed start point going backward
-            }
-
-            // Check if next position is occupied
-            boolean isOccupied = false;
-            for (Map.Entry<Player, Integer> entry : playerPositions.entrySet()) {
-                if (!entry.getKey().equals(player.getNickName()) && entry.getValue() == nextPos) {
-                    isOccupied = true;
-                    break;
-                }
-            }
-
-            if (!isOccupied) {
-                currentPos = nextPos;
-                movedSteps++;
-            } else {
-                currentPos = nextPos; // still advance, but don't count the step
-            }
+        int oldPosition = playerPositions.get(nickname);
+        int newPosition = oldPosition + amount;
+        if (newPosition >= lapLength) {
+            int currentLap = playerLap.get(nickname);
+            currentLap++;
+            playerLap.put(nickname, currentLap);
+            newPosition %= lapLength;
+        }
+        if (newPosition < 0) {
+            newPosition = lapLength -1 + newPosition;
+            int currentLap = playerLap.get(nickname);
+            currentLap--;
+            playerLap.put(nickname, currentLap);
         }
 
-        playerPositions.put(player, currentPos);
-        playerLap.put(player, currentlap);
+        playerPositions.put(nickname, newPosition);
+        updateLeader();
+        checkOverLapping(nickname);
     }
 
 
-
-    public void updateOrder(List<Player> players) {
-
-            players.sort(Comparator
-                            .comparingInt((Player p) -> playerLap.get(p))
-                            .thenComparing(p -> playerPositions.get(p)).reversed());
+    /**
+     * Updates the current leader based on player positions.
+     * (Implementation needed)
+     */
+    private void updateLeader(){
+        Player newLeader = null;
+        return;
 
     }
 
-
-    public void checkOverLapping(List<Player> rankedplayers) {
-
-        int numPlayers =rankedplayers.size();
-
-        int positionFirst = playerPositions.get(rankedplayers.get(0));
-        int positionLast = playerPositions.get(rankedplayers.get(numPlayers-1));
-
-        int LapFirst = playerLap.get(rankedplayers.get(0));
-        int LapLast = playerLap.get(rankedplayers.get(numPlayers - 1));
-
-        while(((LapFirst == LapLast+1)&&(positionFirst > positionLast))|| LapFirst > (LapLast+1) ) {
-
-            playerLap.remove(rankedplayers.getLast());
-            playerPositions.remove(rankedplayers.getLast());
-            rankedplayers.removeLast();
-
-            Player lastPlayer = players.get(rankedplayers.size()-1);
-            LapLast = playerLap.get(lastPlayer);
-            positionLast = playerPositions.get(lastPlayer);
-        }
-
-        return ;
+    /**
+     * Checks if a player is overlapping with another player on the board.
+     * (Implementation needed)
+     *
+     * @param nickname The name of the player to check.
+     */
+    private void checkOverLapping(String nickname) {
+            return ;
     }
 
+    /**
+     * Gets the board position of a specific player.
+     *
+     * @param nickname The player's name.
+     * @return The player's current position on the board.
+     */
+    public int getBoardPosition(String nickname) {
+        return playerPositions.get(nickname);
+    }
 
-
-
+    /**
+     * Gets the current leader of the race.
+     *
+     * @return The leader player.
+     */
     public Player getLeader() {
-        return players.get(0);
-    }
-
-    public int getPlayerPositions(Player player) {
-        return playerPositions.get(player);
-    }
-
-    public int getPlayerLap(Player player) {
-        return playerLap.get(player);
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public int getLapLength() {
-        return lapLength;
+        return leader;
     }
 }

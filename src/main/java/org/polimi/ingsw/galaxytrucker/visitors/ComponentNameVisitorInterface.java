@@ -1,10 +1,12 @@
-package org.polimi.ingsw.galaxytrucker.model.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors;
 
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.LOBBY_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NUM_PLAYERS_REQUEST;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
 
 public interface ComponentNameVisitorInterface {
@@ -28,4 +30,8 @@ public interface ComponentNameVisitorInterface {
     String visit(NetworkMessage nicknameRequest);
 
     String visit(SERVER_INFO nicknameRequest);
+
+    String visit(LOBBY_INFO nicknameRequest);
+
+    String visit(NUM_PLAYERS_REQUEST nicknameRequest);
 }

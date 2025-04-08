@@ -5,24 +5,18 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
-public class Observable {
+public interface Observable {
 
-    private final ArrayList<Observer> observers = new ArrayList<>();
 
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
+    public void addObserver(Observer observer);
 
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
+    public void removeObserver(Observer observer);
 
-    public void notifyObservers(NetworkMessage message) throws IOException {
-        for (Observer observer : observers) {
-            observer.update(message);
-        }
-    }
+    public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException ;
+
+    public void notifyObservers(String message) throws IOException, ExecutionException;
 
 
 }

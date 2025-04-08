@@ -10,7 +10,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.util.*;
 

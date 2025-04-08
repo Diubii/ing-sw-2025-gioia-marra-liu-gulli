@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 /**
  * Represents a component in the game, which could be part of a ship .
