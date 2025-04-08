@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
-public class Printer {
+public class PrinterUtils {
     public static void printLabel(PrinterLabels label, TuiColor color) {
         System.out.print(color.toString() + "[" + label + "]" + TuiColor.RESET.toString() + " ");
     }
