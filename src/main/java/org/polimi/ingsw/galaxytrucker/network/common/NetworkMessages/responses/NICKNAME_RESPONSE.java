@@ -7,11 +7,11 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 public class NICKNAME_RESPONSE extends NetworkMessage {
     private String response;
     public NICKNAME_RESPONSE(String response) {
-        super(NetworkMessageType.NICKNAME_RESPONSE);
+        super();
         this.response = response;
     }
 
-    public String accept(ComponentNameVisitorInterface visitor) {
+    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
         return visitor.visit(this);
     }
 

@@ -1,12 +1,10 @@
 package org.polimi.ingsw.galaxytrucker.visitors;
 
+import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.LOBBY_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NUM_PLAYERS_REQUEST;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
 
 public interface ComponentNameVisitorInterface {
@@ -23,15 +21,10 @@ public interface ComponentNameVisitorInterface {
     String visit(ModularHousingUnit component);
     String visit(Shield component);
 
-    String visit(NICKNAME_REQUEST nicknameRequest);
-
-    String visit(NICKNAME_RESPONSE nicknameRequest);
-
-    String visit(NetworkMessage nicknameRequest);
-
-    String visit(SERVER_INFO nicknameRequest);
-
-    String visit(LOBBY_INFO nicknameRequest);
-
-    String visit(NUM_PLAYERS_REQUEST nicknameRequest);
+    NetworkMessageType visit(NicknameRequest nicknameRequest);
+    NetworkMessageType visit(NICKNAME_RESPONSE nicknameRequest);
+    NetworkMessageType visit(NetworkMessage nicknameRequest);
+    NetworkMessageType visit(CreateRoomRequest nicknameRequest);
+    NetworkMessageType visit(JoiniRoomOptionsRequest nicknameRequest);
+    NetworkMessageType visit(JoinRoomRequest nicknameRequest);
 }

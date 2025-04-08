@@ -13,7 +13,7 @@ public class NetworkMessage implements Serializable {
 
     private NetworkMessageType type;
 
-    public NetworkMessage(final NetworkMessageType type) {
+    public NetworkMessage() {
         this.type = type;
     }
 
@@ -21,7 +21,7 @@ public class NetworkMessage implements Serializable {
         return type;
     }
 
-    public String accept(ComponentNameVisitorInterface visitor) {
+    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
         return visitor.visit(this);
     }
 }

@@ -7,7 +7,8 @@ package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 public enum PrinterLabels {
     ServerRMI("RMI - Server"),
     ClientSocket("Socket - Client"),
-    ServerSocket("Socket - Server");
+    ServerSocket("Socket - Server"),
+    LobbyInfo("Lobby Info");
 
     private final String label;
 

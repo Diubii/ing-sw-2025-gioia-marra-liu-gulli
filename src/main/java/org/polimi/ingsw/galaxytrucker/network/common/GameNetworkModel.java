@@ -1,21 +1,17 @@
 package org.polimi.ingsw.galaxytrucker.network.common;
 
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameNetworkModel {
-    private final List<String> moves = new ArrayList<>();
-    private Game RealGame = null;
+    private Game RealGame;
 
-    public synchronized void addMove(String move) {
-        moves.add(move);
-    }
-
-    public synchronized List<String> getMoves() {
-        return new ArrayList<>(moves);
-    }
+    private final HashMap<String, Color> PlayerColors;
+    private Color nextAvailableColor;
 
     public void setRealGame(Game game) {
         RealGame = game;
@@ -24,4 +20,26 @@ public class GameNetworkModel {
     public Game getRealGame() {
         return RealGame;
     }
+
+    public GameNetworkModel() {
+        PlayerColors = new HashMap<>();
+        RealGame = new Game();
+        nextAvailableColor = Color.RED;
+    }
+
+    public HashMap<String, Color> getPlayerColors() {
+        return PlayerColors;
+    }
+
+    public Color useNextAvailableColor() {
+
+        Color temp = nextAvailableColor;
+
+        int nextIndex = temp.ordinal() + 1;
+        nextAvailableColor = Color.values()[nextIndex];
+
+        return temp;
+    }
+
+
 }

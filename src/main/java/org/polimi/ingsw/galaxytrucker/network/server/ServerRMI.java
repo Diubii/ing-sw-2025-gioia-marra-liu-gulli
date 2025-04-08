@@ -2,10 +2,8 @@ package org.polimi.ingsw.galaxytrucker.network.server;
 
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientInterfaceRMI;
-import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientRMI;
-import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.LOBBY_INFO;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,13 +11,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface {
-    private final GameNetworkModel model;
     ServerController controller;
     private final Map<ClientInterfaceRMI, ClientHandler> clientMap = new ConcurrentHashMap<>();
 
-    public ServerRMI(GameNetworkModel model, ServerController serverController) throws RemoteException {
+    public ServerRMI(ServerController serverController) throws RemoteException {
         super();
-        this.model = model;
         this.controller = serverController;
 
     }
@@ -45,21 +41,8 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
 
         synchronized (controller.getClients()){
             controller.addClient(handler);
-            Boolean flag = false;
+            System.out.println(TuiColor.GREEN + "CURRENT SERVER-WIDE PLAYERS NUM " + controller.getClients().size() + TuiColor.RESET);
 
-            LOBBY_INFO message = new LOBBY_INFO();
-            message.setIsFirst(false);
-
-            System.out.println("PLAYERS NUM " + controller.getClients().size());
-            if (controller.getClients().getFirst().equals(handler)) {
-
-                message.setIsFirst(true);
-//                    output.writeObject(model);
-                System.out.println("Client  connected. is first");
-
-            }
-
-            handler.sendMessage(message);
         }
         clientMap.put(clientStub, handler); // Salvi il riferimento
     }

@@ -9,7 +9,7 @@ import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NicknameRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NUM_PLAYERS_REQUEST;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 //import org.polimi.ingsw.galaxytrucker.view.Tui.util.ReadLine;
@@ -127,7 +127,7 @@ private static final Scanner scanner = new Scanner(System.in);
     public void askNickname() throws IOException, ExecutionException, InterruptedException {
 
               String nickname = readLine("Enter your nickname: ");
-        NICKNAME_REQUEST nicknameRequest = new NICKNAME_REQUEST(NetworkMessageType.NICKNAME_REQUEST, nickname,true);
+        NicknameRequest nicknameRequest = new NicknameRequest(NetworkMessageType.NICKNAME_REQUEST, nickname,true);
 
             notifyObservers(nicknameRequest);
 

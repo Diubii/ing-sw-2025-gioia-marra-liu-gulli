@@ -1,13 +1,11 @@
 package org.polimi.ingsw.galaxytrucker.visitors;
 
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
+import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.LOBBY_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NUM_PLAYERS_REQUEST;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
 
 public class ComponentNameVisitor implements ComponentNameVisitorInterface {
@@ -70,33 +68,38 @@ public class ComponentNameVisitor implements ComponentNameVisitorInterface {
     }
 
     @Override
-    public String visit(NICKNAME_REQUEST nicknameRequest) {
-        return "NICKNAME_REQUEST";
+    public NetworkMessageType visit(NicknameRequest nicknameRequest) {
+        return NetworkMessageType.NicknameRequest;
     }
 
     @Override
-    public String visit(NICKNAME_RESPONSE nicknameResponse) {
-        return "NICKNAME_RESPONSE";
+    public NetworkMessageType visit(NICKNAME_RESPONSE nicknameResponse) {
+        return NetworkMessageType.NicknameResponse;
     }
     @Override
-    public String visit(NetworkMessage nicknameRequest) {
-        return "NM";
+    public NetworkMessageType visit(NetworkMessage nicknameRequest) {
+        return NetworkMessageType.NetworkMessage;
+    }
+
+    //@Override
+    //public NetworkMessageType visit(SERVER_INFO nicknameRequest) {
+    //    return NetworkMessage;
+    //}
+
+    @Override
+    public NetworkMessageType visit(CreateRoomRequest nicknameRequest) {
+        return NetworkMessageType.CreateRoomRequest;
     }
 
     @Override
-    public String visit(SERVER_INFO nicknameRequest) {
-        return "SERVER_INFO";
+    public NetworkMessageType visit(JoinRoomRequest nicknameRequest) {
+        return NetworkMessageType.JoinRoomRequest;
     }
+
     @Override
-    public String visit(LOBBY_INFO nicknameRequest) {
-        return "LOBBY_INFO";
+    public NetworkMessageType visit(JoiniRoomOptionsRequest nicknameRequest) {
+        return NetworkMessageType.JoinRoomOptionsRequest;
     }
-
-   @Override
-   public String visit(NUM_PLAYERS_REQUEST nicknameRequest) {
-        return "NUM_PLAYERS_REQUEST";
-    }
-
 }
 
 

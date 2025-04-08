@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class Player {
 
-    private String nickname;
+    private final String nickname;
     private int nCredits;
 
     private Ship ship;

@@ -17,17 +17,17 @@ public class NUM_PLAYERS_REQUEST extends NetworkMessage implements Serializable 
 
     // ✅ Costruttore senza argomenti richiesto per la deserializzazione
     public NUM_PLAYERS_REQUEST() {
-        super(NetworkMessageType.NUM_PLAYERS_REQUEST); // o un default valido
+        super(); // o un default valido
     }
 
     // ✅ Costruttore che usi per creare il messaggio nel client
     public NUM_PLAYERS_REQUEST(Integer num, Boolean learningMatch) {
-        super(NetworkMessageType.NUM_PLAYERS_REQUEST);
+        super();
         this.learningMatch = learningMatch;
         this.num = num;
     }
 
-    public String accept(ComponentNameVisitorInterface visitor) {
+    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
         return visitor.visit(this);
     }
 

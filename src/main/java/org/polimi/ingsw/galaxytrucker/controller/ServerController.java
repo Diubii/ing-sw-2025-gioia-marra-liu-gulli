@@ -2,34 +2,41 @@ package org.polimi.ingsw.galaxytrucker.controller;
 
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NICKNAME_REQUEST;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.CreateRoomRequest;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.JoinRoomRequest;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.JoiniRoomOptionsRequest;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NicknameRequest;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.JoinRoomOptionsResponse;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.JoinRoomResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
-import org.polimi.ingsw.galaxytrucker.network.server.SocketClientHandler;
 import org.polimi.ingsw.galaxytrucker.network.server.MessageManager;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class ServerController {
-    private final GameNetworkModel model;
+
+    final ArrayList<GameNetworkModel> GameModels;
     private final MessageManager messageManager;
     private final ArrayList<ClientHandler> clients = new ArrayList<>();
+    private final ArrayList<String> usedNicknames = new ArrayList<>();
+    private final ArrayList<LobbyInfo> lobbyInfos = new ArrayList<>();
 
-    public ServerController(GameNetworkModel model) {
-        this.model = model;
-        messageManager = new MessageManager(model, this);
-        model.setRealGame(new Game(4, false));
+    public ServerController( ArrayList<GameNetworkModel> model) {
+        this.GameModels = model;
+        messageManager = new MessageManager(this.GameModels, this);
+
+
+
+//        model.setRealGame(new Game(4, false));
     }
 
-    public GameNetworkModel getModel() {
-        return model;
-    }
+
 
 
     public void addClient(ClientHandler client) {
@@ -45,7 +52,7 @@ public class ServerController {
     }
 
 
-    public synchronized void HandleNicknameRequest(NICKNAME_REQUEST message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public  void handleNicknameRequest(NicknameRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
         Boolean result = false;
         boolean flag = false;
 
@@ -54,28 +61,14 @@ public class ServerController {
         NICKNAME_RESPONSE nicknameResponse = new NICKNAME_RESPONSE(null);
 
 
-        synchronized (model) {
+        synchronized (usedNicknames) {
 
-            if (!model.getRealGame().isNicknameUsed(tempNick)) {
-
-                if (model.getRealGame().getNumPlayers() == 0) {
-                    model.getRealGame().setLearningMatch(true);
-                    if (message.getLearningMatch()) model.getRealGame().initFlightBoard(true);
-                    //controlli per gli input successivamente
-//
-
-                }
-
-                Player player = new Player(message.getNickname(), 0, 0, flag);
-                model.getRealGame().addPlayer(player);
-                System.out.println("[+] ADDED " + player.getNickName());
+            if (!usedNicknames.contains(tempNick)) {
+                usedNicknames.add(tempNick);
                 nicknameResponse.setResponse("VALID");
-
             } else {System.out.println("[+] NOT ADDED " + message.getNickname());
                 nicknameResponse.setResponse("INVALID");
             }
-
-
 
         }
 
@@ -84,9 +77,64 @@ public class ServerController {
 
     }
 
+
+    public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler){
+
+            GameNetworkModel newGame = new GameNetworkModel();
+            newGame.getPlayerColors().putIfAbsent(message.getNickName(), newGame.useNextAvailableColor());
+            newGame.getRealGame().setLearningMatch(message.getIsLearningMatch());
+            newGame.getRealGame().setnMaxPlayer(message.getMaxPlayers());
+
+            GameModels.add(newGame);
+            int index = GameModels.indexOf(newGame);
+            lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, index));
+
+    }
+
+    public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler){
+
+        JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos);
+        clientHandler.sendMessage(joinRoomOptionsResponse);
+    }
+
+    public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler){
+
+        String mess = "";
+
+        JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null);
+
+
+            GameNetworkModel myGame = GameModels.get(message.getRoomId());
+            synchronized (myGame){
+                if (myGame.getPlayerColors().size() == myGame.getRealGame().getMaxPlayers()){
+                    mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY NUMBER " + message.getRoomId() + "IS FULL");
+                    joinRoomResponse.setErrMess(mess);
+                    joinRoomResponse.setOperationSuccess(false);
+                } else {
+                    mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
+                    myGame.getPlayerColors().putIfAbsent(message.getNickName(), myGame.useNextAvailableColor());
+                    LobbyInfo myLobbyInfo = lobbyInfos.stream().filter(l -> l.getLobbyID() == message.getRoomId()).findFirst().orElse(null);
+                    joinRoomResponse.setErrMess(mess);
+                    joinRoomResponse.setOperationSuccess(true);
+
+                    if (myLobbyInfo != null) {
+                        myLobbyInfo.addConnectedPlayer();
+                    } else {
+                        mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY NOT FOUND :) " + message.getRoomId());
+                        joinRoomResponse.setOperationSuccess(false);
+
+                    }
+                }
+            }
+
+            clientHandler.sendMessage(joinRoomResponse);
+    }
+
     public MessageManager getMessageManager() {
         return messageManager;
     }
+
+
 
 
 }

@@ -50,24 +50,19 @@ public class Game {
      */
 
 
-    public Game(int nMaxPlayer,boolean learningMatch) {
-        this.nMaxPlayer = nMaxPlayer;
+    public Game() {
+        this.nMaxPlayer = 4;
         this.playerMap = new HashMap<>();
         this.playerShip = new HashMap<>();
         this.usedNicknames = new HashSet<>();
         this.playerOrder = new HashMap<>();
-
-
+        this.learningMatch = false;
 
         this.decks = new ArrayList<>();
-
 
         this.tileBunch = new TileBunch();
 
         this.currentState = GameState.LOBBY;
-
-
-
     }
 
     /*
@@ -76,7 +71,7 @@ public class Game {
     * creata funzione separata poiche non si sa se il gioco e' learningMatch fino a che il primo client non lo decide
     * */
 
-    public void initFlightBoard(Boolean learningMatch){
+    public void initFlightBoard(){
         this.flightBoard = new FlightBoard(new ArrayList<>(), learningMatch);
 
     }
@@ -160,6 +155,10 @@ public class Game {
 
     public GameState getCurrentState() {
         return currentState;
+    }
+
+    public Integer getMaxPlayers(){
+        return nMaxPlayer;
     }
 }
 
