@@ -1,14 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.network.client.rmi;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
-import org.polimi.ingsw.galaxytrucker.network.client.Client;
-import org.polimi.ingsw.galaxytrucker.network.common.GameInterface;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.server.RMIClientHandler;
-import org.polimi.ingsw.galaxytrucker.network.server.ServerRMI;
 
 import java.io.IOException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -16,12 +11,9 @@ import java.rmi.registry.Registry;
 import org.polimi.ingsw.galaxytrucker.network.server.ServerRMIInterface;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
-import org.polimi.ingsw.galaxytrucker.view.Tui.TuiColor;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI, Observable {

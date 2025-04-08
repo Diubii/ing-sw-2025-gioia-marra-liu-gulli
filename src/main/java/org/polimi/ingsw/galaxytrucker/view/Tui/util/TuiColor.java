@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.view.Tui;
+package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
 public enum TuiColor {
     // Colori base

@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.enums;
+package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
 /**
  * This enum provides colors to use in a console in ANSI format. At each value is assigned a String.

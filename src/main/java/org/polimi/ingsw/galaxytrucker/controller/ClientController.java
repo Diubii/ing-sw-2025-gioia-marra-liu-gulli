@@ -1,6 +1,5 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
-import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientRMI;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.network.client.Client;
@@ -10,7 +9,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.LOBBY_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
-import org.polimi.ingsw.galaxytrucker.view.Tui.TuiColor;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import org.polimi.ingsw.galaxytrucker.view.View;
 
 import java.io.FilterInputStream;

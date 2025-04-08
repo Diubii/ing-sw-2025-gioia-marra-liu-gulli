@@ -14,6 +14,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NU
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 //import org.polimi.ingsw.galaxytrucker.view.Tui.util.ReadLine;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import org.polimi.ingsw.galaxytrucker.view.View;
 
 
