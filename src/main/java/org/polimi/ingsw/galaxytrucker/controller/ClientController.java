@@ -5,7 +5,6 @@ import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.client.socket.ClientSocket;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.LOBBY_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
@@ -76,7 +75,6 @@ public class ClientController implements Observer {
                 new Thread(() -> {
                     try {
                         view.askNickname();
-                        nicknameAsked.complete(null);// Segnalo che ho finito
                     } catch (IOException | ExecutionException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -90,7 +88,6 @@ public class ClientController implements Observer {
                 new Thread(() -> {
                     try {
                         view.askNickname();
-                        nicknameAsked.complete(null);// Segnalo che ho finito
                     } catch (IOException | ExecutionException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }

@@ -160,6 +160,10 @@ public class Game {
     public Integer getMaxPlayers(){
         return nMaxPlayer;
     }
+
+    public Boolean getIsLearningMatch(){
+        return learningMatch;
+    }
 }
 
 

@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.controller;
 
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.CreateRoomRequest;
@@ -78,12 +79,16 @@ public class ServerController {
     }
 
 
-    public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler){
+    public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
 
             GameNetworkModel newGame = new GameNetworkModel();
+            Player myPlayer = new Player(message.getNickName(), 0, 0, message.getIsLearningMatch());
+
             newGame.getPlayerColors().putIfAbsent(message.getNickName(), newGame.useNextAvailableColor());
             newGame.getRealGame().setLearningMatch(message.getIsLearningMatch());
             newGame.getRealGame().setnMaxPlayer(message.getMaxPlayers());
+            newGame.getRealGame().addPlayer(myPlayer);
+            newGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
 
             GameModels.add(newGame);
             int index = GameModels.indexOf(newGame);
@@ -97,28 +102,40 @@ public class ServerController {
         clientHandler.sendMessage(joinRoomOptionsResponse);
     }
 
-    public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler){
+    public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
 
         String mess = "";
 
         JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null);
+        ArrayList<ClientHandler> playersHandlers = new ArrayList<>();
+        Boolean result = false;
 
 
-            GameNetworkModel myGame = GameModels.get(message.getRoomId());
+
+        GameNetworkModel myGame = GameModels.get(message.getRoomId());
             synchronized (myGame){
                 if (myGame.getPlayerColors().size() == myGame.getRealGame().getMaxPlayers()){
                     mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY NUMBER " + message.getRoomId() + "IS FULL");
                     joinRoomResponse.setErrMess(mess);
                     joinRoomResponse.setOperationSuccess(false);
                 } else {
+
+                    Player myPlayer = new Player(message.getNickName(),0, 0, myGame.getRealGame().getIsLearningMatch());
                     mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
+                     playersHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
+
                     myGame.getPlayerColors().putIfAbsent(message.getNickName(), myGame.useNextAvailableColor());
+                    myGame.getRealGame().addPlayer(myPlayer);
+                    myGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
+
+
                     LobbyInfo myLobbyInfo = lobbyInfos.stream().filter(l -> l.getLobbyID() == message.getRoomId()).findFirst().orElse(null);
                     joinRoomResponse.setErrMess(mess);
                     joinRoomResponse.setOperationSuccess(true);
 
                     if (myLobbyInfo != null) {
                         myLobbyInfo.addConnectedPlayer();
+                        result = true;
                     } else {
                         mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY NOT FOUND :) " + message.getRoomId());
                         joinRoomResponse.setOperationSuccess(false);
@@ -128,6 +145,14 @@ public class ServerController {
             }
 
             clientHandler.sendMessage(joinRoomResponse);
+            //others
+//        if (result) {
+//            for (ClientHandler c: playersHandlers) {
+//                c.sendMessage(PlayerConnected);
+//            }
+//        }
+
+
     }
 
     public MessageManager getMessageManager() {
