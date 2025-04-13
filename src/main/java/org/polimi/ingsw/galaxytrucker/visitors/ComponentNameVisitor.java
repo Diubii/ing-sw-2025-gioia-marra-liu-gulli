@@ -6,7 +6,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
 
 public class ComponentNameVisitor implements ComponentNameVisitorInterface {
     @Override
@@ -73,7 +73,7 @@ public class ComponentNameVisitor implements ComponentNameVisitorInterface {
     }
 
     @Override
-    public NetworkMessageType visit(NICKNAME_RESPONSE nicknameResponse) {
+    public NetworkMessageType visit(NicknameResponse nicknameResponse) {
         return NetworkMessageType.NicknameResponse;
     }
     @Override
@@ -100,6 +100,12 @@ public class ComponentNameVisitor implements ComponentNameVisitorInterface {
     public NetworkMessageType visit(JoiniRoomOptionsRequest nicknameRequest) {
         return NetworkMessageType.JoinRoomOptionsRequest;
     }
+
+    @Override
+    public NetworkMessageType visit(DrawTileRequest nicknameRequest) {
+        return NetworkMessageType.DrawTileRequest;
+    }
+
 }
 
 

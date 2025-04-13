@@ -4,13 +4,10 @@ import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.CreateRoomRequest;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.JoinRoomRequest;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.JoiniRoomOptionsRequest;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NicknameRequest;
 
 import java.util.ArrayList;
 
@@ -24,7 +21,7 @@ public class MessageManager {
     }
     //logica
 
-    public  void handle(NetworkMessage message, ClientHandler clientHandler) {
+    public  void handle(NetworkMessage message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
 
 
         if (message.accept(new ComponentNameVisitor()).equals(NetworkMessageType.NicknameRequest)) {
@@ -48,6 +45,15 @@ public class MessageManager {
         if (message.accept(new ComponentNameVisitor()).equals(NetworkMessageType.JoinRoomOptionsRequest)){
             controller.handleJoinRoomOptionsRequest((JoiniRoomOptionsRequest) message, clientHandler);
         }
+
+        if (message.accept(new ComponentNameVisitor()).equals(NetworkMessageType.DrawTileRequest)){
+
+            controller.handleDrawTileRequest((DrawTileRequest) message, clientHandler);
+        }
+
+
+
+
 
 
 

@@ -1,7 +1,10 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
 
+import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.Engine;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,7 +25,7 @@ public class TileBunch {
         this.faceUpTiles = new ArrayList<>();
         this.tiles = new ArrayList<>();
         generateTiles();
-        getFaceUpTiles();
+//        getFaceUpTiles();
     }
 
     /**
@@ -32,8 +35,16 @@ public class TileBunch {
     private void generateTiles() {
         int tiles_size = 152;
         for (int i = 0; i < tiles_size; i++) {
-            int randomRotation = rand.nextInt(4)*90;
-            //tiles.add(new Tile(i, randomRotation));
+            //esempio per creazione solo a fine di testing
+//            int randomRotation = rand.nextInt(4)*90;
+            BatterySlot batterySlot = new BatterySlot(2);
+            ArrayList<Connector> connectors = new ArrayList<>();
+            connectors.add(Connector.UNIVERSAL);
+            connectors.add(Connector.UNIVERSAL);
+            connectors.add(Connector.UNIVERSAL);
+            connectors.add(Connector.UNIVERSAL);
+            Tile myTile = new Tile(i, 0, connectors, batterySlot);
+            tiles.add(myTile);
         }
     }
 
@@ -45,7 +56,10 @@ public class TileBunch {
         if (!faceUpTiles.isEmpty()) {
             for (Tile tile : faceUpTiles) {
                 if (tile.getId()== id) {
-                    return tile;
+
+                    Tile myTile = tile;
+                    faceUpTiles.remove(tile);
+                    return myTile;
                 }
             }
         }

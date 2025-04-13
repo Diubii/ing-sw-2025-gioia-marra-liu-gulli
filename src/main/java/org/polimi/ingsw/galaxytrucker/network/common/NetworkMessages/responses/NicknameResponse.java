@@ -4,9 +4,9 @@ import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
-public class NICKNAME_RESPONSE extends NetworkMessage {
+public class NicknameResponse extends NetworkMessage {
     private String response;
-    public NICKNAME_RESPONSE(String response) {
+    public NicknameResponse(String response) {
         super();
         this.response = response;
     }

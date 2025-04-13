@@ -5,7 +5,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
 
 public interface ComponentNameVisitorInterface {
     String visit(Component component);
@@ -22,9 +22,11 @@ public interface ComponentNameVisitorInterface {
     String visit(Shield component);
 
     NetworkMessageType visit(NicknameRequest nicknameRequest);
-    NetworkMessageType visit(NICKNAME_RESPONSE nicknameRequest);
+    NetworkMessageType visit(NicknameResponse nicknameRequest);
     NetworkMessageType visit(NetworkMessage nicknameRequest);
     NetworkMessageType visit(CreateRoomRequest nicknameRequest);
     NetworkMessageType visit(JoiniRoomOptionsRequest nicknameRequest);
     NetworkMessageType visit(JoinRoomRequest nicknameRequest);
+
+    NetworkMessageType visit(DrawTileRequest nicknameRequest);
 }

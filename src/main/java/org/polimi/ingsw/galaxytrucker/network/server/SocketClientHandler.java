@@ -1,6 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.network.server;
 
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 import java.io.*;
@@ -52,7 +54,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
 
                 }
             }
-        } catch (ClassCastException | ClassNotFoundException e) {
+        } catch (ClassCastException | ClassNotFoundException | TooManyPlayersException | PlayerAlreadyExistsException e) {
             System.out.println("Invalid stream from client");
         }
         clientSocket.close();

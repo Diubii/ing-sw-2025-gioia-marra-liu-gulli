@@ -23,7 +23,7 @@ public class SERVER_INFO extends NetworkMessage {
         return port;
     }
 
-    public String accept(ComponentNameVisitorInterface visitor) {
+    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
         return visitor.visit(this);
     }
 

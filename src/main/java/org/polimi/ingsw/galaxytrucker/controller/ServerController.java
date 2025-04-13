@@ -1,17 +1,14 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.CreateRoomRequest;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.JoinRoomRequest;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.JoiniRoomOptionsRequest;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NicknameRequest;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.JoinRoomOptionsResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.JoinRoomResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.network.server.MessageManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
@@ -19,6 +16,7 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ServerController {
 
@@ -59,7 +57,7 @@ public class ServerController {
 
         //get nickname & check
         String tempNick = message.getNickname();
-        NICKNAME_RESPONSE nicknameResponse = new NICKNAME_RESPONSE(null);
+        NicknameResponse nicknameResponse = new NicknameResponse(null);
 
 
         synchronized (usedNicknames) {
@@ -105,10 +103,12 @@ public class ServerController {
     public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
 
         String mess = "";
+        LobbyInfo myLobbyInfo;
 
         JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null);
         ArrayList<ClientHandler> playersHandlers = new ArrayList<>();
-        Boolean result = false;
+        boolean result = false;
+        PlayerJoinedUpdate playerJoinedUpdate = null;
 
 
 
@@ -122,14 +122,21 @@ public class ServerController {
 
                     Player myPlayer = new Player(message.getNickName(),0, 0, myGame.getRealGame().getIsLearningMatch());
                     mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
-                     playersHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
+                    playersHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
 
                     myGame.getPlayerColors().putIfAbsent(message.getNickName(), myGame.useNextAvailableColor());
+
                     myGame.getRealGame().addPlayer(myPlayer);
                     myGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
 
+                    ArrayList<Player> players = (ArrayList<Player>) myGame.getRealGame().getPlayers();
+                    HashMap<String, Color> playerInfo = myGame.getPlayerColors();
+                    playerJoinedUpdate = new PlayerJoinedUpdate(players, playerInfo);
 
-                    LobbyInfo myLobbyInfo = lobbyInfos.stream().filter(l -> l.getLobbyID() == message.getRoomId()).findFirst().orElse(null);
+
+                    synchronized (lobbyInfos) {
+                        myLobbyInfo = lobbyInfos.stream().filter(l -> l.getLobbyID() == message.getRoomId()).findFirst().orElse(null);
+                    }
                     joinRoomResponse.setErrMess(mess);
                     joinRoomResponse.setOperationSuccess(true);
 
@@ -142,15 +149,28 @@ public class ServerController {
 
                     }
                 }
+
+                //fine synchronzied e
+
+
+                //se tutto e' andato bene
+                if (result) {
+                    for (ClientHandler c: playersHandlers) {
+                        c.sendMessage(playerJoinedUpdate);
+                    }
+
+                    //dopo aver mandato la notifica di connessione vedo se ho raggiunto il numero massimo di player per la lobby
+                    //e starto il gioco automaticamente lato server
+
+                    if (myGame.getRealGame().getMaxPlayers() == myGame.getRealGame().getPlayers().size()) {
+
+                    }
+                }
             }
 
             clientHandler.sendMessage(joinRoomResponse);
-            //others
-//        if (result) {
-//            for (ClientHandler c: playersHandlers) {
-//                c.sendMessage(PlayerConnected);
-//            }
-//        }
+
+
 
 
     }
@@ -158,6 +178,50 @@ public class ServerController {
     public MessageManager getMessageManager() {
         return messageManager;
     }
+
+    public GameNetworkModel getGameFromHandler(ClientHandler clientHandler){
+
+        return GameModels.stream().filter(gameModel ->
+             gameModel.getPlayerHandlers().containsValue(clientHandler)).findFirst().orElse(null);
+    }
+
+    public void handleDrawTileRequest(DrawTileRequest message, ClientHandler clientHandler){
+        //il client mi chiede una Tile, e devo restituirla
+        GameNetworkModel myGame = getGameFromHandler(clientHandler);
+        Tile myTile = null;
+        TileDrawnResponse tileDrawnResponse;
+
+        synchronized (myGame.getTileBunch()){
+             if (message.getTileId() == -1){
+
+                 myTile = myGame.getTileBunch().drawFaceUpTile(message.getTileId());
+                 if (myTile == null){
+                     tileDrawnResponse = new TileDrawnResponse(null);
+                     tileDrawnResponse.setErrorMessage("ALREADY TAKEN!");
+                 } else {
+                     tileDrawnResponse = new TileDrawnResponse(myTile);
+                     tileDrawnResponse.setErrorMessage("VALID");
+                 }
+
+             } else {
+
+                 myTile = myGame.getTileBunch().drawTile();
+                 if (myTile == null){
+                     tileDrawnResponse = new TileDrawnResponse(null);
+                     tileDrawnResponse.setErrorMessage("EMPTY");
+                 } else {
+                     tileDrawnResponse = new TileDrawnResponse(myTile);
+                     tileDrawnResponse.setErrorMessage("VALID");
+                 }
+
+             }
+
+        }
+        clientHandler.sendMessage(tileDrawnResponse);
+
+
+    }
+
 
 
 

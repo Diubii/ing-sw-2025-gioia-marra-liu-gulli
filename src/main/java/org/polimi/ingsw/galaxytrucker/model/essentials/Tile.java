@@ -2,9 +2,15 @@ package org.polimi.ingsw.galaxytrucker.model.essentials;
 
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Tile {
+public class Tile implements Serializable {
+
+   @Serial
+   private static final long serialVersionUID = 535L;
+
     private int id;
     private int Rotation;
     private boolean flipped;

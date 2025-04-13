@@ -1,6 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.network.common;
 
+import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.model.TileBunch;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
@@ -14,6 +17,8 @@ public class GameNetworkModel {
     private final HashMap<String, Color> PlayerColors;
     private Color nextAvailableColor;
     private final HashMap<String, ClientHandler> PlayerHandlers = new HashMap<>();
+    private TileBunch tileBunch = null;
+    private GameController gameController;
 
 
     public void setRealGame(Game game) {
@@ -28,6 +33,8 @@ public class GameNetworkModel {
         PlayerColors = new HashMap<>();
         RealGame = new Game();
         nextAvailableColor = Color.RED;
+        tileBunch = new TileBunch();
+        gameController = new GameController(this);
     }
 
     public HashMap<String, Color> getPlayerColors() {
@@ -54,6 +61,11 @@ public class GameNetworkModel {
 
     public HashMap<String, ClientHandler> getPlayerHandlers() {
         return PlayerHandlers;
+    }
+
+
+    public TileBunch getTileBunch() {
+        return tileBunch;
     }
 
 

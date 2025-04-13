@@ -6,7 +6,7 @@ import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.client.socket.ClientSocket;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import org.polimi.ingsw.galaxytrucker.view.View;
@@ -130,7 +130,7 @@ public class ClientController implements Observer {
         }
 
         if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_RESPONSE")) {
-            NICKNAME_RESPONSE nicknameResponse = (NICKNAME_RESPONSE) message;
+            NicknameResponse nicknameResponse = (NicknameResponse) message;
             if (nicknameResponse.getResponse().equals("VALID")){
 //                System.out.println("[+]VALID!");
                 clientPhaseController.nextPhase();

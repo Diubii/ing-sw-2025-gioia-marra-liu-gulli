@@ -1,7 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages;
 
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NicknameRequest;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NICKNAME_RESPONSE;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -17,7 +17,7 @@ public class NetworkMessageMethods extends UnicastRemoteObject implements Networ
         System.out.println("Got nickname request: " + nickReq.getNickname());
     }
 
-    public void getNicknameResponse(NICKNAME_RESPONSE nickRes) throws RemoteException {
+    public void getNicknameResponse(NicknameResponse nickRes) throws RemoteException {
         System.out.println("Got nickname response");
     }
 }
