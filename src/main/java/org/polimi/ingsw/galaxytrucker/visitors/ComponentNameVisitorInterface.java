@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameStartedUpdate;
 
 public interface ComponentNameVisitorInterface {
     String visit(Component component);
@@ -20,13 +21,4 @@ public interface ComponentNameVisitorInterface {
     String visit(LifeSupportSystem component);
     String visit(ModularHousingUnit component);
     String visit(Shield component);
-
-    NetworkMessageType visit(NicknameRequest nicknameRequest);
-    NetworkMessageType visit(NicknameResponse nicknameRequest);
-    NetworkMessageType visit(NetworkMessage nicknameRequest);
-    NetworkMessageType visit(CreateRoomRequest nicknameRequest);
-    NetworkMessageType visit(JoiniRoomOptionsRequest nicknameRequest);
-    NetworkMessageType visit(JoinRoomRequest nicknameRequest);
-
-    NetworkMessageType visit(DrawTileRequest nicknameRequest);
 }

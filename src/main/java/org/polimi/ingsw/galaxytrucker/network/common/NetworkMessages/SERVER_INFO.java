@@ -1,8 +1,10 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages;
 
+import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
 
 public class SERVER_INFO extends NetworkMessage {
 
@@ -10,7 +12,7 @@ public class SERVER_INFO extends NetworkMessage {
     private final int port;
 
 
-    public SERVER_INFO(NetworkMessageType type,String address, int port) {
+    public SERVER_INFO(String address, int port) {
         super();
         this.address = address;
         this.port = port;
@@ -23,8 +25,8 @@ public class SERVER_INFO extends NetworkMessage {
         return port;
     }
 
-    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this);
+    public void accept(ServerController serverController, ClientHandler clientHandler) {
+        NetworkMessageVisitor.visit(this, serverController, clientHandler);
     }
 
 

@@ -1,8 +1,11 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.controller.ServerController;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -20,13 +23,13 @@ public class NicknameRequest extends NetworkMessage implements Serializable {
     }
 
     // ✅ Costruttore che usi per creare il messaggio nel client
-    public NicknameRequest(NetworkMessageType type, String nickname, Boolean flag) {
+    public NicknameRequest(String nickname) {
         super();
         this.nickname = nickname;
     }
 
-    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this);
+    public void accept(ServerController serverController, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
+        NetworkMessageVisitor.visit(this, serverController, clientHandler);
     }
 
     public String getNickname() {

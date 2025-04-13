@@ -5,10 +5,12 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameStartedUpdate;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.network.server.MessageManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
@@ -106,7 +108,7 @@ public class ServerController {
         LobbyInfo myLobbyInfo;
 
         JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null);
-        ArrayList<ClientHandler> playersHandlers = new ArrayList<>();
+        ArrayList<ClientHandler> playerHandlers = new ArrayList<>();
         boolean result = false;
         PlayerJoinedUpdate playerJoinedUpdate = null;
 
@@ -122,7 +124,7 @@ public class ServerController {
 
                     Player myPlayer = new Player(message.getNickName(),0, 0, myGame.getRealGame().getIsLearningMatch());
                     mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
-                    playersHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
+                    playerHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
 
                     myGame.getPlayerColors().putIfAbsent(message.getNickName(), myGame.useNextAvailableColor());
 
@@ -150,12 +152,11 @@ public class ServerController {
                     }
                 }
 
-                //fine synchronzied e
+                //fine synchronized e
 
-
-                //se tutto e' andato bene
+                //se tutto è andato bene
                 if (result) {
-                    for (ClientHandler c: playersHandlers) {
+                    for (ClientHandler c: playerHandlers) {
                         c.sendMessage(playerJoinedUpdate);
                     }
 
@@ -163,16 +164,14 @@ public class ServerController {
                     //e starto il gioco automaticamente lato server
 
                     if (myGame.getRealGame().getMaxPlayers() == myGame.getRealGame().getPlayers().size()) {
-
+                        for (ClientHandler c: playerHandlers) {
+                            c.sendMessage(new GameStartedUpdate());
+                        }
                     }
                 }
             }
 
             clientHandler.sendMessage(joinRoomResponse);
-
-
-
-
     }
 
     public MessageManager getMessageManager() {

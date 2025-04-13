@@ -1,8 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -27,8 +27,7 @@ public class NUM_PLAYERS_REQUEST extends NetworkMessage implements Serializable 
         this.num = num;
     }
 
-    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this);
+    public void accept(ServerController serverController, ClientHandler clientHandler) {
     }
 
     public Integer getNum() {
