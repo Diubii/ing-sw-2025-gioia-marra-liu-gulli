@@ -1,6 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses;
 
+import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -32,4 +34,7 @@ public class JoinRoomResponse extends NetworkMessage implements Serializable {
         this.operationSuccess = operationSuccess;
     }
 
+    public void accept(ServerController serverController, ClientHandler clientHandler) {
+
+    }
 }

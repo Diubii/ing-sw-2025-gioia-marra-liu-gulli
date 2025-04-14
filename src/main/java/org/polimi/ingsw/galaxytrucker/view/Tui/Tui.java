@@ -18,19 +18,17 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import org.polimi.ingsw.galaxytrucker.view.View;
 
 
-public class Tui   implements View, Observable {
+public class Tui implements View, Observable {
 
 
     private static final String STR_INPUT_CANCELED = "CAXX";
     private static PrintStream out;
     private final Boolean isSocket;
     private final ClientController clientController;
-//    ReadLine readLine = new ReadLine();
-private static final Scanner scanner = new Scanner(System.in);
+    //    ReadLine readLine = new ReadLine();
+    private static final Scanner scanner = new Scanner(System.in);
     private static final Object inpuLock = new Object();
     private final ArrayList<Observer> observers = new ArrayList<>();
-
-
 
 
     public Tui(PrintStream out, Boolean isSocket, ClientController controller) {
@@ -62,8 +60,6 @@ private static final Scanner scanner = new Scanner(System.in);
     }
 
 
-
-
     public void start() throws ExecutionException, IOException, InterruptedException {
 
         String banner = "\033[1;34m" + // Colore Blu Chiaro
@@ -74,7 +70,7 @@ private static final Scanner scanner = new Scanner(System.in);
                 "\033[0m"; // Reset colore
 
         out.println(banner);
-            askServerInfo();
+        askServerInfo();
 //        else askRMIServerInfo();
     }
 
@@ -89,14 +85,14 @@ private static final Scanner scanner = new Scanner(System.in);
 
         out.println("Please specify the following settings. The default value is shown between brackets.");
 
-    String prop = "Enter the server address [" + defaultAddress + "]: ";
+        String prop = "Enter the server address [" + defaultAddress + "]: ";
 
 
         String address = readLine(prop);
 
         if (address.isEmpty()) {
             serverInfo.put("address", defaultAddress);
-        } else  {
+        } else {
             serverInfo.put("address", address);
         }
 
@@ -109,47 +105,39 @@ private static final Scanner scanner = new Scanner(System.in);
             validInput = true;
         } else {
 
-                serverInfo.put("port", port);
-                validInput = true;
-            }
+            serverInfo.put("port", port);
+            validInput = true;
+        }
 
         int numero = Integer.parseInt(serverInfo.get("port"));
-        SERVER_INFO message = new SERVER_INFO(NetworkMessageType.SERVER_INFO, serverInfo.get("address"), numero );
-                notifyObservers(message);
+        SERVER_INFO message = new SERVER_INFO(serverInfo.get("address"), numero);
+        notifyObservers(message);
     }
-
-
-
-
-
 
 
     public void askNickname() throws IOException, ExecutionException, InterruptedException {
 
-              String nickname = readLine("Enter your nickname: ");
-        NicknameRequest nicknameRequest = new NicknameRequest(NetworkMessageType.NICKNAME_REQUEST, nickname,true);
+        String nickname = readLine("Enter your nickname: ");
+        NicknameRequest nicknameRequest = new NicknameRequest(nickname);
 
-            notifyObservers(nicknameRequest);
+        notifyObservers(nicknameRequest);
 
     }
 
 
-
-
-    public void showGenericMessage(String message){
+    public void showGenericMessage(String message) {
         System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
     }
 
     @Override
     public void askMaxPlayers() throws ExecutionException, InterruptedException, IOException {
         String number = readLine("You are the host \n Insert Max Players num: ");
-        String learningMatch  = readLine("Learning Match ?");
+        String learningMatch = readLine("Learning Match ?");
 //        NICKNAME_REQUEST nicknameRequest = new NICKNAME_REQUEST(NetworkMessageType.NICKNAME_REQUEST, nickname,true);
 
         NUM_PLAYERS_REQUEST request = new NUM_PLAYERS_REQUEST(Integer.parseInt(number), Boolean.parseBoolean(learningMatch));
         notifyObservers(request);
     }
-
 
 
     @Override

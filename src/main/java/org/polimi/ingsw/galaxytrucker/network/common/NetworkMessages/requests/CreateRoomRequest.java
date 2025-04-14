@@ -1,8 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
+import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -20,7 +20,6 @@ public class CreateRoomRequest extends NetworkMessage implements Serializable  {
         this.maxPlayers = maxPlayers;
         this.isLearningMatch = isLearningMatch;
         this.nickName = nickName;
-
     }
 
     public int getMaxPlayers() {
@@ -34,8 +33,8 @@ public class CreateRoomRequest extends NetworkMessage implements Serializable  {
         return isLearningMatch;
     }
 
-    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this);
+    public void accept(ServerController serverController, ClientHandler clientHandler) {
+
     }
 
 }

@@ -54,7 +54,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
 
                 }
             }
-        } catch (ClassCastException | ClassNotFoundException | TooManyPlayersException | PlayerAlreadyExistsException e) {
+        } catch (ClassCastException | ClassNotFoundException e) {
             System.out.println("Invalid stream from client");
         }
         clientSocket.close();

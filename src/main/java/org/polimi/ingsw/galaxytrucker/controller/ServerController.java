@@ -9,6 +9,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameStartedUpdate;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.network.server.MessageManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
@@ -106,7 +107,7 @@ public class ServerController {
         LobbyInfo myLobbyInfo;
 
         JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null);
-        ArrayList<ClientHandler> playersHandlers = new ArrayList<>();
+        ArrayList<ClientHandler> playerHandlers = new ArrayList<>();
         boolean result = false;
         PlayerJoinedUpdate playerJoinedUpdate = null;
 
@@ -122,7 +123,7 @@ public class ServerController {
 
                     Player myPlayer = new Player(message.getNickName(),0, 0, myGame.getRealGame().getIsLearningMatch());
                     mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
-                    playersHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
+                    playerHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
 
                     myGame.getPlayerColors().putIfAbsent(message.getNickName(), myGame.useNextAvailableColor());
 
@@ -150,12 +151,11 @@ public class ServerController {
                     }
                 }
 
-                //fine synchronzied e
+                //fine synchronized e
 
-
-                //se tutto e' andato bene
+                //se tutto è andato bene
                 if (result) {
-                    for (ClientHandler c: playersHandlers) {
+                    for (ClientHandler c: playerHandlers) {
                         c.sendMessage(playerJoinedUpdate);
                     }
 
@@ -163,16 +163,14 @@ public class ServerController {
                     //e starto il gioco automaticamente lato server
 
                     if (myGame.getRealGame().getMaxPlayers() == myGame.getRealGame().getPlayers().size()) {
-
+                        for (ClientHandler c: playerHandlers) {
+                            c.sendMessage(new GameStartedUpdate());
+                        }
                     }
                 }
             }
 
             clientHandler.sendMessage(joinRoomResponse);
-
-
-
-
     }
 
     public MessageManager getMessageManager() {
@@ -189,35 +187,35 @@ public class ServerController {
         //il client mi chiede una Tile, e devo restituirla
         GameNetworkModel myGame = getGameFromHandler(clientHandler);
         Tile myTile = null;
-        TileDrawnResponse tileDrawnResponse;
+        DrawTileResponse drawTileResponse;
 
         synchronized (myGame.getTileBunch()){
              if (message.getTileId() == -1){
 
                  myTile = myGame.getTileBunch().drawFaceUpTile(message.getTileId());
                  if (myTile == null){
-                     tileDrawnResponse = new TileDrawnResponse(null);
-                     tileDrawnResponse.setErrorMessage("ALREADY TAKEN!");
+                     drawTileResponse = new DrawTileResponse(null);
+                     drawTileResponse.setErrorMessage("ALREADY TAKEN!");
                  } else {
-                     tileDrawnResponse = new TileDrawnResponse(myTile);
-                     tileDrawnResponse.setErrorMessage("VALID");
+                     drawTileResponse = new DrawTileResponse(myTile);
+                     drawTileResponse.setErrorMessage("VALID");
                  }
 
              } else {
 
                  myTile = myGame.getTileBunch().drawTile();
                  if (myTile == null){
-                     tileDrawnResponse = new TileDrawnResponse(null);
-                     tileDrawnResponse.setErrorMessage("EMPTY");
+                     drawTileResponse = new DrawTileResponse(null);
+                     drawTileResponse.setErrorMessage("EMPTY");
                  } else {
-                     tileDrawnResponse = new TileDrawnResponse(myTile);
-                     tileDrawnResponse.setErrorMessage("VALID");
+                     drawTileResponse = new DrawTileResponse(myTile);
+                     drawTileResponse.setErrorMessage("VALID");
                  }
 
              }
 
         }
-        clientHandler.sendMessage(tileDrawnResponse);
+        clientHandler.sendMessage(drawTileResponse);
 
 
     }

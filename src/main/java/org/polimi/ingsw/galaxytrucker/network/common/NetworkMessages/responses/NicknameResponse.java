@@ -1,8 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses;
 
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
 
 public class NicknameResponse extends NetworkMessage {
     private String response;
@@ -11,8 +12,8 @@ public class NicknameResponse extends NetworkMessage {
         this.response = response;
     }
 
-    public NetworkMessageType accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this);
+    public void accept(ServerController serverController, ClientHandler clientHandler) {
+        NetworkMessageVisitor.visit(this, serverController, clientHandler);
     }
 
     public String getResponse() {

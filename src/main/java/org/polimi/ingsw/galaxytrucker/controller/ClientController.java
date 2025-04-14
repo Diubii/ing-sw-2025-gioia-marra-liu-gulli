@@ -58,99 +58,99 @@ public class ClientController implements Observer {
 
     @Override
     public void update(NetworkMessage message) throws IOException, ExecutionException {
-        //da aggiungere l'if per RMI: uguale
-        if (message.accept(new ComponentNameVisitor()).equals("SERVER_INFO")) {
-
-            int port = ((SERVER_INFO) message).getPort();
-            String address = ((SERVER_INFO) message).getAddress();
-
-            if (isSocket) {
-                client = new ClientSocket(address, port);
-                ((ClientSocket) client).create(address, port);
-                ((ClientSocket) client).addObserver(this);
-                ((ClientSocket) client).receiveMessage();
-                clientPhaseController.nextPhase();
-
-
-                new Thread(() -> {
-                    try {
-                        view.askNickname();
-                    } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
-            } else { //sto in RMI
-
-
-                client = new ClientRMI(port, this);
-
-                clientPhaseController.nextPhase();
-                new Thread(() -> {
-                    try {
-                        view.askNickname();
-                    } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
-
-            }
-
-
-        }
-
-        if (message.accept(new ComponentNameVisitor()).equals("LOBBY_INFO")) {
-
-            LOBBY_INFO mess = (LOBBY_INFO) message;
-
-            nicknameAsked.thenRunAsync(() -> {
-                if (mess.getIsFirst()) {
-                    isHost = true;
-                    try {
-                        view.askMaxPlayers(); // viene eseguito solo dopo che askNickname è finito
-                        clientPhaseController.nextPhase();
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-//                System.out.println(clientPhaseController.getPhase());
-            }, viewExecutor); // eseguiamo in un thread separato
-        }
-
-
-
-        if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_REQUEST")) {
-//            System.out.println("[+]NICKNAME_REQUEST SENT : SENT : " + ((NICKNAME_REQUEST)message).getNickname());
-            client.sendMessage(message);
-        }
-
-        if (message.accept(new ComponentNameVisitor()).equals("NUM_PLAYERS_REQUEST")) {
-//            System.out.println("[+]NICKNAME_REQUEST SENT : SENT : " + ((NICKNAME_REQUEST)message).getNickname());
-            client.sendMessage(message);
-        }
-
-        if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_RESPONSE")) {
-            NicknameResponse nicknameResponse = (NicknameResponse) message;
-            if (nicknameResponse.getResponse().equals("VALID")){
-//                System.out.println("[+]VALID!");
-                clientPhaseController.nextPhase();
+//        //da aggiungere l'if per RMI: uguale
+//        if (message.accept(new ComponentNameVisitor()).equals("SERVER_INFO")) {
+//
+//            int port = ((SERVER_INFO) message).getPort();
+//            String address = ((SERVER_INFO) message).getAddress();
+//
+//            if (isSocket) {
+//                client = new ClientSocket(address, port);
+//                ((ClientSocket) client).create(address, port);
+//                ((ClientSocket) client).addObserver(this);
+//                ((ClientSocket) client).receiveMessage();
+//                clientPhaseController.nextPhase();
+//
+//
 //                new Thread(() -> {
-//                    view.showGenericMessage("NICKNAME VALID");
+//                    try {
+//                        view.askNickname();
+//                    } catch (IOException | ExecutionException | InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
 //                }).start();
-
-            } else {
-
-                System.out.println(TuiColor.RED + "INVALID NICKNAME!" + TuiColor.RESET);
-                new Thread(() -> {
-                    try {
-                        view.askNickname();
-                        nicknameAsked.complete(null);// Segnalo che ho finito
-                    } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
-            }
-        }
+//            } else { //sto in RMI
+//
+//
+//                client = new ClientRMI(port, this);
+//
+//                clientPhaseController.nextPhase();
+//                new Thread(() -> {
+//                    try {
+//                        view.askNickname();
+//                    } catch (IOException | ExecutionException | InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }).start();
+//
+//            }
+//
+//
+//        }
+//
+//        if (message.accept(new ComponentNameVisitor()).equals("LOBBY_INFO")) {
+//
+//            LOBBY_INFO mess = (LOBBY_INFO) message;
+//
+//            nicknameAsked.thenRunAsync(() -> {
+//                if (mess.getIsFirst()) {
+//                    isHost = true;
+//                    try {
+//                        view.askMaxPlayers(); // viene eseguito solo dopo che askNickname è finito
+//                        clientPhaseController.nextPhase();
+//
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+////                System.out.println(clientPhaseController.getPhase());
+//            }, viewExecutor); // eseguiamo in un thread separato
+//        }
+//
+//
+//
+//        if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_REQUEST")) {
+////            System.out.println("[+]NICKNAME_REQUEST SENT : SENT : " + ((NICKNAME_REQUEST)message).getNickname());
+//            client.sendMessage(message);
+//        }
+//
+//        if (message.accept(new ComponentNameVisitor()).equals("NUM_PLAYERS_REQUEST")) {
+////            System.out.println("[+]NICKNAME_REQUEST SENT : SENT : " + ((NICKNAME_REQUEST)message).getNickname());
+//            client.sendMessage(message);
+//        }
+//
+//        if (message.accept(new ComponentNameVisitor()).equals("NICKNAME_RESPONSE")) {
+//            NicknameResponse nicknameResponse = (NicknameResponse) message;
+//            if (nicknameResponse.getResponse().equals("VALID")){
+////                System.out.println("[+]VALID!");
+//                clientPhaseController.nextPhase();
+////                new Thread(() -> {
+////                    view.showGenericMessage("NICKNAME VALID");
+////                }).start();
+//
+//            } else {
+//
+//                System.out.println(TuiColor.RED + "INVALID NICKNAME!" + TuiColor.RESET);
+//                new Thread(() -> {
+//                    try {
+//                        view.askNickname();
+//                        nicknameAsked.complete(null);// Segnalo che ho finito
+//                    } catch (IOException | ExecutionException | InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }).start();
+//            }
+//        }
     }
 
 
