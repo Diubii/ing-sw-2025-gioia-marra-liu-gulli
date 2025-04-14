@@ -35,7 +35,7 @@ public class AbandonedStation extends AdventureCard {
      * @param aca         The activator responsible for triggering the Abandoned Station's effect.
      * @param flightBoard
      */
-    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard) {
-        aca.activateAbandonedStation(this, p, flightBoard);
+    public void activateEffect(AdventureCardActivator aca,ArrayList<Player> player, FlightBoard flightBoard) {
+        aca.activateAbandonedStation(this,player , flightBoard);
     }
 }

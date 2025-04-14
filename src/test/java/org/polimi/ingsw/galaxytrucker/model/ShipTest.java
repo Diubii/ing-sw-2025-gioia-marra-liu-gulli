@@ -129,7 +129,7 @@ class ShipTest {
 
         myShip.putTile(myTile2, new Position(3,4));
         myShip.putTile(myTile3, new Position(3,5));
-        myShip.getShipBoard()[3][5].getTile().setMyComponent(new ModularHousingUnit(AlienColor.PURPLE));
+        myShip.getShipBoard()[3][5].getTile().setMyComponent(new ModularHousingUnit());
         ((ModularHousingUnit)myShip.getShipBoard()[3][5].getTile().getMyComponent()).addPurpleAlien();
 
 

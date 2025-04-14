@@ -1,5 +1,5 @@
 package org.polimi.ingsw.galaxytrucker.enums;
 
 public enum GameState {
-    LOBBY, BUILDING, FLIGHT, END;
+    LOBBY, BUILDING_START, BUILDING_TIMER, BUILDING_END, SHIP_CHECK, FLIGHT, END;
 }

@@ -18,7 +18,7 @@ public class Planets extends AdventureCard {
         this.planets = planets;
     }
 
-    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard){
+    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard){
         aca.activatePlanets(this, p, flightBoard);
     }
 }

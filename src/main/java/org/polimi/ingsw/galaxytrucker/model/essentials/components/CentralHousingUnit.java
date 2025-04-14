@@ -6,13 +6,14 @@ import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 public class CentralHousingUnit extends Component {
 
-    private Color color;
-    private int HumanCrewNumber;
-    private Boolean isColored = Boolean.TRUE;
+    private final Color color;
+    private int HumanCrewNumber = 0;
+    private final Boolean isColored = Boolean.TRUE;
 
     public CentralHousingUnit(Color color) {
         super(false);
         this.color = color;
+        if (!color.equals(Color.EMPTY)) setHumanCrewNumber(2);
 
     }
 
@@ -22,7 +23,7 @@ public class CentralHousingUnit extends Component {
     public int getHumanCrewNumber() {
         return HumanCrewNumber;
     }
-    public void setHumanCrewNumber(int humanCrewNumber) {
+    private void setHumanCrewNumber(int humanCrewNumber) {
          if (humanCrewNumber > 0 && humanCrewNumber <= 2) {
              HumanCrewNumber = humanCrewNumber;
 

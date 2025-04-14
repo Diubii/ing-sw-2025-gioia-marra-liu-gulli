@@ -8,10 +8,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DrawTileResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.PlaceTileResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameStartedUpdate;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipViewUpdate;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.TileDrawnUpdate;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.TileDiscardedUpdate;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
 public abstract class NetworkMessageVisitor {
@@ -53,7 +50,7 @@ public abstract class NetworkMessageVisitor {
 
     }
 
-    public static void visit(FetchShipStatusRequest fetchShipStatusRequest, ServerController serverController, ClientHandler clientHandler){
+    public static void visit(FetchShipRequest fetchShipRequest, ServerController serverController, ClientHandler clientHandler){
 
     }
 
@@ -75,4 +72,7 @@ public abstract class NetworkMessageVisitor {
 
     }
 
+    public static void visit(ShipCheckEndUpdate shipCheckEndUpdate, ServerController serverController, ClientHandler clientHandler) {
+
+    }
 }

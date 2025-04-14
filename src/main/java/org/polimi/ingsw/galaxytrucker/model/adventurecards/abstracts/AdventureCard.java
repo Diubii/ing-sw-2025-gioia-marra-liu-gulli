@@ -3,6 +3,9 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+
+import java.util.ArrayList;
+
 /**
  * Represents an abstract adventure card with common properties and behavior.
  * Adventure cards may have various effects that influence gameplay.
@@ -23,7 +26,7 @@ public abstract class AdventureCard {
      * @param aca         The activator responsible for triggering the card's effect.
      * @param flightBoard
      */
-    public abstract void activateEffect(AdventureCardActivator aca, Player player, FlightBoard flightBoard);
+    public abstract void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard);
     /**
      * Gets the unique identifier of the card.
      *

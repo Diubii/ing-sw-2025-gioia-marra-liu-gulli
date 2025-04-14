@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
+package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates;
 
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -10,24 +10,11 @@ import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
 import java.io.Serial;
 import java.io.Serializable;
 
-public class DrawTileRequest extends NetworkMessage implements Serializable {
+public class ShipCheckEndUpdate extends NetworkMessage implements Serializable {
+
     @Serial
-    private static final long serialVersionUID = 533L;
-    private final int tileId;
+    private static final long serialVersionUID = 3434L;
 
-    public DrawTileRequest() {
-        this.tileId = -1;
-    }
-
-
-    public DrawTileRequest(int tileId) {
-        //pesco da faceup tiles
-        this.tileId = tileId;
-    }
-
-    public int getTileId() {
-        return tileId;
-    }
 
     @Override
     public void accept(ServerController serverController, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {

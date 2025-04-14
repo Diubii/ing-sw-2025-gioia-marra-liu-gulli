@@ -13,7 +13,7 @@ public class Player {
     private final String nickname;
     private int nCredits;
 
-    private Ship ship;
+    private final Ship ship;
     private int placement;
 
     private HashMap<String, Integer> detailedScores;
@@ -21,11 +21,11 @@ public class Player {
     private List<Good> ListOfGoods;
     private List<Good> ListUnloadedGoods;
 
-    public Player(String nickname, int nCredits, int placement, Boolean leaningMatch) {
+    public Player(String nickname, int nCredits, int placement, Boolean learningMatch) {
         this.nickname = nickname;
         this.nCredits = 0;
         this.placement = placement;
-        this.ship = new Ship(leaningMatch); //Rivedere
+        this.ship = new Ship(learningMatch); //Rivedere
     }
 
     public String getNickName() {
@@ -34,5 +34,18 @@ public class Player {
     public Ship getShip() { return ship; }
     public void addCredits(int credits){
         nCredits += credits;
+    }
+    public int getNCredits() {
+        return nCredits;
+    }
+    public void setNCredits(int nCredits) {
+        this.nCredits = nCredits;
+    }
+
+    public int getPlacement() {
+        return placement;
+    }
+    public void setPlacement(int placement) {
+        this.placement = placement;
     }
 }

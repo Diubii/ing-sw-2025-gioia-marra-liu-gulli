@@ -18,7 +18,7 @@ public class MeteorSwarm extends AdventureCard {
         this.meteors = meteors;
     }
 
-    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard){
+    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard){
         aca.activateMeteorSwarm(this, p, flightBoard);
     }
 }

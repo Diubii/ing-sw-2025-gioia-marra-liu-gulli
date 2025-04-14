@@ -36,9 +36,11 @@ public class CardDeck {
         this.spyable = spyable;
     }
 
-    private int getSize(){
+    public int getSize(){
         return cards.size();
     }
+
+
 
     /**
      * Adds a card to che current {@link CardDeck}

@@ -5,6 +5,8 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.Enemy;
 
+import java.util.ArrayList;
+
 public class Slavers extends Enemy {
     private final int penalty;
     public int getPenalty() {
@@ -15,7 +17,7 @@ public class Slavers extends Enemy {
         this.penalty = penalty;
     }
 
-    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard) {
+    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {
         aca.activateSlavers(this, p, flightBoard);
     }
 }

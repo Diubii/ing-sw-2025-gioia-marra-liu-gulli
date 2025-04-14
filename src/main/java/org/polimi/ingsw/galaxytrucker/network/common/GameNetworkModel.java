@@ -18,7 +18,7 @@ public class GameNetworkModel {
     private Color nextAvailableColor;
     private final HashMap<String, ClientHandler> PlayerHandlers = new HashMap<>();
     private TileBunch tileBunch = null;
-    private GameController gameController;
+    private final GameController gameController;
 
 
     public void setRealGame(Game game) {
@@ -66,6 +66,10 @@ public class GameNetworkModel {
 
     public TileBunch getTileBunch() {
         return tileBunch;
+    }
+
+    public GameController getGameController() {
+        return gameController;
     }
 
 

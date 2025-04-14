@@ -10,13 +10,13 @@ import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
 import java.io.Serial;
 import java.io.Serializable;
 
-public class FetchShipStatusRequest extends NetworkMessage implements Serializable {
+public class FetchShipRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 43847L;
 
     private final String targetNickname;
 
-    public FetchShipStatusRequest(String targetNickname) {
+    public FetchShipRequest(String targetNickname) {
         this.targetNickname = targetNickname;
     }
 

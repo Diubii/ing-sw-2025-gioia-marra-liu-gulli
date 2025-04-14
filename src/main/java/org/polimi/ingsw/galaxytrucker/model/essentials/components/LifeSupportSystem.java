@@ -11,7 +11,6 @@ import java.util.ArrayList;
 public class LifeSupportSystem extends Component {
 
     private AlienColor color;
-    private ArrayList<Pair<Position, AlienColor>> nearMHU;
 
     public LifeSupportSystem(AlienColor color) {
         super(false);

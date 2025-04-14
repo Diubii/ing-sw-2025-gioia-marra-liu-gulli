@@ -4,12 +4,14 @@ import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameStartedUpdate;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipViewUpdate;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.network.server.MessageManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
@@ -35,9 +37,6 @@ public class ServerController {
 
 //        model.setRealGame(new Game(4, false));
     }
-
-
-
 
     public void addClient(ClientHandler client) {
         synchronized (clients) {
@@ -97,7 +96,10 @@ public class ServerController {
 
     public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler){
 
-        JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos);
+        JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(null);
+        synchronized (lobbyInfos) {
+            joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos);
+        }
         clientHandler.sendMessage(joinRoomOptionsResponse);
     }
 
@@ -166,6 +168,10 @@ public class ServerController {
                         for (ClientHandler c: playerHandlers) {
                             c.sendMessage(new GameStartedUpdate());
                         }
+
+                        //dopo aver notificato tutti starto il gioco
+                        myGame.getGameController().nextState();
+
                     }
                 }
             }
@@ -190,7 +196,9 @@ public class ServerController {
         DrawTileResponse drawTileResponse;
 
         synchronized (myGame.getTileBunch()){
-             if (message.getTileId() == -1){
+
+            //-1 significa cge si pesca dal mazzo, invece se e' presente un valore valiido di TileId si prende da quelle face-up
+             if (message.getTileId() != -1){
 
                  myTile = myGame.getTileBunch().drawFaceUpTile(message.getTileId());
                  if (myTile == null){
@@ -218,6 +226,20 @@ public class ServerController {
         clientHandler.sendMessage(drawTileResponse);
 
 
+    }
+
+    public void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler){
+
+        GameNetworkModel myGame = getGameFromHandler(clientHandler);
+
+        Player targetPlayer = myGame.getRealGame().getPlayer(message.getTargetNickname());
+        Ship targetShip;
+
+        synchronized (targetPlayer.getShip()){
+            targetShip = targetPlayer.getShip();
+            ShipViewUpdate shipViewUpdate = new ShipViewUpdate(targetShip);
+            clientHandler.sendMessage(shipViewUpdate);
+        }
     }
 
 
