@@ -20,7 +20,6 @@ public class CreateRoomRequest extends NetworkMessage implements Serializable  {
         this.maxPlayers = maxPlayers;
         this.isLearningMatch = isLearningMatch;
         this.nickName = nickName;
-
     }
 
     public int getMaxPlayers() {
@@ -35,6 +34,7 @@ public class CreateRoomRequest extends NetworkMessage implements Serializable  {
     }
 
     public void accept(ServerController serverController, ClientHandler clientHandler) {
+
     }
 
 }

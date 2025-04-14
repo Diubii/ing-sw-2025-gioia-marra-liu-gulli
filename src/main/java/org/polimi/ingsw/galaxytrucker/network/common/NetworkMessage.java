@@ -5,13 +5,8 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 public abstract class NetworkMessage implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     public abstract void accept(ServerController serverController, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException;
 }

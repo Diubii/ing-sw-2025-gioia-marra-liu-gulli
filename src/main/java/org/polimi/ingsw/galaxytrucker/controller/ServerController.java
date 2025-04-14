@@ -5,7 +5,6 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
@@ -188,35 +187,35 @@ public class ServerController {
         //il client mi chiede una Tile, e devo restituirla
         GameNetworkModel myGame = getGameFromHandler(clientHandler);
         Tile myTile = null;
-        TileDrawnResponse tileDrawnResponse;
+        DrawTileResponse drawTileResponse;
 
         synchronized (myGame.getTileBunch()){
              if (message.getTileId() == -1){
 
                  myTile = myGame.getTileBunch().drawFaceUpTile(message.getTileId());
                  if (myTile == null){
-                     tileDrawnResponse = new TileDrawnResponse(null);
-                     tileDrawnResponse.setErrorMessage("ALREADY TAKEN!");
+                     drawTileResponse = new DrawTileResponse(null);
+                     drawTileResponse.setErrorMessage("ALREADY TAKEN!");
                  } else {
-                     tileDrawnResponse = new TileDrawnResponse(myTile);
-                     tileDrawnResponse.setErrorMessage("VALID");
+                     drawTileResponse = new DrawTileResponse(myTile);
+                     drawTileResponse.setErrorMessage("VALID");
                  }
 
              } else {
 
                  myTile = myGame.getTileBunch().drawTile();
                  if (myTile == null){
-                     tileDrawnResponse = new TileDrawnResponse(null);
-                     tileDrawnResponse.setErrorMessage("EMPTY");
+                     drawTileResponse = new DrawTileResponse(null);
+                     drawTileResponse.setErrorMessage("EMPTY");
                  } else {
-                     tileDrawnResponse = new TileDrawnResponse(myTile);
-                     tileDrawnResponse.setErrorMessage("VALID");
+                     drawTileResponse = new DrawTileResponse(myTile);
+                     drawTileResponse.setErrorMessage("VALID");
                  }
 
              }
 
         }
-        clientHandler.sendMessage(tileDrawnResponse);
+        clientHandler.sendMessage(drawTileResponse);
 
 
     }
