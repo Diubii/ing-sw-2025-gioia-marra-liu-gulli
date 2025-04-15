@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses;
+package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates;
 
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
@@ -16,13 +16,12 @@ public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 12L;
 
-    private  final ArrayList<Player> players;
+    private final ArrayList<Player> players;
     private final  HashMap<String, Color> playerInfo;
 
     public PlayerJoinedUpdate(ArrayList<Player> players, HashMap<String, Color> playerInfo) {
         this.players = players;
         this.playerInfo = playerInfo;
-
     }
 
     public ArrayList<Player> getPlayers() {

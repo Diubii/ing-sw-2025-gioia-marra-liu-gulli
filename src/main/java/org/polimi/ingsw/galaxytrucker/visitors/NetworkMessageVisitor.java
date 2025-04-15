@@ -5,6 +5,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.FetchShipResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DrawTileResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.PlaceTileResponse;
@@ -50,7 +51,11 @@ public abstract class NetworkMessageVisitor {
 
     }
 
+    //FetchShip
     public static void visit(FetchShipRequest fetchShipRequest, ServerController serverController, ClientHandler clientHandler){
+
+    }
+    public static void visit(FetchShipResponse fetchShipResponse, ServerController serverController, ClientHandler clientHandler){
 
     }
 
@@ -65,9 +70,25 @@ public abstract class NetworkMessageVisitor {
     public static void visit(ViewAdventureDecksRequest viewAdventureDecksRequest, ServerController serverController, ClientHandler clientHandler){
 
     }
+
+    //FinishBuilding
     public static void visit(FinishBuildingRequest finishBuildingRequest, ServerController serverController, ClientHandler clientHandler){
 
     }
+    public static void visit(FinishBuildingUpdate finishBuildingUpdate, ServerController serverController, ClientHandler clientHandler){
+
+    }
+
+    //BuildingEnd
+    public static void visit(BuildingEndStartedUpdate buildingEndStartedUpdate, ServerController serverController, ClientHandler clientHandler){
+
+    }
+
+    //BuildingPhaseEnd
+    public static void visit(BuildingPhaseEndUpdate buildingPhaseEndUpdate, ServerController serverController, ClientHandler clientHandler){
+
+    }
+
     public static void visit(ShipViewUpdate shipViewUpdate, ServerController serverController, ClientHandler clientHandler){
 
     }

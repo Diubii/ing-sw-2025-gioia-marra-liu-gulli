@@ -11,6 +11,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameStartedUpdate;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PlayerJoinedUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipViewUpdate;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.network.server.MessageManager;
@@ -241,10 +242,4 @@ public class ServerController {
             clientHandler.sendMessage(shipViewUpdate);
         }
     }
-
-
-
-
-
-
 }
