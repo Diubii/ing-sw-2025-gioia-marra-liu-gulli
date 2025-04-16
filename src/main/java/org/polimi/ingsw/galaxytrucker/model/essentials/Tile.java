@@ -1,16 +1,16 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Tile implements Serializable {
 
-    //Used even for finding the corresponding Image from 1 to 157
+   @Serial
+   private static final long serialVersionUID = 535L;
+
     private int id;
     private int Rotation;
     private boolean flipped;
@@ -18,14 +18,10 @@ public class Tile implements Serializable {
     private int exposedConnectors;
     private Boolean used;
     private Boolean fixed;
+//    private Slot mySlot;
     private Component myComponent;
-    @JsonIgnore
-    //    private Slot mySlot;
     private Boolean wellConnected;
 
-
-    @JsonCreator
-    public Tile(){ }
 
     public Tile(int id,int rotation, ArrayList<Connector> s, Component c) {
         this.id = id;

@@ -2,20 +2,18 @@ package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 public class ModularHousingUnit extends CentralHousingUnit{
 
-    private Boolean isColored = Boolean.FALSE;
-    private int nBrownAlien;
-    private int nPurpleAlien;
-    private AlienColor alienColor;
+    private int nBrownAlien = 0;
+    private int nPurpleAlien = 0;
+    private  AlienColor alienColor;
+    private int humanCrew = 0;
 
-    public ModularHousingUnit( AlienColor color) {
 
+    public ModularHousingUnit() {
         super(Color.EMPTY);
-        this.alienColor = color;
-
     }
 
 
@@ -24,6 +22,7 @@ public class ModularHousingUnit extends CentralHousingUnit{
         if (alienColor == AlienColor.BROWN) {
             nBrownAlien += 1;
         }
+        alienColor = AlienColor.BROWN;
 
     }
 
@@ -31,6 +30,7 @@ public class ModularHousingUnit extends CentralHousingUnit{
         if (alienColor == AlienColor.PURPLE) {
             nPurpleAlien += 1;
         }
+        alienColor = AlienColor.PURPLE;
     }
 
     public int getNBrownAlien() {
@@ -46,6 +46,11 @@ public class ModularHousingUnit extends CentralHousingUnit{
 
     }
 
+    public void removeAlienCrew(){
+        nPurpleAlien = 0;
+        nBrownAlien = 0;
+    }
+
     public void removePurpleAlien(){
         if (nPurpleAlien > 0 && alienColor == AlienColor.PURPLE) nPurpleAlien -= 1;
     }
@@ -55,5 +60,12 @@ public class ModularHousingUnit extends CentralHousingUnit{
         return visitor.visit(this); 
     }
 
+    public void addHumanCrew(){
+        humanCrew = 2;
+    }
 
+    @Override
+    public int getHumanCrewNumber() {
+        return humanCrew;
+    }
 }

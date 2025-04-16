@@ -3,7 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
-import org.polimi.ingsw.galaxytrucker.model.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class AbandonedStation extends AdventureCard {
      * @param aca         The activator responsible for triggering the Abandoned Station's effect.
      * @param flightBoard
      */
-    public void activateEffect(AdventureCardActivator aca, Player p, FlightBoard flightBoard) {
-        aca.activateAbandonedStation(this, p, flightBoard);
+    public void activateEffect(AdventureCardActivator aca,ArrayList<Player> player, FlightBoard flightBoard) {
+        aca.activateAbandonedStation(this,player , flightBoard);
     }
 }

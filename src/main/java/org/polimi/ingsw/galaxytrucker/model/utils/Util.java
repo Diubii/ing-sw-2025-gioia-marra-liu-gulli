@@ -7,11 +7,10 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.util.ArrayList;
 import java.util.Queue;
-import java.util.Set;
 
 /**
  * Classe di utilità che fornisce metodi per verificare la connettività di componenti nella nave.
@@ -81,28 +80,28 @@ public class Util {
         String s1, s2, s3, s4;
 
         // Controlla la tile sopra
-        if (S.getPosition().getY() - 1 >= 0) {
+        if (S.getPosition().getY() - 1 >= 0 && TempShipBoard[S.getPosition().getY() - 1][S.getPosition().getX()].getTile() != null) {
             s1 = TempShipBoard[S.getPosition().getY() - 1][S.getPosition().getX()].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s1 = null;
         }
 
         // Controlla la tile a sinistra
-        if (S.getPosition().getX() - 1 >= 0) {
+        if (S.getPosition().getX() - 1 >= 0 && TempShipBoard[S.getPosition().getY()][S.getPosition().getX() - 1].getTile() != null) {
             s2 = TempShipBoard[S.getPosition().getY()][S.getPosition().getX() - 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s2 = null;
         }
 
         // Controlla la tile sotto
-        if (S.getPosition().getY() + 1 <= 6) {
+        if (S.getPosition().getY() + 1 <= 6 && TempShipBoard[S.getPosition().getY() + 1][S.getPosition().getX()].getTile() != null) {
             s3 = TempShipBoard[S.getPosition().getY() + 1][S.getPosition().getX()].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s3 = null;
         }
 
         // Controlla la tile a destra
-        if (S.getPosition().getX() + 1 <= 4) {
+        if (S.getPosition().getX() + 1 <= 4 && TempShipBoard[S.getPosition().getY()][S.getPosition().getX() + 1].getTile() != null) {
             s4 = TempShipBoard[S.getPosition().getY()][S.getPosition().getX() + 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s4 = null;

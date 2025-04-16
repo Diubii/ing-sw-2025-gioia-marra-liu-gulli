@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 public class DoubleEngine extends Engine{
 

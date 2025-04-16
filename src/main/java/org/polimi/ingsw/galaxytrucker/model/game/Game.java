@@ -20,14 +20,12 @@ import java.util.*;
  */
 public class Game {
 
-    private final int nMaxPlayer;
+    private int nMaxPlayer;
+    private final Map<String, Player> playerMap;
+//    private final Map<Player,Ship> playerShip;
+    private final HashSet<String> usedNicknames;
+    private final HashMap<Player,Integer> playerOrder;
 
-    private GameState currentState;
-
-    private Map<String, Player> playerMap;
-    private Map<Player,Ship> playerShip;
-    private HashSet<String> usedNicknames;
-    private Map<Player,Integer> playerOrder;
 
 
     private Player gameHost;
@@ -39,9 +37,10 @@ public class Game {
     private CardDeck oneDeck;
     private CardDeck twoDeck;
     private CardDeck learningDeck;
+    private CardDeck flightDeck;
 
-    private FlightBoard flightBoard;
-    private TileBunch tileBunch;
+    public FlightBoard flightBoard;
+    private final TileBunch tileBunch;
 
 
     /**Not yet implemented
@@ -50,27 +49,38 @@ public class Game {
      */
 
 
-    public Game(int nMaxPlayer,boolean learningMatch) {
-        this.nMaxPlayer = nMaxPlayer;
+    public Game() {
+        this.nMaxPlayer = 4;
         this.playerMap = new HashMap<>();
-        this.playerShip = new HashMap<>();
+//        this.playerShip = new HashMap<>();
         this.usedNicknames = new HashSet<>();
         this.playerOrder = new HashMap<>();
-
-
+        this.learningMatch = false;
 
         this.decks = new ArrayList<>();
 
-
         this.tileBunch = new TileBunch();
-        this.flightBoard = new FlightBoard(new ArrayList<>(), learningMatch);
-
-        this.currentState = GameState.LOBBY;
-
-
 
     }
 
+    /*
+    * @authord nerd53
+    *
+    * creata funzione separata poiche non si sa se il gioco e' learningMatch fino a che il primo client non lo decide
+    * */
+
+    public void initFlightBoard(){
+        this.flightBoard = new FlightBoard(new ArrayList<>(), learningMatch);
+
+    }
+
+    public void setLearningMatch(Boolean learningMatch){
+        this.learningMatch = learningMatch;
+    }
+
+    public void setnMaxPlayer(Integer nMaxPlayer){
+        this.nMaxPlayer = nMaxPlayer;
+    }
 
     public boolean isNicknameUsed(String nickname) {
         return usedNicknames.contains(nickname);
@@ -89,7 +99,7 @@ public class Game {
         playerMap.put(player.getNickName(), player);
         usedNicknames.add(player.getNickName());
 
-        playerShip.put(player,new Ship(learningMatch));
+//        playerShip.put(player,player.getShip());
 
     }
 
@@ -100,7 +110,7 @@ public class Game {
         }
         playerMap.remove(nickname);
         usedNicknames.remove(nickname);
-        playerShip.remove(player);
+//        playerShip.remove(player);
 
     }
 
@@ -116,14 +126,14 @@ public class Game {
     }
 
 
-    public List<Player> getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return new ArrayList<>(playerMap.values());
     }
 
-    public Ship getPlayerShip(Player player) {
-
-        return playerShip.get(player);
-    }
+//    public Ship getPlayerShip(Player player) {
+//
+//        return playerShip.get(player);
+//    }
 
     public Player getPlayer(String nickname) {
         return playerMap.get(nickname);
@@ -133,16 +143,45 @@ public class Game {
         return playerMap.size();
     }
 
-    public GameState getGameState() {
-        return currentState;
-    }
 
     public TileBunch getTileBunch() {
         return tileBunch;
     }
 
-    public GameState getCurrentState() {
-        return currentState;
+    public Integer getMaxPlayers(){
+        return nMaxPlayer;
+    }
+
+    public Boolean getIsLearningMatch(){
+        return learningMatch;
+    }
+
+
+    public CardDeck getFlightDeck(){
+        return flightDeck;
+    }
+
+    public HashMap<Player,Integer> getPlayerOrder(){
+        return playerOrder;
+    }
+
+    public Player getActivePlayer(){
+
+        Player myPlayer = null ;
+        int i = 0;
+        for (Player player : playerOrder.keySet()) {
+
+            //il player in posizione 1 e' il primo
+            if (playerOrder.get(player) == 1) {
+                myPlayer = player;
+            }
+        }
+
+        return myPlayer;
+    }
+
+    public FlightBoard getFlightBoard(){
+        return flightBoard;
     }
 }
 

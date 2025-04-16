@@ -10,7 +10,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.util.*;
 
@@ -28,8 +28,8 @@ public class Ship {
     private int destroyedTiles;
     private int nBatterieLeft;
     private int nCrew;
-    private Boolean purpleAlien;
-    private Boolean brownAlien;
+    private int purpleAlien;
+    private int brownAlien;
     private int nGoods;
     private ArrayList<Pair<Good, Pair<Position, Slot>>> listOfGoods;
     private ArrayList<Good> listNotLoadedGoods;
@@ -41,6 +41,7 @@ public class Ship {
     private Set<Position> housingPos;
     private Set<Position> batteryPos;
     private Set<Position> cannonPos;
+    private Set<Position> lssPos;
     private Set<Position> enginePos = new LinkedHashSet<>();
     private ArrayList<Position> invalidPositions;
     public Queue<Position> brokenPositions = new LinkedList<>();
@@ -79,6 +80,7 @@ public class Ship {
         redStoragePos = new LinkedHashSet<>();
         housingPos = new LinkedHashSet<>();
         storagePos = new LinkedHashSet<>();
+        lssPos = new LinkedHashSet<>();
 
     }
 
@@ -120,6 +122,10 @@ public class Ship {
     public ArrayList<Position> getEnginePos() {
         return new ArrayList<Position>(enginePos);
     }
+    public ArrayList<Position> getLifeSSPos() {
+        return new ArrayList<Position>(lssPos);
+    }
+
 
     public int getnExposedConnector() {
         return nExposedConnector;
@@ -137,11 +143,11 @@ public class Ship {
         return nGoods;
     }
 
-    public Boolean getPurpleAlien() {
+    public int getNPurpleAlien() {
         return purpleAlien;
     }
 
-    public Boolean getBrownAlien() {
+    public int getNBrownAlien() {
         return brownAlien;
     }
 
@@ -259,6 +265,12 @@ public class Ship {
                     redStoragePos.add(pos);
                 } else storagePos.add(pos);
             }
+
+            case "LifeSupportSystem":
+
+                lssPos.add(pos);
+                break;
+
         }
 
     }
@@ -295,10 +307,15 @@ public class Ship {
                         redStoragePos.remove(pos);
                     } else storagePos.remove(pos);
                 }
+
+                case "LifeSupportSystem":
+                    lssPos.remove(pos);
+                    break;
             }
+            brokenPositions.add(pos);
+            getShipBoard()[pos.getY()][pos.getX()].removeTile();
 
         }
-        getShipBoard()[pos.getY()][pos.getX()].removeTile();
 
     }
 
@@ -380,7 +397,12 @@ public class Ship {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 7; j++) {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
-                    sb.append("[1] ");// Slot con Tile
+
+                    if (shipBoard[i][j].getTile().getWellConnected()){
+
+                        sb.append("[Y] ");// Slot con Tile
+
+                    }else sb.append("[N] ");
 //                    System.out.printf("FOUND %d %d\n", i, j);
                 } else if (shipBoard[i][j] != null && shipBoard[i][j].getTile() == null) {
                     int finalJ = j;
@@ -432,9 +454,17 @@ public class Ship {
                             if (temp.getNPurpleAlien() > temp.getNBrownAlien() && temp.getHumanCrewNumber() == 0)
                                 al = AlienColor.PURPLE;
 
-                            Boolean result = Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
-                            shipBoard[i][j].getTile().setWellConnected(result);
-                            return result;
+                            if ( al != null){
+                                Boolean result = Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+                                if (!result){
+                                    temp.removeAlienCrew();
+                                }
+
+                                shipBoard[i][j].getTile().setWellConnected(result);
+                                return result;
+
+                            }
+
 
 
                         }
@@ -444,6 +474,19 @@ public class Ship {
         }
 
         return true;
+
+    }
+
+    public void setCrew(Boolean isAlien, AlienColor color, Tile tile){
+        ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tile.getMyComponent();
+        if (isAlien){
+            if (color == AlienColor.BROWN){
+                modularHousingUnit.addBrownAlien();
+            } else modularHousingUnit.addPurpleAlien();
+        } else {
+
+            modularHousingUnit.addHumanCrew();
+        }
 
     }
 
@@ -709,7 +752,10 @@ public class Ship {
                 if (!invalidPositions.contains(tempSlot.getPosition()) && Util.inBoundaries(i, j)) {
                     if (tempTile != null) {
                         if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("Shield")) {
-                            sides.addAll(((Shield) tempTile.getMyComponent()).getProtectedSides());
+
+                            Shield tempShield = (Shield)tempTile.getMyComponent();
+                            if (tempShield.getCharged())  sides.addAll(tempShield.getProtectedSides());
+
                         }
                     }
                 }

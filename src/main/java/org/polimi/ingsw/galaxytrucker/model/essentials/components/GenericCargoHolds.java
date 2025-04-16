@@ -2,7 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 import java.util.ArrayList;
 

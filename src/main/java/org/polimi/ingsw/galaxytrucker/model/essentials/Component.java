@@ -1,29 +1,22 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+
+import java.io.Serializable;
 
 /**
  * Represents a component in the game, which could be part of a ship .
  * Each component has a name, a structural property, and a rotation value.
  */
-public  class Component {
-    @JsonIgnore
-    /** The tile associated with the component. */
-    private  Tile myTile;
+public  class Component implements Serializable {
 
-    //private final String Name;
+
+//    private final String Name;
 
     private Boolean Structural;
 
     /** The rotation of the component (in degrees). */
     protected int rotation = 0;
-
-    @JsonCreator
-    public Component() {
-
-    }
 
     /**
      * Constructs a Component with the specified name and structural property.
@@ -31,10 +24,18 @@ public  class Component {
      * @param structural .
      */
     public Component(Boolean structural) {
+//        this.Name = name;
+
         Structural = structural;
 
     }
 
+//    public void getName(ComponentNameVisitor cnm){
+//
+//
+//
+//    }
+//
     /**
      * Gets the current rotation of the component.
      *

@@ -20,4 +20,16 @@ module org.polimi.ingsw.galaxytrucker {
     opens org.polimi.ingsw.galaxytrucker.model.utils to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.view.Gui;
     opens org.polimi.ingsw.galaxytrucker.view.Gui to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker.network.common;
+    exports org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages;
+    exports org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates;
+    exports org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
+    exports org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses;
+    exports org.polimi.ingsw.galaxytrucker.network.server;
+    exports org.polimi.ingsw.galaxytrucker.network.client.rmi;
+    exports org.polimi.ingsw.galaxytrucker.enums;
+    exports org.polimi.ingsw.galaxytrucker.visitors;
+    exports org.polimi.ingsw.galaxytrucker.observer;
+    exports org.polimi.ingsw.galaxytrucker.controller;
+    exports org.polimi.ingsw.galaxytrucker.exceptions;
 }
