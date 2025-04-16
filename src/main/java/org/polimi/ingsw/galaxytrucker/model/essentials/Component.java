@@ -35,12 +35,6 @@ public  class Component {
 
     }
 
-//    public void getName(ComponentNameVisitor cnm){
-//
-//
-//
-//    }
-//
     /**
      * Gets the current rotation of the component.
      *

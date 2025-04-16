@@ -15,17 +15,17 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
+import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class TileCardsJsonUtility extends Application {
 
@@ -42,11 +42,16 @@ public class TileCardsJsonUtility extends Application {
     @FXML private ComboBox<String> comboBoxRConn;
     @FXML private ComboBox<String> comboBoxBotConn;
     @FXML private ComboBox<String> comboBoxLConn;
+    @FXML private ComboBox<String> centralHousingUnitColor;
+    @FXML private CheckBox specialCargo;
+
 
     @FXML private ImageView tileImageView;
     private Image tileImage;
+
     //Carte
     private Pane cartePane;
+    @FXML private TextField cardId;
     @FXML private ImageView imageViewFronte;
     private File immagineFronte;
     @FXML private ImageView imageViewRetro;
@@ -54,10 +59,12 @@ public class TileCardsJsonUtility extends Application {
 
     //Lista di Tiles
     ArrayList<Tile> tiles = new ArrayList<>();
+    int tileIndex = 0;
+    ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
 
     //Lista di Carte
-
-
+    ArrayList<AdventureCard> cards = new ArrayList<>();
+    int cardIndex = 0;
     //<editor-fold desc="Condiviso">
 
 
@@ -113,7 +120,6 @@ public class TileCardsJsonUtility extends Application {
     }
 
     public static void main(String[] args) {
-
         launch(args);
     }
 
@@ -122,29 +128,29 @@ public class TileCardsJsonUtility extends Application {
 
     //<editor-fold desc="Per Tiles">
 
-    @FXML
-    private void handleLoadTileImage() {
+    public void handleShowTileId(ActionEvent actionEvent) {
         String tileIdVal = tileId.getText();
-        if(tileIdVal!=null && !tileIdVal.equals("")) {
-            String imagePath = "galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-            // Caricare l'immagine dal classpath
-            tileImage = new Image(getClass().getResourceAsStream(imagePath));
-            tileImageView.setImage(tileImage);
-        }
+        showTile( Integer.parseInt(tileIdVal)-1 );
     }
 
+    public void handleNextTile(ActionEvent actionEvent) {
 
+    }
 
-    public void handleAddToList(ActionEvent actionEvent) {
+    public void handlePrevTile(ActionEvent actionEvent) {
+
+    }
+
+    public void handleAddTileToList(ActionEvent actionEvent) {
 
         ArrayList<Connector> connectionsapp= new ArrayList<>();
         Tile tile;
-        Component comp = new Component();
+        Component comp;
 
         String componentString = tileComponentType.getValue(); // Per ComboBox
         String tileIdVal = tileId.getText(); // Per TextField
 
-        // Stampiamo i valori letti
+        // Debug
         System.out.println("Valore ComboBox: " + componentString);
         System.out.println("Valore TextField: " + tileIdVal);
 
@@ -160,30 +166,113 @@ public class TileCardsJsonUtility extends Application {
         System.out.println("connectors: " + connectionsapp);
 
         switch (tileComponentType.getValue()){
-            case "Cannone":
-                 comp = new Cannon((float)1.0);
-                break;
-            case "Batterie":
+            case "BatterySlot":
                  comp = new BatterySlot(Integer.parseInt(extraVal.getText()));
                 break;
-            case "Cabina":
+            case "Cannon":
+                comp = new Cannon((float)1.0);
+                break;
+            case "CentralHousingUnit":
+                comp = new CentralHousingUnit(Color.fromString(centralHousingUnitColor.getValue()));
+                break;
+            case "DoubleCannon":
+                comp = new DoubleCannon(false,(float)2.0);
+                break;
+            case "DoubleEngine":
+                comp = new DoubleEngine(false,2);
+                break;
+            case "Engine":
+                comp = new Engine(1);
+                break;
+            case "GenericCargoHolds":
+                comp = new GenericCargoHolds(specialCargo.isSelected(),Integer.parseInt(extraVal.getText()));
+                break;
+            case "PurpleLifeSupportSystem":
+                comp = new LifeSupportSystem(AlienColor.PURPLE);
+                break;
+            case "BrownLifeSupportSystem":
+                comp = new LifeSupportSystem(AlienColor.BROWN);
+                break;
+            case "ModularHousingUnit":
                 comp = new ModularHousingUnit(AlienColor.EMPTY);
+                break;
+            case "Shield":
+                comp = new Shield(false);
+                break;
+
+            default:
+                comp = new Component();
             break;
         }
 
         tile = new Tile(Integer.parseInt(tileIdVal),0,connectionsapp,comp);
-        tiles.add(tile);
+        tiles.add( Integer.parseInt(tileIdVal)-1 ,tile);
         tile.testPrint();
         System.out.println("tiles: " + tiles);
     }
 
+    @FXML
+    /**
+     * Loads the image of the tile with the id specified in the TextBox
+     */
+    private void handleLoadTileImage() {
+        String tileIdVal = tileId.getText();
+        if(tileIdVal!=null && !tileIdVal.equals("")) {
+            String imagePath = "galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+            // Caricare l'immagine dal classpath
+            tileImage = new Image(getClass().getResourceAsStream(imagePath));
+            tileImageView.setImage(tileImage);
+        }
+    }
+
+    /**
+     * Shows the tile with that id from the tiles ArrayList
+     * @param id
+     */
+    private void showTile(int id){
+        //DEBUG
+        System.out.println("ShowTile chiamato");
+        System.out.println(tiles.get(id).getMyComponent().accept(componentNameVisitor));
+
+        tileComponentType.setValue(tiles.get(id).getMyComponent().accept(componentNameVisitor));
+        comboBoxTopConn.setValue(tiles.get(id).getSides().get(0).getConnectorString());
+        comboBoxRConn.setValue(tiles.get(id).getSides().get(1).getConnectorString());
+        comboBoxBotConn.setValue(tiles.get(id).getSides().get(2).getConnectorString());
+        comboBoxLConn.setValue(tiles.get(id).getSides().get(3).getConnectorString());
+        handleLoadTileImage();
+
+        switch (tiles.get(id).getMyComponent().accept(componentNameVisitor)){
+            case "BatterySlot":
+                break;
+            case "CentralHousingUnit":
+                break;
+
+
+        }
+    }
+
     //</editor-fold>
 
-    //<editor-fold desc="Per Carte">
-    public void handleSaveCarta(ActionEvent actionEvent) {
+
+
+    //<editor-fold desc=" Per Carte ">
+
+    public void handleShowCardId(ActionEvent actionEvent) {
+
+    }
+
+    public void handleNextCard(ActionEvent actionEvent) {
+
+    }
+
+    public void handlePrevCard(ActionEvent actionEvent) {
+
+    }
+
+    public void handleAddCardToList(ActionEvent actionEvent) {
     }
     @FXML
-    private void handleLoadFronte() {
+    private void handleLoadFront() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Immagini", "*.png", "*.jpg", "*.jpeg"));
         File file = fileChooser.showOpenDialog(null);
@@ -193,7 +282,7 @@ public class TileCardsJsonUtility extends Application {
         }
     }
     @FXML
-    private void handleLoadRetro() {
+    private void handleLoadBack() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Immagini", "*.png", "*.jpg", "*.jpeg"));
         File file = fileChooser.showOpenDialog(null);

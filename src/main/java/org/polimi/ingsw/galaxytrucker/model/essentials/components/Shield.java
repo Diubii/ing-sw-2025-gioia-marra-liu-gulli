@@ -11,6 +11,10 @@ public class Shield extends Component {
     private ArrayList<ProjectileDirection> protectedSides;
     private Boolean charged;
 
+    public Shield(Boolean charged){
+        this.charged = charged;
+    }
+
     public Shield( ArrayList<ProjectileDirection> protectedSides, Boolean charged) {
         super(false);
         this.protectedSides = new ArrayList<>(protectedSides);
