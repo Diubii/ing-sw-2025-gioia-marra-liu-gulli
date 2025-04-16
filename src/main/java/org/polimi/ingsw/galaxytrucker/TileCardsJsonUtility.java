@@ -21,7 +21,7 @@ import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCa
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
-import org.polimi.ingsw.galaxytrucker.model.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -194,14 +194,14 @@ public class TileCardsJsonUtility extends Application {
                 comp = new LifeSupportSystem(AlienColor.BROWN);
                 break;
             case "ModularHousingUnit":
-                comp = new ModularHousingUnit(AlienColor.EMPTY);
+                comp = new ModularHousingUnit();
                 break;
             case "Shield":
                 comp = new Shield(false);
                 break;
 
             default:
-                comp = new Component();
+                comp = new Component(true);
             break;
         }
 

@@ -5,6 +5,7 @@ module org.polimi.ingsw.galaxytrucker {
     requires org.controlsfx.controls;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
+    requires java.rmi;
 
     opens org.polimi.ingsw.galaxytrucker to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker;

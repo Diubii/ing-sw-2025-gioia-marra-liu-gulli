@@ -12,6 +12,7 @@ public class Shield extends Component {
     private Boolean charged;
 
     public Shield(Boolean charged){
+        super(false);
         this.charged = charged;
     }
 
