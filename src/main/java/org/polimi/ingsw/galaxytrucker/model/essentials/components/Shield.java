@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
@@ -14,9 +16,11 @@ public class Shield extends Component {
     public Shield(Boolean charged){
         super(false);
         this.charged = charged;
+        protectedSides = new ArrayList<>();
     }
 
-    public Shield( ArrayList<ProjectileDirection> protectedSides, Boolean charged) {
+    @JsonCreator
+    public Shield(@JsonProperty("protectedSides") ArrayList<ProjectileDirection> protectedSides,@JsonProperty("charged") Boolean charged) {
         super(false);
         this.protectedSides = new ArrayList<>(protectedSides);
         this.charged = charged;

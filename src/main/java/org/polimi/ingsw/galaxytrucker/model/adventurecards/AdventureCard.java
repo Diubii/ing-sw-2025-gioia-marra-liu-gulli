@@ -1,5 +1,7 @@
-package org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts;
+package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
@@ -10,6 +12,17 @@ import java.util.ArrayList;
  * Represents an abstract adventure card with common properties and behavior.
  * Adventure cards may have various effects that influence gameplay.
  */
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Pirates.class, name = "Pirates"),
+        @JsonSubTypes.Type(value = Slavers.class, name = "Slavers"),
+        @JsonSubTypes.Type(value = AbandonedShip.class, name = "AbandonedShip"),
+        @JsonSubTypes.Type(value = AbandonedStation.class, name = "AbandonedStation"),
+})
 public abstract class AdventureCard {
     protected int id;
     protected int level;
@@ -20,6 +33,9 @@ public abstract class AdventureCard {
     protected boolean learningFlight;
     /** Indicates whether the effect of the card applies to all players. */
     protected boolean affectsAll;
+    /** The firepower of the enemy. */
+    protected int firePower;
+
     /**
      * Activates the effect of the adventure card.
      *
@@ -74,5 +90,14 @@ public abstract class AdventureCard {
      */
     public boolean isAffectsAll() {
         return affectsAll;
+    }
+
+    /**
+     * Gets the firepower of the enemy.
+     *
+     * @return The firepower value.
+     */
+    public int getFirePower() {
+        return firePower;
     }
 }

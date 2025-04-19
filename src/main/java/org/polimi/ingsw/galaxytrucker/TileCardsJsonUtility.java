@@ -1,6 +1,8 @@
 package org.polimi.ingsw.galaxytrucker;
 
-
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,16 +16,21 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.enums.Connector;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.enums.*;
+import org.polimi.ingsw.galaxytrucker.model.Projectile;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AbandonedShip;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.Pirates;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.Slavers;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -57,10 +64,13 @@ public class TileCardsJsonUtility extends Application {
     @FXML private ImageView imageViewRetro;
     private File immagineRetro;
 
+    ObjectMapper mapper = new ObjectMapper();
+
     //Lista di Tiles
     ArrayList<Tile> tiles = new ArrayList<>();
     int tileIndex = 0;
     ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+
 
     //Lista di Carte
     ArrayList<AdventureCard> cards = new ArrayList<>();
@@ -107,6 +117,7 @@ public class TileCardsJsonUtility extends Application {
         primaryStage.setTitle("Gestione Oggetti di Gioco");
         primaryStage.setScene(new Scene(root, 800, 800));
         primaryStage.show();
+
     }
 
     @FXML
@@ -134,11 +145,25 @@ public class TileCardsJsonUtility extends Application {
     }
 
     public void handleNextTile(ActionEvent actionEvent) {
-
+        String tileIdVal = tileId.getText();
+        int currId = Integer.parseInt(tileIdVal);
+        currId++;
+        if(currId== 157){
+            currId = 1;
+        }
+        tileId.setText(String.valueOf(currId));
+        showTile(currId-1);
     }
 
     public void handlePrevTile(ActionEvent actionEvent) {
-
+        String tileIdVal = tileId.getText();
+        int currId = Integer.parseInt(tileIdVal);
+        currId--;
+        if(currId== 0){
+            currId = 156;
+        }
+        tileId.setText(String.valueOf(currId));
+        showTile(currId-1);
     }
 
     public void handleAddTileToList(ActionEvent actionEvent) {
@@ -206,9 +231,20 @@ public class TileCardsJsonUtility extends Application {
         }
 
         tile = new Tile(Integer.parseInt(tileIdVal),0,connectionsapp,comp);
-        tiles.add( Integer.parseInt(tileIdVal)-1 ,tile);
+        tiles.set( Integer.parseInt(tileIdVal)-1 ,tile);
+
+        /* //FILLARE
+        for(int i = 0; i< 157; i++){
+            tile = new Tile(i,0,connectionsapp,comp);
+            tiles.add( i ,tile);
+        }*/
+
         tile.testPrint();
         System.out.println("tiles: " + tiles);
+        //Salva Direttamente lista ogni volta
+        ActionEvent e = new ActionEvent();
+        handleSaveTileList(e);
+        handleLoadTileList(e);
     }
 
     @FXML
@@ -230,9 +266,10 @@ public class TileCardsJsonUtility extends Application {
      * @param id
      */
     private void showTile(int id){
-        //DEBUG
-        System.out.println("ShowTile chiamato");
-        System.out.println(tiles.get(id).getMyComponent().accept(componentNameVisitor));
+        //Svuoto tutti campi così se non usati appaiono vuoti e si capisce
+        extraVal.setText("n");
+        centralHousingUnitColor.setValue(Color.EMPTY.getColorString());
+        specialCargo.setSelected(false);
 
         tileComponentType.setValue(tiles.get(id).getMyComponent().accept(componentNameVisitor));
         comboBoxTopConn.setValue(tiles.get(id).getSides().get(0).getConnectorString());
@@ -243,11 +280,37 @@ public class TileCardsJsonUtility extends Application {
 
         switch (tiles.get(id).getMyComponent().accept(componentNameVisitor)){
             case "BatterySlot":
+                extraVal.setText(String.valueOf(((BatterySlot)tiles.get(id).getMyComponent()).getBatteriesLeft()));
                 break;
+
             case "CentralHousingUnit":
+                centralHousingUnitColor.setValue(((CentralHousingUnit)tiles.get(id).getMyComponent()).getColor().getColorString());
+                break;
+            case "GenericCargoHolds":
+                extraVal.setText(String.valueOf(((GenericCargoHolds)tiles.get(id).getMyComponent()).getnMaxContainers()));
+                specialCargo.setSelected(((GenericCargoHolds)tiles.get(id).getMyComponent()).isSpecial());
                 break;
 
 
+        }
+    }
+
+    public void handleSaveTileList(ActionEvent actionEvent) {
+        try{
+            FileOutputStream fos = new FileOutputStream("tiledata.json");
+            String json = mapper.writeValueAsString(tiles);
+            fos.write(json.getBytes());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void handleLoadTileList(ActionEvent actionEvent) {
+        try{
+            FileInputStream fis = new FileInputStream("tiledata.json");
+            tiles = mapper.readValue(fis, new TypeReference<ArrayList<Tile>>(){});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -256,6 +319,32 @@ public class TileCardsJsonUtility extends Application {
 
 
     //<editor-fold desc=" Per Carte ">
+
+    public void handleJsonCiascuna(ActionEvent actionEvent) {
+
+        //Esempio Proiettili
+        Projectile EsProiettile = new Projectile(ProjectileType.Meteor, ProjectileDirection.FRONT, ProjectileSize.BIG);
+        ArrayList<Projectile> EsempioProj = new ArrayList<>();
+        EsempioProj.add(EsProiettile);
+        EsempioProj.add(EsProiettile);
+
+        //Esempio Merci
+        Good EsGood = new Good(Color.BLUE);
+        ArrayList<Good> EsGoods = new ArrayList<>();
+        EsGoods.add(EsGood);
+        EsGoods.add(EsGood);
+
+        cards.add(new Pirates(1,1,1,"Pirati",false,1,EsempioProj));
+        cards.add(new Slavers(2,1,1,"Schiavisti",false,1,1));
+        cards.add(new AbandonedShip(3,1,1,"Nave abbandonata",false,1,1,1));
+
+
+
+        ActionEvent e = new ActionEvent();
+        handleSaveCardList(e);
+        handleLoadCardList(e);
+
+    }
 
     public void handleShowCardId(ActionEvent actionEvent) {
 
@@ -270,6 +359,7 @@ public class TileCardsJsonUtility extends Application {
     }
 
     public void handleAddCardToList(ActionEvent actionEvent) {
+
     }
     @FXML
     private void handleLoadFront() {
@@ -290,6 +380,29 @@ public class TileCardsJsonUtility extends Application {
             immagineRetro = file;
             imageViewRetro.setImage(new Image(file.toURI().toString()));
         }
+    }
+
+    public void handleSaveCardList(ActionEvent actionEvent) {
+        try{
+            FileOutputStream fos = new FileOutputStream("carddata.json");
+            String json = mapper.writerFor(new TypeReference<ArrayList<AdventureCard>>() {}).writeValueAsString(cards);
+            fos.write(json.getBytes());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void handleLoadCardList(ActionEvent actionEvent) {
+        try{
+            FileInputStream fis = new FileInputStream("carddata.json");
+            cards = mapper.readValue(fis, new TypeReference<ArrayList<AdventureCard>>(){});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void showCard(int id){
+
     }
     //</editor-fold>
 }

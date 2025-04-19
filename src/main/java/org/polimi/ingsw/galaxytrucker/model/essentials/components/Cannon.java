@@ -1,12 +1,15 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 public class Cannon extends Component {
     protected Float FirePower;
 
-    public Cannon( Float firePower) {
+    @JsonCreator
+    public Cannon( @JsonProperty("firePower") Float firePower) {
         super(false);
         this.FirePower = firePower;
     }

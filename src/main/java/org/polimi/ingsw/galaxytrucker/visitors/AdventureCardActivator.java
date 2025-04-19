@@ -3,7 +3,6 @@ package org.polimi.ingsw.galaxytrucker.visitors;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.enemies.*;
 
 import java.util.ArrayList;
 

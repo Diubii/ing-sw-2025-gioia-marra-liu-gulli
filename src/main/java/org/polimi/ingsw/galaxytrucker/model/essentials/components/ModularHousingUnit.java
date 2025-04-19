@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
@@ -9,8 +11,14 @@ public class ModularHousingUnit extends CentralHousingUnit{
     private int nBrownAlien = 0;
     private int nPurpleAlien = 0;
     private  AlienColor alienColor;
-    private int humanCrew = 0;
 
+    @JsonCreator
+    public ModularHousingUnit(@JsonProperty("color") Color color,@JsonProperty("nbrownAlien") int nBrownAlien, @JsonProperty("npurpleAlien") int nPurpleAlien,@JsonProperty("alienColor")  AlienColor alienColor, @JsonProperty("humanCrewNumber") int humanCrew) {
+        super(color,humanCrew);
+        this.nBrownAlien = nBrownAlien;
+        this.nPurpleAlien = nPurpleAlien;
+        this.alienColor = alienColor;
+    }
 
     public ModularHousingUnit() {
         super(Color.EMPTY);
@@ -61,11 +69,11 @@ public class ModularHousingUnit extends CentralHousingUnit{
     }
 
     public void addHumanCrew(){
-        humanCrew = 2;
+        super.setHumanCrewNumber(2);;
     }
 
     @Override
     public int getHumanCrewNumber() {
-        return humanCrew;
+        return super.getHumanCrewNumber();
     }
 }

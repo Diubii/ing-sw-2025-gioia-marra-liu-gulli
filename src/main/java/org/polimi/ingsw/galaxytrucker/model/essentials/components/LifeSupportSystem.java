@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
@@ -12,7 +14,8 @@ public class LifeSupportSystem extends Component {
 
     private AlienColor color;
 
-    public LifeSupportSystem(AlienColor color) {
+    @JsonCreator
+    public LifeSupportSystem(@JsonProperty("color") AlienColor color) {
         super(false);
         this.color = color;
     }

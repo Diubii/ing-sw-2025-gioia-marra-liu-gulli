@@ -1,11 +1,15 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 public class DoubleEngine extends Engine{
 
     private Boolean charged;
-    public DoubleEngine( Boolean charged,int enginePower) {
+
+    @JsonCreator
+    public DoubleEngine(@JsonProperty("charged") Boolean charged, @JsonProperty("enginePower") int enginePower) {
 
         super(enginePower);
         this.charged = charged;

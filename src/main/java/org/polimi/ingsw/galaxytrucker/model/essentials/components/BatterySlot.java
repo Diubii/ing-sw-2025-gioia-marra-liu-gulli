@@ -1,24 +1,28 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 public class BatterySlot extends Component {
 
-    private int capacity;
-    public BatterySlot( int initialCapacity) {
+    private int batteriesLeft;
+    @JsonCreator
+    public BatterySlot( @JsonProperty("batteriesLeft") int batteriesLeft) {
         super(false);
-        capacity = initialCapacity;
+        this.batteriesLeft = batteriesLeft;
 
     }
 
-    public int getBatteriesLeft(){
-        return capacity;
+    public int getBatteriesLeft() {
+        return batteriesLeft;
     }
 
     public void removeBattery(){
-        capacity--;
+        batteriesLeft--;
     }
+
     @Override
     public String accept(ComponentNameVisitorInterface visitor) {
         return visitor.visit(this); // this ora è di tipo Cannon!

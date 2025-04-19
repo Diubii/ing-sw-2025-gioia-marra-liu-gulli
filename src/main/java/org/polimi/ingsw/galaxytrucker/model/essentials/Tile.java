@@ -1,7 +1,11 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 
+import java.beans.ConstructorProperties;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,7 +26,6 @@ public class Tile implements Serializable {
     private Component myComponent;
     private Boolean wellConnected;
 
-
     public Tile(int id,int rotation, ArrayList<Connector> s, Component c) {
         this.id = id;
         Rotation = rotation;
@@ -35,6 +38,28 @@ public class Tile implements Serializable {
 //        this.mySlot = null;
         this.myComponent = c;
     }
+
+        @JsonCreator
+    public Tile(
+            @JsonProperty("id") int id,
+            @JsonProperty("rotation") int rotation,
+            @JsonProperty("flipped") boolean flipped,
+            @JsonProperty("sides") ArrayList<Connector> s,
+            @JsonProperty("myComponent") Component c,
+            @JsonProperty("fixed") boolean fixed,
+            @JsonProperty("wellConnected") boolean wellConnected
+    ) {
+        this.id = id;
+        Rotation = rotation;
+        this.flipped = flipped;
+        this.sides = new ArrayList<>(s);
+        this.exposedConnectors = 0;
+        this.used = false;
+        this.fixed = fixed;
+        this.wellConnected = wellConnected;
+        this.myComponent = c;
+    }
+
     public Tile(Tile other) {
         this.id = other.id;
         this.Rotation = other.Rotation;
@@ -53,11 +78,6 @@ public class Tile implements Serializable {
         this.id = id;
     }
 
-    public void setSides(ArrayList<Connector> sides) {
-        this.sides = sides;
-    }
-
-
     public void setMyComponent(Component myComponent1) {
         myComponent = myComponent1;
     }
@@ -66,9 +86,6 @@ public class Tile implements Serializable {
         return myComponent;
     }
 
-    public void setFixed(Boolean fixed) {
-        this.fixed = fixed;
-    }
 
 //    public void setMySlot(Slot mySlot2) {
 //
@@ -129,7 +146,6 @@ public class Tile implements Serializable {
     public void setWellConnected(Boolean wellConnected) {
         this.wellConnected = wellConnected;
     }
-
 
 
     public void testPrint(){

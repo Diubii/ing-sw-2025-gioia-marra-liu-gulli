@@ -1,7 +1,5 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
-
 import java.util.ArrayList;
 import java.util.Collections;
 

@@ -6,19 +6,29 @@ module org.polimi.ingsw.galaxytrucker {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires java.rmi;
+    requires java.desktop;
+
+    opens org.polimi.ingsw.galaxytrucker.model.essentials to com.fasterxml.jackson.databind;
+    // opens org.polimi.ingsw.galaxytrucker.model.essentials to javafx.fxml;
+    opens org.polimi.ingsw.galaxytrucker.model.essentials.components to com.fasterxml.jackson.databind;
+    opens org.polimi.ingsw.galaxytrucker.model.adventurecards to com.fasterxml.jackson.databind;
+    //opens org.polimi.ingsw.galaxytrucker.model.adventurecards to javafx.fxml;
+    opens org.polimi.ingsw.galaxytrucker.model to com.fasterxml.jackson.databind;
+    //opens org.polimi.ingsw.galaxytrucker.model to javafx.fxml;
+    opens org.polimi.ingsw.galaxytrucker.model.utils to javafx.fxml;
 
     opens org.polimi.ingsw.galaxytrucker to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker;
     exports org.polimi.ingsw.galaxytrucker.model.essentials;
-    opens org.polimi.ingsw.galaxytrucker.model.essentials to javafx.fxml;
+
     exports org.polimi.ingsw.galaxytrucker.model.game;
     opens org.polimi.ingsw.galaxytrucker.model.game to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.model;
-    opens org.polimi.ingsw.galaxytrucker.model to javafx.fxml;
+
     exports org.polimi.ingsw.galaxytrucker.model.adventurecards;
-    opens org.polimi.ingsw.galaxytrucker.model.adventurecards to javafx.fxml;
+
     exports org.polimi.ingsw.galaxytrucker.model.utils;
-    opens org.polimi.ingsw.galaxytrucker.model.utils to javafx.fxml;
+
     exports org.polimi.ingsw.galaxytrucker.view.Gui;
     opens org.polimi.ingsw.galaxytrucker.view.Gui to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.network.common;
@@ -33,4 +43,5 @@ module org.polimi.ingsw.galaxytrucker {
     exports org.polimi.ingsw.galaxytrucker.observer;
     exports org.polimi.ingsw.galaxytrucker.controller;
     exports org.polimi.ingsw.galaxytrucker.exceptions;
+    exports org.polimi.ingsw.galaxytrucker.model.essentials.components;
 }

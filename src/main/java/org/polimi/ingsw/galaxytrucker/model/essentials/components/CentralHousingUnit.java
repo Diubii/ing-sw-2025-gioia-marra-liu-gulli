@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
@@ -7,34 +9,41 @@ import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 public class CentralHousingUnit extends Component {
 
     private final Color color;
-    private int HumanCrewNumber = 0;
+    private int humanCrewNumber = 0;
     private final Boolean isColored = Boolean.TRUE;
 
-    public CentralHousingUnit(Color color) {
+    @JsonCreator
+    public CentralHousingUnit( @JsonProperty("color") Color color ,@JsonProperty("humanCrewNumber") int humanCrewNumber) {
         super(false);
         this.color = color;
         if (!color.equals(Color.EMPTY)) setHumanCrewNumber(2);
 
     }
 
+    public CentralHousingUnit( Color color) {
+        super(false);
+        this.color = color;
+        if (!color.equals(Color.EMPTY)) setHumanCrewNumber(2);
+    }
+
     public Color getColor() {
         return color;
     }
     public int getHumanCrewNumber() {
-        return HumanCrewNumber;
+        return humanCrewNumber;
     }
-    private void setHumanCrewNumber(int humanCrewNumber) {
+    public void setHumanCrewNumber(int humanCrewNumber) {
          if (humanCrewNumber > 0 && humanCrewNumber <= 2) {
-             HumanCrewNumber = humanCrewNumber;
+           this.humanCrewNumber = humanCrewNumber;
 
          } else throw new IllegalArgumentException("humanCrewNumber must be between 0 and 2");
     }
     public Boolean getIsColored() {
         return isColored;
     }
-    public void removeHumanCrewNumber() {
+    public void removehumanCrewNumber() {
 
-        if (HumanCrewNumber > 0) HumanCrewNumber--;
+        if (humanCrewNumber > 0) humanCrewNumber--;
     }
     @Override
     public String accept(ComponentNameVisitorInterface visitor) {

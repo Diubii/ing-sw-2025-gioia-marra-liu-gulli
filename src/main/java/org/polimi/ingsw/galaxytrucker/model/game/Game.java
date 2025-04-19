@@ -6,9 +6,8 @@ import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 
 import java.util.*;
 

@@ -3,7 +3,7 @@ package org.polimi.ingsw.galaxytrucker.controller;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCardEffects;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.network.common.GameNetworkModel;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 

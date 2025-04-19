@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
@@ -12,6 +14,14 @@ public class GenericCargoHolds extends Component {
     private Boolean special;
     private ArrayList<Good> Goods;
 
+    @JsonCreator
+    public GenericCargoHolds(@JsonProperty("special") Boolean special, @JsonProperty("nMaxContainers") int nMaxContainers,@JsonProperty("goods") ArrayList<Good> Goods) {
+        super(false);
+        this.special = special;
+        this.nMaxContainers = nMaxContainers;
+        this.Goods = new ArrayList<>(Goods);
+
+    }
 
     public GenericCargoHolds(Boolean special, int nMaxContainers) {
         super(false);
@@ -59,7 +69,7 @@ public class GenericCargoHolds extends Component {
 
     @Override
     public String accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this); // this ora è di tipo Cannon!
+        return visitor.visit(this);
     }
 
     public Boolean isSpecial() {

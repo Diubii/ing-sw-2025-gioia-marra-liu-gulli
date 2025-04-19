@@ -1,9 +1,32 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 import java.io.Serializable;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = BatterySlot.class, name = "BatterySlot"),
+        @JsonSubTypes.Type(value = Cannon.class, name = "Cannon"),
+        @JsonSubTypes.Type(value = CentralHousingUnit.class, name = "CentralHousingUnit"),
+        @JsonSubTypes.Type(value = DoubleCannon.class, name = "DoubleCannon"),
+        @JsonSubTypes.Type(value = DoubleEngine.class, name = "DoubleEngine"),
+        @JsonSubTypes.Type(value = Engine.class, name = "Engine"),
+        @JsonSubTypes.Type(value = GenericCargoHolds.class, name = "GenericCargoHolds"),
+        @JsonSubTypes.Type(value = LifeSupportSystem.class, name = "LifeSupportSystem"),
+        @JsonSubTypes.Type(value = ModularHousingUnit.class, name = "ModularHousingUnit"),
+        @JsonSubTypes.Type(value = Shield.class, name = "Shield"),
+
+})
 /**
  * Represents a component in the game, which could be part of a ship .
  * Each component has a name, a structural property, and a rotation value.
@@ -23,7 +46,8 @@ public  class Component implements Serializable {
      *
      * @param structural .
      */
-    public Component(Boolean structural) {
+    @JsonCreator
+    public Component( @JsonProperty("structural") Boolean structural) {
 //        this.Name = name;
 
         Structural = structural;

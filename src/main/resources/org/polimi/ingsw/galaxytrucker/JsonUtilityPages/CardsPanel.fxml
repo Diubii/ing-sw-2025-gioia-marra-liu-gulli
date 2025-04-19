@@ -9,49 +9,97 @@
 <?import java.lang.String?>
 <VBox spacing="10" alignment="TOP_CENTER"  xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.polimi.ingsw.galaxytrucker.TileCardsJsonUtility">
+
+    <!--
     <HBox spacing="20">
         <Label text="ID (da 1 a 40):"/>
         <TextField fx:id="cardId"/>
         <Button text="Vedi per Id" onAction="#handleShowCardId"/>
         <Button text="Prec" onAction="#handlePrevCard"/>
-        <Label text="Gestione Carte" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        <Label text="Carte" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
         <Button text="Next" onAction="#handleNextCard"/>
-        <Button text="Salva la lista" onAction="#handleAddCardToList"/>
-        <Button text="Carica la lista" onAction="#handleAddCardToList"/>
+        <Button text="Salva la lista" onAction="#handleSaveCardList"/>
+        <Button text="Carica la lista" onAction="#handleLoadCardList"/>
     </HBox>
 
     <HBox spacing="20">
         <VBox>
-            <Label text="Fronte Carta:"/>
-            <ImageView fx:id="imageViewFronte" fitWidth="331" fitHeight="508"/>
-            <Button text="Carica Fronte" onAction="#handleLoadFront"/>
-        </VBox>
+            <Label text="Livello:"/>
+            <ComboBox fx:id="cardLevel">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="1"/>
+                        <String fx:value="2"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <Label text="Giorni Persi:"/>
+            <TextField fx:id="cardDaysLost"/>
+            <Label text="Carta Learning:"/>
+            <CheckBox fx:id="learningCard"></CheckBox>
+            <HBox>
+                <VBox>
+                    <Label text="Fronte Carta:"/>
+                    <ImageView fx:id="imageViewFronte" fitWidth="100" fitHeight="150"/>
+                    <Button text="Carica Fronte" onAction="#handleLoadFront"/>
+                </VBox>
+                <VBox>
+                    <Label text="Retro Carta:"/>
+                    <ImageView fx:id="imageViewRetro" fitWidth="100" fitHeight="150"/>
+                    <Button text="Carica Retro" onAction="#handleLoadBack"/>
+                </VBox>
 
+            </HBox>
+
+        </VBox>
         <VBox>
-            <Label text="Retro Carta:"/>
-            <ImageView fx:id="imageViewRetro" fitWidth="331" fitHeight="508"/>
-            <Button text="Carica Retro" onAction="#handleLoadBack"/>
+            <Label text="Tipo Carta:"/>
+            <ComboBox fx:id="comboBoxTipoCarta">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Pirates"/>
+                        <String fx:value="Slavers"/>
+                        <String fx:value="Smugglers"/>
+                        <String fx:value="AbandonedShip"/>
+                        <String fx:value="AbandonedStation"/>
+                        <String fx:value="CombatZone"/>
+                        <String fx:value="Epidemic"/>
+                        <String fx:value="MeteorSwarm"/>
+                        <String fx:value="OpenSpace"/>
+                        <String fx:value="Stardust"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <Label text="Nemico, Potenza fuoco:"/>
+            <TextField fx:id="firePower"/>
+            <Label text="Giorni Persi:"/>
+            <TextField fx:id="cardDaysLost"/>
+            <Label text="Giorni Persi:"/>
+            <TextField fx:id="cardDaysLost"/>
+
+        </VBox>
+        <VBox>
+            <Label text="Giorni Persi:"/>
+            <TextField fx:id="cardDaysLost"/>
+            <Label text="Giorni Persi:"/>
+            <TextField fx:id="cardDaysLost"/>
+            <Label text="Giorni Persi:"/>
+            <TextField fx:id="cardDaysLost"/>
         </VBox>
     </HBox>
 
-    <HBox spacing="10">
-        <Label text="Nome Carta:"/>
-        <TextField fx:id="textFieldNomeCarta" promptText="Inserisci il nome..."/>
+    <HBox>
+        <Label text="Merci da Json:"/>
     </HBox>
 
-    <HBox spacing="10">
-        <Label text="Tipo Carta:"/>
-        <ComboBox fx:id="comboBoxTipoCarta">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Attacco"/>
-                    <String fx:value="Difesa"/>
-                    <String fx:value="Magia"/>
-                </FXCollections>
-            </items>
-        </ComboBox>
+    <HBox>
+        <Label text="Proiettili da Json:"/>
+
     </HBox>
 
     <Button text="Imposta nella lista" onAction="#handleAddCardToList"/>
+
+    -->
+    <Button text="Json una per tipo" onAction="#handleJsonCiascuna"/>
 
 </VBox>

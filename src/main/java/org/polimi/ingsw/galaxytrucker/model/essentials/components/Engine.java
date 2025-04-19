@@ -1,12 +1,15 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 
 public class Engine extends Component {
     protected int enginePower;
 
-    public Engine(int enginePower) {
+    @JsonCreator
+    public Engine( @JsonProperty("enginePower") int enginePower) {
 
         super(false);
         this.enginePower = enginePower;

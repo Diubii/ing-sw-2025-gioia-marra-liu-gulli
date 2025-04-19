@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileType;
@@ -19,7 +21,11 @@ public class Projectile {
         return size;
     }
 
-    public Projectile(ProjectileType type, ProjectileDirection direction, ProjectileSize size) {
+    @JsonCreator
+    public Projectile(
+            @JsonProperty("type") ProjectileType type,
+            @JsonProperty("direction") ProjectileDirection direction,
+            @JsonProperty("size") ProjectileSize size) {
         this.type = type;
         this.direction = direction;
         this.size = size;
