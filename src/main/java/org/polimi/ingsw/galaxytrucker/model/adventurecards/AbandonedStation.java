@@ -30,7 +30,8 @@ public class AbandonedStation extends AdventureCard {
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("humansLost") int humansLost ,
                          @JsonProperty("aliensLost")  int aliensLost,
-                         @JsonProperty("credits")  int credits )
+                         @JsonProperty("credits")  int credits,
+                            ArrayList<Good> goods)
     {
         this.id = id;
         this.level = level;
@@ -42,6 +43,7 @@ public class AbandonedStation extends AdventureCard {
         this.humansLost = humansLost;
         this.aliensLost = aliensLost;
         this.credits = credits;
+        this.goods = goods;
     }
 
 

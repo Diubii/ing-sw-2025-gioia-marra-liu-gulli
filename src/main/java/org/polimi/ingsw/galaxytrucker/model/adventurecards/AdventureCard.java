@@ -42,8 +42,6 @@ public abstract class AdventureCard {
     protected boolean learningFlight;
     /** Indicates whether the effect of the card applies to all players. */
     protected boolean affectsAll;
-    /** The firepower of the enemy. */
-    protected int firePower;
 
     /**
      * Activates the effect of the adventure card.

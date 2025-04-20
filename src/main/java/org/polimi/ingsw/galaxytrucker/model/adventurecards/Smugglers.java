@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class Smugglers extends AdventureCard {
     private int penalty;
+    private final int firePower;
     public int getPenalty() {
         return penalty;
     }
@@ -19,8 +20,9 @@ public class Smugglers extends AdventureCard {
                          @JsonProperty("level") int level,
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
+                         @JsonProperty("firePower") int firePower,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("humansLost") int humansLost ,
+                         @JsonProperty("humansLost") int humansLost,
                          @JsonProperty("aliensLost")  int aliensLost,
                          @JsonProperty("credits")  int credits )
     {
@@ -30,13 +32,15 @@ public class Smugglers extends AdventureCard {
         this.name = name;
         this.learningFlight = learningFlight;
         this.affectsAll = false;
-        this.firePower = 0;
+        this.firePower = firePower;
         this.humansLost = humansLost;
         this.aliensLost = aliensLost;
         this.credits = credits;
     }
 
-    public Smugglers(){}
+    public Smugglers(int firePower){
+        this.firePower = firePower;
+    }
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {
         aca.activateSmugglers(this, p, flightBoard);

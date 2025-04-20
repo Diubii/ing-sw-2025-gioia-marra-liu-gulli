@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class Slavers extends AdventureCard {
     private final int penalty;
+    private final int firePower;
     public int getPenalty() {
         return penalty;
     }
@@ -31,8 +32,9 @@ public class Slavers extends AdventureCard {
         this.penalty = penalty;
     }
 
-    public Slavers(int penalty) {
+    public Slavers(int penalty, int firePower) {
         this.penalty = penalty;
+        this.firePower = firePower;
     }
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {

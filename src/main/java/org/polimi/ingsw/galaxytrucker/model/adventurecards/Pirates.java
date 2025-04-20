@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class Pirates extends AdventureCard {
     private final ArrayList<Projectile> cannonFires;
+    private final int firePower;
     public ArrayList<Projectile> getCannonFires() {
         return cannonFires;
     }
@@ -32,8 +33,9 @@ public class Pirates extends AdventureCard {
         this.cannonFires = cannonFires;
     }
 
-    public Pirates(ArrayList<Projectile> cannonFires) {
+    public Pirates(ArrayList<Projectile> cannonFires, int firePower) {
         this.cannonFires = cannonFires;
+        this.firePower = firePower;
     }
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {

@@ -4,22 +4,34 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
 import java.util.ArrayList;
 
 public class CombatZone extends AdventureCard {
-    public CombatZone() {}
+    private final int crewMembersLost;
+    private final int goodsLost;
+    private final ArrayList<Projectile> projectiles;
+
+    public CombatZone(int crewMembersLost, int goodsLost, ArrayList<Projectile> projectiles) {
+        this.crewMembersLost = crewMembersLost;
+        this.goodsLost = goodsLost;
+        this.projectiles = projectiles;
+    }
 
     @JsonCreator
-    public CombatZone(@JsonProperty("id") int id,
+    public CombatZone(   @JsonProperty("id") int id,
                          @JsonProperty("level") int level,
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("humansLost") int humansLost ,
                          @JsonProperty("aliensLost")  int aliensLost,
-                         @JsonProperty("credits")  int credits )
+                         @JsonProperty("credits")  int credits,
+                         int crewMembersLost,
+                         int goodsLost,
+                         ArrayList<Projectile> projectiles)
     {
         this.id = id;
         this.level = level;
@@ -31,9 +43,24 @@ public class CombatZone extends AdventureCard {
         this.humansLost = humansLost;
         this.aliensLost = aliensLost;
         this.credits = credits;
+        this.crewMembersLost = crewMembersLost;
+        this.goodsLost = goodsLost;
+        this.projectiles = projectiles;
     }
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {
         aca.activateCombatZone(this, p, flightBoard);
+    }
+
+    public int getCrewMembersLost() {
+        return crewMembersLost;
+    }
+
+    public int getGoodsLost() {
+        return goodsLost;
+    }
+
+    public ArrayList<Projectile> getProjectiles() {
+        return projectiles;
     }
 }
