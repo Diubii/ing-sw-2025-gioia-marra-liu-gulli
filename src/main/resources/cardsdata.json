@@ -1,0 +1,48 @@
+[
+  {
+    "type": "Pirates",
+    "id": 1,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Pirati",
+    "learningFlight": false,
+    "firePower": 1,
+    "cannonFires": [
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "BIG"
+      },
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "BIG"
+      }
+    ],
+    "affectsAll": false
+  },
+  {
+    "type": "Slavers",
+    "id": 2,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Schiavisti",
+    "learningFlight": false,
+    "firePower": 1,
+    "penalty": 1,
+    "affectsAll": false
+  },
+  {
+    "type": "AbandonedShip",
+    "id": 3,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Nave abbandonata",
+    "learningFlight": false,
+    "humansLost": 1,
+    "aliensLost": 1,
+    "credits": 1,
+    "affectsAll": false,
+    "firePower": 0
+  }
+]

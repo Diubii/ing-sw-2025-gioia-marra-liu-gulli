@@ -297,7 +297,7 @@ public class TileCardsJsonUtility extends Application {
 
     public void handleSaveTileList(ActionEvent actionEvent) {
         try{
-            FileOutputStream fos = new FileOutputStream("tiledata.json");
+            FileOutputStream fos = new FileOutputStream("src/main/resources/tiledata.json");
             String json = mapper.writeValueAsString(tiles);
             fos.write(json.getBytes());
         } catch (Exception e) {
@@ -307,7 +307,7 @@ public class TileCardsJsonUtility extends Application {
 
     public void handleLoadTileList(ActionEvent actionEvent) {
         try{
-            FileInputStream fis = new FileInputStream("tiledata.json");
+            FileInputStream fis = new FileInputStream("src/main/resources/tiledata.json");
             tiles = mapper.readValue(fis, new TypeReference<ArrayList<Tile>>(){});
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -384,7 +384,7 @@ public class TileCardsJsonUtility extends Application {
 
     public void handleSaveCardList(ActionEvent actionEvent) {
         try{
-            FileOutputStream fos = new FileOutputStream("carddata.json");
+            FileOutputStream fos = new FileOutputStream("src/main/resources/cardsdata.json");
             String json = mapper.writerFor(new TypeReference<ArrayList<AdventureCard>>() {}).writeValueAsString(cards);
             fos.write(json.getBytes());
         } catch (Exception e) {
@@ -394,7 +394,7 @@ public class TileCardsJsonUtility extends Application {
 
     public void handleLoadCardList(ActionEvent actionEvent) {
         try{
-            FileInputStream fis = new FileInputStream("carddata.json");
+            FileInputStream fis = new FileInputStream("src/main/resources/cardsdata.json");
             cards = mapper.readValue(fis, new TypeReference<ArrayList<AdventureCard>>(){});
         } catch (Exception e) {
             throw new RuntimeException(e);

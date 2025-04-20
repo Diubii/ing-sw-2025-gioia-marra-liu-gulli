@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
@@ -18,16 +19,24 @@ import java.util.ArrayList;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Pirates.class, name = "Pirates"),
-        @JsonSubTypes.Type(value = Slavers.class, name = "Slavers"),
         @JsonSubTypes.Type(value = AbandonedShip.class, name = "AbandonedShip"),
         @JsonSubTypes.Type(value = AbandonedStation.class, name = "AbandonedStation"),
+        @JsonSubTypes.Type(value = CombatZone.class, name = "CombatZone"),
+        @JsonSubTypes.Type(value = Epidemic.class, name = "Epidemic"),
+        @JsonSubTypes.Type(value = MeteorSwarm.class, name = "MeteorSwarm"),
+        @JsonSubTypes.Type(value = OpenSpace.class, name = "OpenSpace"),
+        @JsonSubTypes.Type(value = Pirates.class, name = "Pirates"),
+        @JsonSubTypes.Type(value = Planets.class, name = "Planets"),
+        @JsonSubTypes.Type(value = Slavers.class, name = "Slavers"),
+        @JsonSubTypes.Type(value = Smugglers.class, name = "Smugglers"),
+        @JsonSubTypes.Type(value = Stardust.class, name = "Stardust"),
+
+
 })
 public abstract class AdventureCard {
     protected int id;
     protected int level;
     protected int daysLost;
-
     protected String name;
     /** Indicates whether the card grants the ability to learn flight. */
     protected boolean learningFlight;

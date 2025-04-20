@@ -1,0 +1,3266 @@
+[
+  {
+    "id": 1,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "SINGLE",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 2,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 3,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "DOUBLE",
+      "SINGLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 4,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "DOUBLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 5,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 6,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "SINGLE",
+      "SINGLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 7,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 8,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 9,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 10,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 11,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 12,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 3,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 13,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "SINGLE",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 3,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 14,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 3,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 15,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 3,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 16,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "DOUBLE",
+      "SINGLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 3,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 17,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 3,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 18,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "UNIVERSAL",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 19,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "UNIVERSAL",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 20,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "UNIVERSAL",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 21,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 22,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 23,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 24,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 25,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 26,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 27,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 3,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 28,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "SINGLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 3,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 29,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 3,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 30,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 3,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 31,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "DOUBLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 3,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 32,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "SINGLE",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": false,
+      "nMaxContainers": 3,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 33,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "CentralHousingUnit",
+      "color": "BLUE",
+      "humanCrewNumber": 2,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 34,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "CentralHousingUnit",
+      "color": "GREEN",
+      "humanCrewNumber": 2,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 35,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 36,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "DOUBLE",
+      "SINGLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 37,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "DOUBLE",
+      "DOUBLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 38,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 39,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 40,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "DOUBLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 41,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 42,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "DOUBLE",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 43,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 44,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 45,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 46,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "SINGLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 47,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 48,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 49,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 50,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 51,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "DOUBLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "ModularHousingUnit",
+      "color": "EMPTY",
+      "nbrownAlien": 0,
+      "npurpleAlien": 0,
+      "humanCrewNumber": 0,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 52,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "CentralHousingUnit",
+      "color": "RED",
+      "humanCrewNumber": 2,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 53,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Component",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 54,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "UNIVERSAL",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Component",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 55,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "UNIVERSAL",
+      "SINGLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Component",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 56,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "UNIVERSAL",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Component",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 57,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "UNIVERSAL",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Component",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 58,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "SINGLE",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Component",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 59,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "DOUBLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Component",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 60,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "DOUBLE",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Component",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 61,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "UNIVERSAL",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "CentralHousingUnit",
+      "color": "YELLOW",
+      "humanCrewNumber": 2,
+      "rotation": 0,
+      "isColored": true
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 62,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "SINGLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 1,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 63,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 1,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 64,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "SINGLE",
+      "SINGLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 1,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 65,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 1,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 66,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 1,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 67,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 1,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 68,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 69,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 70,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "GenericCargoHolds",
+      "special": true,
+      "nMaxContainers": 2,
+      "goods": [],
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 71,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 72,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 73,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 74,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 75,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "SINGLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 76,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 77,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 78,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 79,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 79,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "BatterySlot",
+      "batteriesLeft": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 81,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 82,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 83,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "DOUBLE",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 84,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 85,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "DOUBLE",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 86,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 87,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "SINGLE",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 88,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 89,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 90,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 91,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Engine",
+      "enginePower": 1,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 92,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 93,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 94,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 95,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "SINGLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 96,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "SINGLE",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 97,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "DOUBLE",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 98,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 99,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 100,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "DoubleEngine",
+      "charged": false,
+      "enginePower": 2,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 101,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "SINGLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 102,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "SINGLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 103,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 104,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 105,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 106,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 107,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 108,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 109,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "SINGLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 110,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "UNIVERSAL",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 111,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "SINGLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 112,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 113,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 114,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 115,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "SINGLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 116,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "UNIVERSAL",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 117,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 118,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 119,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "SINGLE",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 120,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 121,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 122,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 123,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 124,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 125,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Cannon",
+      "firePower": 1.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 126,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "SINGLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 127,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 128,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 129,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 130,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "UNIVERSAL",
+      "DOUBLE",
+      "EMPTY"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 131,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "DOUBLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 132,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 133,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 134,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "SINGLE",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 135,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 136,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "DoubleCannon",
+      "charged": false,
+      "firePower": 2.0,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 137,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "SINGLE",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "BROWN",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 138,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "EMPTY",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "BROWN",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 139,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "BROWN",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 140,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "BROWN",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 141,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "BROWN",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 142,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "BROWN",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 143,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "DOUBLE",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "PURPLE",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 144,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "DOUBLE",
+      "EMPTY",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "PURPLE",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 145,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "PURPLE",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 146,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "PURPLE",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 147,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "PURPLE",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 148,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "LifeSupportSystem",
+      "color": "PURPLE",
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 149,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Shield",
+      "protectedSides": [],
+      "charged": false,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 150,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "EMPTY",
+      "SINGLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Shield",
+      "protectedSides": [],
+      "charged": false,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 151,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "DOUBLE",
+      "SINGLE",
+      "DOUBLE",
+      "SINGLE"
+    ],
+    "myComponent": {
+      "type": "Shield",
+      "protectedSides": [],
+      "charged": false,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 152,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "UNIVERSAL",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Shield",
+      "protectedSides": [],
+      "charged": false,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 153,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Shield",
+      "protectedSides": [],
+      "charged": false,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 154,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "SINGLE",
+      "DOUBLE",
+      "SINGLE",
+      "DOUBLE"
+    ],
+    "myComponent": {
+      "type": "Shield",
+      "protectedSides": [],
+      "charged": false,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 155,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "EMPTY",
+      "SINGLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Shield",
+      "protectedSides": [],
+      "charged": false,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  },
+  {
+    "id": 156,
+    "rotation": 0,
+    "flipped": false,
+    "sides": [
+      "EMPTY",
+      "DOUBLE",
+      "DOUBLE",
+      "UNIVERSAL"
+    ],
+    "myComponent": {
+      "type": "Shield",
+      "protectedSides": [],
+      "charged": false,
+      "rotation": 0
+    },
+    "fixed": false,
+    "wellConnected": true,
+    "exposedConnectors": 0,
+    "used": false
+  }
+]

@@ -34,6 +34,8 @@ public class AbandonedShip extends AdventureCard {
         this.daysLost = daysLost;
         this.name = name;
         this.learningFlight = learningFlight;
+        this.affectsAll = false;
+        this.firePower = 0;
         this.humansLost = humansLost;
         this.aliensLost = aliensLost;
         this.credits = credits;
