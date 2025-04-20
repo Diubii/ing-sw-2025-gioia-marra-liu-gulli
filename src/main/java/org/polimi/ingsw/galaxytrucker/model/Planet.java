@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 
 import java.util.ArrayList;
@@ -26,7 +28,8 @@ public class Planet {
         return goods;
     }
 
-    public Planet(boolean occupied, ArrayList<Good> goods) {
+    @JsonCreator
+    public Planet(@JsonProperty("occupied") boolean occupied, @JsonProperty("goods") ArrayList<Good> goods) {
         this.occupied = occupied;
         this.goods = goods;
     }

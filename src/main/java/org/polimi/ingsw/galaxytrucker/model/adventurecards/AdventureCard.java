@@ -99,12 +99,5 @@ public abstract class AdventureCard {
         return affectsAll;
     }
 
-    /**
-     * Gets the firepower of the enemy.
-     *
-     * @return The firepower value.
-     */
-    public int getFirePower() {
-        return firePower;
-    }
+
 }

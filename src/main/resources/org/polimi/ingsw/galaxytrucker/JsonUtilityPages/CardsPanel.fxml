@@ -10,6 +10,9 @@
 <VBox spacing="10" alignment="TOP_CENTER"  xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.polimi.ingsw.galaxytrucker.TileCardsJsonUtility">
 
+    <Label text="Manipolare direttamente il Json, troppo diverse le varie carte, decommentare il bottone per creare un Json con una carta per tipo"/>
+   <!-- <Button text="Json una per tipo" onAction="#handleJsonCiascuna"/>-->
+    <Button text="Carica la lista" onAction="#handleLoadCardList"/>
     <!--
     <HBox spacing="20">
         <Label text="ID (da 1 a 40):"/>
@@ -100,6 +103,6 @@
     <Button text="Imposta nella lista" onAction="#handleAddCardToList"/>
 
     -->
-    <Button text="Json una per tipo" onAction="#handleJsonCiascuna"/>
+
 
 </VBox>

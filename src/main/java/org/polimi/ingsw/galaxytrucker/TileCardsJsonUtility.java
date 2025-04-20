@@ -17,11 +17,9 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.enums.*;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AbandonedShip;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.Pirates;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.Slavers;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
@@ -334,9 +332,25 @@ public class TileCardsJsonUtility extends Application {
         EsGoods.add(EsGood);
         EsGoods.add(EsGood);
 
-        cards.add(new Pirates(1,1,1,"Pirati",false,1,EsempioProj));
-        cards.add(new Slavers(2,1,1,"Schiavisti",false,1,1));
-        cards.add(new AbandonedShip(3,1,1,"Nave abbandonata",false,1,1,1));
+        //Esempio Pianeti
+        Planet EsPianeta = new Planet(false,EsGoods);
+        ArrayList<Planet> EsPlanets = new ArrayList<>();
+        EsPlanets.add(EsPianeta);
+        EsPlanets.add(EsPianeta);
+
+        cards.add(new AbandonedShip(1,1,1,"Nave abbandonata",false,1,1));
+        cards.add(new AbandonedStation(1,1,2,"Stazione abbandonata",false,EsGoods,8));
+        cards.add(new CombatZone(1,1,2,"Zona Guerra",false,2,2,EsempioProj));
+        cards.add(new Epidemic(2,1,2,"Epidemia",true));
+        cards.add(new MeteorSwarm(1,1,1,"Meteoriti",false,EsempioProj));
+        cards.add(new OpenSpace(1,1,1,"Spazio aperto",false));
+        cards.add(new Pirates(1,1,1,"Pirati",false,1,EsempioProj,2));
+        cards.add(new Planets(1,1,1,"Pianeti",false,EsPlanets));
+        cards.add(new Slavers(2,1,1,"Schiavisti",false,1,1,1));
+        cards.add(new Smugglers(1,1,1,"Contrabbandieri",false,2,2,EsGoods));
+        cards.add(new Stardust(1,1,1,"Polvere di stelle",false));
+
+
 
 
 

@@ -1,5 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 
 
@@ -18,7 +21,8 @@ public class Good {
      *
      * @param color The color of the good.
      */
-    public Good(Color color) {
+    @JsonCreator
+    public Good( @JsonProperty("color") Color color) {
         this.color = color;
     }
 
@@ -50,6 +54,7 @@ public class Good {
      *
      * @return The value of the good.
      */
+    @JsonIgnore
     public int getValue(){
         switch (color){
             case RED -> {

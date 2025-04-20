@@ -11,6 +11,11 @@ import java.util.ArrayList;
 public class Slavers extends AdventureCard {
     private final int penalty;
     private final int firePower;
+
+
+
+    /** The amount of credits lost or gained. */
+    private final int credits;
     public int getPenalty() {
         return penalty;
     }
@@ -22,7 +27,8 @@ public class Slavers extends AdventureCard {
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
                    @JsonProperty("firePower") int firePower ,
-                   @JsonProperty("penalty") int penalty) {
+                   @JsonProperty("penalty") int penalty,
+                   @JsonProperty("credits") int credits) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;
@@ -30,11 +36,26 @@ public class Slavers extends AdventureCard {
         this.learningFlight = learningFlight;
         this.firePower = firePower;
         this.penalty = penalty;
+        this.credits = credits;
     }
 
-    public Slavers(int penalty, int firePower) {
+    public Slavers(int penalty, int firePower,int credits) {
         this.penalty = penalty;
         this.firePower = firePower;
+        this.credits = credits;
+    }
+
+    /**
+     * Gets the firepower of the enemy.
+     *
+     * @return The firepower value.
+     */
+    public int getFirePower() {
+        return firePower;
+    }
+
+    public int getCredits() {
+        return credits;
     }
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {

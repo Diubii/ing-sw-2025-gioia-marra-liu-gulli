@@ -15,24 +15,15 @@ public class Stardust extends AdventureCard {
                          @JsonProperty("level") int level,
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("humansLost") int humansLost ,
-                         @JsonProperty("aliensLost")  int aliensLost,
-                         @JsonProperty("credits")  int credits )
+                         @JsonProperty("learningFlight") boolean learningFlight )
     {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;
         this.name = name;
         this.learningFlight = learningFlight;
-        this.affectsAll = false;
-        this.firePower = 0;
-        this.humansLost = humansLost;
-        this.aliensLost = aliensLost;
-        this.credits = credits;
+        this.affectsAll = true;
     }
-
-    public Stardust(){}
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard){
         aca.activateStardust(this, p, flightBoard);

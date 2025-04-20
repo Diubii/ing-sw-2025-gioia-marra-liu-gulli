@@ -1,13 +1,631 @@
 [
   {
-    "type": "Pirates",
+    "type": "Slavers",
     "id": 1,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Schiavisti",
+    "learningFlight": false,
+    "firePower": 6,
+    "penalty": 3,
+    "credits": 5,
+    "affectsAll": false
+  },
+  {
+  "type": "Smugglers",
+  "id": 2,
+  "level": 1,
+  "daysLost": 1,
+  "name": "Contrabbandieri",
+  "learningFlight": true,
+  "firePower": 4,
+  "penalty": 2,
+  "affectsAll": false,
+  "goods": [
+      {
+        "color": "YELLOW"
+      },
+      {
+        "color": "GREEN"
+      },
+      {
+        "color": "BLUE"
+      }
+    ]
+  },
+  {
+    "type": "Pirates",
+    "id": 3,
     "level": 1,
     "daysLost": 1,
     "name": "Pirati",
     "learningFlight": false,
-    "firePower": 1,
+    "firePower": 5,
     "cannonFires": [
+      {
+        "type": "CannonFire",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "CannonFire",
+        "direction": "FRONT",
+        "size": "BIG"
+      },
+      {
+        "type": "CannonFire",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      }
+    ],
+    "credits": 4,
+    "affectsAll": false
+  },
+  {
+    "type": "Stardust",
+    "id": 4,
+    "level": 1,
+    "daysLost": 0,
+    "name": "Polvere di stelle",
+    "learningFlight": true,
+    "affectsAll": true
+  },
+  {
+    "type": "OpenSpace",
+    "id": 5,
+    "level": 1,
+    "daysLost": 0,
+    "name": "Spazio aperto",
+    "learningFlight": true,
+    "affectsAll": true
+  },
+  {
+    "type": "OpenSpace",
+    "id": 6,
+    "level": 1,
+    "daysLost": 0,
+    "name": "Spazio aperto",
+    "learningFlight": false,
+    "affectsAll": true
+  },
+  {
+    "type": "OpenSpace",
+    "id": 7,
+    "level": 1,
+    "daysLost": 0,
+    "name": "Spazio aperto",
+    "learningFlight": false,
+    "affectsAll": true
+  },
+  {
+    "type": "OpenSpace",
+    "id": 8,
+    "level": 1,
+    "daysLost": 0,
+    "name": "Spazio aperto",
+    "learningFlight": false,
+    "affectsAll": true
+  },
+  {
+    "type": "MeteorSwarm",
+    "id": 9,
+    "level": 1,
+    "daysLost": 0,
+    "name": "Meteoriti",
+    "learningFlight": true,
+    "meteors": [
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "BIG"
+      },
+      {
+        "type": "Meteor",
+        "direction": "LEFT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "RIGHT",
+        "size": "LITTLE"
+      }
+    ],
+    "affectsAll": true
+  },
+  {
+    "type": "MeteorSwarm",
+    "id": 10,
+    "level": 1,
+    "daysLost": 0,
+    "name": "Meteoriti",
+    "learningFlight": false,
+    "meteors": [
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "LEFT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "RIGHT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "BOTTOM",
+        "size": "LITTLE"
+      }
+    ],
+    "affectsAll": true
+  },
+  {
+    "type": "MeteorSwarm",
+    "id": 11,
+    "level": 1,
+    "daysLost": 0,
+    "name": "Meteoriti",
+    "learningFlight": false,
+    "meteors": [
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "BIG"
+      },
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "BIG"
+      }
+    ],
+    "affectsAll": true
+  },
+  {
+    "type": "Planets",
+    "id": 12,
+    "level": 1,
+    "daysLost": 3,
+    "name": "Pianeti",
+    "learningFlight": false,
+    "planets": [
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "YELLOW"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "GREEN"
+          }
+        ]
+      }
+    ],
+    "affectsAll": false
+  },
+  {
+    "type": "Planets",
+    "id": 13,
+    "level": 1,
+    "daysLost": 2,
+    "name": "Pianeti",
+    "learningFlight": true,
+    "planets": [
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "RED"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "YELLOW"
+          }
+        ]
+      }
+    ],
+    "affectsAll": false
+  },
+  {
+    "type": "Planets",
+    "id": 14,
+    "level": 1,
+    "daysLost": 3,
+    "name": "Pianeti",
+    "learningFlight": false,
+    "planets": [
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "YELLOW"
+          },
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "YELLOW"
+          },
+          {
+            "color": "YELLOW"
+          }
+        ]
+      }
+    ],
+    "affectsAll": false
+  },
+  {
+    "type": "Planets",
+    "id": 15,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Pianeti",
+    "learningFlight": false,
+    "planets": [
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "YELLOW"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
+      }
+    ],
+    "affectsAll": false
+  },
+  {
+    "type": "CombatZone",
+    "id": 16,
+    "level": 1,
+    "daysLost": 3,
+    "name": "Zona Guerra",
+    "learningFlight": true,
+    "crewMembersLost": 2,
+    "goodsLost": 0,
+    "projectiles": [
+      {
+        "type": "CannonFire",
+        "direction": "BOTTOM",
+        "size": "LITTLE"
+      },
+      {
+        "type": "CannonFire",
+        "direction": "BOTTOM",
+        "size": "BIG"
+      }
+    ],
+    "affectsAll": true
+  },
+  {
+    "type": "AbandonedShip",
+    "id": 17,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Nave abbandonata",
+    "learningFlight": false,
+    "crewMembersLost": 2,
+    "credits": 3,
+    "affectsAll": false
+  },
+  {
+    "type": "AbandonedShip",
+    "id": 18,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Nave abbandonata",
+    "learningFlight": true,
+    "crewMembersLost": 3,
+    "credits": 4,
+    "affectsAll": false
+  },
+  {
+    "type": "AbandonedStation",
+    "id": 19,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Stazione abbandonata",
+    "learningFlight": true,
+    "goods": [
+      {
+        "color": "YELLOW"
+      },
+      {
+        "color": "GREEN"
+      }
+    ],
+    "affectsAll": false,
+    "crewMemebers": 5
+  },
+  {
+    "type": "AbandonedStation",
+    "id": 20,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Stazione abbandonata",
+    "learningFlight": false,
+    "goods": [
+      {
+        "color": "RED"
+      },
+      {
+        "color": "RED"
+      }
+    ],
+    "affectsAll": false,
+    "crewMemebers": 6
+  },
+  {
+    "type": "Slavers",
+    "id": 21,
+    "level": 2,
+    "daysLost": 2,
+    "name": "Schiavisti",
+    "learningFlight": false,
+    "firePower": 7,
+    "penalty": 4,
+    "credits": 8,
+    "affectsAll": false
+  },
+  {
+    "type": "Smugglers",
+    "id": 22,
+    "level": 2,
+    "daysLost": 1,
+    "name": "Contrabbandieri",
+    "learningFlight": false,
+    "firePower": 8,
+    "penalty": 3,
+    "affectsAll": false,
+    "goods": [
+      {
+        "color": "RED"
+      },
+      {
+        "color": "YELLOW"
+      },
+      {
+        "color": "YELLOW"
+      }
+    ]
+  },
+  {
+    "type": "Pirates",
+    "id": 23,
+    "level": 2,
+    "daysLost": 2,
+    "name": "Pirati",
+    "learningFlight": false,
+    "firePower": 6,
+    "cannonFires": [
+      {
+        "type": "CannonFire",
+        "direction": "FRONT",
+        "size": "BIG"
+      },
+      {
+        "type": "CannonFire",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "CannonFire",
+        "direction": "FRONT",
+        "size": "BIG"
+      }
+    ],
+    "credits": 7,
+    "affectsAll": false
+  },
+  {
+    "type": "Stardust",
+    "id": 24,
+    "level": 2,
+    "daysLost": 0,
+    "name": "Polvere di stelle",
+    "learningFlight": false,
+    "affectsAll": true
+  },
+  {
+    "type": "Epidemic",
+    "id": 25,
+    "level": 2,
+    "daysLost": 0,
+    "name": "Epidemia",
+    "learningFlight": false,
+    "affectsAll": true
+  },
+  {
+    "type": "OpenSpace",
+    "id": 26,
+    "level": 2,
+    "daysLost": 0,
+    "name": "Spazio aperto",
+    "learningFlight": false,
+    "affectsAll": true
+  },
+  {
+    "type": "OpenSpace",
+    "id": 27,
+    "level": 2,
+    "daysLost": 0,
+    "name": "Spazio aperto",
+    "learningFlight": false,
+    "affectsAll": true
+  },
+  {
+    "type": "OpenSpace",
+    "id": 28,
+    "level": 2,
+    "daysLost": 0,
+    "name": "Spazio aperto",
+    "learningFlight": false,
+    "affectsAll": true
+  },
+  {
+    "type": "MeteorSwarm",
+    "id": 29,
+    "level": 2,
+    "daysLost": 0,
+    "name": "Meteoriti",
+    "learningFlight": false,
+    "meteors": [
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "LEFT",
+        "size": "BIG"
+      },
+      {
+        "type": "Meteor",
+        "direction": "LEFT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "LEFT",
+        "size": "LITTLE"
+      }
+    ],
+    "affectsAll": true
+  },
+  {
+    "type": "MeteorSwarm",
+    "id": 30,
+    "level": 2,
+    "daysLost": 0,
+    "name": "Meteoriti",
+    "learningFlight": false,
+    "meteors": [
       {
         "type": "Meteor",
         "direction": "FRONT",
@@ -17,32 +635,363 @@
         "type": "Meteor",
         "direction": "FRONT",
         "size": "BIG"
+      },
+      {
+        "type": "Meteor",
+        "direction": "BOTTOM",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "BOTTOM",
+        "size": "LITTLE"
+      }
+    ],
+    "affectsAll": true
+  },
+  {
+    "type": "MeteorSwarm",
+    "id": 31,
+    "level": 2,
+    "daysLost": 0,
+    "name": "Meteoriti",
+    "learningFlight": false,
+    "meteors": [
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "RIGHT",
+        "size": "BIG"
+      },
+      {
+        "type": "Meteor",
+        "direction": "RIGHT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "Meteor",
+        "direction": "RIGHT",
+        "size": "LITTLE"
+      }
+    ],
+    "affectsAll": true
+  },
+  {
+    "type": "Planets",
+    "id": 32,
+    "level": 2,
+    "daysLost": 4,
+    "name": "Pianeti",
+    "learningFlight": false,
+    "planets": [
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "RED"
+          },
+          {
+            "color": "RED"
+          },
+          {
+            "color": "YELLOW"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "RED"
+          },
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
       }
     ],
     "affectsAll": false
   },
   {
-    "type": "Slavers",
-    "id": 2,
-    "level": 1,
-    "daysLost": 1,
-    "name": "Schiavisti",
+    "type": "Planets",
+    "id": 33,
+    "level": 2,
+    "daysLost": 3,
+    "name": "Pianeti",
     "learningFlight": false,
-    "firePower": 1,
-    "penalty": 1,
+    "planets": [
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "RED"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          }
+        ]
+      }
+    ],
+    "affectsAll": false
+  },
+  {
+    "type": "Planets",
+    "id": 34,
+    "level": 2,
+    "daysLost": 2,
+    "name": "Pianeti",
+    "learningFlight": false,
+    "planets": [
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "RED"
+          },
+          {
+            "color": "YELLOW"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "YELLOW"
+          },
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "YELLOW"
+          }
+        ]
+      }
+    ],
+    "affectsAll": false
+  },
+  {
+    "type": "Planets",
+    "id": 35,
+    "level": 2,
+    "daysLost": 3,
+    "name": "Pianeti",
+    "learningFlight": false,
+    "planets": [
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          },
+          {
+            "color": "GREEN"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "YELLOW"
+          },
+          {
+            "color": "YELLOW"
+          }
+        ]
+      },
+      {
+        "occupied": false,
+        "goods": [
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          },
+          {
+            "color": "BLUE"
+          }
+        ]
+      }
+    ],
+    "affectsAll": false
+  },
+  {
+    "type": "CombatZone",
+    "id": 36,
+    "level": 2,
+    "daysLost": 4,
+    "name": "Zona Guerra",
+    "learningFlight": false,
+    "crewMembersLost": 0,
+    "goodsLost": 3,
+    "projectiles": [
+      {
+        "type": "CannonFire",
+        "direction": "FRONT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "CannonFire",
+        "direction": "RIGHT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "CannonFire",
+        "direction": "LEFT",
+        "size": "LITTLE"
+      },
+      {
+        "type": "CannonFire",
+        "direction": "BOTTOM",
+        "size": "BIG"
+      }
+    ],
+    "affectsAll": true
+  },
+  {
+    "type": "AbandonedShip",
+    "id": 37,
+    "level": 2,
+    "daysLost": 1,
+    "name": "Nave abbandonata",
+    "learningFlight": false,
+    "crewMembersLost": 4,
+    "credits": 6,
     "affectsAll": false
   },
   {
     "type": "AbandonedShip",
-    "id": 3,
-    "level": 1,
-    "daysLost": 1,
+    "id": 38,
+    "level": 2,
+    "daysLost": 2,
     "name": "Nave abbandonata",
     "learningFlight": false,
-    "humansLost": 1,
-    "aliensLost": 1,
-    "credits": 1,
+    "crewMembersLost": 5,
+    "credits": 8,
+    "affectsAll": false
+  },
+  {
+    "type": "AbandonedStation",
+    "id": 39,
+    "level": 2,
+    "daysLost": 1,
+    "name": "Stazione abbandonata",
+    "learningFlight": false,
+    "goods": [
+      {
+        "color": "RED"
+      },
+      {
+        "color": "YELLOW"
+      }
+    ],
     "affectsAll": false,
-    "firePower": 0
+    "crewMemebers": 7
+  },
+  {
+    "type": "AbandonedStation",
+    "id": 40,
+    "level": 2,
+    "daysLost": 2,
+    "name": "Stazione abbandonata",
+    "learningFlight": false,
+    "goods": [
+      {
+        "color": "YELLOW"
+      },
+      {
+        "color": "YELLOW"
+      },
+      {
+        "color": "GREEN"
+      }
+    ],
+    "affectsAll": false,
+    "crewMemebers": 7
   }
 ]

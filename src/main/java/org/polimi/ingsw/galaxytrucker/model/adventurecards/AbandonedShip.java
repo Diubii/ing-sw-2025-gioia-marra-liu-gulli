@@ -13,9 +13,7 @@ import java.util.ArrayList;
  */
 public class AbandonedShip extends AdventureCard {
     /** The number of humans lost. */
-    private final int humansLost;
-    /** The number of aliens lost. */
-    private final int aliensLost;
+    private final int crewMembersLost;
     /** The amount of credits lost or gained. */
     private final int credits;
 
@@ -25,8 +23,7 @@ public class AbandonedShip extends AdventureCard {
                    @JsonProperty("daysLost") int daysLost,
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
-                   @JsonProperty("humansLost") int humansLost ,
-                   @JsonProperty("aliensLost")  int aliensLost,
+                   @JsonProperty("crewMembersLost") int crewMembersLost ,
                    @JsonProperty("credits")  int credits )
             {
         this.id = id;
@@ -35,23 +32,10 @@ public class AbandonedShip extends AdventureCard {
         this.name = name;
         this.learningFlight = learningFlight;
         this.affectsAll = false;
-        this.firePower = 0;
-        this.humansLost = humansLost;
-        this.aliensLost = aliensLost;
+        this.crewMembersLost = crewMembersLost;
         this.credits = credits;
     }
-    /**
-     * Constructs an AbandonedShip card with specified losses.
-     *
-     * @param humansLost The number of humans lost.
-     * @param aliensLost The number of aliens lost.
-     * @param credits The amount of credits lost or gained.
-     */
-    public AbandonedShip(int humansLost, int aliensLost, int credits) {
-        this.humansLost = humansLost;
-        this.aliensLost = aliensLost;
-        this.credits = credits;
-    }
+
     /**
      * Activates the effect of the abandoned ship card.
      *
@@ -61,28 +45,12 @@ public class AbandonedShip extends AdventureCard {
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {
         aca.activateAbandonedShip(this, p, flightBoard);
     }
-    /**
-     * Gets the number of humans lost.
-     *
-     * @return The number of humans lost.
-     */
-    public int getHumansLost() {
-        return humansLost;
+
+    public int getCrewMembersLost() {
+        return crewMembersLost;
     }
 
-    /**
-     * Gets the number of aliens lost.
-     *
-     * @return The number of aliens lost.
-     */
-    public int getAliensLost() {
-        return aliensLost;
-    }
-    /**
-     * Gets the amount of credits associated with the abandoned ship.
-     *
-     * @return The credit amount.
-     */
+
     public int getCredits() {
         return credits;
     }

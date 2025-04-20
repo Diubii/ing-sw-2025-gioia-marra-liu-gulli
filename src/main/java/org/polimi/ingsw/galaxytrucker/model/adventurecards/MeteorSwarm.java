@@ -21,20 +21,15 @@ public class MeteorSwarm extends AdventureCard {
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("humansLost") int humansLost ,
-                         @JsonProperty("aliensLost")  int aliensLost,
-                         @JsonProperty("credits")  int credits )
+                         @JsonProperty("meteors") ArrayList<Projectile> meteors)
     {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;
         this.name = name;
         this.learningFlight = learningFlight;
-        this.affectsAll = false;
-        this.firePower = 0;
-        this.humansLost = humansLost;
-        this.aliensLost = aliensLost;
-        this.credits = credits;
+        this.affectsAll = true;
+        this.meteors = meteors;
     }
 
     public MeteorSwarm(ArrayList<Projectile> meteors) {

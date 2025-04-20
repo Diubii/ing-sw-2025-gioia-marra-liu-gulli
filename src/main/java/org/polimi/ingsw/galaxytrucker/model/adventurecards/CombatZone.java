@@ -26,12 +26,9 @@ public class CombatZone extends AdventureCard {
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("humansLost") int humansLost ,
-                         @JsonProperty("aliensLost")  int aliensLost,
-                         @JsonProperty("credits")  int credits,
-                         int crewMembersLost,
-                         int goodsLost,
-                         ArrayList<Projectile> projectiles)
+                         @JsonProperty("crewMembersLost") int crewMembersLost,
+                         @JsonProperty("goodsLost") int goodsLost,
+                         @JsonProperty("projectiles") ArrayList<Projectile> projectiles)
     {
         this.id = id;
         this.level = level;
@@ -39,10 +36,6 @@ public class CombatZone extends AdventureCard {
         this.name = name;
         this.learningFlight = learningFlight;
         this.affectsAll = false;
-        this.firePower = 0;
-        this.humansLost = humansLost;
-        this.aliensLost = aliensLost;
-        this.credits = credits;
         this.crewMembersLost = crewMembersLost;
         this.goodsLost = goodsLost;
         this.projectiles = projectiles;

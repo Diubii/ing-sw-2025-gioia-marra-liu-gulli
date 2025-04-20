@@ -13,8 +13,19 @@ import java.util.ArrayList;
  * The card allows the player to gain or lose goods based on the card's effect.
  */
 public class AbandonedStation extends AdventureCard {
+
+
     /** A list of goods associated with the abandoned station. */
     private final ArrayList<Good> goods;
+
+
+
+    private final int crewMemebers;
+
+    public int getCrewMemebers() {
+        return crewMemebers;
+    }
+
     /**
      * Gets the list of goods found at the abandoned station.
      *
@@ -28,10 +39,8 @@ public class AbandonedStation extends AdventureCard {
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("humansLost") int humansLost ,
-                         @JsonProperty("aliensLost")  int aliensLost,
-                         @JsonProperty("credits")  int credits,
-                            ArrayList<Good> goods)
+                         @JsonProperty("goods")   ArrayList<Good> goods,
+                         @JsonProperty("crewMembers")   int crewMemebers)
     {
         this.id = id;
         this.level = level;
@@ -39,23 +48,11 @@ public class AbandonedStation extends AdventureCard {
         this.name = name;
         this.learningFlight = learningFlight;
         this.affectsAll = false;
-        this.firePower = 0;
-        this.humansLost = humansLost;
-        this.aliensLost = aliensLost;
-        this.credits = credits;
         this.goods = goods;
+        this.crewMemebers = crewMemebers;
     }
 
 
-
-    /**
-     * Constructs an AbandonedStation adventure card with a specified list of goods.
-     *
-     * @param goods A list of {@link Good} objects representing the goods at the abandoned station.
-     */
-    public AbandonedStation(ArrayList<Good> goods) {
-        this.goods=goods;
-    }
     /**
      * Activates the effect of the Abandoned Station card by triggering the effect
      * through the given {@link AdventureCardActivator}.

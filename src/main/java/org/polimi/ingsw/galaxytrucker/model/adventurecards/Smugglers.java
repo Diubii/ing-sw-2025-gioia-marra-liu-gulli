@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
 import java.util.ArrayList;
 
 public class Smugglers extends AdventureCard {
-    private int penalty;
     private final int firePower;
+    private int penalty;
+    private ArrayList<Good> goods;
     public int getPenalty() {
         return penalty;
     }
@@ -20,11 +22,10 @@ public class Smugglers extends AdventureCard {
                          @JsonProperty("level") int level,
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
-                         @JsonProperty("firePower") int firePower,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("humansLost") int humansLost,
-                         @JsonProperty("aliensLost")  int aliensLost,
-                         @JsonProperty("credits")  int credits )
+                         @JsonProperty("firePower") int firePower,
+                         @JsonProperty("penalty")int penalty,
+                         @JsonProperty("good") ArrayList<Good> goods)
     {
         this.id = id;
         this.level = level;
@@ -33,13 +34,25 @@ public class Smugglers extends AdventureCard {
         this.learningFlight = learningFlight;
         this.affectsAll = false;
         this.firePower = firePower;
-        this.humansLost = humansLost;
-        this.aliensLost = aliensLost;
-        this.credits = credits;
+        this.penalty = penalty;
+        this.goods = goods;
+
     }
 
     public Smugglers(int firePower){
         this.firePower = firePower;
+    }
+
+    public ArrayList<Good> getGoods() {
+        return new ArrayList<Good>(goods);
+    }
+    /**
+     * Gets the firepower of the enemy.
+     *
+     * @return The firepower value.
+     */
+    public int getFirePower() {
+        return firePower;
     }
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {
