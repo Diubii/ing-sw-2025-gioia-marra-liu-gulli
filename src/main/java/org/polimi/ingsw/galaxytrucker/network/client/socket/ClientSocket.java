@@ -1,5 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.network.client.socket;
 
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
@@ -13,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ClientSocket   implements Client, Observable {
+public class ClientSocket implements Client, Observable {
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
@@ -23,18 +26,20 @@ public class ClientSocket   implements Client, Observable {
     private final ExecutorService taskQueue;
     private final ArrayList<Observer> observers = new ArrayList<>();
 
+    //test
+    public String testSignal;
 
     public ClientSocket(String address, Integer port) throws IOException {
-    this.port = port;
-    this.address = address;
-    taskQueue = Executors.newSingleThreadExecutor();
-}
+        this.port = port;
+        this.address = address;
+        taskQueue = Executors.newSingleThreadExecutor();
+    }
 
- public void sendMessage(NetworkMessage message) throws IOException {
-    outputStream.writeObject(message);
-    outputStream.flush();  // << Aggiungi questo!
-    outputStream.reset();  // reset serve se mandi oggetti modificati
- }
+    public void sendMessage(NetworkMessage message) throws IOException {
+        outputStream.writeObject(message);
+        outputStream.flush();  // << Aggiungi questo!
+        outputStream.reset();  // reset serve se mandi oggetti modificati
+    }
 
     public void receiveMessage() {
         readExecutionQueue.execute(() -> {
@@ -50,6 +55,7 @@ public class ClientSocket   implements Client, Observable {
 //
 //                        System.out.println(m2.getIsFirst());
 //                    }
+
 
                 } catch (IOException | ClassNotFoundException e) {
                     readExecutionQueue.shutdownNow();
@@ -71,7 +77,7 @@ public class ClientSocket   implements Client, Observable {
         this.readExecutionQueue = Executors.newSingleThreadExecutor();
     }
 
-    public Socket getSocket(){
+    public Socket getSocket() {
         return socket;
     }
 
@@ -88,7 +94,12 @@ public class ClientSocket   implements Client, Observable {
     @Override
     public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException {
         for (Observer observer : observers) {
-            observer.update(message);
+            try {
+                observer.update(message);
+            }
+            catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition | InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
         }
     }
 

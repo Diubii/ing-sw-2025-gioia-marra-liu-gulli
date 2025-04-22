@@ -49,18 +49,27 @@ public class ModularHousingUnit extends CentralHousingUnit{
         return nPurpleAlien;
     }
 
-    public void removeBrownAlien(){
-        if (nBrownAlien > 0 && alienColor == AlienColor.BROWN) nBrownAlien -= 1;
+    public void removeBrownAlien() {
+        if (nBrownAlien > 0 && alienColor == AlienColor.BROWN) {
+            nBrownAlien -= 1;
+            this.alienColor = AlienColor.EMPTY;
+
+        }
 
     }
 
-    public void removeAlienCrew(){
+    public void removeAlienCrew() {
         nPurpleAlien = 0;
         nBrownAlien = 0;
+        this.alienColor = AlienColor.EMPTY;
+
     }
 
-    public void removePurpleAlien(){
-        if (nPurpleAlien > 0 && alienColor == AlienColor.PURPLE) nPurpleAlien -= 1;
+    public void removePurpleAlien() {
+        if (nPurpleAlien > 0 && alienColor == AlienColor.PURPLE) {
+            nPurpleAlien -= 1;
+            this.alienColor = AlienColor.EMPTY;
+        }
     }
 
     @Override
@@ -76,4 +85,9 @@ public class ModularHousingUnit extends CentralHousingUnit{
     public int getHumanCrewNumber() {
         return super.getHumanCrewNumber();
     }
+
+    public AlienColor getAlienColor(){
+        return this.alienColor;
+    }
+
 }

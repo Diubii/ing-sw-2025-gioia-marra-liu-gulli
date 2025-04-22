@@ -1,42 +1,34 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
+import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 
 public class ClientPhaseController {
     private final ClientController controller;
-    private PLAYER_PHASE phase;
+    private GameState phase;
+
     public ClientPhaseController(ClientController controller) {
         this.controller = controller;
-        phase = PLAYER_PHASE.START;
+        phase = GameState.LOBBY;
     }
 
-    public PLAYER_PHASE getPhase() {
+    public GameState getPhase() {
         return phase;
     }
 
-    public void nextPhase(){
-        switch (phase){
-            case START:
-                phase = PLAYER_PHASE.SERVER_INFO;
-                break;
 
-            case SERVER_INFO:
-                phase = PLAYER_PHASE.NICKNAME_REQUEST;
-                break;
+    public void handlePhaseUpdate(PhaseUpdate update) {
+        switch (update.getState()){
 
-                case NICKNAME_REQUEST:
-                    phase = PLAYER_PHASE.NUM_PLAYERS_REQ;
-                    break;
+            case BUILDING_START -> {
+                new Thread(() -> {
+                    controller.getView().showGenericMessage("NEW GAME PHASE " + update.getState());
+                }).start();
 
-                case NUM_PLAYERS_REQ:
-                    phase = PLAYER_PHASE.LOBBY;
-                    break;
-
-        }    }
-
-
-
-
+            }
+        }
+    }
 
 
 }

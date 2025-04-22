@@ -1,0 +1,39 @@
+package org.polimi.ingsw.galaxytrucker.model;
+
+import org.polimi.ingsw.galaxytrucker.enums.Color;
+
+import java.io.Serial;
+import java.io.Serializable;
+
+public class PlayerInfo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 3462319L;
+
+    private Color color;
+    private String NickName;
+    private Ship ship;
+
+    public Color getColor() {
+        return color;
+    }
+    public void setColor(Color color) {
+        this.color = color;}
+
+    public String getNickName() {
+        return NickName;
+
+    }
+
+    public void setNickName(String NickName) {
+        this.NickName = NickName;
+    }
+    public Ship getShip() {
+        return ship;
+    }
+    public void setShip(Ship ship) {
+        this.ship = ship;
+    }
+
+
+}

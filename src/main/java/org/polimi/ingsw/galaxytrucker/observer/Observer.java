@@ -1,5 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.observer;
 
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 import java.io.IOException;
@@ -7,7 +10,8 @@ import java.util.concurrent.ExecutionException;
 
 public interface Observer {
 
-    void update(NetworkMessage message) throws IOException, ExecutionException;
+    void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException;
+
     void update(String genericMessage);
 
 }

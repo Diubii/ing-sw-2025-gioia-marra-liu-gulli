@@ -1,11 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
-import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -28,8 +26,9 @@ public class NicknameRequest extends NetworkMessage implements Serializable {
         this.nickname = nickname;
     }
 
-    public void accept(ServerController serverController, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
-        NetworkMessageVisitor.visit(this, serverController, clientHandler);
+    @Override
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+        return visitor.visit(this);
     }
 
     public String getNickname() {
@@ -41,5 +40,4 @@ public class NicknameRequest extends NetworkMessage implements Serializable {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
-
 }

@@ -1,13 +1,11 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses;
 
 import org.polimi.ingsw.galaxytrucker.annotations.TemporaryType;
-import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -28,8 +26,8 @@ public class FetchShipResponse extends NetworkMessage implements Serializable {
     }
 
     @Override
-    public void accept(ServerController serverController, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
-        NetworkMessageVisitor.visit(this, serverController, clientHandler);
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+        return visitor.visit(this);
     }
 
     public String getTargetNickname() {

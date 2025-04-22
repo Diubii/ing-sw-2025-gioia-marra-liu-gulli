@@ -1,6 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.network.client.rmi;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 import java.io.IOException;
@@ -23,16 +26,15 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
     ServerRMIInterface server;
     ClientInterfaceRMI stub;
 
-    public  ClientRMI(int port, ClientController controller) throws RemoteException {
+    public ClientRMI(int port, ClientController controller) throws RemoteException {
         super();
         try {
-             registry = LocateRegistry.getRegistry("localhost", port);
-             server = (ServerRMIInterface ) registry.lookup("GameServer");
-             stub = (ClientInterfaceRMI) this;
+            registry = LocateRegistry.getRegistry("localhost", port);
+            server = (ServerRMIInterface) registry.lookup("GameServer");
+            stub = (ClientInterfaceRMI) this;
 
-             addObserver(controller);
-             server.handleRMIRegistration(stub);
-
+            addObserver(controller);
+            server.handleRMIRegistration(stub);
 
 
         } catch (Exception e) {
@@ -41,12 +43,12 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
     }
 
     @Override
-    public void sendMessage(NetworkMessage message) throws IOException, RemoteException {
+    public void sendMessage(NetworkMessage message) throws IOException, RemoteException, ExecutionException, InterruptedException {
         server.receiveMessage(message, stub);
     }
 
     @Override
-    public void receiveMessage(NetworkMessage message) throws IOException, ExecutionException {
+    public void receiveMessage(NetworkMessage message) throws IOException, ExecutionException, InvalidTilePosition {
         notifyObservers(message);
 
     }
@@ -64,10 +66,17 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
     }
 
     @Override
-    public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException {
+    public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException, InvalidTilePosition {
+
+
         for (Observer observer : observers) {
 //            System.out.println("i\n");
-            observer.update(message);
+            try{
+                observer.update(message);
+            }
+            catch (TooManyPlayersException | PlayerAlreadyExistsException | InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
         }
     }
 

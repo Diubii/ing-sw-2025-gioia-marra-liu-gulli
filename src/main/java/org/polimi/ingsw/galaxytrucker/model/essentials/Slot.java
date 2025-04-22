@@ -1,34 +1,48 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 
-public class Slot {
-    private Position position;
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Slot implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 12121L;
+
+    private final Position position;
     private Tile TileContainer;
     private Boolean lastAction = false;
+
     public Slot(Position position) {
         this.position = position;
         this.TileContainer = null;
     }
 
 
-
     public Position getPosition() {
         return position;
     }
 
-    public void removeTile(){
+    public void removeTile() {
         TileContainer = null;
         setLastAction(Boolean.TRUE);
     }
 
-    public Tile getTile(){
+    public Tile getTile() {
         return TileContainer;
     }
 
 
-    public void putTile(Tile t){
-     this.TileContainer = new Tile(t);
+    public void putTile(Tile t) throws InvalidTilePosition {
+
+
+        if (TileContainer == null) {
+            this.TileContainer = new Tile(t);
+
+        } else throw new InvalidTilePosition("INVALID_POSITION");
+
     }
 
     public boolean getLastAction() {

@@ -1,99 +1,216 @@
 package org.polimi.ingsw.galaxytrucker.visitors;
 
+import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.FetchShipResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DrawTileResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.PlaceTileResponse;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
-public abstract class NetworkMessageVisitor {
+import java.util.concurrent.ExecutionException;
+
+public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Void> {
+    private final ServerController serverController;
+    private final ClientHandler clientHandler;
+
+    public NetworkMessageVisitor(ServerController serverController, ClientHandler clientHandler) {
+        this.serverController = serverController;
+        this.clientHandler = clientHandler;
+    }
+
     //INIT AND LOBBY
-    public static void visit(SERVER_INFO serverInfo, ServerController serverController, ClientHandler clientHandler){}
-    public static void visit(NicknameRequest nicknameRequest, ServerController serverController, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException{}
-    public static void visit(NicknameResponse nicknameResponse, ServerController serverController, ClientHandler clientHandler){}
-    public static void visit(CreateRoomRequest createRoomRequest, ServerController serverController, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException{
+
+    @NeedsToBeCompleted
+    @Override
+    public Void visit(SERVER_INFO serverInfo) {
+        return null;
+    }
+
+    @NeedsToBeCompleted
+    @Override
+    public Void visit(NUM_PLAYERS_REQUEST numPlayersRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(NicknameRequest nicknameRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
+        serverController.handleNicknameRequest(nicknameRequest, clientHandler);
+        return null;
+    }
+
+    public Void visit(NicknameResponse nicknameResponse) {
+        return null;
+    }
+
+    @NeedsToBeCompleted
+    @Override
+    public Void visit(CreateRoomRequest createRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
         serverController.handleCreateRoomRequest(createRoomRequest, clientHandler);
+        return null;
     }
-    public static void visit(JoiniRoomOptionsRequest joiniRoomOptionsRequest, ServerController serverController, ClientHandler clientHandler){
+
+    @Override
+    public Void visit(JoiniRoomOptionsRequest joiniRoomOptionsRequest) {
         serverController.handleJoinRoomOptionsRequest(joiniRoomOptionsRequest, clientHandler);
+        return null;
     }
-    public static void visit(JoinRoomRequest joinRoomRequest, ServerController serverController, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException{
+
+    @Override
+    public Void visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
         serverController.handleJoinRoomRequest(joinRoomRequest, clientHandler);
+        return null;
     }
-    public static void visit(GameStartedUpdate gameStartedUpdate, ServerController serverController, ClientHandler clientHandler){}
+
+    @Override
+    public Void visit(JoinRoomResponse joinRoomResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(JoinRoomOptionsResponse joinRoomOptionsResponse) {
+        return null;
+    }
+
+
 
 
     //BUILDING
 
     //DrawTile
-    public static void visit(DrawTileRequest drawTileRequest,  ServerController serverController, ClientHandler clientHandler){
+
+    @Override
+    public Void visit(DrawTileRequest drawTileRequest) {
         serverController.handleDrawTileRequest(drawTileRequest, clientHandler);
+        return null;
     }
-    public static void visit(DrawTileResponse drawTileResponse, ServerController serverController, ClientHandler clientHandler){
 
+
+    @Override
+    public Void visit(DrawTileResponse drawTileResponse) {
+        return null;
     }
-    public static void visit(TileDrawnUpdate tileDrawnUpdate, ServerController serverController, ClientHandler clientHandler){
 
+
+    @Override
+    public Void visit(TileDrawnUpdate tileDrawnUpdate) {
+        return null;
     }
 
 
     //PlaceTile
-    public static void visit(PlaceTileRequest placeTileRequest, ServerController serverController, ClientHandler clientHandler){
 
-    }
-    public static void visit(PlaceTileResponse placeTileResponse, ServerController serverController, ClientHandler clientHandler){
-
-    }
-
-    //FetchShip
-    public static void visit(FetchShipRequest fetchShipRequest, ServerController serverController, ClientHandler clientHandler){
-
-    }
-    public static void visit(FetchShipResponse fetchShipResponse, ServerController serverController, ClientHandler clientHandler){
-
+    @Override
+    public Void visit(PlaceTileRequest placeTileRequest) throws InvalidTilePosition {
+        serverController.handlePlaceTileRequest(placeTileRequest, clientHandler);
+        return null;
     }
 
-    //DiscardTile
-    public static void visit(DiscardTileRequest discardTileRequest, ServerController serverController, ClientHandler clientHandler){
-
-    }
-    public static void visit(TileDiscardedUpdate tileDiscardedUpdate, ServerController serverController, ClientHandler clientHandler){
-
+    @Override
+    public Void visit(PlaceTileResponse placeTileResponse) {
+        return null;
     }
 
-    public static void visit(ViewAdventureDecksRequest viewAdventureDecksRequest, ServerController serverController, ClientHandler clientHandler){
-
+    @Override
+    public Void visit(FetchShipRequest fetchShipRequest) {
+        serverController.handleFetchShipRequest(fetchShipRequest, clientHandler);
+        return null;
     }
 
-    //FinishBuilding
-    public static void visit(FinishBuildingRequest finishBuildingRequest, ServerController serverController, ClientHandler clientHandler){
-
-    }
-    public static void visit(FinishBuildingUpdate finishBuildingUpdate, ServerController serverController, ClientHandler clientHandler){
-
+    @Override
+    public Void visit(FetchShipResponse fetchShipResponse) {
+        return null;
     }
 
-    //BuildingEnd
-    public static void visit(BuildingEndStartedUpdate buildingEndStartedUpdate, ServerController serverController, ClientHandler clientHandler){
-
+    //Discard
+    @Override
+    public Void visit(DiscardTileRequest discardTileRequest) {
+        serverController.handleDiscardTileRequest(discardTileRequest, clientHandler);
+        return null;
     }
 
-    //BuildingPhaseEnd
-    public static void visit(BuildingPhaseEndUpdate buildingPhaseEndUpdate, ServerController serverController, ClientHandler clientHandler){
-
+    @Override
+    public Void visit(TileDiscardedUpdate tileDiscardedUpdate) {
+        return null;
     }
 
-    public static void visit(ShipViewUpdate shipViewUpdate, ServerController serverController, ClientHandler clientHandler){
-
+    @Override
+    public Void visit(ViewAdventureDecksRequest viewAdventureDecksRequest) {
+        serverController.handleViewAdventureDecksRequest(viewAdventureDecksRequest, clientHandler);
+        return null;
     }
 
-    public static void visit(ShipCheckEndUpdate shipCheckEndUpdate, ServerController serverController, ClientHandler clientHandler) {
-
+    @Override
+    public Void visit(EndTimerUpdate endTimerUpdate) {
+        return null;
     }
+
+    @Override
+    public Void visit(PhaseUpdate phaseUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(PlayerJoinedUpdate playerJoinedUpdate) {
+        return null;
+    }
+
+
+
+    @Override
+    public Void visit(FinishBuildingRequest finishBuildingRequest) throws ExecutionException, InterruptedException {
+        serverController.handleFinishBuildingRequest(finishBuildingRequest, clientHandler);
+        return null;
+    }
+
+
+
+    @Override
+    public Void visit(ShipUpdate shipUpdate) {
+        return null;
+    }
+
+
+
+    @Override
+    public Void visit(AdventureCardExampleResponse adventureCardExampleResponse) {
+        return null;
+        //controllo se c'e una pending di questo tipo
+    }
+
+
+    @Override
+    public Void visit(CheckShipStatusRequest checkShipStatusRequest) {
+        serverController.handleCheckShipStatusRequest(checkShipStatusRequest, clientHandler);
+        return null;
+    }
+
+    @Override
+    public Void visit(CheckShipStatusResponse checkShipStatusResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(CrewInitUpdate crewInitUpdate){
+        serverController.handleCrewInitUpdate(crewInitUpdate, clientHandler);
+        return null;
+    }
+
+    @Override
+    public Void visit(AskPositionUpdate askPositionUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskPositionResponse askPositionResponse) {
+
+        serverController.handleAskPositionResponse(askPositionResponse, clientHandler);
+        return null;
+    }
+
+//    public static void visit(JoinRoomRequest joinRoomRequest) {
+//    }
 }

@@ -9,7 +9,7 @@ public class LobbyInfo implements Serializable {
 
     private final String host;
     private final int maxPlayers;
-    private  int connectedPlayers;
+    private int connectedPlayers;
     private final int lobbyID;
 
     public LobbyInfo(String host, int maxPlayers, int connectedPlayers, int lobbyID) {
@@ -27,15 +27,15 @@ public class LobbyInfo implements Serializable {
         return maxPlayers;
     }
 
-    public int getConnectedPlayers() {
+    public synchronized int getConnectedPlayers() {
         return connectedPlayers;
     }
 
-    public void addConnectedPlayer() {
+    public synchronized void addConnectedPlayer() {
         connectedPlayers++;
     }
 
-    public void removeConnectedPlayer(){
+    public synchronized void removeConnectedPlayer() {
 
         connectedPlayers--;
     }

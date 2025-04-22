@@ -1,8 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
-import org.polimi.ingsw.galaxytrucker.controller.ServerController;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,11 +16,15 @@ public class JoinRoomRequest extends NetworkMessage implements Serializable {
     private final String nickName;
 
     public JoinRoomRequest(int roomId, String nickName) {
+
+        super();
         this.roomId = roomId;
         this.nickName = nickName;
     }
 
-    public void accept(ServerController serverController, ClientHandler clientHandler) {
+    @Override
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+        return visitor.visit(this);
     }
 
     public int getRoomId() {

@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 
 public interface NetworkMessageVisitor extends Remote {
     void getNicknameRequest(NicknameRequest nickname) throws RemoteException;
+
     void getNicknameResponse(NicknameResponse response) throws RemoteException;
 }
 

@@ -7,24 +7,22 @@ import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 
 import java.util.*;
 
 /**
- *  Used for managing data,
- *  handling game state changes,
- *  monitoring game progress,
- *  and managing game players.
+ * Used for managing data,
+ * handling game state changes,
+ * monitoring game progress,
+ * and managing game players.
  */
 public class Game {
 
     private int nMaxPlayer;
     private final Map<String, Player> playerMap;
-//    private final Map<Player,Ship> playerShip;
+    //    private final Map<Player,Ship> playerShip;
     private final HashSet<String> usedNicknames;
-    private final HashMap<Player,Integer> playerOrder;
-
+    private final HashMap<Player, Integer> playerOrder;
 
 
     private Player gameHost;
@@ -42,7 +40,8 @@ public class Game {
     private final TileBunch tileBunch;
 
 
-    /**Not yet implemented
+    /**
+     * Not yet implemented
      * Consider generating deck-related member variables
      * at the beginning.
      */
@@ -63,70 +62,87 @@ public class Game {
     }
 
     /*
-    * @authord nerd53
-    *
-    * creata funzione separata poiche non si sa se il gioco e' learningMatch fino a che il primo client non lo decide
-    * */
+     * @authord nerd53
+     *
+     * creata funzione separata poiche non si sa se il gioco e' learningMatch fino a che il primo client non lo decide
+     * */
 
-    public void initFlightBoard(){
-        this.flightBoard = new FlightBoard(new ArrayList<>(), learningMatch);
+    public void initFlightBoard() {
+        this.flightBoard = new FlightBoard(learningMatch);
 
     }
 
-    public void setLearningMatch(Boolean learningMatch){
+    public void setLearningMatch(Boolean learningMatch) {
         this.learningMatch = learningMatch;
     }
 
-    public void setnMaxPlayer(Integer nMaxPlayer){
+    public void setnMaxPlayer(Integer nMaxPlayer) {
         this.nMaxPlayer = nMaxPlayer;
     }
 
     public boolean isNicknameUsed(String nickname) {
-        return usedNicknames.contains(nickname);
+
+        synchronized (usedNicknames) {
+            return usedNicknames.contains(nickname);
+        }
     }
 
 
-
     public void addPlayer(Player player) throws TooManyPlayersException, PlayerAlreadyExistsException {
-        if(playerMap.size() >= nMaxPlayer ){
-            throw new TooManyPlayersException(nMaxPlayer);
-        }
 
-        if(isNicknameUsed(player.getNickName())){
-            throw new PlayerAlreadyExistsException(player.getNickName());
+        synchronized (playerMap) {
+
+            if (playerMap.size() >= nMaxPlayer) {
+                throw new TooManyPlayersException(nMaxPlayer);
+            }
+
+            if (isNicknameUsed(player.getNickName())) {
+                throw new PlayerAlreadyExistsException(player.getNickName());
+            }
+            playerMap.put(player.getNickName(), player);
+            synchronized (usedNicknames) {
+                usedNicknames.add(player.getNickName());
+            }
+
+
+
         }
-        playerMap.put(player.getNickName(), player);
-        usedNicknames.add(player.getNickName());
 
 //        playerShip.put(player,player.getShip());
 
     }
 
     public void removePlayer(String nickname) throws PlayerNotFoundException {
-        Player player = playerMap.get(nickname);
-        if(player == null){
-            throw new PlayerNotFoundException(nickname);
-        }
-        playerMap.remove(nickname);
-        usedNicknames.remove(nickname);
+
+        synchronized (playerMap) {
+
+            Player player = playerMap.get(nickname);
+            if (player == null) {
+                throw new PlayerNotFoundException(nickname);
+            }
+            playerMap.remove(nickname);
+            synchronized (usedNicknames) {
+                usedNicknames.remove(nickname);
+            }
 //        playerShip.remove(player);
+        }
 
     }
 
-    public void startCardEffect(AdventureCard card, Player leader) {
+
+    public void generatelvtwoDeckes() {
 
     }
-    public void generatelvtwoDeckes(){
 
-    }
-
-    public void reorderPlayer(){
+    public void reorderPlayer() {
 
     }
 
 
     public ArrayList<Player> getPlayers() {
-        return new ArrayList<>(playerMap.values());
+        synchronized (playerMap) {
+            return new ArrayList<>(playerMap.values());
+        }
     }
 
 //    public Ship getPlayerShip(Player player) {
@@ -135,11 +151,15 @@ public class Game {
 //    }
 
     public Player getPlayer(String nickname) {
-        return playerMap.get(nickname);
+        synchronized (playerMap) {
+            return playerMap.get(nickname);
+        }
     }
 
     public int getNumPlayers() {
-        return playerMap.size();
+        synchronized (playerMap) {
+            return playerMap.size();
+        }
     }
 
 
@@ -147,26 +167,26 @@ public class Game {
         return tileBunch;
     }
 
-    public Integer getMaxPlayers(){
+    public Integer getMaxPlayers() {
         return nMaxPlayer;
     }
 
-    public Boolean getIsLearningMatch(){
+    public Boolean getIsLearningMatch() {
         return learningMatch;
     }
 
 
-    public CardDeck getFlightDeck(){
+    public CardDeck getFlightDeck() {
         return flightDeck;
     }
 
-    public HashMap<Player,Integer> getPlayerOrder(){
+    public HashMap<Player, Integer> getPlayerOrder() {
         return playerOrder;
     }
 
-    public Player getActivePlayer(){
+    public Player getActivePlayer() {
 
-        Player myPlayer = null ;
+        Player myPlayer = null;
         int i = 0;
         for (Player player : playerOrder.keySet()) {
 
@@ -179,8 +199,12 @@ public class Game {
         return myPlayer;
     }
 
-    public FlightBoard getFlightBoard(){
+    public FlightBoard getFlightBoard() {
         return flightBoard;
+    }
+
+    public Player getPlayerFromName(String nickname) {
+        return playerMap.get(nickname);
     }
 }
 

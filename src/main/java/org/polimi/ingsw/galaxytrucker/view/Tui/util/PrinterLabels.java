@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
 /**
  * This enum provides colors to use in a console in ANSI format. At each value is assigned a String.
+ *
  * @author Alessandro Giuseppe Gioia
  */
 public enum PrinterLabels {
@@ -12,11 +13,11 @@ public enum PrinterLabels {
 
     private final String label;
 
-    PrinterLabels(String label){
+    PrinterLabels(String label) {
         this.label = label;
     }
 
-    public String toString(){
+    public String toString() {
         return label;
     }
 }

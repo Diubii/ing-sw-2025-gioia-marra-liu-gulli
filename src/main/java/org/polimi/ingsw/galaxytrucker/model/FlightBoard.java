@@ -1,155 +1,123 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
+import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMap;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-/**
- * Represents the flight board that tracks player positions during the game.
- * It manages player movement, lap progression, and leader updates.
- */
+import java.util.stream.Collectors;
+
 public class FlightBoard {
 
-    /** Indicates whether the match is a learning match. */
-    private boolean learningMatch;
 
-    /** The length of one lap in the flight track. */
-    private int lapLength;
+    private FlightBoardMap flightBoardMap;
+    private final HashMap<Color, Integer> playerSteps;
 
-    /** A map storing the player's name and their current position on the board. */
-    private Map<String, Integer> playerPositions = new HashMap<String, Integer>();
 
-    /** A map storing the player's name and the number of laps completed. */
-    private Map<String, Integer> playerLap = new HashMap<String, Integer>();
 
-    /** The current leader of the race. */
-    private Player leader;
 
-    /** The list of players participating in the race. */
-    private List<Player> players;
+    private final Boolean learningMatch;
 
-    /**
-     * Constructs a FlightBoard instance and initializes player positions.
-     *
-     * @param rankedplayers The list of players ordered by rank.
-     * @param leaderMatch {@code true} if it is a learning match, otherwise {@code false}.
-     */
-    public FlightBoard(List<Player> rankedplayers, boolean leaderMatch) {
-        this.players = rankedplayers;
-        this.learningMatch = leaderMatch;
-
-        if (rankedplayers.size() > 0)         this.leader = rankedplayers.getFirst();
-        else this.leader = null;
-        initializeFlightBoards(learningMatch);
+    public FlightBoard(boolean learningMatch) {
+        this.learningMatch = learningMatch;
+        playerSteps = new HashMap<>();
     }
 
-    /**
-     * Initializes player positions and lap length based on the match type.
-     *
-     * @param learningMatch {@code true} if it is a learning match, otherwise {@code false}.
-     */
-    private void initializeFlightBoards(boolean learningMatch) {
-        if (learningMatch) {
-            lapLength = 18;
-            int position = 0;
-            for (int i = players.size() - 1; i >= 0; i--) {
-                String name = players.get(i).getNickName();
-                if (players.size() > 1 && i == 0) {
-                    position++;
-                }
-                playerPositions.put(name, position);
-                playerLap.put(name, 0);
-                position++;
-            }
+    public Boolean getLearningMatch() {
+        return learningMatch;
+    }
 
-        } else if (learningMatch) {
-            lapLength = 24;
-            int positionTwo = 0;
-            for (int i = players.size() - 1; i >= 0; i--) {
-                String name = players.get(i).getNickName();
-                if (players.size() > 1) {
-                    if (i == 0) {
-                        positionTwo = positionTwo + 2;
-                    }
-                    if (i == 1 && players.size() > 2) {
-                        positionTwo++;
-                    }
+    public void positionPlayer(Color token, int pos ){
+        for (int i = 0; i < flightBoardMap.getFlightBoardMapSlots().size(); i++){
+            if (i == pos){
+                if (flightBoardMap.getFlightBoardMapSlots().get(i).getPlayerToken() == Color.EMPTY){
+                    flightBoardMap.getFlightBoardMapSlots().get(i).setPlayerToken(token);
+                    playerSteps.put(token, i);
+
                 }
-                playerPositions.put(name, positionTwo);
-                playerLap.put(name, 0);
-                positionTwo++;
             }
         }
-
     }
 
-    /**
-     * Moves a player by a specified amount on the board.
-     * If the player completes a lap, their lap count is updated.
-     * Also updates the leader and checks for overlapping positions.
-     *
-     * @param nickname The name of the player who needs to move.
-     * @param amount The number of steps to move.
-     */
-    public void moveBoard(String nickname, int amount) {
-        if (!playerPositions.containsKey(nickname)) return;
+    public void movePlayer(Color token, int steps){
+        int initialPos = playerSteps.get(token) % flightBoardMap.getFlightBoardMapSlots().size();
+        boolean occupied = true;
+        int additionalSteps = 0;
 
-        int oldPosition = playerPositions.get(nickname);
-        int newPosition = oldPosition + amount;
-        if (newPosition >= lapLength) {
-            int currentLap = playerLap.get(nickname);
-            currentLap++;
-            playerLap.put(nickname, currentLap);
-            newPosition %= lapLength;
+        while (occupied){
+            int tempFinalPos = (initialPos + steps + additionalSteps) % flightBoardMap.getFlightBoardMapSlots().size();
+            if (flightBoardMap.getFlightBoardMapSlots().get(tempFinalPos).getPlayerToken() != Color.EMPTY){
+                //occupata
+
+                if (steps > 0)  additionalSteps++;
+                else additionalSteps--;
+
+            } else {
+                positionPlayer(token, tempFinalPos);
+                playerSteps.put(token, initialPos+steps+additionalSteps);
+                occupied = false;
+            }
+
         }
-        if (newPosition < 0) {
-            newPosition = lapLength -1 + newPosition;
-            int currentLap = playerLap.get(nickname);
-            currentLap--;
-            playerLap.put(nickname, currentLap);
-        }
+    }
 
-        playerPositions.put(nickname, newPosition);
-        updateLeader();
-        checkOverLapping(nickname);
+    public ArrayList<Color> getRankedPlayers() {
+
+        ArrayList<Color> ranked = (ArrayList<Color>) playerSteps.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))  // Ordine decrescente
+                .map(Map.Entry::getKey)  // Estraggo solo i Color
+                .toList();
+
+
+        return ranked;
     }
 
 
-    /**
-     * Updates the current leader based on player positions.
-     * (Implementation needed)
-     */
-    private void updateLeader(){
-        Player newLeader = null;
-        return;
+    @NeedsToBeCompleted
 
-    }
-
-    /**
-     * Checks if a player is overlapping with another player on the board.
-     * (Implementation needed)
-     *
-     * @param nickname The name of the player to check.
-     */
-    private void checkOverLapping(String nickname) {
-            return ;
-    }
-
-    /**
-     * Gets the board position of a specific player.
-     *
-     * @param nickname The player's name.
-     * @return The player's current position on the board.
-     */
-    public int getBoardPosition(String nickname) {
-        return playerPositions.get(nickname);
-    }
-
-    /**
-     * Gets the current leader of the race.
-     *
-     * @return The leader player.
-     */
     public Player getLeader() {
-        return leader;
+
+        Color leaderColor = getRankedPlayers().getFirst();
+        return null;
+    }
+
+    public Boolean isPlayerOverLapped(Color token) {
+        int myPos = playerSteps.get(token) % flightBoardMap.getFlightBoardMapSlots().size();
+        int mySteps = playerSteps.get(token);
+        int myLoops = mySteps / flightBoardMap.getFlightBoardMapSlots().size();
+
+        for (Map.Entry<Color, Integer> entry : playerSteps.entrySet()) {
+
+            int otherPlayerSteps = entry.getValue();
+            int otherPlayerLoops = otherPlayerSteps / flightBoardMap.getFlightBoardMapSlots().size();
+
+            if (otherPlayerSteps > playerSteps.get(token) && otherPlayerLoops > myLoops) return true;
+
+
+        }
+
+        return false;
+
+    }
+
+    public ArrayList<Integer> getOccupiedPositions() {
+        ArrayList<Integer> positions = new ArrayList<>();
+
+        for (Map.Entry<Color, Integer> entry : playerSteps.entrySet()) {
+
+            int position = entry.getValue() % flightBoardMap.getFlightBoardMapSlots().size();
+            positions.add(position);
+
+        }
+
+        return positions;
+    }
+
+    public FlightBoardMap getFlightBoardMap(){
+        return flightBoardMap;
     }
 }

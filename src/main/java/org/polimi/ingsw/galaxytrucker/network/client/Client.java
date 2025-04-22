@@ -5,8 +5,9 @@ import org.polimi.ingsw.galaxytrucker.observer.Observable;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.ExecutionException;
 
-public  interface Client {
+public interface Client {
 
-public void sendMessage(NetworkMessage message) throws IOException;
+    public void sendMessage(NetworkMessage message) throws IOException, ExecutionException, InterruptedException;
 }

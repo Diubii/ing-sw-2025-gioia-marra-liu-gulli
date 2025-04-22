@@ -1,8 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
-import org.polimi.ingsw.galaxytrucker.controller.ServerController;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -27,7 +28,9 @@ public class NUM_PLAYERS_REQUEST extends NetworkMessage implements Serializable 
         this.num = num;
     }
 
-    public void accept(ServerController serverController, ClientHandler clientHandler) {
+    @Override
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+        return visitor.visit(this);
     }
 
     public Integer getNum() {
@@ -37,6 +40,4 @@ public class NUM_PLAYERS_REQUEST extends NetworkMessage implements Serializable 
     public Boolean getLearningMatch() {
         return learningMatch;
     }
-
-
 }

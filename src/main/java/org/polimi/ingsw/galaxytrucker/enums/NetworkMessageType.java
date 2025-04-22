@@ -14,7 +14,7 @@ public enum NetworkMessageType {
 
     //Building
     DrawTileRequest, DrawTileResponse,
-    FetchShipStatusRequest, FetchShipStatusResponse,
+    FetchShipRequest, FetchShipResponse,
     PlaceTileRequest, PlaceTileResponse,
     DiscardTileRequest, DiscardTileResponse,
     ViewAdventureDeckRequest, ViewAdventureDeckResponse,
@@ -41,8 +41,11 @@ public enum NetworkMessageType {
     PlayerLeftUpdate,
     GameStartedUpdate,
     ShipViewUpdate,
+    ShipUpdate,
+    ShipCheckStateUpdate,
     TileReturnedUpdate,
     FinishBuildingUpdate,
+    BuildingEndStartedUpdate,
     BuildingPhaseEndUpdate,
     StartFlightPhaseUpdate,
     ForcedEndFlightPhaseUpdate,
@@ -59,5 +62,5 @@ public enum NetworkMessageType {
     CombatZoneUpdate,
     MeteorSwarmUpdate,
     StardustUpdate,
-    PlanetsUpdate,
+    PlanetsUpdate, AdventureCardExampleResponse, CheckShipStatusRequest, CheckShipStatusResponse, ServerInfo, ShipCheckEndUpdate, EndTimer, TileDrawnUpdate, TileDiscardedUpdate, PhaseUpdate, CrewInitUpdate, AskPositionUpdate, AskPositionResponse,
 }

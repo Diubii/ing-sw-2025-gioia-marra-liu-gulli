@@ -30,10 +30,10 @@ public class ClientStartApp {
             Boolean flag = scelta2.equals("2");
             controller = new ClientController(myT, flag);
 
-            myT = new Tui(System.out,flag, controller);
+            myT = new Tui(System.out, flag, controller);
             controller.setView(myT);
 
-            ((Tui)myT).start(); //Cli
+            ((Tui) myT).start(); //Cli
         }
 
 

@@ -1,14 +1,22 @@
 package org.polimi.ingsw.galaxytrucker.network.server;
 
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientInterfaceRMI;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageNameVisitor;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface {
     ServerController controller;
@@ -25,9 +33,14 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
+
     @Override
-    public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws RemoteException {
-        System.out.println("RECEIVED MESSAGE\n");
+    public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws RemoteException, ExecutionException, InterruptedException {
+        try {
+            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + message.accept(new NetworkMessageNameVisitor())));
+        } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition e) {
+            throw new RuntimeException(e);
+        }
         RMIClientHandler handler = (RMIClientHandler) clientMap.get(clientRMI);
         controller.getMessageManager().handle(message, handler);
 
@@ -39,14 +52,12 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
 
         RMIClientHandler handler = new RMIClientHandler(clientStub);
 
-        synchronized (controller.getClients()){
+        synchronized (controller.getClients()) {
             controller.addClient(handler);
-            System.out.println(TuiColor.GREEN + "CURRENT SERVER-WIDE PLAYERS NUM " + controller.getClients().size() + TuiColor.RESET);
 
         }
         clientMap.put(clientStub, handler); // Salvi il riferimento
     }
-
 
 
 }

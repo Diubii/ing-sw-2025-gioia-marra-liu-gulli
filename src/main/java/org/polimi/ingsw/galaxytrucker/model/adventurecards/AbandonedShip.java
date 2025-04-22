@@ -40,7 +40,8 @@ public class AbandonedShip extends AdventureCard {
      * Activates the effect of the abandoned ship card.
      *
      * @param aca         The activator responsible for handling this card's effect.
-     * @param flightBoard
+     * @param flightBoard FlightBoard ot game
+     *
      */
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard) {
         aca.activateAbandonedShip(this, p, flightBoard);

@@ -1,9 +1,10 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses;
 
-import org.polimi.ingsw.galaxytrucker.controller.ServerController;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
+import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,8 +16,9 @@ public class JoinRoomOptionsResponse extends NetworkMessage implements Serializa
     private static final long serialVersionUID = 75L;
     private final ArrayList<LobbyInfo> lobbyInfos;
 
-    public JoinRoomOptionsResponse(ArrayList<LobbyInfo> lobbyInfos) {
+    public JoinRoomOptionsResponse(ArrayList<LobbyInfo> lobbyInfos, int id) {
 
+        super(id);
         this.lobbyInfos = lobbyInfos;
     }
 
@@ -24,8 +26,8 @@ public class JoinRoomOptionsResponse extends NetworkMessage implements Serializa
         return lobbyInfos;
     }
 
-    public void accept(ServerController serverController, ClientHandler clientHandler) {
-
+    @Override
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+        return visitor.visit(this);
     }
-
 }

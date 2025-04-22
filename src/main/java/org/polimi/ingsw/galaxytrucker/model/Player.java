@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
 import java.util.*;
 
@@ -28,16 +29,24 @@ public class Player {
         this.ship = new Ship(learningMatch); //Rivedere
     }
 
+
+
     public String getNickName() {
         return nickname;
     }
-    public Ship getShip() { return ship; }
-    public void addCredits(int credits){
+
+    public Ship getShip() {
+        return ship;
+    }
+
+    public void addCredits(int credits) {
         nCredits += credits;
     }
+
     public int getNCredits() {
         return nCredits;
     }
+
     public void setNCredits(int nCredits) {
         this.nCredits = nCredits;
     }
@@ -45,6 +54,7 @@ public class Player {
     public int getPlacement() {
         return placement;
     }
+
     public void setPlacement(int placement) {
         this.placement = placement;
     }

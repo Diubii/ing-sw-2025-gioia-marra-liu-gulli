@@ -159,4 +159,9 @@ public class Tile implements Serializable {
         System.out.println(this.fixed);
     }
 
+    public void setFixed(Boolean fixed) {
+        this.fixed = fixed;
+    }
+
+
 }

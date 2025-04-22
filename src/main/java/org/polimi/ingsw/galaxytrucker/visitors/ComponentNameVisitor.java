@@ -7,7 +7,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 public class ComponentNameVisitor implements ComponentNameVisitorInterface {
     @Override
     public String visit(Component component) {
-        return "def";
+        return "";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ComponentNameVisitor implements ComponentNameVisitorInterface {
 
     @Override
     public String visit(LifeSupportSystem component) {
-        if (component.getColor().equals(AlienColor.PURPLE)){
+        if (component.getColor().equals(AlienColor.PURPLE)) {
             return "PurpleLifeSupportSystem";
         }
         return "BrownLifeSupportSystem";
