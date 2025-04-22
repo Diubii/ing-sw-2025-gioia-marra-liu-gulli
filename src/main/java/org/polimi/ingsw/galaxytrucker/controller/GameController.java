@@ -15,8 +15,6 @@ public class GameController {
     final Object ncsLock = new Object();
 
     public int getnCompletedShips() {
-
-
         synchronized (ncsLock) {
             return nCompletedShips;
         }
