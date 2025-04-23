@@ -5,6 +5,8 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCardEffects;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.MatchInfoUpdate;
+import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
 public class GameController {
@@ -13,6 +15,11 @@ public class GameController {
     private final LobbyManager myGame;
     private int nCompletedShips = 0;
     final Object ncsLock = new Object();
+//    private  final ServerController serverController;
+
+    public LobbyManager getMyGame() {
+        return myGame;
+    }
 
     public int getnCompletedShips() {
         synchronized (ncsLock) {
@@ -29,6 +36,7 @@ public class GameController {
     public GameController(LobbyManager myGame) {
 
         this.myGame = myGame;
+//        this.serverController = serverController;
         gameState = GameState.LOBBY;
 
     }
@@ -63,13 +71,21 @@ public class GameController {
 
     private void handleTurn() {
 
+
+
         Player activePlayer = myGame.getRealGame().getFlightBoard().getLeader();
-        //NOTIFICA A TUTTI CHI E' IL LEADER
+        //NOTIFICA A TUTTI CHI E' IL LEADER (MATCH_INFO)
+        for (ClientHandler clientHandler: myGame.getPlayerHandlers().values()){
+            clientHandler.sendMessage(new MatchInfoUpdate());
+        }
+        
         AdventureCard adventureCard = myGame.getRealGame().getFlightDeck().pop();
         //NOTIFICHIAMO CHE CARTA E' STATA PESCATA E LA MANDIAMO,
+
         AdventureCardActivator adventureCardActivator = new AdventureCardEffects();
 
-        adventureCard.activateEffect(adventureCardActivator, myGame.getRealGame().getPlayers(), myGame.getRealGame().getFlightBoard());
+        adventureCard.activateEffect(adventureCardActivator, myGame.getRealGame().getPlayers(), myGame.getRealGame().getFlightBoard(), this);
+
 
 
     }

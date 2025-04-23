@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class CheckShipStatusRequest extends NetworkMessage implements Serializable {
 
@@ -28,7 +29,7 @@ public class CheckShipStatusRequest extends NetworkMessage implements Serializab
 
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws ExecutionException, InterruptedException {
         return visitor.visit(this);
     }
 }

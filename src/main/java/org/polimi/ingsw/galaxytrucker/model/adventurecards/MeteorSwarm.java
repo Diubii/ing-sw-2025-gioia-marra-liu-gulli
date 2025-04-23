@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
@@ -36,7 +37,7 @@ public class MeteorSwarm extends AdventureCard {
         this.meteors = meteors;
     }
 
-    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard){
-        aca.activateMeteorSwarm(this, p, flightBoard);
+    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard, GameController gameController){
+        aca.activateMeteorSwarm(this, p, flightBoard, gameController);
     }
 }

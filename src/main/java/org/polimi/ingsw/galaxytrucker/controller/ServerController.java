@@ -101,6 +101,7 @@ public class ServerController {
         NicknameResponse nicknameResponse = new NicknameResponse(null, message.getId());
 
 
+        System.out.println("REQ");
         synchronized (usedNicknames) {
 
             if (!usedNicknames.contains(tempNick)) {
@@ -259,6 +260,7 @@ public class ServerController {
                     myGame.getGameController().nextState();
                     System.out.println("PLAYER: HANDL : " + playerHandlers.size());
                     broadCast(playerHandlers, new PhaseUpdate(myGame.getGameController().getGameState()));
+                    //MANDARE I DECK -> -> ->
 
                     //dopo aver notificato tutti starto il gioco
 
@@ -604,7 +606,9 @@ public class ServerController {
             }
         }
 
+        //dopo aver implementato la lista di quelli che hanno finito e si boradcasta la fase nuova
 
+        new Thread(() -> myGame.getGameController().startFlight());
 
 
 

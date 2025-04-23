@@ -1,10 +1,13 @@
 package org.polimi.ingsw.galaxytrucker;
 
-import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+//import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.controller.ClientController2;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
-import org.polimi.ingsw.galaxytrucker.view.Tui.Tui;
+//import org.polimi.ingsw.galaxytrucker.view.Tui.Tui;
+import org.polimi.ingsw.galaxytrucker.view.Tui.Tui2;
 import org.polimi.ingsw.galaxytrucker.view.View;
+import org.polimi.ingsw.galaxytrucker.view.View2;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -21,19 +24,19 @@ public class ClientStartApp {
         System.out.println("Digita 1 per RMI oppure digita 2 per SOCKET e poi premi invio ");
         String scelta2 = scanner.nextLine();
 
-        View myT = null;
-        ClientController controller;
+        View2 myT = null;
+        ClientController2 controller;
 
         if ("1".equals(scelta)) {
             GuiJavaFx.main(args); //JavaFx
         } else {
             Boolean flag = scelta2.equals("2");
-            controller = new ClientController(myT, flag);
+            controller = new ClientController2(myT, flag);
 
-            myT = new Tui(System.out, flag, controller);
+            myT = new Tui2(System.out, flag, controller);
             controller.setView(myT);
 
-            ((Tui) myT).start(); //Cli
+            ((Tui2) myT).start(); //Cli
         }
 
 

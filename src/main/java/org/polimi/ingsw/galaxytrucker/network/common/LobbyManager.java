@@ -101,7 +101,7 @@ public class LobbyManager {
         RealGame = new Game();
         nextAvailableColor = Color.RED;
         tileBunch = new TileBunch();
-        gameController = new GameController(this);
+        gameController = new GameController(this );
     }
 
     public HashMap<String, Color> getPlayerColors() {

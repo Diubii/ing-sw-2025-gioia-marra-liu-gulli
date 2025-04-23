@@ -211,6 +211,11 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
+    @Override
+    public Void visit(MatchInfoUpdate matchInfoUpdate) {
+        return null;
+    }
+
 //    public static void visit(JoinRoomRequest joinRoomRequest) {
 //    }
 }
