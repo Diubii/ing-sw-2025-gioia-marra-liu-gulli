@@ -7,6 +7,7 @@ module org.polimi.ingsw.galaxytrucker {
     requires com.fasterxml.jackson.databind;
     requires java.rmi;
     requires java.desktop;
+    requires java.smartcardio;
 
     opens org.polimi.ingsw.galaxytrucker.model.essentials to com.fasterxml.jackson.databind;
     // opens org.polimi.ingsw.galaxytrucker.model.essentials to javafx.fxml;

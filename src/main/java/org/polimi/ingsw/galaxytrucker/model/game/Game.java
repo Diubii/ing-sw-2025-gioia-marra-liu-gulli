@@ -3,11 +3,13 @@ package org.polimi.ingsw.galaxytrucker.model.game;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
 
+import javax.smartcardio.Card;
 import java.util.*;
 
 /**
@@ -192,7 +194,7 @@ public class Game {
         int i = 0;
         for (Player player : playerOrder.keySet()) {
 
-            //il player in posizione 1 e' il primo
+            //il player in posizione 1 è il primo
             if (playerOrder.get(player) == 1) {
                 myPlayer = player;
             }
@@ -207,6 +209,35 @@ public class Game {
 
     public Player getPlayerFromName(String nickname) {
         return playerMap.get(nickname);
+    }
+
+    public ArrayList<CardDeck> createBuildingCardDecks(CardDeck lvl1cards, CardDeck lvl2cards) {
+        lvl1cards.shuffle();
+        lvl2cards.shuffle();
+
+        ArrayList<CardDeck> decks = new ArrayList<>();
+        for(int i=0; i<4; i++){
+            CardDeck deck = new CardDeck(i<3); //L'ultima non è spiabile
+            deck.addCard(lvl2cards.pop());
+            deck.addCard(lvl2cards.pop());
+            deck.addCard(lvl1cards.pop());
+            decks.add(deck);
+        }
+
+        return decks;
+    }
+
+    public CardDeck createFlightDeck(ArrayList<CardDeck> decks) {
+        CardDeck flightDeck = new CardDeck(true);
+
+        for(CardDeck deck : decks){
+            flightDeck = flightDeck.merge(deck);
+        }
+
+        flightDeck.shuffle();
+        flightDeck.putFirstLvl2CardOnTop();
+
+        return flightDeck;
     }
 }
 

@@ -22,8 +22,6 @@ public class GameController {
     }
 
     public int getnCompletedShips() {
-
-
         synchronized (ncsLock) {
             return nCompletedShips;
         }
