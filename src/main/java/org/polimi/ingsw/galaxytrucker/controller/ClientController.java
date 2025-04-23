@@ -44,7 +44,7 @@ public class ClientController implements Observer {
 
 
     private Client client;
-    ClientPhaseController clientPhaseController;
+
     private final ExecutorService taskQueue;
     private View view;
     ExecutorService inputExecutor = Executors.newSingleThreadExecutor();
@@ -84,7 +84,7 @@ public class ClientController implements Observer {
         this.myModel = new ClientModel();
         this.isSocket = flag;
         this.view = view;
-        clientPhaseController = new ClientPhaseController(this);
+
 //        clientPhaseController.nextPhase();
         taskQueue = Executors.newSingleThreadExecutor();
         InputStream in = System.in;

@@ -236,7 +236,10 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
         return null;
     }
 
-
+    @Override
+    public Void visit(MatchInfoUpdate matchInfoUpdate) {
+        return null;
+    }
 
 
 }
