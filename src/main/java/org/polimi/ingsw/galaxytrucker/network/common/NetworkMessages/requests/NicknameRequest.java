@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.concurrent.ExecutionException;
 
 public class NicknameRequest extends NetworkMessage implements Serializable {
 
@@ -27,7 +28,7 @@ public class NicknameRequest extends NetworkMessage implements Serializable {
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, ExecutionException, InterruptedException {
         return visitor.visit(this);
     }
 

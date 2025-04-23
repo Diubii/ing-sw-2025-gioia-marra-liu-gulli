@@ -16,9 +16,9 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException;
 
-    T visit(JoiniRoomOptionsRequest joiniRoomOptionsRequest);
+    T visit(JoiniRoomOptionsRequest joiniRoomOptionsRequest) throws ExecutionException, InterruptedException;
 
-    T visit(NicknameRequest nicknameRequest) throws TooManyPlayersException, PlayerAlreadyExistsException;
+    T visit(NicknameRequest nicknameRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, ExecutionException, InterruptedException;
 
     T visit(AdventureCardExampleResponse adventureCardExampleResponse);
 
@@ -32,9 +32,9 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(PlaceTileResponse placeTileResponse);
 
-    T visit(DrawTileRequest drawTileRequest);
+    T visit(DrawTileRequest drawTileRequest) throws ExecutionException, InterruptedException;
 
-    T visit(FetchShipRequest fetchShipRequest);
+    T visit(FetchShipRequest fetchShipRequest) throws ExecutionException, InterruptedException;
 
     T visit(ShipUpdate shipUpdate);
 
@@ -45,9 +45,9 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(CheckShipStatusResponse checkShipStatusResponse);
 
-    T visit(CheckShipStatusRequest checkShipStatusRequest);
+    T visit(CheckShipStatusRequest checkShipStatusRequest) throws ExecutionException, InterruptedException;
 
-    T visit(DiscardTileRequest discardTileRequest);
+    T visit(DiscardTileRequest discardTileRequest) throws ExecutionException, InterruptedException;
 
     T visit(FinishBuildingRequest finishBuildingRequest) throws ExecutionException, InterruptedException;
 
@@ -57,7 +57,7 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(TileDiscardedUpdate tileDiscardedUpdate);
 
-    T visit(PlaceTileRequest placeTileRequest) throws InvalidTilePosition;
+    T visit(PlaceTileRequest placeTileRequest) throws InvalidTilePosition, ExecutionException, InterruptedException;
 
     T visit(FetchShipResponse fetchShipResponse);
 
@@ -74,4 +74,6 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(AskPositionUpdate askPositionUpdate);
 
     T visit(AskPositionResponse askPositionResponse);
+
+    T visit(MatchInfoUpdate matchInfoUpdate);
 }

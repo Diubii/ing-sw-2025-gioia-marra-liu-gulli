@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.concurrent.ExecutionException;
 
 public class FetchShipRequest extends NetworkMessage implements Serializable {
     @Serial
@@ -20,7 +21,11 @@ public class FetchShipRequest extends NetworkMessage implements Serializable {
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
-        return visitor.visit(this);
+        try {
+            return visitor.visit(this);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getTargetNickname() {

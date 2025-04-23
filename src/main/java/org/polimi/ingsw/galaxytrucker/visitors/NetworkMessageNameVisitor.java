@@ -140,6 +140,11 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     }
 
     @Override
+    public NetworkMessageType visit(MatchInfoUpdate matchInfoUpdate) {
+        return NetworkMessageType.MatchInfoUpdate;
+    }
+
+    @Override
     public NetworkMessageType visit(TileDiscardedUpdate tileDiscardedUpdate) {
         return NetworkMessageType.TileDiscardedUpdate;
     }

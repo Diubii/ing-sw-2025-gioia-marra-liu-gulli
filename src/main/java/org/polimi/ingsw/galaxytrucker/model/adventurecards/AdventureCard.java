@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
@@ -49,7 +50,7 @@ public abstract class AdventureCard {
      * @param aca         The activator responsible for triggering the card's effect.
      * @param flightBoard
      */
-    public abstract void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard);
+    public abstract void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard, GameController gameController);
     /**
      * Gets the unique identifier of the card.
      *

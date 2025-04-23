@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.network.client.rmi;
 
-import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.controller.ClientController2;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -26,7 +26,7 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
     ServerRMIInterface server;
     ClientInterfaceRMI stub;
 
-    public ClientRMI(int port, ClientController controller) throws RemoteException {
+    public ClientRMI(int port, ClientController2 controller) throws RemoteException {
         super();
         try {
             registry = LocateRegistry.getRegistry("localhost", port);
