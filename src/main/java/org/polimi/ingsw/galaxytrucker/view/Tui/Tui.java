@@ -1,24 +1,27 @@
 package org.polimi.ingsw.galaxytrucker.view.Tui;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.*;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import org.controlsfx.tools.Utils;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMapSlot;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
+import org.polimi.ingsw.galaxytrucker.model.essentials.*;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -34,9 +37,12 @@ import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.CabinUnitAscii;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardTUI;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils.*;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.printTile;
 
 public class Tui implements View, Observable {
 
@@ -81,6 +87,48 @@ public class Tui implements View, Observable {
 
 
     public void start() throws ExecutionException, IOException, InterruptedException {
+
+        System.setOut(new PrintStream(System.out, true, "UTF-8"));
+
+        //TEST STAMPA DA TOGLIERE
+        /*Ship testShip = new Ship(false);
+
+        //Prendo lista tiles e metto in ship per testare
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayList<Tile> tiles = new ArrayList<>();
+        try{
+            FileInputStream fis = new FileInputStream("src/main/resources/tiledata.json");
+            tiles = mapper.readValue(fis, new TypeReference<ArrayList<Tile>>(){});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+          try{
+              for(int i =0; i<7; i++){
+                  for(int j =0; j<5; j++){
+                      if(j!= 3) {
+                          testShip.putTile(tiles.get(i * 5 * j), new Position(j, i));
+                      }
+                  }
+              }
+              tiles.get(152).rotate(180);
+              testShip.putTile(tiles.get(18),new Position(3,0));
+              testShip.putTile(tiles.get(54),new Position(3,1));
+              testShip.putTile(tiles.get(64),new Position(3,2));
+              testShip.putTile(tiles.get(93),new Position(3,3));
+              testShip.putTile(tiles.get(152),new Position(3,4));
+              testShip.putTile(tiles.get(136),new Position(3,5));
+              testShip.putTile(tiles.get(137),new Position(3,6));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        printShip(testShip);
+        printTile(tiles.get(152));
+        //Vedi colori ok non occupano spazio, ma "emoji si più di uno esatto"...
+        */
+        //Per le carte
 
         String banner = "\033[1;34m" + // Colore Blu Chiaro
                 "   __    _   __    _   _  __ _  __  _____ ___  _ __  __  _    ___  ___    ___\n" +

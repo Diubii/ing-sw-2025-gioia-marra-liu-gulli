@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
 
 import java.io.Serializable;
 
@@ -87,4 +88,10 @@ public  class Component implements Serializable {
 
     public String accept(ComponentNameVisitorInterface visitor) {
         return visitor.visit(this);
-    }}
+    }
+
+    public String[] accept(ComponentPrintVisitorInterface visitor) {
+        return visitor.visit(this);
+    }
+}
+

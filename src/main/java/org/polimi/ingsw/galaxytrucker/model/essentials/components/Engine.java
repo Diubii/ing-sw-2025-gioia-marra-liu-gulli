@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
 
 public class Engine extends Component {
     protected int enginePower;
@@ -29,6 +30,10 @@ public class Engine extends Component {
         return visitor.visit(this); // this ora è di tipo Cannon!
     }
 
+    @Override
+    public String[] accept(ComponentPrintVisitorInterface visitor) {
+        return visitor.visit(this);
+    }
 
 
 }

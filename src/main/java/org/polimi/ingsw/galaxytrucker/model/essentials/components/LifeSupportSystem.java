@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
 
 import java.util.ArrayList;
 
@@ -29,5 +30,9 @@ public class LifeSupportSystem extends Component {
         return visitor.visit(this); // this ora è di tipo Cannon!
     }
 
+    @Override
+    public String[] accept(ComponentPrintVisitorInterface visitor) {
+        return visitor.visit(this);
+    }
 
 }
