@@ -8,7 +8,10 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 import java.util.ArrayList;
 
 public class ClientModel {
-
+    public ClientModel() {
+        this.myInfo = new PlayerInfo();
+        this.playerInfos = new ArrayList<>();
+    }
     private PlayerInfo myInfo;
     private ArrayList<PlayerInfo> playerInfos;
     private FlightBoard flightBoard;

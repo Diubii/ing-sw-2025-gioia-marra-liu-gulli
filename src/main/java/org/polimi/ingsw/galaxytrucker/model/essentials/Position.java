@@ -1,11 +1,13 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
+import java.io.Serializable;
+
 /**
  * Represents a position in a 2D Cartesian space.
  * This class is used for managing positions within the ship's matrix.
  * ...
  */
-public class Position {
+public class Position implements Serializable {
     private int x;
     private int y;
 
