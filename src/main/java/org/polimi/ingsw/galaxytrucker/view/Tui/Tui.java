@@ -34,9 +34,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Pha
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 //import org.polimi.ingsw.galaxytrucker.view.Tui.util.ReadLine;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
-import org.polimi.ingsw.galaxytrucker.view.Tui.util.CabinUnitAscii;
-import org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardTUI;
-import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.*;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
@@ -56,6 +54,7 @@ public class Tui implements View, Observable {
     private final ArrayList<Observer> observers = new ArrayList<>();
 
     private  MenuManager menuManager = new MenuManager();
+    private GameState phase = GameState.LOBBY;
 
     public Tui(PrintStream out, Boolean isSocket, ClientController controller) {
         Tui.out = out;
@@ -243,7 +242,7 @@ public class Tui implements View, Observable {
     @Override
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
 
-            GameState phase = phaseUpdate.getState();
+            phase = phaseUpdate.getState();
             menuManager.setMenuText(phase);
             synchronized (outputLock) {
                 menuManager.showCurrentMenu();
@@ -275,6 +274,23 @@ public class Tui implements View, Observable {
     }
 
     @Override
+    public void askViewAdventureDecks(){
+        try {
+
+            String DeckIDStr = readLine("Enter which Deck you want to view (1~3)> ").trim();
+            int DeckID = Integer.parseInt(DeckIDStr);
+            if(DeckID < 1 || DeckID >3){
+                out.println("Deck ID not valid. Please enter a number between 1 and 3.");
+                askViewAdventureDecks();
+                return;
+            }
+            clientController.viewAdventureCardDeck(DeckID);
+        } catch (Exception e) {
+            out.println(" Error during ask view adventure Decks: " + e.getMessage());
+        }
+
+    }
+    @Override
     public void askFetchShip() {
         new Thread(()->{
             try{
@@ -295,20 +311,9 @@ public class Tui implements View, Observable {
         try {
             out.println("Enter rotation degree (90, 180, 270, or 360): ");
             String input = readLine("> ").trim();
-
-            int rotation = Integer.parseInt(input);
-
-            List<Integer> validRotations = Arrays.asList(90, 180, 270, 360);
-
-            if (!validRotations.contains(rotation)) {
-                out.println("Invalid rotation. Please enter 90, 180, 270, or 360.");
-                askRotation();
-
-            }
+            int rotation = InputUtils.parseRotation(input);
             clientController.rotateCurrentTile(rotation);
-        } catch (NumberFormatException e) {
-            out.println("Please enter a valid number.");
-            askRotation();
+
         } catch (Exception e) {
             out.println(" Error during tile rotation: " + e.getMessage());
         }
@@ -319,21 +324,8 @@ public class Tui implements View, Observable {
     public void askPosition() {
         try {
             String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
-
-            input = input.replaceAll("[()\\s]", "");
-
-            String[] parts = input.split(",");
-
-            if (parts.length != 2) {
-                out.println(" Invalid format. Please use (x,y).");
-                askPosition(); // Retry
-                return;
-            }
-
-            int x = Integer.parseInt(parts[0]);
-            int y = Integer.parseInt(parts[1]);
-
-            clientController.moveCurrentTile(x,y);
+            Position pos = InputUtils.parseCoordinate(input);
+            clientController.moveCurrentTile(pos.getX(),pos.getY());
 
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
@@ -345,13 +337,7 @@ public class Tui implements View, Observable {
 // TileView
     @Override
     public void showTile(Tile tile) {
-
-
-            out.println("You drew a tile.");
-            out.println("Tile ID: " + tile.getId());
-            out.println("Tile Type: " + tile.getMyComponent().accept(new ComponentNameVisitor()));
-            out.println("Tile Rotation: " + tile.getRotation());
-
+    TilePrintUtils.printTile(tile);
     }
 
     @Override

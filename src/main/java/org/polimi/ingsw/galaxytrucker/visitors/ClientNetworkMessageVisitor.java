@@ -202,6 +202,7 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(TileDiscardedUpdate tileDiscardedUpdate) {
+        clientController.completeFuture(tileDiscardedUpdate);
         return null;
     }
 
@@ -256,6 +257,16 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
     public Void visit(FlightBoardUpdate flightBoardUpdate) {
 
         clientController.handleFlightBoardUpdate(flightBoardUpdate);
+        return null;
+    }
+
+    @Override
+    public Void visit(GetFaceUpTilesRequest getFaceUpTilesRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(FaceUpTileUpdate faceUpTileUpdate) {
         return null;
     }
 

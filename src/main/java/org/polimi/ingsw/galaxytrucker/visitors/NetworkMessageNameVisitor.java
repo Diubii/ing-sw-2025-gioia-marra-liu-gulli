@@ -155,6 +155,16 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     }
 
     @Override
+    public NetworkMessageType visit(GetFaceUpTilesRequest getFaceUpTilesRequest) {
+        return null;
+    }
+
+    @Override
+    public NetworkMessageType visit(FaceUpTileUpdate faceUpTileUpdate) {
+        return null;
+    }
+
+    @Override
     public NetworkMessageType visit(TileDiscardedUpdate tileDiscardedUpdate) {
         return NetworkMessageType.TileDiscardedUpdate;
     }

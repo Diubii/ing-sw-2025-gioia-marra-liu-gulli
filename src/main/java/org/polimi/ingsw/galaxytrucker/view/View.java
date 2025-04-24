@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.view;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -29,6 +30,7 @@ public interface View {
 
     void showPlayerJoined(PlayerInfo playerInfo);
 
+    void handleChoiceForPhase(GameState phase);
     void handlePhaseUpdate(PhaseUpdate phaseUpdate);
 
     //building
@@ -36,6 +38,7 @@ public interface View {
     //asks_building
     void askRotation();
     void askPosition();
+    void askViewAdventureDecks();
     void showTile(Tile tile);
 
 

@@ -81,4 +81,8 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(DecksUpdate decksUpdate);
 
     T visit(FlightBoardUpdate flightBoardUpdate);
+
+    T visit(GetFaceUpTilesRequest getFaceUpTilesRequest);
+
+    T visit(FaceUpTileUpdate faceUpTileUpdate);
 }

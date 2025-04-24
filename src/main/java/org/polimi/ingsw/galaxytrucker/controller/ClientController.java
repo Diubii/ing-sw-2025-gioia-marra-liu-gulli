@@ -3,12 +3,14 @@ package org.polimi.ingsw.galaxytrucker.controller;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
@@ -22,6 +24,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ClientNetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageNameVisitor;
@@ -31,7 +34,8 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.ArrayList;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -56,8 +60,9 @@ public class ClientController implements Observer {
     private ClientModel myModel = new ClientModel();
     private final NetworkMessageVisitorsInterface<Void> messageVisitor = new ClientNetworkMessageVisitor(this);
     private Tile currentTileInHand = null;
-    private Ship currentShip;
+
     private Position currentPosition;
+    private GameState phase = GameState.LOBBY;
 
     public ClientModel getMyModel() {
         return myModel;
@@ -298,6 +303,7 @@ public class ClientController implements Observer {
 
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate){
 
+        phase = phaseUpdate.getState();
         view.handlePhaseUpdate(phaseUpdate);
 
     }
@@ -307,19 +313,39 @@ public class ClientController implements Observer {
 
             switch (input) {
                 case "a" -> view.askFetchShip();
-//            case "b" -> viewAdventureDecks();
-//            case "c" -> client.sendMessage(new ShowFaceUpTilesRequest());
-              case "d" -> view.askDrawTile();
-              case "e" -> showTileInHand();
-              case "f" -> view.askRotation();
-              case "g" -> view.askPosition();
-              case "h" -> view.askTilePlacement();
-//            case "i" -> client.sendMessage(new DiscardTileRequest(currentTileInHand));
-            case "j" -> {
-                try {
+                case "b" -> {
+                    try {
+                        sendShipUpdate();
+                    } catch (IOException | ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    view.askViewAdventureDecks();
+                }
+                case "c" -> {
+                    try {
+                        sendGetFaceUpTilesRequest();
+                    } catch (IOException | ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                case "d" -> {
+                    try {
+                        sendShipUpdate();
+                    } catch (IOException | ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    view.askDrawTile();
+                }
+                case "e" -> showTileInHand();
+                case "f" -> view.askRotation();
+                case "g" -> view.askPosition();
+                case "h" -> view.askTilePlacement();
+                case "i" -> sendDiscardrequest();
+                case "j" -> {
+                  try {
                     client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
-                } catch (IOException | ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                  } catch (IOException | ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
                 }
             }
                 default -> {
@@ -331,7 +357,42 @@ public class ClientController implements Observer {
         }).start();
     }
 
+
+    public void sendShipUpdate() throws IOException, ExecutionException, InterruptedException {
+                    ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
+                    currentPosition = null;
+                    currentTileInHand = null;
+                    update.setOnlyFix(true);
+                    client.sendMessage(update);
+    }
+
+
+    public void sendGetFaceUpTilesRequest() throws IOException, ExecutionException, InterruptedException {
+        GetFaceUpTilesRequest request = new GetFaceUpTilesRequest();
+        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+        setCompletableFuture(future, request.getId());
+        try {
+            client.sendMessage(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        new Thread(() -> {
+            try {
+                FaceUpTileUpdate update = (FaceUpTileUpdate) future.get();
+                handleFaceUpTileUpdate(update);
+            } catch (Exception e) {}
+        }).start();
+
+    }
+    public void handleFaceUpTileUpdate(FaceUpTileUpdate update){
+        ArrayList<Tile> faceUpTiles = update.getFaceUpTiles();
+        synchronized (myModel.getFaceUpTiles()) {
+            myModel.setFaceUpTiles(faceUpTiles);
+        }
+    }
+
     public void handleFetchShip(String targetNickname){
+
 
     FetchShipRequest request = new FetchShipRequest(targetNickname);
     try {
@@ -339,7 +400,19 @@ public class ClientController implements Observer {
         view.showGenericMessage("Request sent. Waiting for server...");
     } catch (Exception e) {
         view.showGenericMessage("Failed to send request: " + e.getMessage());
+
     }
+    }
+    public void viewAdventureCardDeck(int DeckID){
+        ArrayList<CardDeck> cardDecks = myModel.getCardDecks();
+        if(!cardDecks.isEmpty()){
+            CardDeck deck = cardDecks.get(DeckID);
+            int colums = 4;
+//
+        }else{
+            view.showGenericMessage("No card decks found.");
+        }
+            view.showBuildingMenu();
     }
 
     @NeedsToBeCompleted
@@ -347,31 +420,42 @@ public class ClientController implements Observer {
     public void handleShipUpdate(ShipUpdate update){
             String owner = update.getNickName();
             Ship ship = update.getShipView();
-     if(owner != null) {
+            view.showGenericMessage("In Update: " + owner);
+     if(owner != null ) {
          view.showGenericMessage("Ship belongs to: " + owner);
          if (getNickname().equals(owner)) {
              synchronized (myModel.getMyInfo()) {
-                 myModel.getMyInfo().setShip(ship);
+                 myModel.getMyInfo().setShip(ship);  // per avere la versione l'utima del mio ship dal lato server
              }
          }else {
              synchronized (myModel.getPlayerInfos()){
-                 myModel.getPlayerInfos().stream().filter(info -> info.getNickName().equals(owner)).findFirst().get().setShip(ship);
+                 myModel.getPlayerInfos().stream()
+                         .filter(info -> info.getNickName().equals(owner))
+                         .findFirst()
+                         .ifPresentOrElse(
+                                 info -> info.setShip(ship),
+                                 () -> view.showGenericMessage("Player with nickname " + owner + " not found.")
+                         );
              }
          }
 //            view.showShip(ship);
+
      }
      else{
          view.showGenericMessage("No ship belongs to this player.");
-     }
 
+     }
+            view.handleChoiceForPhase(phase);
     }
 
 
-    public void handleTilePlacement(Boolean confirm){
+    public void handleTilePlacement(Boolean confirm) throws InvalidTilePosition {
         if (currentPosition == null || currentTileInHand == null) {
             view.showGenericMessage("No tile or position selected.");
             return;
         }
+        myModel.getMyInfo().getShip().putTile(currentTileInHand,currentPosition);   //ship.putTile(tileInHand)
+        myModel.getMyInfo().getShip().setLastTile(currentTileInHand);               //ship.setLastTile
 
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -381,16 +465,22 @@ public class ClientController implements Observer {
             client.sendMessage(request);
         } catch (IOException | ExecutionException | InterruptedException e) {
             view.showGenericMessage("Failed to send tile placement: " + e.getMessage());
+            view.showBuildingMenu();
             return;
         }
+
 
         new Thread(() -> {
             try {
                 PlaceTileResponse response = (PlaceTileResponse) future.get();
                 view.showGenericMessage(response.getMessage());
+
             } catch (Exception e) {
                 view.showGenericMessage("Error during tile placement: " + e.getMessage());
+            }finally {
+                view.showBuildingMenu();
             }
+
         }).start();
 
     }
@@ -413,9 +503,13 @@ public class ClientController implements Observer {
 
         }
     }
+@NeedsToBeCompleted
+//cambiare metodi di stampa
     public void showTileInHand() {
+
         view.showTile(currentTileInHand);
     }
+
     public void rotateCurrentTile(int rotation) {
         currentTileInHand.rotate(rotation);
 
@@ -423,6 +517,7 @@ public class ClientController implements Observer {
 
     public void moveCurrentTile(int x, int y) {
         Position pos = new Position(x, y);
+        Ship currentShip = myModel.getMyInfo().getShip();
         if(currentShip.getInvalidPositions().contains(pos)||currentShip.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
           new Thread(() -> {
               view.showGenericMessage("Invalid position. Please try again.");
@@ -431,13 +526,30 @@ public class ClientController implements Observer {
         }
         else{
             currentPosition = pos;
+            view.showGenericMessage("Tile moved successfully.");
+            view.showBuildingMenu();
         }
 
     }
-    public void moveTile() {
-
+public void sendDiscardrequest(){
+    DiscardTileRequest request = new DiscardTileRequest(currentTileInHand);
+    CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+    setCompletableFuture(future, request.getId());
+    try {
+        client.sendMessage(request);
+    } catch (IOException | ExecutionException | InterruptedException e) {
+        view.showGenericMessage("Failed to Discard request: " + e.getMessage());
+        return;
     }
 
+    new Thread(() -> {
+        try {
+            TileDiscardedUpdate update = (TileDiscardedUpdate) future.get();
+        } catch (Exception e) {
+            view.showGenericMessage("Error receiving room options: " + e.getMessage());
+        }
+    }).start();
+}
     //update per generic message
 
     @Override
