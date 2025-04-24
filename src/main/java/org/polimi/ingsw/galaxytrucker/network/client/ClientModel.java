@@ -4,10 +4,12 @@ import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 
 import java.util.ArrayList;
 
 public class ClientModel {
+
     public ClientModel() {
         this.myInfo = new PlayerInfo();
         this.playerInfos = new ArrayList<>();
@@ -15,6 +17,15 @@ public class ClientModel {
     private PlayerInfo myInfo;
     private ArrayList<PlayerInfo> playerInfos;
     private FlightBoard flightBoard;
+    private ArrayList<CardDeck> cardDecks = new ArrayList<>();
+
+    public ArrayList<CardDeck> getCardDecks() {
+        return cardDecks;
+    }
+
+    public void setCardDecks(ArrayList<CardDeck> cardDecks) {
+        this.cardDecks = cardDecks;
+    }
 
     public FlightBoard getFlightBoard() {
         return flightBoard;

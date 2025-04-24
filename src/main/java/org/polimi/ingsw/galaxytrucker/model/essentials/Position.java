@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -8,6 +9,10 @@ import java.io.Serializable;
  * ...
  */
 public class Position implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 6767L;
+
     private int x;
     private int y;
 
@@ -27,9 +32,11 @@ public class Position implements Serializable {
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
+
     public void setPos(int x, int y) {
         this.x = x;
         this.y = y;

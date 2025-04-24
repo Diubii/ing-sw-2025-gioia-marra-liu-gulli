@@ -1,15 +1,22 @@
 package org.polimi.ingsw.galaxytrucker.model.utils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -18,6 +25,45 @@ import java.util.Queue;
  * @author nerd53
  */
 public class Util {
+
+
+
+    public static CardDeck createLvl1Deck() throws IOException {
+        File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
+        ObjectMapper mapper = new ObjectMapper();
+
+        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().filter(card -> card.getLevel() == 1).toList()) ;
+
+
+        return new CardDeck(list, true);
+
+    }
+
+    public static CardDeck createLvl2Deck() throws IOException {
+        File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
+        ObjectMapper mapper = new ObjectMapper();
+
+        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().filter(card -> card.getLevel() == 2).toList()) ;
+
+        System.out.println("LVL2: ");
+
+        return new CardDeck(list, true);
+
+    }
+
+    public static CardDeck createLearningDeck() throws IOException {
+        File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
+        ObjectMapper mapper = new ObjectMapper();
+
+        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>( mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().filter(AdventureCard::isLearningFlight).toList());
+
+        return new CardDeck(list, true);
+
+    }
+
+
+
+
 
     /**
      * Controlla se un motore è ben connesso alla nave, verificando che non sia bloccato da altri componenti.

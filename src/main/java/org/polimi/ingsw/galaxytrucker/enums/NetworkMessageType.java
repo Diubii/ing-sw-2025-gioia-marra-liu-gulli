@@ -75,5 +75,5 @@ public enum NetworkMessageType {
     CrewInitUpdate,
     AskPositionUpdate,
     AskPositionResponse,
-    MatchInfoUpdate,
+    MatchInfoUpdate, DecksUpdate, FlightBoardUpdate,
 }

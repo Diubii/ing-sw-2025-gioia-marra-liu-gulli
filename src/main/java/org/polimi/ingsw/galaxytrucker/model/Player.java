@@ -14,7 +14,7 @@ public class Player {
     private final String nickname;
     private int nCredits;
 
-    private final Ship ship;
+    private  Ship ship;
     private int placement;
 
     private HashMap<String, Integer> detailedScores;
@@ -57,5 +57,9 @@ public class Player {
 
     public void setPlacement(int placement) {
         this.placement = placement;
+    }
+
+    public  void replaceShip(Ship ship) {
+        this.ship = ship;
     }
 }

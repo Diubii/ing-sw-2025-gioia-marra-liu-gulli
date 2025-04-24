@@ -145,6 +145,16 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     }
 
     @Override
+    public NetworkMessageType visit(DecksUpdate decksUpdate) {
+        return NetworkMessageType.DecksUpdate;
+    }
+
+    @Override
+    public NetworkMessageType visit(FlightBoardUpdate flightBoardUpdate) {
+        return NetworkMessageType.FlightBoardUpdate;
+    }
+
+    @Override
     public NetworkMessageType visit(TileDiscardedUpdate tileDiscardedUpdate) {
         return NetworkMessageType.TileDiscardedUpdate;
     }

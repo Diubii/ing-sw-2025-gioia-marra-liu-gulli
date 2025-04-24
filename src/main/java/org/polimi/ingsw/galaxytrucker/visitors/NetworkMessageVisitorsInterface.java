@@ -9,12 +9,13 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public interface NetworkMessageVisitorsInterface<T> {
-    T visit(CreateRoomRequest createRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException;
+    T visit(CreateRoomRequest createRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition;
 
-    T visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException;
+    T visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, IOException, InvalidTilePosition;
 
     T visit(JoiniRoomOptionsRequest joiniRoomOptionsRequest) throws ExecutionException, InterruptedException;
 
@@ -76,4 +77,8 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(AskPositionResponse askPositionResponse);
 
     T visit(MatchInfoUpdate matchInfoUpdate);
+
+    T visit(DecksUpdate decksUpdate);
+
+    T visit(FlightBoardUpdate flightBoardUpdate);
 }

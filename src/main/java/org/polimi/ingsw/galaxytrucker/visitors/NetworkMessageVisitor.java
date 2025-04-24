@@ -11,6 +11,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Void> {
@@ -48,7 +49,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @NeedsToBeCompleted
     @Override
-    public Void visit(CreateRoomRequest createRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public Void visit(CreateRoomRequest createRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition {
         serverController.handleCreateRoomRequest(createRoomRequest, clientHandler);
         return null;
     }
@@ -60,7 +61,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
     @Override
-    public Void visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public Void visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, IOException, InvalidTilePosition {
         serverController.handleJoinRoomRequest(joinRoomRequest, clientHandler);
         return null;
     }
@@ -170,7 +171,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(ShipUpdate shipUpdate) {
-        return null;
+        return serverController.handleShipUpdate(shipUpdate, clientHandler);
     }
 
 
@@ -213,6 +214,16 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(MatchInfoUpdate matchInfoUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(DecksUpdate decksUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(FlightBoardUpdate flightBoardUpdate) {
         return null;
     }
 

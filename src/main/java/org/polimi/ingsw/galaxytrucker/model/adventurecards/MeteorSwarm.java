@@ -8,9 +8,14 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 public class MeteorSwarm extends AdventureCard {
+
+    @Serial
+    private static final long serialVersionUID = 9999329L;
+
     private final ArrayList<Projectile> meteors;
     public ArrayList<Projectile> getMeteors() {
         return meteors;

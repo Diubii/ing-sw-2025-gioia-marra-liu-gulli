@@ -8,9 +8,16 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 public class Pirates extends AdventureCard {
+
+
+    @Serial
+    private static final long serialVersionUID = 32233232L;
+
+
     private final ArrayList<Projectile> cannonFires;
     private final int firePower;
     /** The amount of credits lost or gained. */

@@ -25,6 +25,8 @@ public class ClientSocket implements Client, Observable {
     int port;
     private final ExecutorService taskQueue;
     private final ArrayList<Observer> observers = new ArrayList<>();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
+
 
     //test
     public String testSignal;
@@ -60,11 +62,14 @@ public class ClientSocket implements Client, Observable {
                 } catch (IOException | ClassNotFoundException e) {
                     readExecutionQueue.shutdownNow();
                 }
-                try {
-                    notifyObservers(message);
-                } catch (IOException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
+                NetworkMessage finalMessage = message;
+                executor.submit(() -> {
+                    try {
+                        notifyObservers(finalMessage);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             }
         });
     }

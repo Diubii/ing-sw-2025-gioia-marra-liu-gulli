@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +13,10 @@ import java.util.ArrayList;
  * A planet has a state of occupation (whether it is occupied or not)
  * and a collection of goods that can be associated with it.
  */
-public class Planet {
+public class Planet  implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 7823187187L;
+
     /** Indicates whether the planet is occupied. */
     private boolean occupied;
     private final ArrayList<Good> goods;

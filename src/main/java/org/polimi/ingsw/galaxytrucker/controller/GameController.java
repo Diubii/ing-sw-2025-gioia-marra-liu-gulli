@@ -9,6 +9,10 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Mat
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class GameController {
 
     private GameState gameState;
@@ -63,13 +67,15 @@ public class GameController {
 
     public void startFlight() {
 
-        while (myGame.getRealGame().getFlightDeck().getSize() > 0) {
-            handleTurn();
-        }
+//        ArrayList<Decks>
+//
+//        while (myGame.getRealGame().ge) {
+//            handleTurn();
+//        }
 
     }
 
-    private void handleTurn() {
+    private void handleTurn() throws IOException {
 
 
 

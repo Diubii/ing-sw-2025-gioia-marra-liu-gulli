@@ -8,6 +8,8 @@ import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -34,7 +36,10 @@ import java.util.ArrayList;
 
 
 })
-public abstract class AdventureCard {
+public abstract class AdventureCard implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 99999L;
     protected int id;
     protected int level;
     protected int daysLost;

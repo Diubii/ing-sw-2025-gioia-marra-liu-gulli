@@ -8,8 +8,10 @@ import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 
 import javax.smartcardio.Card;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -32,11 +34,10 @@ public class Game {
     private boolean gameStarted;
     private boolean learningMatch;
 
-    private ArrayList<CardDeck> decks;
-    private CardDeck oneDeck;
-    private CardDeck twoDeck;
-    private CardDeck learningDeck;
+    private final ArrayList<CardDeck> Decks;
     private CardDeck flightDeck;
+
+
 
     public FlightBoard flightBoard;
     private final TileBunch tileBunch;
@@ -57,7 +58,7 @@ public class Game {
         this.playerOrder = new HashMap<>();
         this.learningMatch = false;
 
-        this.decks = new ArrayList<>();
+        this.Decks = new ArrayList<>();
 
         this.tileBunch = new TileBunch();
 
@@ -69,9 +70,25 @@ public class Game {
      * creata funzione separata poiche non si sa se il gioco e' learningMatch fino a che il primo client non lo decide
      * */
 
+    public ArrayList<CardDeck> getDecks() {
+        return Decks;
+    }
+
+    public CardDeck getFlightDeck() {
+        return flightDeck;
+    }
+
     public void initFlightBoard() {
         this.flightBoard = new FlightBoard(learningMatch);
+    }
 
+    public void setFlightBoard(FlightBoard flightBoard)
+    {
+        this.flightBoard = flightBoard;
+    }
+
+    public FlightBoard getFlightBoard(){
+        return flightBoard;
     }
 
     public void setLearningMatch(Boolean learningMatch) {
@@ -180,36 +197,16 @@ public class Game {
     }
 
 
-    public CardDeck getFlightDeck() {
-        return flightDeck;
-    }
 
     public HashMap<Player, Integer> getPlayerOrder() {
         return playerOrder;
     }
 
-    public Player getActivePlayer() {
-
-        Player myPlayer = null;
-        int i = 0;
-        for (Player player : playerOrder.keySet()) {
-
-            //il player in posizione 1 è il primo
-            if (playerOrder.get(player) == 1) {
-                myPlayer = player;
-            }
-        }
-
-        return myPlayer;
-    }
-
-    public FlightBoard getFlightBoard() {
-        return flightBoard;
-    }
 
     public Player getPlayerFromName(String nickname) {
         return playerMap.get(nickname);
     }
+
 
     public ArrayList<CardDeck> createBuildingCardDecks(CardDeck lvl1cards, CardDeck lvl2cards) {
         lvl1cards.shuffle();
@@ -235,10 +232,35 @@ public class Game {
         }
 
         flightDeck.shuffle();
-        flightDeck.putFirstLvl2CardOnTop();
+        if (!learningMatch) {
+            flightDeck.putFirstLvl2CardOnTop();
+        }
 
         return flightDeck;
     }
+
+    public void setFlightDeck() throws IOException {
+
+        ArrayList<CardDeck> decks = new ArrayList<>();
+
+
+        if (learningMatch){
+            Decks.add(Util.createLearningDeck());
+            decks.addAll(Decks);
+        } else {
+
+            ArrayList<CardDeck> tempDecks = createBuildingCardDecks(Util.createLvl1Deck(), Util.createLvl2Deck());
+            Decks.addAll(tempDecks);
+            decks.addAll(Decks);
+
+        }
+
+        flightDeck = createFlightDeck(decks);
+        System.out.println("SIZE DECKS " + Decks.size());
+
+    }
+
+
 }
 
 

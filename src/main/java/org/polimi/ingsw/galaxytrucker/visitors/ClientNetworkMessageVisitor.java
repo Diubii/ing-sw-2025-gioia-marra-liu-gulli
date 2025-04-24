@@ -32,6 +32,8 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
         return null;
     }
 
+
+
     @Override
     public Void visit(NicknameRequest nicknameRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
 
@@ -228,6 +230,8 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(AskPositionUpdate askPositionUpdate) {
+
+        clientController.handleAskPositionUpdate(askPositionUpdate);
         return null;
     }
 
@@ -238,6 +242,20 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(MatchInfoUpdate matchInfoUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(DecksUpdate decksUpdate) {
+
+        clientController.handleDecksUpdate(decksUpdate);
+        return null;
+    }
+
+    @Override
+    public Void visit(FlightBoardUpdate flightBoardUpdate) {
+
+        clientController.handleFlightBoardUpdate(flightBoardUpdate);
         return null;
     }
 

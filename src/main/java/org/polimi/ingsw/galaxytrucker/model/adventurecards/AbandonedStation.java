@@ -8,13 +8,15 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 
+import java.io.Serial;
 import java.util.ArrayList;
 /**
  * Represents an Abandoned Station adventure card.
  * The card allows the player to gain or lose goods based on the card's effect.
  */
 public class AbandonedStation extends AdventureCard {
-
+    @Serial
+    private static final long serialVersionUID = 99199L;
 
     /** A list of goods associated with the abandoned station. */
     private final ArrayList<Good> goods;

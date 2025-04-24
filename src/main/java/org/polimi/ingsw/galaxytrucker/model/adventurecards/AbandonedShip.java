@@ -7,12 +7,16 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 /**
  * This card introduces a scenario where humans, aliens, and credits are lost.
  */
 public class AbandonedShip extends AdventureCard {
+
+    @Serial
+    private static final long serialVersionUID = 999991L;
     /** The number of humans lost. */
     private final int crewMembersLost;
     /** The amount of credits lost or gained. */

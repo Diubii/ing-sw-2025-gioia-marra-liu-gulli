@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
@@ -10,10 +12,14 @@ import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
@@ -27,7 +33,10 @@ import org.polimi.ingsw.galaxytrucker.network.server.MessageManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -40,12 +49,28 @@ public class ServerController {
     private final ArrayList<LobbyInfo> lobbyInfos = new ArrayList<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final Object positionLock = new Object();
+    private ArrayList<Tile> gameTiles;
 
-    public ServerController(ArrayList<LobbyManager> model) {
+
+
+    public ServerController(ArrayList<LobbyManager> model) throws IOException {
         this.LobbyManagers = model;
         messageManager = new MessageManager(this);
         initActionsAllowed();
 //        model.setRealGame(new Game(4, false));
+        generateGameTiles();
+    }
+
+
+    public ArrayList<Tile> getGameTiles(){
+        return gameTiles;
+    }
+
+    public void generateGameTiles() throws IOException {
+        File file = new File("src/main/resources/tiledata.json"); // metti qui il percorso corretto
+        ObjectMapper mapper = new ObjectMapper();
+
+        this.gameTiles = (ArrayList<Tile>) mapper.readValue(file, new TypeReference<List<Tile>>() {});
     }
 
     public void addClient(ClientHandler client) {
@@ -119,7 +144,7 @@ public class ServerController {
 
     }
 
-    public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition {
 
         //get nickname & check
         String tempNick = message.getNickName();
@@ -134,6 +159,23 @@ public class ServerController {
         newGame.getRealGame().setnMaxPlayer(message.getMaxPlayers());
         newGame.getRealGame().addPlayer(myPlayer);
         newGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
+        newGame.getRealGame().initFlightBoard();
+
+        Tile centralTile = null;
+
+        for (Tile tile: gameTiles){
+            if (tile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")){
+                System.out.println(tile.getMyComponent().accept(new ComponentNameVisitor()));
+                CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
+                if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)){
+                    centralTile = tile;
+                }
+
+            }
+        }
+
+
+        myPlayer.getShip().putTile(centralTile, new Position(2,3));
 
 
         synchronized (LobbyManagers) {
@@ -148,8 +190,11 @@ public class ServerController {
 
         JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null,true, message.getId());
         joinRoomResponse.setColor(myColor);
+        joinRoomResponse.setMyShip(myPlayer.getShip());
+
 
         clientHandler.sendMessage(joinRoomResponse);
+        clientHandler.sendMessage(new FlightBoardUpdate(newGame.getRealGame().getFlightBoard()));
 
     }
 
@@ -162,7 +207,7 @@ public class ServerController {
         clientHandler.sendMessage(joinRoomOptionsResponse);
     }
 
-    public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException, IOException, InvalidTilePosition {
 
 
         String mess = "";
@@ -187,9 +232,13 @@ public class ServerController {
         }
 
         synchronized (myGame) {
-            System.out.println("SI");
+
+                System.out.println("SIZE: " + myGame.getPlayerColors().size());
 
             if (myGame.getPlayerColors().size() == myGame.getRealGame().getMaxPlayers() || myGame.getGameController().getGameState() != GameState.LOBBY) {
+                System.out.println("2");
+
+
                 mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY" + message.getRoomId() + "DOESN'T MUNGI YOU");
                 joinRoomResponse.setErrMess(mess);
                 joinRoomResponse.setOperationSuccess(false);
@@ -199,27 +248,54 @@ public class ServerController {
 
             } else {
 
+                System.out.println("3");
 
                 Player myPlayer = new Player(message.getNickName(), 0, 0, myGame.getRealGame().getIsLearningMatch());
+
+                //trovo la cabina con il colore
+
                 mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
-
-
-//                    lobbyInfos.get(0).addConnectedPlayer();
-
 
                 Color myColor =  myGame.useNextAvailableColor();
                 myGame.getPlayerColors().putIfAbsent(message.getNickName(),myColor);
 
+                System.out.println("4");
 
+                //trovo la cabina centrale del colore dell'utente
+                Tile centralTile = null;
+
+                for (Tile tile: gameTiles){
+                    if (tile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")){
+                        System.out.println(tile.getMyComponent().accept(new ComponentNameVisitor()));
+                        CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
+                        if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)){
+                                centralTile = tile;
+                        }
+
+                    }
+                }
+
+                System.out.println("5");
+
+
+                myPlayer.getShip().putTile(centralTile, new Position(2,3));
                 myGame.getRealGame().addPlayer(myPlayer);
 
                 myGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
+
                 playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+
 
 
 //                    ArrayList<Player> players = (ArrayList<Player>) myGame.getRealGame().getPlayers();
                 HashMap<String, Color> playerInfo = myGame.getPlayerColors();
-                playerJoinedUpdate = new PlayerJoinedUpdate(playerInfo);
+
+                PlayerInfo playerInfo1 = new PlayerInfo();
+                playerInfo1.setShip(myPlayer.getShip());
+                playerInfo1.setNickName(myPlayer.getNickName());
+                playerInfo1.setColor(myColor);
+
+                playerJoinedUpdate = new PlayerJoinedUpdate(playerInfo1);
 
 
                 synchronized (lobbyInfos) {
@@ -230,6 +306,7 @@ public class ServerController {
                 joinRoomResponse.setErrMess(mess);
                 joinRoomResponse.setOperationSuccess(true);
                 joinRoomResponse.setColor(myColor);
+                joinRoomResponse.setMyShip(myPlayer.getShip());
 
                 if (myLobbyInfo != null) {
 
@@ -240,26 +317,54 @@ public class ServerController {
                     mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY NOT FOUND :) " + message.getRoomId());
                     joinRoomResponse.setOperationSuccess(false);
                     joinRoomResponse.setColor(null);
+                    joinRoomResponse.setMyShip(null);
+
 
                 }
             }
 
             //fine synchronized e
 
+            PlayerInfo hostPlayerInfo = new PlayerInfo();
+            hostPlayerInfo.setNickName(myLobbyInfo.getHost());
+            hostPlayerInfo.setShip(myGame.getRealGame().getPlayer(myLobbyInfo.getHost()).getShip());
+            hostPlayerInfo.setColor(myGame.getPlayerColors().get(myLobbyInfo.getHost()));
+
+
+            clientHandler.sendMessage(new PlayerJoinedUpdate(hostPlayerInfo));
+            clientHandler.sendMessage(new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
             clientHandler.sendMessage(joinRoomResponse);
             System.out.println("ID RESP: " + joinRoomResponse.getId());
 
             //se tutto è andato bene
             if (result) {
+
+                ArrayList<ClientHandler> original = new ArrayList<>(playerHandlers);
+                playerHandlers.remove(clientHandler);
+
                 broadCast(playerHandlers, playerJoinedUpdate);
 
                 //dopo aver mandato la notifica di connessione vedo se ho raggiunto il numero massimo di player per la lobby
                 //e starto il gioco automaticamente lato server
 
                 if (myGame.getRealGame().getMaxPlayers() == myGame.getRealGame().getNumPlayers()) {
+
+                    //creo i deck
+
+                    myGame.getRealGame().setFlightDeck();
+
+                    CardDeck flightDeck = myGame.getRealGame().getFlightDeck();
+
+                    ArrayList<CardDeck> decks = myGame.getRealGame().getDecks();
+
+                    DecksUpdate decksUpdate = new DecksUpdate();
+                    decksUpdate.setDecks(decks);
+                    decksUpdate.setFlightDeck(flightDeck);
+
+
                     myGame.getGameController().nextState();
-                    System.out.println("PLAYER: HANDL : " + playerHandlers.size());
-                    broadCast(playerHandlers, new PhaseUpdate(myGame.getGameController().getGameState()));
+                    broadCast(original, decksUpdate);
+                    broadCast(original, new PhaseUpdate(myGame.getGameController().getGameState()));
                     //MANDARE I DECK -> -> ->
 
                     //dopo aver notificato tutti starto il gioco
@@ -420,15 +525,13 @@ public class ServerController {
 
             Color playerColor = myGame.getPlayerColors().get(nickname);
             myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, response.getPosition());
+
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
+            broadCast(playerHandlers, new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
+
 //            myGame.getRealGame().getFlightBoard()
 
         }
-
-
-
-
-
-
 
 
         synchronized ( myGame.getRealGame().getPlayer(nickname).getShip()) {
@@ -437,9 +540,10 @@ public class ServerController {
 
             if (myGame.getPlayerShipFinishedSize() == 0) {
                 //allroa e' il primo e fa partire il timer, e lo aggiungo
-                myGame.addPlayerShipFinished(nickname);
-                startTimer(60, myGame.getGameController(), (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values());
+                startTimer(60, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
             }
+            myGame.addPlayerShipFinished(nickname);
+
 
             //se quando arriva building request il client e' aggiornato
                 Tile lastTile = myGame.getRealGame().getPlayer(nickname).getShip().getLastTile();
@@ -464,15 +568,17 @@ public class ServerController {
 
                 }
 
-                clientHandler.sendMessage(new FetchShipResponse(nickname,myShip));
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
+
+            broadCast(playerHandlers, new ShipUpdate(myShip,nickname));
         }
 
         //controllo se tutti hanno finito
         if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
             //se hanno finito tutti allora si passa alla fase di check_ship
             myGame.getGameController().nextState();
-            ArrayList<ClientHandler> playerHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
-            broadCast(playerHandlers, new PhaseUpdate(myGame.getGameController().getGameState()));
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
+            broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
 
         }
 
@@ -527,12 +633,12 @@ public class ServerController {
 
             //non esiste, allora la inserisco
 
-            myTile.setFixed(true);
+//            myTile.setFixed(true);
             myShip.putTile(myTile, myPos);
             //resetto lastTile
-            myShip.setLastTile(null);
-            //la ship e' aggiornata
-            myShip.setSynch(true);
+            myShip.setLastTile(myTile);
+//            //la ship e' aggiornata
+//            myShip.setSynch(true);
             //setto il messaggio
             placeTileResponse.setMessage("SUCCESS");
 
@@ -649,6 +755,45 @@ public class ServerController {
         return allowedActions.contains(action);
     }
 
+
+    public Void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) {
+        if (shipUpdate.getOnlyFix()) {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            String nickname = myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
+            Player myPlayer = myGame.getRealGame().getPlayer(nickname);
+            Ship myShip = myPlayer.getShip();
+
+            synchronized (myShip) {
+                List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
+                        .flatMap(Arrays::stream)
+                        .filter(Objects::nonNull)
+                        .toList();
+
+                //trovo la tile non fissata
+
+                for (Slot slot: Slots){
+
+                    Tile tempTile = slot.getTile();
+
+                    if (tempTile != null){
+
+                        if (!tempTile.getFixed()){
+                            tempTile.setFixed(true);
+                            break;
+                        }
+                    }
+                }
+
+
+            }
+
+            ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
+            broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), shipUpdate);
+
+        }
+
+        return null;
+    }
 
 
 }

@@ -49,7 +49,17 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
     @Override
     public void receiveMessage(NetworkMessage message) throws IOException, ExecutionException, InvalidTilePosition {
-        notifyObservers(message);
+        new Thread(()-> {
+            try {
+                notifyObservers(message);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InvalidTilePosition e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
 
     }
 

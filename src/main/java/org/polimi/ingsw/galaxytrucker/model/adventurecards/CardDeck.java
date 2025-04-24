@@ -1,6 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import javax.smartcardio.Card;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -10,9 +12,13 @@ import java.util.stream.Stream;
  * The stack contains a collection of {@link AdventureCard} objects and may be
  * either spyable or not, depending on the deck's configuration.
  */
-public class CardDeck {
+public class CardDeck implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 19819109L;
+
     /** The list of cards in the deck. */
-    private ArrayList<AdventureCard> cards;
+    private final ArrayList<AdventureCard> cards;
     /** Indicates whether the card deck is spyable (can be observed by players). */
     public final boolean spyable;
 
@@ -43,6 +49,7 @@ public class CardDeck {
      */
     public CardDeck(boolean spyable) {
         this.spyable = spyable;
+        this.cards = new ArrayList<>();
     }
 
     public int getSize(){

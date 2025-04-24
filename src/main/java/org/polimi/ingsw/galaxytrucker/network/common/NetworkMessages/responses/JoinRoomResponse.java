@@ -4,6 +4,7 @@ import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
@@ -21,10 +22,20 @@ public class JoinRoomResponse extends NetworkMessage implements Serializable {
 
     private Color color;
 
+    private Ship myShip;
+
     public JoinRoomResponse(String errMess, Boolean operationSuccess, int id) {
         super(id);
         this.errMess = errMess;
         this.operationSuccess = operationSuccess;
+    }
+
+    public Ship getMyShip() {
+        return myShip;
+    }
+
+    public void setMyShip(Ship myShip) {
+        this.myShip = myShip;
     }
 
     public void setColor(Color color) {

@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class MessageManager {
@@ -23,7 +24,7 @@ public class MessageManager {
         NetworkMessageVisitor nmv = new NetworkMessageVisitor(serverController, clientHandler);
         try {
             message.accept(nmv);
-        } catch (TooManyPlayersException | PlayerAlreadyExistsException e) {
+        } catch (TooManyPlayersException | PlayerAlreadyExistsException | IOException e) {
             System.out.println(e.getMessage());
         } catch (InvalidTilePosition e) {
             throw new RuntimeException(e);

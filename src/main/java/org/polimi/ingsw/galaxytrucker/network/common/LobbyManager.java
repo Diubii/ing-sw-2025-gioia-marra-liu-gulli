@@ -69,7 +69,7 @@ public class LobbyManager {
 
     public void completePendingResponse(Integer id, NetworkMessage response) {
         synchronized (lock2) {
-            Pair<Integer, CompletableFuture<NetworkMessage>> pendingResponse = pendingResponses.get(id);
+            Pair<Integer, CompletableFuture<NetworkMessage>> pendingResponse = pendingResponses.stream().filter(pair -> pair.getKey().equals(id)).findFirst().orElse(null);
             pendingResponse.getValue().complete(response);
             pendingResponses.remove(pendingResponse);
         }
@@ -102,6 +102,7 @@ public class LobbyManager {
         nextAvailableColor = Color.RED;
         tileBunch = new TileBunch();
         gameController = new GameController(this );
+        pendingResponses = new ArrayList<>();
     }
 
     public HashMap<String, Color> getPlayerColors() {

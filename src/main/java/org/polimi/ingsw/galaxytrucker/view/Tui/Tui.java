@@ -17,6 +17,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMapSlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
@@ -27,10 +28,7 @@ import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.JoinRoomOptionsResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.JoinRoomResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskPositionResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.CrewInitUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
@@ -53,6 +51,8 @@ public class Tui implements View, Observable {
     //    ReadLine readLine = new ReadLine();
     private static final Scanner scanner = new Scanner(System.in);
     private static final Object inpuLock = new Object();
+    private static final Object outputLock = new Object();
+
     private final ArrayList<Observer> observers = new ArrayList<>();
 
     private  MenuManager menuManager = new MenuManager();
@@ -225,15 +225,17 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void showPlayerJoined(HashMap<String, Color> playerInfo) {
+    public void showPlayerJoined(PlayerInfo playerInfo) {
+
+        //da capire ccome usarla
         out.println(" Players in the room:");
-
-        for (Map.Entry<String, Color> entry : playerInfo.entrySet()) {
-            String nickname = entry.getKey();
-            Color color = entry.getValue();
-
-            out.printf("- %s (Color: %s)%n", nickname, color.name());
-        }
+//
+//        for (Map.Entry<String, Color> entry : playerInfo.en) {
+//            String nickname = entry.getKey();
+//            Color color = entry.getValue();
+//
+//            out.printf("- %s (Color: %s)%n", nickname, color.name());
+//        }
 
         out.println();
     }
@@ -243,7 +245,9 @@ public class Tui implements View, Observable {
 
             GameState phase = phaseUpdate.getState();
             menuManager.setMenuText(phase);
-            menuManager.showCurrentMenu();
+            synchronized (outputLock) {
+                menuManager.showCurrentMenu();
+            }
             handleChoiceForPhase(phase);
 
     }
@@ -399,10 +403,31 @@ public class Tui implements View, Observable {
 
     }
 
+    @Override
+    public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
+        System.out.println("Free positions: ");
+        for (Integer i: validPositions){
+            System.out.println(" --> " + i);
+        }
+
+        String input = readLine(" Choose one > ").trim().toLowerCase();
+        while (Integer.parseInt(input) < validPositions.getFirst() || Integer.parseInt(input) > validPositions.getLast()) {
+            askFlightBoardPosition(validPositions, id);
+        }
+
+        AskPositionResponse askPositionResponse = new AskPositionResponse(id, Integer.parseInt(input));
+
+        clientController.getClient().sendMessage(askPositionResponse);
+
+
+    }
 
 
     public void showGenericMessage(String message) {
-        System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
+
+        synchronized (outputLock) {
+            System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
+        }
     }
 
 

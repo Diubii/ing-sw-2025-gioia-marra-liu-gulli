@@ -7,9 +7,13 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 public class Stardust extends AdventureCard {
+
+    @Serial
+    private static final long serialVersionUID = 76767545L;
 
     @JsonCreator
     public Stardust(@JsonProperty("id") int id,

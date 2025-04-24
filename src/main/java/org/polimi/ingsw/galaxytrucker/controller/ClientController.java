@@ -20,9 +20,7 @@ import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.client.socket.ClientSocket;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PlayerJoinedUpdate;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ClientNetworkMessageVisitor;
@@ -57,7 +55,7 @@ public class ClientController implements Observer {
 
     private ClientModel myModel = new ClientModel();
     private final NetworkMessageVisitorsInterface<Void> messageVisitor = new ClientNetworkMessageVisitor(this);
-    private Tile currentTileInHand;
+    private Tile currentTileInHand = null;
     private Ship currentShip;
     private Position currentPosition;
 
@@ -202,6 +200,10 @@ public class ClientController implements Observer {
             try {
                 JoinRoomResponse response = (JoinRoomResponse) future.get();
                 if (response.getOperationSuccess()) {
+                    myModel.getMyInfo().setColor(response.getColor());
+                    myModel.getMyInfo().setShip(response.getMyShip());
+                    myModel.getMyInfo().setNickName(getNickname());
+
                     view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
                 } else {
                     view.showGenericMessage("Room creation failed: " + response.getErrMess());
@@ -251,24 +253,31 @@ public class ClientController implements Observer {
         try {
             client.sendMessage(request);
         } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send join room request.");
+            new Thread(()-> {
+                view.showGenericMessage("Failed to send join room request.");
+            });
             return;
         }
 
-        new Thread(() -> {
+
             try {
+
                 JoinRoomResponse response = (JoinRoomResponse) future.get();
                 if (response.getOperationSuccess()) {
                     view.showGenericMessage("Successfully joined the lobby! Waiting for other players...");
+
+                    myModel.getMyInfo().setColor(response.getColor());
+                    myModel.getMyInfo().setShip(response.getMyShip());
+                    myModel.getMyInfo().setNickName(getNickname());
+
                 } else {
                     view.showGenericMessage("Failed to join the lobby: " + response.getErrMess());
                     view.askRoomCode();
                 }
             } catch (Exception e) {
-                view.showGenericMessage("Error waiting for join room response: " + e.getMessage());
-                view.askRoomCode();
+                view.showGenericMessage("Error waiting for join room response: " + e.getStackTrace());
             }
-        }).start();
+
     }
 
 
@@ -277,8 +286,13 @@ public class ClientController implements Observer {
 
 
     public void handlePlayerJoinedUpdate(PlayerJoinedUpdate playerJoinedUpdate){
-                HashMap<String, Color> playerInfo = playerJoinedUpdate.getPlayerInfo();
-                view.showPlayerJoined(playerInfo);
+                PlayerInfo playerInfo = playerJoinedUpdate.getPlayerInfo();
+
+                synchronized (myModel.getPlayerInfos()){
+                    myModel.getPlayerInfos().add(playerJoinedUpdate.getPlayerInfo());
+                }
+
+//                view.showPlayerJoined(playerInfo);
 
     }
 
@@ -301,7 +315,13 @@ public class ClientController implements Observer {
               case "g" -> view.askPosition();
               case "h" -> view.askTilePlacement();
 //            case "i" -> client.sendMessage(new DiscardTileRequest(currentTileInHand));
-//            case "j" -> client.sendMessage(new FinishBuildingRequest(currentShip, currentTileInHand));
+            case "j" -> {
+                try {
+                    client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
+                } catch (IOException | ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
                 default -> {
                     new Thread(() -> {
                     view.showGenericMessage("Invalid option. Please try again.");
@@ -329,6 +349,15 @@ public class ClientController implements Observer {
             Ship ship = update.getShipView();
      if(owner != null) {
          view.showGenericMessage("Ship belongs to: " + owner);
+         if (getNickname().equals(owner)) {
+             synchronized (myModel.getMyInfo()) {
+                 myModel.getMyInfo().setShip(ship);
+             }
+         }else {
+             synchronized (myModel.getPlayerInfos()){
+                 myModel.getPlayerInfos().stream().filter(info -> info.getNickName().equals(owner)).findFirst().get().setShip(ship);
+             }
+         }
 //            view.showShip(ship);
      }
      else{
@@ -368,7 +397,7 @@ public class ClientController implements Observer {
     public void completeFuture(NetworkMessage message) {
         int responseId = message.getId();
         if (completableFuture == null) {
-            view.showGenericMessage("⚠️ CompletableFuture is null when receiving JoinRoomResponse with ID: " + responseId);
+            view.showGenericMessage("⚠️ CompletableFuture is null when receiving response with ID: " + responseId);
             return;
         }
 
@@ -444,5 +473,36 @@ public class ClientController implements Observer {
 
     public boolean hasTileInHand() {
         return this.getCurrentTileInHand() != null;
+    }
+
+    public void handleDecksUpdate(DecksUpdate decksUpdate) {
+
+        synchronized (myModel.getCardDecks()){
+            myModel.setCardDecks(decksUpdate.getDecks());
+        }
+    }
+
+    public void handleFlightBoardUpdate(FlightBoardUpdate flightBoardUpdate) {
+
+        if (myModel.getFlightBoard() != null) {
+            synchronized (myModel.getFlightBoard()){
+                myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
+            }
+        } else {
+            myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
+        }
+
+    }
+
+    public void handleAskPositionUpdate(AskPositionUpdate askPositionUpdate) {
+        new Thread(()->{
+
+            try {
+                view.askFlightBoardPosition(askPositionUpdate.getValidPositions(), askPositionUpdate.getId());
+            } catch (ExecutionException | InterruptedException | IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }).start();
     }
 }

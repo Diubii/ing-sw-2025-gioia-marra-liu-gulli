@@ -12,6 +12,7 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageNameVisitor;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
 
 
     @Override
-    public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws RemoteException, ExecutionException, InterruptedException {
+    public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws IOException, ExecutionException, InterruptedException {
         try {
             System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + message.accept(new NetworkMessageNameVisitor())));
         } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition e) {

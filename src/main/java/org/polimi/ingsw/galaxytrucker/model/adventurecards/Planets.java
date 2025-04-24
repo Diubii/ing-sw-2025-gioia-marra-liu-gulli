@@ -8,9 +8,15 @@ import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 public class Planets extends AdventureCard {
+
+
+    @Serial
+    private static final long serialVersionUID = 9994343L;
+
     private final ArrayList<Planet> planets;
     public ArrayList<Planet> getPlanets() {
         return planets;

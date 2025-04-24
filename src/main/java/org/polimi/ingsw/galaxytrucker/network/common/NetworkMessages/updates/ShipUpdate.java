@@ -15,6 +15,7 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
 
     private final Ship shipView; //CAMBIARE TIPO Ship->ShipView
     private final String nickName;
+    private Boolean  onlyFix = false;
 
     public ShipUpdate(Ship shipView, String nickName) {
         this.shipView = shipView;
@@ -31,5 +32,13 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
 
     public String getNickName() {
         return nickName;
+    }
+
+    public Boolean getOnlyFix() {
+        return onlyFix;
+    }
+
+    public void setOnlyFix(Boolean onlyFix) {
+        this.onlyFix = onlyFix;
     }
 }

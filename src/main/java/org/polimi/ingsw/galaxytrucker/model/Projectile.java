@@ -6,7 +6,14 @@ import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileType;
 
-public class Projectile {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Projectile implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1019019019L; // consigliato
+
     private final ProjectileType type;
     private final ProjectileDirection direction;
     private final ProjectileSize size;
@@ -14,9 +21,11 @@ public class Projectile {
     public ProjectileType getType() {
         return type;
     }
+
     public ProjectileDirection getDirection() {
         return direction;
     }
+
     public ProjectileSize getSize() {
         return size;
     }

@@ -8,9 +8,12 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 public class Smugglers extends AdventureCard {
+    @Serial
+    private static final long serialVersionUID = 888888889L;
     private final int firePower;
     private int penalty;
     private ArrayList<Good> goods;

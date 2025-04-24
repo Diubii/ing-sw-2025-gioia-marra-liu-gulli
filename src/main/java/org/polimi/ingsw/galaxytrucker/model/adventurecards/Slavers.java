@@ -7,9 +7,15 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 public class Slavers extends AdventureCard {
+
+
+    @Serial
+    private static final long serialVersionUID = 99434216L;
+
     private final int penalty;
     private final int firePower;
 

@@ -2,7 +2,13 @@ package org.polimi.ingsw.galaxytrucker.model.essentials;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 
-public class FlightBoardMapSlot {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class FlightBoardMapSlot implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 356098306830L;
 
     private Color playerToken = Color.EMPTY;
     private Boolean isStartingPos;

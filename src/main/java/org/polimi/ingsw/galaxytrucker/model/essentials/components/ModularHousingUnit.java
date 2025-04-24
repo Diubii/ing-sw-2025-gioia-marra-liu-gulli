@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
 
 public class ModularHousingUnit extends CentralHousingUnit{
 
@@ -90,4 +91,8 @@ public class ModularHousingUnit extends CentralHousingUnit{
         return this.alienColor;
     }
 
+    @Override
+    public String[] accept(ComponentPrintVisitorInterface visitor) {
+        return visitor.visit(this);
+    }
 }

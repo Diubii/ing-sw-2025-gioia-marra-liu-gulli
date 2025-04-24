@@ -8,9 +8,13 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 public class CombatZone extends AdventureCard {
+
+    @Serial
+    private static final long serialVersionUID = 999929L;
     private final int crewMembersLost;
     private final int goodsLost;
     private final ArrayList<Projectile> projectiles;

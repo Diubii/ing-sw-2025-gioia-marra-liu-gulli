@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 
 /**
  * Represents a good in the game, characterized by its color.
@@ -12,7 +15,10 @@ import org.polimi.ingsw.galaxytrucker.enums.Color;
  * by the color of the good.
  */
 
-public class Good {
+public class Good implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 14242424244L;
 
     private Color color;
 

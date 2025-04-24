@@ -535,18 +535,18 @@ public class Ship implements Serializable {
     }
 
 
-    public ArrayList<Slot[][]> getTronc() {
+    public ArrayList<Ship> getTronc() throws InvalidTilePosition {
 
 
-        ArrayList<Slot[][]> tronconi = new ArrayList<>();
-        tronconi.add(this.getShipBoard());
+        ArrayList<Ship> tronconi = new ArrayList<>();
+        tronconi.add(this);
 
         while (!brokenPositions.isEmpty()) {
 
             Position temp = brokenPositions.poll();
 
 
-            ListIterator<Slot[][]> iterator = tronconi.listIterator();
+            ListIterator<Ship> iterator = tronconi.listIterator();
 //        ArrayList<Slot[][]> targetSlot = new ArrayList<>();
 
 
@@ -555,15 +555,20 @@ public class Ship implements Serializable {
             boolean bigger = true;
 
             for (int i = 0; i < tronconi.size() && bigger; i++) {
-                ArrayList<Slot[][]> toRemove = new ArrayList<>();
-                ArrayList<Slot[][]> toAdd = new ArrayList<>();
+                ArrayList<Ship> toRemove = new ArrayList<>();
+                ArrayList<Ship> toAdd = new ArrayList<>();
 
 
-                Slot[][] board = tronconi.get(i);
+                Ship board = tronconi.get(i);
+
+                List<Slot> Slots = Arrays.stream(board.getShipBoard())
+                        .flatMap(Arrays::stream)
+                        .filter(Objects::nonNull)
+                        .toList();
 
 
-                for (Slot[] slots : board) {
-                    for (Slot slot : slots) {
+
+                    for (Slot slot : Slots) {
 
                         if (slot.getPosition().equals(temp) && slot.getLastAction()) {
                             System.out.println("TILE DA RIM " + slot.getPosition().getY() + " " + slot.getPosition().getX());
@@ -571,11 +576,11 @@ public class Ship implements Serializable {
                             toRemove.add(board); // Segna la board per la rimozione
                             toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
 
-                            Slot[][] t2 = toAdd.getLast();
-                            Ship tSh = new Ship(getLearningMatch());
-                            tSh.updateShipBoard(t2);
-                            System.out.println("GETTRONC + ADD : SIZE" + toAdd.size());
-                            System.out.println(tSh.toString());
+//                            Ship t2 = toAdd.getLast();
+//                            Ship tSh = new Ship(getLearningMatch());
+//                            tSh.updateShipBoard(t2);
+//                            System.out.println("GETTRONC + ADD : SIZE" + toAdd.size());
+//                            System.out.println(tSh.toString());
 
                             break;
                         } else {
@@ -583,7 +588,7 @@ public class Ship implements Serializable {
 
                         }
                     }
-                }
+
 
                 // Rimuove gli elementi segnati
                 tronconi.removeAll(toRemove);
@@ -607,7 +612,7 @@ public class Ship implements Serializable {
     }
 
 
-    public ArrayList<Slot[][]> truncateShip(Position pos, Queue<Position> brokenPos) {
+    public ArrayList<Ship> truncateShip(Position pos, Queue<Position> brokenPos) throws InvalidTilePosition {
 
         System.out.println("IF");
 
@@ -715,8 +720,8 @@ public class Ship implements Serializable {
                 Util.visitTile(myTile, tilesID, villagers.get(i).getValue(), invalidPositions, brokenPos, this);
 
                 System.out.println("TILES CONNESSE A " + myTile.getId());
-                for (int k = 0; k < tilesID.size(); k++) {
-                    System.out.println("LIST [+]" + tilesID.get(k));
+                for (Integer integer : tilesID) {
+                    System.out.println("LIST [+]" + integer);
                 }
 
 
@@ -746,7 +751,7 @@ public class Ship implements Serializable {
             int numTronconi = equivalenceClasses.size();
 
             // Creazione delle nuove navi separate
-            ArrayList<Slot[][]> ships = new ArrayList<>(numTronconi);
+            ArrayList<Ship> ships = new ArrayList<>(numTronconi);
             for (ArrayList<Integer> equivalenceClass : equivalenceClasses) {
 
                 // Crea una nuova nave vuota
@@ -756,22 +761,23 @@ public class Ship implements Serializable {
                 for (int j = 0; j < 5; j++) {
                     for (int k = 0; k < 7; k++) {
                         // Se la tile appartiene alla classe di equivalenza, viene inclusa nella nuova nave
-                        if (shipBoard[j][k].getTile() != null && equivalenceClass.contains(shipBoard[j][k].getTile().getId()) || invalidPositions.contains(new Position(j, k))) {
-                            myshipBoard[j][k] = shipBoard[j][k];
+                        if (shipBoard[j][k].getTile() != null && equivalenceClass.contains(shipBoard[j][k].getTile().getId()) || !invalidPositions.contains(new Position(j, k))) {
+//                            myshipBoard[j][k] = shipBoard[j][k];
+                            myShip.putTile(shipBoard[j][k].getTile(), shipBoard[j][k].getPosition());
                         }
                     }
                 }
 
                 // Aggiunge la nuova nave alla lista delle navi separate
-                ships.add(myshipBoard);
+                ships.add(myShip);
             }
 
             return ships; // Restituisce l'elenco delle navi separate
         }
 
 
-        ArrayList<Slot[][]> finalShips = new ArrayList<>();
-        finalShips.add(shipBoard);
+        ArrayList<Ship> finalShips = new ArrayList<>();
+        finalShips.add(null);
         return finalShips; // Se non ci sono sezioni da separare, restituisce null
     }
 

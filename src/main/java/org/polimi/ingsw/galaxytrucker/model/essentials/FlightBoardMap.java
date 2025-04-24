@@ -2,11 +2,15 @@ package org.polimi.ingsw.galaxytrucker.model.essentials;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class FlightBoardMap {
+public class FlightBoardMap implements Serializable {
 
+    @Serial
+            private static final long serialVersionUID = 456983986094L;
 
     ArrayList<FlightBoardMapSlot> flightBoardMapSlots;
     int nSlots;
@@ -35,7 +39,10 @@ public class FlightBoardMap {
         secondPos = 3;
         firstPos = 6;
 
-        flightBoardMapSlots = new ArrayList<>(Arrays.asList(new FlightBoardMapSlot[nSlots]));
+        flightBoardMapSlots = new ArrayList<>(nSlots);
+        for (int j = 0; j < nSlots; j++) {
+            flightBoardMapSlots.add(new FlightBoardMapSlot());
+        }
 
         int i = 0;
         for (FlightBoardMapSlot slot : flightBoardMapSlots) {
@@ -56,8 +63,10 @@ public class FlightBoardMap {
          secondPos = 2;
          firstPos = 4;
 
-         flightBoardMapSlots = new ArrayList<>(Arrays.asList(new FlightBoardMapSlot[nSlots]));
-
+        flightBoardMapSlots = new ArrayList<>(nSlots);
+        for (int j = 0; j < nSlots; j++) {
+            flightBoardMapSlots.add(new FlightBoardMapSlot());
+        }
          int i = 0;
          for (FlightBoardMapSlot slot : flightBoardMapSlots) {
              if (i == firstPos || i == secondPos || i == thirdPos || i == fourthPos ){

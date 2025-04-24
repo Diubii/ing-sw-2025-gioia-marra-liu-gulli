@@ -5,14 +5,18 @@ import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMap;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FlightBoard {
+public class FlightBoard implements Serializable{
 
+    @Serial
+    private static final long serialVersionUID = 781273817837L;
 
     private FlightBoardMap flightBoardMap;
     private final HashMap<Color, Integer> playerSteps;
@@ -25,6 +29,7 @@ public class FlightBoard {
     public FlightBoard(boolean learningMatch) {
         this.learningMatch = learningMatch;
         playerSteps = new HashMap<>();
+        flightBoardMap = new FlightBoardMap(learningMatch);
     }
 
     public Boolean getLearningMatch() {
