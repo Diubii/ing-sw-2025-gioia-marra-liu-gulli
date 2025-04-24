@@ -113,7 +113,7 @@ public class TileCardsJsonUtility extends Application {
 
         // Configurazione della scena e della finestra principale
         primaryStage.setTitle("Gestione Oggetti di Gioco");
-        primaryStage.setScene(new Scene(root, 800, 800));
+        primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
 
     }

@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards.abstracts;
 import  org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 
 /**
+ * NON PIù USATA
  * Represents an enemy adventure card that extends {@link AdventureCard}.
  * An enemy card introduces a hostile entity with a specific firepower.
  */

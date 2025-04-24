@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker;
 
 //import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 //import org.polimi.ingsw.galaxytrucker.view.Tui.Tui;

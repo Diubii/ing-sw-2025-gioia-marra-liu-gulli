@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -33,5 +34,9 @@ public class Epidemic extends AdventureCard {
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard, GameController gameController) {
         aca.activateEpidemic(this, p, flightBoard, gameController);
+    }
+
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

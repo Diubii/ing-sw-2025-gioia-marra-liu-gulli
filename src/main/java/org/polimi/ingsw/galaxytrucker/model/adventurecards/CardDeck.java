@@ -56,6 +56,8 @@ public class CardDeck implements Serializable {
         return cards.size();
     }
 
+
+
     /**
      * Adds a card to che current {@link CardDeck}
      * @param card The card to add
@@ -123,5 +125,9 @@ public class CardDeck implements Serializable {
             cards.remove(toBeFirst);
             cards.addFirst(toBeFirst);
         }
+    }
+
+    public ArrayList<AdventureCard> getCards() {
+        return cards;
     }
 }

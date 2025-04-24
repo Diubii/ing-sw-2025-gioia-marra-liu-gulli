@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -44,5 +45,9 @@ public class MeteorSwarm extends AdventureCard {
 
     public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard, GameController gameController){
         aca.activateMeteorSwarm(this, p, flightBoard, gameController);
+    }
+
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

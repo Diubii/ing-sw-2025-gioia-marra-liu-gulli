@@ -2,8 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
 public class DoubleEngine extends Engine{
 
@@ -23,14 +22,9 @@ public class DoubleEngine extends Engine{
     public void setCharged(Boolean charged) {
         this.charged = charged;
     }
-    @Override
-    public String accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this); // this ora è di tipo Cannon!
-    }
 
     @Override
-    public String[] accept(ComponentPrintVisitorInterface visitor) {
+    public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }
-
 }

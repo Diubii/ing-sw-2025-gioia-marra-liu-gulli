@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
 public class CentralHousingUnit extends Component {
 
@@ -46,14 +45,9 @@ public class CentralHousingUnit extends Component {
 
         if (humanCrewNumber > 0) humanCrewNumber--;
     }
-    @Override
-    public String accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this); // this ora è di tipo Cannon!
-    }
 
     @Override
-    public String[] accept(ComponentPrintVisitorInterface visitor) {
+    public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }
-
 }

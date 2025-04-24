@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
 public class ModularHousingUnit extends CentralHousingUnit{
 
@@ -73,26 +72,16 @@ public class ModularHousingUnit extends CentralHousingUnit{
         }
     }
 
-    @Override
-    public String accept(ComponentNameVisitorInterface visitor) {
-        return visitor.visit(this); 
-    }
 
     public void addHumanCrew(){
         super.setHumanCrewNumber(2);;
     }
-
-    @Override
-    public int getHumanCrewNumber() {
-        return super.getHumanCrewNumber();
-    }
-
     public AlienColor getAlienColor(){
-        return this.alienColor;
+        return alienColor;
     }
 
     @Override
-    public String[] accept(ComponentPrintVisitorInterface visitor) {
+    public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

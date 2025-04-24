@@ -17,6 +17,7 @@ public enum Connector {
         return connectorString;
     }
 
+
     // Metodo per convertire una stringa nell'enum
     public static Connector fromString(String text) {
         if (text != null) {

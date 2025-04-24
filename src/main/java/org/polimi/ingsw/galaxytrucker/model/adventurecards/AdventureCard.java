@@ -56,6 +56,10 @@ public abstract class AdventureCard implements Serializable {
      * @param flightBoard
      */
     public abstract void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard, GameController gameController);
+    public abstract void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard);
+
+    public abstract String[] accept(AdventureCardPrintVisitorInterface visitor);
+
     /**
      * Gets the unique identifier of the card.
      *

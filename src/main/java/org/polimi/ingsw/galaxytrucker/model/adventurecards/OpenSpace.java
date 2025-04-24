@@ -38,4 +38,8 @@ public class OpenSpace extends AdventureCard {
     }
 
 
+
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
+    }
 }
