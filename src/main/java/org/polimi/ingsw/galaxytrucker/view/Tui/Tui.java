@@ -20,6 +20,8 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
@@ -43,6 +45,8 @@ import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils.*;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.printTile;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils.*;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.printTileList;
 
 public class Tui implements View, Observable {
 
@@ -91,7 +95,7 @@ public class Tui implements View, Observable {
         System.setOut(new PrintStream(System.out, true, "UTF-8"));
 
         //TEST STAMPA DA TOGLIERE
-        /*Ship testShip = new Ship(false);
+        Ship testShip = new Ship(false);
 
         //Prendo lista tiles e metto in ship per testare
         ObjectMapper mapper = new ObjectMapper();
@@ -126,9 +130,28 @@ public class Tui implements View, Observable {
 
         printShip(testShip);
         printTile(tiles.get(152));
+        printTileList(tiles,9);
         //Vedi colori ok non occupano spazio, ma "emoji si più di uno esatto"...
-        */
+
         //Per le carte
+        ArrayList<AdventureCard> cards = new ArrayList<>();
+        try{
+            FileInputStream fis = new FileInputStream("src/main/resources/cardsdata.json");
+            cards = mapper.readValue(fis, new TypeReference<ArrayList<AdventureCard>>(){});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        ArrayList<AdventureCard> listaEx = new ArrayList();
+        for(int i =0; i<20; i++){
+           printCard(cards.get(i));
+           listaEx.add(cards.get(i));
+        }
+
+
+        CardDeck exampleDeck = new CardDeck(listaEx,false);
+        printDeck(exampleDeck,5);
+
 
         String banner = "\033[1;34m" + // Colore Blu Chiaro
                 "   __    _   __    _   _  __ _  __  _____ ___  _ __  __  _    ___  ___    ___\n" +

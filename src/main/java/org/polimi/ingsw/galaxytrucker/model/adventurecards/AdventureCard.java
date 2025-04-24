@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.util.ArrayList;
 
@@ -50,6 +51,9 @@ public abstract class AdventureCard {
      * @param flightBoard
      */
     public abstract void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard);
+
+    public abstract String[] accept(AdventureCardPrintVisitorInterface visitor);
+
     /**
      * Gets the unique identifier of the card.
      *

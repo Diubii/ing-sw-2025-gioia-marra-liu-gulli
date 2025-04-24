@@ -4,7 +4,7 @@ import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 
-public class ComponentNameVisitor implements ComponentNameVisitorInterface {
+public class ComponentNameVisitor implements ComponentVisitorInterface<String> {
     @Override
     public String visit(Component component) {
         return "";

@@ -9,6 +9,8 @@ import java.util.Collections;
  * either spyable or not, depending on the stack's configuration.
  */
 public class CardDeck {
+
+
     /** The list of cards in the stack. */
     private ArrayList<AdventureCard> cards;
     /** Indicates whether the card stack is spyable (can be observed by players). */
@@ -86,5 +88,9 @@ public class CardDeck {
      */
     public void clear(){
         cards.clear();
+    }
+
+    public ArrayList<AdventureCard> getCards() {
+        return cards;
     }
 }

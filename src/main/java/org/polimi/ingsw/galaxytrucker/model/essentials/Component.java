@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
 import java.io.Serializable;
 
@@ -39,7 +38,9 @@ public  class Component implements Serializable {
 
     private Boolean Structural;
 
-    /** The rotation of the component (in degrees). */
+    /**
+     * The rotation of the component (in degrees).
+     */
     protected int rotation = 0;
 
     /**
@@ -48,7 +49,7 @@ public  class Component implements Serializable {
      * @param structural .
      */
     @JsonCreator
-    public Component( @JsonProperty("structural") Boolean structural) {
+    public Component(@JsonProperty("structural") Boolean structural) {
 //        this.Name = name;
 
         Structural = structural;
@@ -61,6 +62,7 @@ public  class Component implements Serializable {
 //
 //    }
 //
+
     /**
      * Gets the current rotation of the component.
      *
@@ -69,6 +71,7 @@ public  class Component implements Serializable {
     public int getRotation() {
         return rotation;
     }
+
     /**
      * Sets the rotation of the component.
      *
@@ -86,12 +89,8 @@ public  class Component implements Serializable {
      * @return A string result from the visitor's interaction with the component.
      */
 
-    public String accept(ComponentNameVisitorInterface visitor) {
+    public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }
 
-    public String[] accept(ComponentPrintVisitorInterface visitor) {
-        return visitor.visit(this);
-    }
 }
-
