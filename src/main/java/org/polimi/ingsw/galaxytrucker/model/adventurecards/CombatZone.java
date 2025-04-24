@@ -51,6 +51,11 @@ public class CombatZone extends AdventureCard {
         aca.activateCombatZone(this, p, flightBoard, gameController);
     }
 
+    @Override
+    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard) {
+
+    }
+
     public String[] accept(AdventureCardPrintVisitorInterface visitor){
         return visitor.visit(this);
     }

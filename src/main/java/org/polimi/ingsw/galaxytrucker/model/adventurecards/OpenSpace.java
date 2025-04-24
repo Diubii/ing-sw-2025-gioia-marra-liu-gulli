@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -37,6 +38,10 @@ public class OpenSpace extends AdventureCard {
         aca.activateOpenSpace(this, p, flightBoard, gameController);
     }
 
+    @Override
+    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard) {
+
+    }
 
 
     public String[] accept(AdventureCardPrintVisitorInterface visitor){

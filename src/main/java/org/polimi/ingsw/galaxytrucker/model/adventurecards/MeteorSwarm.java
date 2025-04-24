@@ -47,6 +47,11 @@ public class MeteorSwarm extends AdventureCard {
         aca.activateMeteorSwarm(this, p, flightBoard, gameController);
     }
 
+    @Override
+    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard) {
+
+    }
+
     public String[] accept(AdventureCardPrintVisitorInterface visitor){
         return visitor.visit(this);
     }
