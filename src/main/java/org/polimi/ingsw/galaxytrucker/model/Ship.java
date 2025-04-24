@@ -2,14 +2,10 @@ package org.polimi.ingsw.galaxytrucker.model;
 
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
@@ -69,7 +65,7 @@ public class Ship implements Serializable {
         invalidPositions = createIP();
         generateSlot();
         initializePos();
-        //TIle of chosen color
+        //Tile of chosen color
 
 //        putTile();
 
@@ -368,7 +364,7 @@ public class Ship implements Serializable {
 
                 if (shipBoard[i][j].getTile() != null) {
                     Tile myTile = shipBoard[i][j].getTile();
-                    //calculate neihbours
+                    //calculate neighbours
                     Position nord = new Position(i - 1, j);
                     Position sud = new Position(i + 1, j);
                     Position est = new Position(i, j + 1);
@@ -817,8 +813,8 @@ public class Ship implements Serializable {
                  *
                  */
 
-                BatterySlot battery = (BatterySlot) shipBoard[batteryPos.getY()][batteryPos.getX()].getTile().getMyComponent();
-                Shield shield = (Shield) shipBoard[shieldPos.getY()][shieldPos.getX()].getTile().getMyComponent();
+                BatterySlot battery = (BatterySlot) getComponentFromPosition(batteryPos);
+                Shield shield = (Shield) getComponentFromPosition(shieldPos);
 
                 if (battery.getBatteriesLeft() > 0) {
                     battery.removeBattery();
@@ -838,12 +834,12 @@ public class Ship implements Serializable {
             if (!invalidPositions.contains(batteryPos) && Util.inBoundaries(batteryPos.getY(), batteryPos.getX())) {
                 //sono sicuro che entrambe le tile esistano
                 /*
-                 * levo una batteria da pbatteryPos e carico enginePos
+                 * levo una batteria da batteryPos e carico enginePos
                  *
                  */
 
-                BatterySlot battery = (BatterySlot) shipBoard[batteryPos.getY()][batteryPos.getX()].getTile().getMyComponent();
-                DoubleEngine engine = (DoubleEngine) shipBoard[enginePos.getY()][enginePos.getX()].getTile().getMyComponent();
+                BatterySlot battery = (BatterySlot) getComponentFromPosition(batteryPos);
+                DoubleEngine engine = (DoubleEngine) getComponentFromPosition(enginePos);
 
                 if (battery.getBatteriesLeft() > 0) {
                     battery.removeBattery();
@@ -851,9 +847,7 @@ public class Ship implements Serializable {
                     return true;
                 }
             }
-
         }
-
         return false;
     }
 
@@ -867,8 +861,8 @@ public class Ship implements Serializable {
                  *
                  */
 
-                BatterySlot battery = (BatterySlot) shipBoard[batteryPos.getY()][batteryPos.getX()].getTile().getMyComponent();
-                DoubleCannon cannon = (DoubleCannon) shipBoard[cannonPos.getY()][cannonPos.getX()].getTile().getMyComponent();
+                BatterySlot battery = (BatterySlot) getComponentFromPosition(batteryPos);
+                DoubleCannon cannon = (DoubleCannon) getComponentFromPosition(cannonPos);
 
                 if (battery.getBatteriesLeft() > 0) {
                     battery.removeBattery();
@@ -882,11 +876,17 @@ public class Ship implements Serializable {
         return false;
     }
 
-
     public Slot[] getSetAsideTiles() {
         return setAsideTiles;
     }
 
+    public int calculateEnginePower(){
+        return getEnginePos().stream().mapToInt(p -> ((Engine) getComponentFromPosition(p)).getEnginePower()).sum();
+    }
+
+    public Component getComponentFromPosition(Position position){
+        return shipBoard[position.getX()][position.getY()].getTile().getMyComponent();
+    }
 
     public Tile getLastTile() {
         return lastTile;

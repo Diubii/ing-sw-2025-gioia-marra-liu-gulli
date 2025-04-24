@@ -151,7 +151,7 @@ public class ClientController implements Observer {
     public void handleNicknameInput(String nickname){
         NicknameRequest request = new NicknameRequest(nickname);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        setCompletableFuture(future, request.getId());
+        setCompletableFuture(future, request.getID());
 
         try {
             client.sendMessage(request);
@@ -192,7 +192,7 @@ public class ClientController implements Observer {
     public void handleCreateChoice(int maxPlayers,boolean isLearningMatch) {
         CreateRoomRequest request = new CreateRoomRequest(maxPlayers, isLearningMatch, getNickname());
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        setCompletableFuture(future, request.getId());
+        setCompletableFuture(future, request.getID());
 
         try {
             client.sendMessage(request);
@@ -223,7 +223,7 @@ public class ClientController implements Observer {
     public void handleJoinRoomOptionsChoice(){
         JoiniRoomOptionsRequest request = new JoiniRoomOptionsRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        setCompletableFuture(future, request.getId());
+        setCompletableFuture(future, request.getID());
 
         try {
             client.sendMessage(request);
@@ -254,7 +254,7 @@ public class ClientController implements Observer {
     public void handleJoinChoice(int roomId) {
         JoinRoomRequest request = new JoinRoomRequest(roomId, getNickname());
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        setCompletableFuture(future, request.getId());
+        setCompletableFuture(future, request.getID());
         try {
             client.sendMessage(request);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -370,7 +370,7 @@ public class ClientController implements Observer {
     public void sendGetFaceUpTilesRequest() throws IOException, ExecutionException, InterruptedException {
         GetFaceUpTilesRequest request = new GetFaceUpTilesRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        setCompletableFuture(future, request.getId());
+        setCompletableFuture(future, request.getID());
         try {
             client.sendMessage(request);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -459,7 +459,7 @@ public class ClientController implements Observer {
 
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        setCompletableFuture(future, request.getId());
+        setCompletableFuture(future, request.getID());
 
         try {
             client.sendMessage(request);
@@ -485,7 +485,7 @@ public class ClientController implements Observer {
 
     }
     public void completeFuture(NetworkMessage message) {
-        int responseId = message.getId();
+        int responseId = message.getID();
         if (completableFuture == null) {
             view.showGenericMessage("⚠️ CompletableFuture is null when receiving response with ID: " + responseId);
             return;
@@ -495,7 +495,7 @@ public class ClientController implements Observer {
             view.showGenericMessage("⚠️ ID mismatch! Expected: " + pair.getKey() + ", but got: " + responseId);
             return;
         }
-        if (completableFuture != null && pair.getKey().equals(message.getId())) {
+        if (completableFuture != null && pair.getKey().equals(message.getID())) {
             completableFuture.complete(message);
             completableFuture = null;
         } else {
@@ -534,7 +534,7 @@ public class ClientController implements Observer {
 public void sendDiscardrequest(){
     DiscardTileRequest request = new DiscardTileRequest(currentTileInHand);
     CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-    setCompletableFuture(future, request.getId());
+    setCompletableFuture(future, request.getID());
     try {
         client.sendMessage(request);
     } catch (IOException | ExecutionException | InterruptedException e) {
@@ -610,7 +610,7 @@ public void sendDiscardrequest(){
         new Thread(()->{
 
             try {
-                view.askFlightBoardPosition(askPositionUpdate.getValidPositions(), askPositionUpdate.getId());
+                view.askFlightBoardPosition(askPositionUpdate.getValidPositions(), askPositionUpdate.getID());
             } catch (ExecutionException | InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }

@@ -16,13 +16,25 @@ public class DoubleEngine extends Engine{
         this.charged = charged;
     }
 
-    public Boolean getCharged() {
+    public Boolean isCharged() {
         return charged;
     }
 
     public void setCharged(Boolean charged) {
         this.charged = charged;
     }
+
+    @Override
+    public int getEnginePower(){
+        if(charged){
+            if(getRotation() == 0) return 2;
+            else return 0;
+        }
+        else{
+            return 0;
+        }
+    }
+
     @Override
     public String accept(ComponentNameVisitorInterface visitor) {
         return visitor.visit(this); // this ora è di tipo Cannon!

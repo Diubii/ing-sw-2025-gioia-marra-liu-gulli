@@ -270,5 +270,28 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
         return null;
     }
 
+    @Override
+    public Void visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate){
+        return null;
+    }
 
+    @Override
+    public Void visit(ActivateAdventureCardRequest activateAdventureCardRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateAdventureCardResponse activateAdventureCardResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest){
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse) {
+        return null;
+    }
 }

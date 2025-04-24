@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.network.common;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
@@ -151,6 +152,4 @@ public class LobbyManager {
     public String getNicknameFromColor(Color color){
         return (PlayerColors.entrySet().stream().filter(pair -> pair.getValue().equals(color))).map(Map.Entry::getKey).findFirst().orElse(null);
     }
-
-
 }
