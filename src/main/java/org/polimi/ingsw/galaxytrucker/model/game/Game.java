@@ -131,6 +131,7 @@ public class Game {
 
     }
 
+
     public void removePlayer(String nickname) throws PlayerNotFoundException {
 
         synchronized (playerMap) {
@@ -145,7 +146,6 @@ public class Game {
             }
 //        playerShip.remove(player);
         }
-
     }
 
 

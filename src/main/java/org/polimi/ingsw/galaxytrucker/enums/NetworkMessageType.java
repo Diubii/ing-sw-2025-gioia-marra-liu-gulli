@@ -67,4 +67,5 @@ public enum NetworkMessageType {
     DrawnAdventureCardUpdate,
     DeclareEnginePowerRequest,
     DeclareEnginePowerResponse, MatchInfoUpdate, DecksUpdate, FlightBoardUpdate,
+    RemovedPlayerUpdate
 }

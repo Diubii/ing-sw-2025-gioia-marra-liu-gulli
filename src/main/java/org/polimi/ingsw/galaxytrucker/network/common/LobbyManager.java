@@ -148,7 +148,6 @@ public class LobbyManager {
         return gameController;
     }
 
-
     public String getNicknameFromColor(Color color){
         return (PlayerColors.entrySet().stream().filter(pair -> pair.getValue().equals(color))).map(Map.Entry::getKey).findFirst().orElse(null);
     }

@@ -1,11 +1,13 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateDoubleEnginesRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.ActivateDoubleEnginesResponse;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.FlightBoardUpdate;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
@@ -42,15 +44,17 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 
     @Override
     public void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
-        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+        FlightBoard flightBoard = lobbyManager.getRealGame().getFlightBoard();
         for(Player player : rankedPlayers){
+            CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
             ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
             ActivateDoubleEnginesRequest activateDoubleEnginesRequest = new ActivateDoubleEnginesRequest();
             clientHandler.sendMessage(activateDoubleEnginesRequest); //Mando la richiesta di attivare eventuali motori doppi
             lobbyManager.addPendingResponse(future, activateDoubleEnginesRequest.getID()); //Notifico che sono in attesa di una risposta //IMPORTANTE: Non dovrei mettere l'id di una ActivateDoubleEnginesResponse?
             future.get(); //Aspetto che il player mandi la risposta
 
-            lobbyManager.getRealGame().getFlightBoard().movePlayer(lobbyManager.getPlayerColors().get(player.getNickName()), player.getShip().calculateEnginePower()); //Muovo il player
+            flightBoard.movePlayer(lobbyManager.getPlayerColors().get(player.getNickName()), player.getShip().calculateEnginePower()); //Muovo il player
+            lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(new FlightBoardUpdate(flightBoard))); //Invio la FlightBoard aggiornata a tutti i players
         }
     }
 
@@ -61,6 +65,11 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
     @Override
     public void visitStardust(Stardust stardust, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
         //player.getShip().calcExposedConnectors();
+        FlightBoard flightBoard = lobbyManager.getRealGame().getFlightBoard();
+        for(Player player : rankedPlayers.reversed()){
+            flightBoard.movePlayer(lobbyManager.getPlayerColors().get(player.getNickName()), player.getShip().getnExposedConnector());
+            lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(new FlightBoardUpdate(flightBoard))); //Invio la FlightBoard aggiornata a tutti i players
+        }
     }
 
     @Override

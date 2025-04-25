@@ -210,4 +210,9 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse) {
         return NetworkMessageType.DeclareEnginePowerResponse;
     }
+
+    @Override
+    public NetworkMessageType visit(PlayerRemovedUpdate removedPlayerUpdate) {
+        return NetworkMessageType.RemovedPlayerUpdate;
+    }
 }

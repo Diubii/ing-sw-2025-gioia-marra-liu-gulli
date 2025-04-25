@@ -261,4 +261,9 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         serverController.handleActivateDoubleEnginesResponse(activateDoubleEnginesResponse, clientHandler);
         return null;
     }
+
+    @Override
+    public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
+        return null;
+    }
 }
