@@ -14,7 +14,6 @@ import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
@@ -123,7 +122,7 @@ public class ServerController {
 
         //get nickname & check
         String tempNick = message.getNickname();
-        NicknameResponse nicknameResponse = new NicknameResponse(null, message.getId());
+        NicknameResponse nicknameResponse = new NicknameResponse(null, message.getID());
 
 
         System.out.println("REQ");
@@ -188,7 +187,7 @@ public class ServerController {
 
         }
 
-        JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null,true, message.getId());
+        JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null,true, message.getID());
         joinRoomResponse.setColor(myColor);
         joinRoomResponse.setMyShip(myPlayer.getShip());
 
@@ -200,9 +199,9 @@ public class ServerController {
 
     public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler) {
 
-        JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(null, message.getId());
+        JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(null, message.getID());
         synchronized (lobbyInfos) {
-            joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos, message.getId());
+            joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos, message.getID());
         }
         clientHandler.sendMessage(joinRoomOptionsResponse);
     }
@@ -213,7 +212,7 @@ public class ServerController {
         String mess = "";
         LobbyInfo myLobbyInfo;
 
-        JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null, message.getId());
+        JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null, message.getID());
         ArrayList<ClientHandler> playerHandlers;
         boolean result = false;
         PlayerJoinedUpdate playerJoinedUpdate = null;
@@ -255,6 +254,10 @@ public class ServerController {
                 //trovo la cabina con il colore
 
                 mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
+
+
+//                    lobbyInfos.get(0).addConnectedPlayer();
+
 
                 Color myColor =  myGame.useNextAvailableColor();
                 myGame.getPlayerColors().putIfAbsent(message.getNickName(),myColor);
@@ -334,7 +337,7 @@ public class ServerController {
             clientHandler.sendMessage(new PlayerJoinedUpdate(hostPlayerInfo));
             clientHandler.sendMessage(new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
             clientHandler.sendMessage(joinRoomResponse);
-            System.out.println("ID RESP: " + joinRoomResponse.getId());
+            System.out.println("ID RESP: " + joinRoomResponse.getID());
 
             //se tutto è andato bene
             if (result) {
@@ -450,8 +453,7 @@ public class ServerController {
         //prima di tutto la salvo come nuova nave
 
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        String nickname = myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
-        Player player = myGame.getRealGame().getPlayer(nickname);
+        Player player = getPlayerFromClientHandler(clientHandler);
         Ship ship = player.getShip();
 
         //trovo tutte le Tiles da rimuovere
@@ -485,7 +487,7 @@ public class ServerController {
     public void handleAskPositionResponse(AskPositionResponse askPositionResponse, ClientHandler clientHandler) {
 
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        myGame.completePendingResponse(askPositionResponse.getId(), askPositionResponse);
+        myGame.completePendingResponse(askPositionResponse.getID(), askPositionResponse);
     }
 
     public void handleFinishBuildingRequest(FinishBuildingRequest finishBuildingRequest, ClientHandler clientHandler) throws ExecutionException, InterruptedException {
@@ -516,7 +518,7 @@ public class ServerController {
 
             //aggiungo alle pending responses
 
-            myGame.addPendingResponse(future, askPositionUpdate.getId());
+            myGame.addPendingResponse(future, askPositionUpdate.getID());
 
             clientHandler.sendMessage(askPositionUpdate);
 
@@ -578,7 +580,7 @@ public class ServerController {
         if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
             //se hanno finito tutti allora si passa alla fase di check_ship
             myGame.getGameController().nextState();
-            ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
+            ArrayList<ClientHandler> playerHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
             broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
 
         }
@@ -676,8 +678,7 @@ public class ServerController {
 
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        String nickname = myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
-        Player myPlayer = myGame.getRealGame().getPlayer(nickname);
+        Player myPlayer = getPlayerFromClientHandler(clientHandler, myGame);
         Ship myShip = myPlayer.getShip();
 
         ArrayList<Position> positions = (ArrayList<Position>) crewInitUpdate.getCrewPos().stream().map(Pair::getKey).toList();
@@ -709,16 +710,42 @@ public class ServerController {
                     ModularHousingUnit humanHousing = (ModularHousingUnit) tempTile.getMyComponent();
                     humanHousing.addHumanCrew();
                 }
-
             }
         }
 
-        //dopo aver implementato la lista di quelli che hanno finito e si boradcasta la fase nuova
+        //dopo aver implementato la lista di quelli che hanno finito e si broadcasta la fase nuova
+        new Thread(() -> {
+            try {
+                myGame.getGameController().startFlight();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
-        new Thread(() -> myGame.getGameController().startFlight());
+    public void handleActivateAdventureCardResponse(ActivateAdventureCardResponse activateAdventureCardResponse, ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        myGame.getGameController().notify();
+    }
 
+    public void handleActivateDoubleEnginesResponse(ActivateDoubleEnginesResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        Player player = getPlayerFromClientHandler(clientHandler);
+        Ship ship = player.getShip();
 
+        ArrayList<Position> doubleEnginesPositions = activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions();
+        ArrayList<Position> batteriesPositions = activateDoubleEnginesResponse.getBatteriesPositions();
 
+        for(int i=0; i<activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions().size(); i++){
+            ship.activateDoubleEngine(doubleEnginesPositions.get(i), batteriesPositions.get(i)); //Usare il bool ritornato? //Assumo che ci siano posizioni duplicate nella lista di quelle delle batterie
+        }
+
+        //Mando la shipUpdate
+        ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
+        broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), shipUpdate);
+
+        //Sveglio visitOpenSpace
+        myGame.completePendingResponse(activateDoubleEnginesResponse.getID(), activateDoubleEnginesResponse);
     }
     
     /*
@@ -756,7 +783,14 @@ public class ServerController {
         return allowedActions.contains(action);
     }
 
+    private String getNicknameFromClientHandler(ClientHandler clientHandler){
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        return myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
+    }
 
+    private String getNicknameFromClientHandler(ClientHandler clientHandler, LobbyManager myGame){
+        return myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
+    }
     public Void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) {
         if (shipUpdate.getOnlyFix()) {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -797,6 +831,14 @@ public class ServerController {
     }
 
 
+    private Player getPlayerFromClientHandler(ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
+    }
+
+    private Player getPlayerFromClientHandler(ClientHandler clientHandler, LobbyManager myGame){
+        return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
+    }
 }
 
 

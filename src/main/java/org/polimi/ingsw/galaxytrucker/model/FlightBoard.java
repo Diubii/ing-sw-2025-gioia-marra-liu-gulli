@@ -2,15 +2,11 @@ package org.polimi.ingsw.galaxytrucker.model;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMap;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FlightBoard implements Serializable{
@@ -20,10 +16,6 @@ public class FlightBoard implements Serializable{
 
     private FlightBoardMap flightBoardMap;
     private final HashMap<Color, Integer> playerSteps;
-
-
-
-
     private final Boolean learningMatch;
 
     public FlightBoard(boolean learningMatch) {
@@ -42,7 +34,6 @@ public class FlightBoard implements Serializable{
                 if (flightBoardMap.getFlightBoardMapSlots().get(i).getPlayerToken() == Color.EMPTY){
                     flightBoardMap.getFlightBoardMapSlots().get(i).setPlayerToken(token);
                     playerSteps.put(token, i);
-
                 }
             }
         }
@@ -71,26 +62,18 @@ public class FlightBoard implements Serializable{
     }
 
     public ArrayList<Color> getRankedPlayers() {
-
-        ArrayList<Color> ranked = (ArrayList<Color>) playerSteps.entrySet().stream()
+        return (ArrayList<Color>) playerSteps.entrySet().stream()
                 .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))  // Ordine decrescente
                 .map(Map.Entry::getKey)  // Estraggo solo i Color
                 .toList();
-
-
-        return ranked;
     }
-
 
     @NeedsToBeCompleted
-
-    public Player getLeader() {
-
-        Color leaderColor = getRankedPlayers().getFirst();
-        return null;
+    public Color getLeader() {
+        return getRankedPlayers().getFirst();
     }
 
-    public Boolean isPlayerOverLapped(Color token) {
+    public Boolean isPlayerLapped(Color token) {
         int myPos = playerSteps.get(token) % flightBoardMap.getFlightBoardMapSlots().size();
         int mySteps = playerSteps.get(token);
         int myLoops = mySteps / flightBoardMap.getFlightBoardMapSlots().size();

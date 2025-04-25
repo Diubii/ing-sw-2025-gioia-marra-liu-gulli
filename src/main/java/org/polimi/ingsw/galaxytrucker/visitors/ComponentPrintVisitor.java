@@ -84,7 +84,7 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
                 "  DEng   ",
                 "         "
         };
-        result = AddActiveIndicator(result, component.getCharged());
+        result = AddActiveIndicator(result, component.isCharged());
         return AddEngineFire(result,component.getRotation());
     }
 

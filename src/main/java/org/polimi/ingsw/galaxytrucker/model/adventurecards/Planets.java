@@ -2,10 +2,12 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.polimi.ingsw.galaxytrucker.controller.GameController;
-import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.game.Game;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
@@ -39,22 +41,16 @@ public class Planets extends AdventureCard {
         this.learningFlight = learningFlight;
         this.affectsAll = false;
         this.planets = planets;
-
+        this.facultative = true;
     }
 
     public Planets(ArrayList<Planet> planets) {
         this.planets = planets;
     }
 
-    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard, GameController gameController){
-        aca.activatePlanets(this, p, flightBoard, gameController);
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
+        aca.visitPlanets(this, rankedPlayers, lobbyManager);
     }
-
-    @Override
-    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard) {
-
-    }
-
     public String[] accept(AdventureCardPrintVisitorInterface visitor){
         return visitor.visit(this);
     }

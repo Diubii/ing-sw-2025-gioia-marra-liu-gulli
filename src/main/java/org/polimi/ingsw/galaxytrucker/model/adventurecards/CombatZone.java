@@ -8,6 +8,9 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.model.game.Game;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -47,17 +50,8 @@ public class CombatZone extends AdventureCard {
         this.projectiles = projectiles;
     }
 
-    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard, GameController gameController) {
-        aca.activateCombatZone(this, p, flightBoard, gameController);
-    }
-
-    @Override
-    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard) {
-
-    }
-
-    public String[] accept(AdventureCardPrintVisitorInterface visitor){
-        return visitor.visit(this);
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+        aca.visitCombatZone(this, rankedPlayers, lobbyManager);
     }
 
     public int getCrewMembersLost() {
@@ -70,5 +64,8 @@ public class CombatZone extends AdventureCard {
 
     public ArrayList<Projectile> getProjectiles() {
         return projectiles;
+    }
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

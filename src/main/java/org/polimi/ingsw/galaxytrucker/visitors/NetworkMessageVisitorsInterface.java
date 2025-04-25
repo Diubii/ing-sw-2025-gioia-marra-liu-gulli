@@ -1,6 +1,5 @@
 package org.polimi.ingsw.galaxytrucker.visitors;
 
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -85,4 +84,12 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(GetFaceUpTilesRequest getFaceUpTilesRequest);
 
     T visit(FaceUpTileUpdate faceUpTileUpdate);
+
+    T visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate);
+
+    T visit(ActivateAdventureCardRequest activateAdventureCardRequest);
+    T visit(ActivateAdventureCardResponse activateAdventureCardResponse);
+
+    T visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest);
+    T visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse);
 }

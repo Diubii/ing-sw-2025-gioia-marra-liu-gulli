@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.model.game.Game;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
@@ -59,13 +61,14 @@ public class AbandonedStation extends AdventureCard {
 
     /**
      * Activates the effect of the Abandoned Station card by triggering the effect
-     * through the given {@link AdventureCardActivator}.
+     * through the given {@link AdventureCardVisitorsInterface}.
      *
      * @param aca         The activator responsible for triggering the Abandoned Station's effect.
-     * @param flightBoard
+     * @param rankedPlayers
+     * @param lobbyManager
      */
-    public void activateEffect(AdventureCardActivator aca,ArrayList<Player> player, FlightBoard flightBoard, GameController gameController) {
-        aca.activateAbandonedStation(this,player , flightBoard,  gameController);
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+        aca.visitAbandonedStation(this, rankedPlayers, lobbyManager);
     }
 
     @Override

@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.model.game.Game;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
+
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
@@ -40,23 +43,14 @@ public class AbandonedShip extends AdventureCard {
         this.affectsAll = false;
         this.crewMembersLost = crewMembersLost;
         this.credits = credits;
+        this.facultative = true;
     }
 
-    /**
-     * Activates the effect of the abandoned ship card.
-     *
-     * @param aca         The activator responsible for handling this card's effect.
-     * @param flightBoard FlightBoard ot game
-     *
-     */
-    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> p, FlightBoard flightBoard, GameController gameController) {
-        aca.activateAbandonedShip(this, p, flightBoard, gameController);
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+        aca.visitAbandonedShip(this, rankedPlayers, lobbyManager);
     }
 
-    @Override
-    public void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard) {
 
-    }
 
     public String[] accept(AdventureCardPrintVisitorInterface visitor){
         return visitor.visit(this);
