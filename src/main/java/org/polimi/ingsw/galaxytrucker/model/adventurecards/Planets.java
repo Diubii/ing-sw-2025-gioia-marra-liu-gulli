@@ -8,7 +8,7 @@ import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
