@@ -1,6 +1,5 @@
 package org.polimi.ingsw.galaxytrucker.visitors;
 
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -39,7 +38,6 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(ShipUpdate shipUpdate);
 
-
     T visit(SERVER_INFO serverInfo);
 
     T visit(NUM_PLAYERS_REQUEST numPlayersRequest);
@@ -51,6 +49,8 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(DiscardTileRequest discardTileRequest) throws ExecutionException, InterruptedException;
 
     T visit(FinishBuildingRequest finishBuildingRequest) throws ExecutionException, InterruptedException;
+
+    T visit(PlayerRemovedUpdate removedPlayerUpdate);
 
 
 
@@ -81,4 +81,20 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(DecksUpdate decksUpdate);
 
     T visit(FlightBoardUpdate flightBoardUpdate);
+
+    T visit(GetFaceUpTilesRequest getFaceUpTilesRequest);
+
+    T visit(FaceUpTileUpdate faceUpTileUpdate);
+
+    T visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate);
+
+    T visit(ActivateAdventureCardRequest activateAdventureCardRequest);
+    T visit(ActivateAdventureCardResponse activateAdventureCardResponse);
+
+    T visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest);
+    T visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse);
+
+    T visit(SelectPlanetRequest selectPlanetRequest);
+    T visit(SelectPlanetResponse selectPlanetResponse);
+    T visit(SelectedPlanetUpdate selectedPlanetUpdate);
 }

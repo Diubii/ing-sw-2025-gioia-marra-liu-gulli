@@ -5,8 +5,10 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClientModel {
 
@@ -18,7 +20,7 @@ public class ClientModel {
     private ArrayList<PlayerInfo> playerInfos;
     private FlightBoard flightBoard;
     private ArrayList<CardDeck> cardDecks = new ArrayList<>();
-
+    private ArrayList<Tile>  faceUpTiles = new ArrayList<>();
     public ArrayList<CardDeck> getCardDecks() {
         return cardDecks;
     }
@@ -49,4 +51,10 @@ public class ClientModel {
         return playerInfos;
     }
 
+    public ArrayList<Tile> getFaceUpTiles() {
+        return faceUpTiles;
+    }
+    public void setFaceUpTiles(ArrayList<Tile> faceUpTiles) {
+        this.faceUpTiles = faceUpTiles;
+    }
 }

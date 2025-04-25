@@ -22,6 +22,7 @@ public enum NetworkMessageType {
 
     //Flight
     DrawAdventureCardRequest, DrawAdventureCardResponse,
+    ActivateAdventureCardRequest, ActivateAdventureCardResponse,
     FlightMoveRequest, FlightMoveResponse,
     LandOnPlanetRequest, LandOnPlanetResponse,
     PickPlanetGoodsRequest, PickPlanetGoodsResponse,
@@ -62,18 +63,10 @@ public enum NetworkMessageType {
     CombatZoneUpdate,
     MeteorSwarmUpdate,
     StardustUpdate,
-    PlanetsUpdate,
-    AdventureCardExampleResponse,
-    CheckShipStatusRequest,
-    CheckShipStatusResponse,
-    ServerInfo,
-    ShipCheckEndUpdate,
-    EndTimer,
-    TileDrawnUpdate,
-    TileDiscardedUpdate,
-    PhaseUpdate,
-    CrewInitUpdate,
-    AskPositionUpdate,
-    AskPositionResponse,
-    MatchInfoUpdate, DecksUpdate, FlightBoardUpdate,
+    PlanetsUpdate, AdventureCardExampleResponse, CheckShipStatusRequest, CheckShipStatusResponse, ServerInfo, ShipCheckEndUpdate, EndTimer, TileDrawnUpdate, TileDiscardedUpdate, PhaseUpdate, CrewInitUpdate, AskPositionUpdate, AskPositionResponse,
+    DrawnAdventureCardUpdate,
+    DeclareEnginePowerRequest,
+    DeclareEnginePowerResponse, MatchInfoUpdate, DecksUpdate, FlightBoardUpdate,
+    RemovedPlayerUpdate,
+    SelectPlanetRequest, SelectPlanetResponse, SelectedPlanetUpdate
 }

@@ -4,15 +4,12 @@ import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -202,6 +199,7 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(TileDiscardedUpdate tileDiscardedUpdate) {
+        clientController.completeFuture(tileDiscardedUpdate);
         return null;
     }
 
@@ -259,5 +257,58 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
         return null;
     }
 
+    @Override
+    public Void visit(GetFaceUpTilesRequest getFaceUpTilesRequest) {
+        return null;
+    }
 
+    @Override
+    public Void visit(FaceUpTileUpdate faceUpTileUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate){
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateAdventureCardRequest activateAdventureCardRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateAdventureCardResponse activateAdventureCardResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest){
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(SelectPlanetRequest selectPlanetRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(SelectPlanetResponse selectPlanetResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(SelectedPlanetUpdate selectedPlanetUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
+        return null;
+    }
 }

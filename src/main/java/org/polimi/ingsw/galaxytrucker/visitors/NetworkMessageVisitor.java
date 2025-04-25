@@ -207,7 +207,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(AskPositionResponse askPositionResponse) {
-
         serverController.handleAskPositionResponse(askPositionResponse, clientHandler);
         return null;
     }
@@ -227,6 +226,59 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-//    public static void visit(JoinRoomRequest joinRoomRequest) {
-//    }
+    @Override
+    public Void visit(GetFaceUpTilesRequest getFaceUpTilesRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(FaceUpTileUpdate faceUpTileUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateAdventureCardRequest activateAdventureCardRequest){
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateAdventureCardResponse activateAdventureCardResponse){
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse){
+        serverController.handleActivateDoubleEnginesResponse(activateDoubleEnginesResponse, clientHandler);
+        return null;
+    }
+
+    @Override
+    public Void visit(SelectPlanetRequest selectPlanetRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(SelectPlanetResponse selectPlanetResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(SelectedPlanetUpdate selectedPlanetUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
+        return null;
+    }
 }

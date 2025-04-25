@@ -106,13 +106,10 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.FinishBuildingRequest;
     }
 
-
-
     @Override
     public NetworkMessageType visit(ViewAdventureDecksRequest viewAdventureDecksRequest) {
         return NetworkMessageType.ViewAdventureDeckRequest;
     }
-
 
     @Override
     public NetworkMessageType visit(PlaceTileRequest placeTileRequest) {
@@ -155,6 +152,16 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     }
 
     @Override
+    public NetworkMessageType visit(GetFaceUpTilesRequest getFaceUpTilesRequest) {
+        return null;
+    }
+
+    @Override
+    public NetworkMessageType visit(FaceUpTileUpdate faceUpTileUpdate) {
+        return null;
+    }
+
+    @Override
     public NetworkMessageType visit(TileDiscardedUpdate tileDiscardedUpdate) {
         return NetworkMessageType.TileDiscardedUpdate;
     }
@@ -174,10 +181,51 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.PhaseUpdate;
     }
 
-
-
     @Override
     public NetworkMessageType visit(FetchShipResponse fetchShipResponse) {
         return NetworkMessageType.FetchShipResponse;
+    }
+
+    @Override
+    public NetworkMessageType visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
+        return NetworkMessageType.DrawnAdventureCardUpdate;
+    }
+
+    @Override
+    public NetworkMessageType visit(ActivateAdventureCardRequest activateAdventureCardRequest) {
+        return NetworkMessageType.ActivateAdventureCardRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(ActivateAdventureCardResponse activateAdventureCardResponse) {
+        return NetworkMessageType.ActivateAdventureCardResponse;
+    }
+
+    @Override
+    public NetworkMessageType visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest) {
+        return NetworkMessageType.DeclareEnginePowerRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse) {
+        return NetworkMessageType.DeclareEnginePowerResponse;
+    }
+
+    @Override
+    public NetworkMessageType visit(PlayerRemovedUpdate removedPlayerUpdate) {
+        return NetworkMessageType.RemovedPlayerUpdate;
+    }
+
+    @Override
+    public NetworkMessageType visit(SelectPlanetRequest selectPlanetRequest) {
+        return NetworkMessageType.SelectPlanetRequest;
+    }
+    @Override
+    public NetworkMessageType visit(SelectPlanetResponse selectPlanetResponse) {
+        return NetworkMessageType.SelectPlanetResponse;
+    }
+    @Override
+    public NetworkMessageType visit(SelectedPlanetUpdate selectedPlanetUpdate) {
+        return NetworkMessageType.SelectedPlanetUpdate;
     }
 }

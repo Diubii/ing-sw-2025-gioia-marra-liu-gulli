@@ -25,7 +25,7 @@ public abstract class NetworkMessage implements Serializable {
 //        id++;
     }
 
-    public int getId() {
+    public int getID() {
         return myId;
     }
 

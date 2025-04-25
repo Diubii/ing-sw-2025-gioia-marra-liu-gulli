@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
-import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardActivator;
+import org.polimi.ingsw.galaxytrucker.model.game.Game;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Represents an abstract adventure card with common properties and behavior.
@@ -44,24 +46,26 @@ public abstract class AdventureCard implements Serializable {
     protected int level;
     protected int daysLost;
     protected String name;
-    /** Indicates whether the card grants the ability to learn flight. */
+    /** Indicates whether the card has to be used in learning flights */
     protected boolean learningFlight;
     /** Indicates whether the effect of the card applies to all players. */
-    protected boolean affectsAll;
+    protected boolean affectsAll; //OpenSpace, Stardust, Epidemic, MeteorSwarm
+    /** Indicates whether a player can choose to not activate the card. Used for {@link Planets}, {@link AbandonedShip} and {@link AbandonedStation}.*/
+    protected boolean facultative = false;
 
     /**
      * Activates the effect of the adventure card.
      *
-     * @param aca         The activator responsible for triggering the card's effect.
-     * @param flightBoard
+     * @param aca          The activator responsible for triggering the card's effect.
+     * @param lobbyManager The game's {@link LobbyManager}
      */
-    public abstract void activateEffect(AdventureCardActivator aca, ArrayList<Player> player, FlightBoard flightBoard, GameController gameController);
+    public abstract void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
     /**
      * Gets the unique identifier of the card.
      *
      * @return The card ID.
      */
-    public int getId() {
+    public int getID() {
         return id;
     }
     /**
@@ -89,9 +93,9 @@ public abstract class AdventureCard implements Serializable {
         return name;
     }
     /**
-     * Checks if the card grants the ability to learn flight.
+     * Checks if the card has to be used in learning flights.
      *
-     * @return {@code true} if the card provides the ability to learn flight, otherwise {@code false}.
+     * @return {@code true} if the card has to be used in learning flights, otherwise {@code false}.
      */
     public boolean isLearningFlight() {
         return learningFlight;
@@ -101,8 +105,15 @@ public abstract class AdventureCard implements Serializable {
      *
      * @return {@code true} if the effect applies to all players, otherwise {@code false}.
      */
-    public boolean isAffectsAll() {
+    public boolean doesAffectAll() {
         return affectsAll;
+    }
+
+    /**
+     * Checks if the player can choose to not activate the card. Used for {@link Planets}, {@link AbandonedShip} and {@link AbandonedStation}.
+     */
+    public boolean isFacultative() {
+        return facultative;
     }
 
 
