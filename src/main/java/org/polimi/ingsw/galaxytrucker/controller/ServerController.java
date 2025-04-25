@@ -432,13 +432,13 @@ public class ServerController {
 
         Player targetPlayer = myGame.getRealGame().getPlayer(message.getTargetNickname());
         Ship targetShip;
-        ShipUpdate shipViewUpdate;
+        FetchShipResponse fetchShipResponse;
 
         synchronized (targetPlayer.getShip()) {
             targetShip = targetPlayer.getShip();
-            shipViewUpdate = new ShipUpdate(targetShip, targetPlayer.getNickName());
+            fetchShipResponse = new FetchShipResponse(message.getTargetNickname(),targetShip, message.getId());
         }
-        clientHandler.sendMessage(shipViewUpdate);
+        clientHandler.sendMessage(fetchShipResponse);
 
     }
 
@@ -498,6 +498,16 @@ public class ServerController {
 
         //devo chiedere in che posizione vuole essere
 
+        if (myGame.getPlayerShipFinishedSize() == 0) {
+            myGame.addPlayerShipFinished(nickname);
+
+            //allroa e' il primo e fa partire il timer, e lo aggiungo
+            startTimer(60, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
+        } else {
+            //mandare un messaggio "ATTENDENDO ... SCELTA PRECEDENTI"
+        }
+
+
         synchronized (positionLock) {
             int maxPos = myGame.getRealGame().getNumPlayers();
             int minPos = 1;
@@ -538,11 +548,7 @@ public class ServerController {
 
             Ship myShip = myGame.getRealGame().getPlayer(nickname).getShip();
 
-            if (myGame.getPlayerShipFinishedSize() == 0) {
-                //allroa e' il primo e fa partire il timer, e lo aggiungo
-                startTimer(60, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
-            }
-            myGame.addPlayerShipFinished(nickname);
+
 
 
             //se quando arriva building request il client e' aggiornato
@@ -727,11 +733,18 @@ public class ServerController {
 
     public void startTimer(int seconds, GameController gameController, ArrayList<ClientHandler> clients) {
         //mando a tutti la notifica di end_timer\
-        EndTimerUpdate endTimerUpdate = new EndTimerUpdate(seconds);
-        broadCast(clients, endTimerUpdate);
+        gameController.nextState();
+
+        PhaseUpdate timer = new PhaseUpdate(GameState.BUILDING_TIMER);
+        broadCast(clients, timer);
 
         // Timer scaduto → cambio stato
-        scheduler.schedule(gameController::nextState, seconds, TimeUnit.SECONDS);
+        scheduler.schedule(() -> {
+            gameController.nextState();
+            PhaseUpdate update = new PhaseUpdate(GameState.BUILDING_END);
+            broadCast(clients, update);
+
+        }, seconds, TimeUnit.SECONDS);
     }
 
     public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {

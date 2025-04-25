@@ -3,7 +3,9 @@ package org.polimi.ingsw.galaxytrucker.controller;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
+import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -22,6 +24,8 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintingUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ClientNetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageNameVisitor;
@@ -59,6 +63,8 @@ public class ClientController implements Observer {
     private Ship currentShip;
     private Position currentPosition;
 
+    private ClientPhaseController clientPhaseController = new ClientPhaseController(this);
+
     public ClientModel getMyModel() {
         return myModel;
     }
@@ -83,7 +89,6 @@ public class ClientController implements Observer {
         this.isSocket = flag;
         this.view = view;
 
-//        clientPhaseController.nextPhase();
         taskQueue = Executors.newSingleThreadExecutor();
         InputStream in = System.in;
 
@@ -98,6 +103,9 @@ public class ClientController implements Observer {
     }
 
 
+    public Boolean getIsSocket(){
+        return isSocket;
+    }
 
     @Override
     public void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException {
@@ -123,6 +131,7 @@ public class ClientController implements Observer {
                 throw new IOException(e);
             }
         }
+
     }
 
     public void handleServerInfo(SERVER_INFO info)  {
@@ -200,6 +209,8 @@ public class ClientController implements Observer {
             try {
                 JoinRoomResponse response = (JoinRoomResponse) future.get();
                 if (response.getOperationSuccess()) {
+                    clientPhaseController.setPhase(PLAYER_PHASE.LOBBY);
+
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
@@ -264,6 +275,8 @@ public class ClientController implements Observer {
 
                 JoinRoomResponse response = (JoinRoomResponse) future.get();
                 if (response.getOperationSuccess()) {
+                    clientPhaseController.setPhase(PLAYER_PHASE.LOBBY);
+
                     view.showGenericMessage("Successfully joined the lobby! Waiting for other players...");
 
                     myModel.getMyInfo().setColor(response.getColor());
@@ -298,6 +311,23 @@ public class ClientController implements Observer {
 
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate){
 
+
+        if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
+            if (!clientPhaseController.getPhase().equals(PLAYER_PHASE.FINISH_BUILDING)){
+                //allora  devo gestirla
+                clientPhaseController.handlePhaseUpdate(phaseUpdate);
+
+                try {
+                        client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
+
+                    } catch (IOException | ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+
+        clientPhaseController.handlePhaseUpdate(phaseUpdate);
         view.handlePhaseUpdate(phaseUpdate);
 
     }
@@ -321,6 +351,8 @@ public class ClientController implements Observer {
                 } catch (IOException | ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+                clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
+
             }
                 default -> {
                     new Thread(() -> {
@@ -334,12 +366,33 @@ public class ClientController implements Observer {
     public void handleFetchShip(String targetNickname){
 
     FetchShipRequest request = new FetchShipRequest(targetNickname);
+    CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+    setCompletableFuture(future, request.getId());
     try {
         client.sendMessage(request);
-        view.showGenericMessage("Request sent. Waiting for server...");
-    } catch (Exception e) {
-        view.showGenericMessage("Failed to send request: " + e.getMessage());
-    }
+        new Thread(()-> {
+            view.showGenericMessage("Failed to send join room request.");
+        });    } catch (Exception e) {
+        new Thread(()-> {
+            view.showGenericMessage("Failed to send join room request.");
+        });    }
+
+
+        try {
+
+            FetchShipResponse response = (FetchShipResponse) future.get();
+            if (response.getTargetNickname().equals(targetNickname)) {
+
+                view.showShip(response.getTargetShipView());
+
+            } else {
+                view.showGenericMessage("Failed to spy your enemy");
+            }
+        } catch (Exception e) {
+            view.showGenericMessage("Failed to spy your enemy");
+        }
+
+
     }
 
     @NeedsToBeCompleted
@@ -348,7 +401,7 @@ public class ClientController implements Observer {
             String owner = update.getNickName();
             Ship ship = update.getShipView();
      if(owner != null) {
-         view.showGenericMessage("Ship belongs to: " + owner);
+//         view.showGenericMessage("Ship belongs to: " + owner);
          if (getNickname().equals(owner)) {
              synchronized (myModel.getMyInfo()) {
                  myModel.getMyInfo().setShip(ship);
@@ -504,5 +557,26 @@ public class ClientController implements Observer {
             }
 
         }).start();
+    }
+
+    public void handleCheckShipChoice(String input) {
+        new Thread(() -> {
+
+            switch (input) {
+                case "a" -> view.askFetchShip();
+//            case "b" -> viewAdventureDecks();
+//            case "c" -> client.sendMessage(new ShowFaceUpTilesRequest());
+
+                default -> {
+                    new Thread(() -> {
+                        view.showGenericMessage("Invalid option. Please try again.");
+                        view.showcheckShipMenu();}).start();
+                }
+            }
+
+
+
+        }).start();
+
     }
 }

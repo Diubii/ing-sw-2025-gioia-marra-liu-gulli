@@ -36,6 +36,7 @@ import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.CabinUnitAscii;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardTUI;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
@@ -243,7 +244,15 @@ public class Tui implements View, Observable {
     @Override
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
 
+
             GameState phase = phaseUpdate.getState();
+
+            if (phase.equals(GameState.BUILDING_TIMER)){
+                new Thread(()->{
+
+                    showGenericMessage("TIMER STARTED !!");
+                }).start();
+            }
             menuManager.setMenuText(phase);
             synchronized (outputLock) {
                 menuManager.showCurrentMenu();
@@ -280,6 +289,8 @@ public class Tui implements View, Observable {
             try{
                 String targetName = readLine("Enter the nickname of the player to fetch their ship ");
                 clientController.handleFetchShip(targetName);
+                menuManager.showCurrentMenu();
+
 
             } catch (ExecutionException | InterruptedException e) {
                 showGenericMessage("Error fetching ship: " + e.getMessage() +", please try again");
@@ -289,6 +300,24 @@ public class Tui implements View, Observable {
 
         }).start();
     }
+
+    @Override
+    public void FetchMyShip(){
+        new Thread(()->{
+            try{
+                clientController.handleFetchShip(clientController.getNickname());
+                menuManager.showCurrentMenu();
+
+
+            } catch (Exception e) {
+                showGenericMessage("Error fetching ship: " + e.getMessage() +", please try again");
+                FetchMyShip();
+                throw new RuntimeException(e);
+            }
+
+        }).start();
+    }
+
 
     @Override
     public void askRotation() {
@@ -395,7 +424,15 @@ public class Tui implements View, Observable {
 
     @Override
     public void showcheckShipMenu(){
+        try {
+            String input = readLine("\nChoose an option (a–c) or menu: ").trim().toLowerCase();
 
+
+            clientController.handleCheckShipChoice(input);
+
+        } catch (Exception e) {
+            out.println(" Error: " + e.getMessage());
+        }
     }
 
     @Override
@@ -404,13 +441,18 @@ public class Tui implements View, Observable {
     }
 
     @Override
+    public void showShip(Ship targetShipView) {
+        ShipPrintUtils.printShip(targetShipView);
+    }
+
+    @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
-        System.out.println("Free positions: ");
+        System.out.println("Free FLightBoard: ");
         for (Integer i: validPositions){
             System.out.println(" --> " + i);
         }
 
-        String input = readLine(" Choose one > ").trim().toLowerCase();
+        String input = readLine(" Choose one  > ").trim().toLowerCase();
         while (Integer.parseInt(input) < validPositions.getFirst() || Integer.parseInt(input) > validPositions.getLast()) {
             askFlightBoardPosition(validPositions, id);
         }

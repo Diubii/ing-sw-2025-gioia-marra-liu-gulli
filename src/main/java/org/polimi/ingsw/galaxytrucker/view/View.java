@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.view;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
+import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
@@ -33,6 +34,9 @@ public interface View {
 
     //building
     void showBuildingMenu();
+
+    void FetchMyShip();
+
     //asks_building
     void askRotation();
     void askPosition();
@@ -46,6 +50,8 @@ public interface View {
 
     void showcheckShipMenu();
     void showembarkCrewMenu();
+
+    void showShip(Ship targetShipView);
 
 
 //    public void askNickname(Thread thread) throws IOException;

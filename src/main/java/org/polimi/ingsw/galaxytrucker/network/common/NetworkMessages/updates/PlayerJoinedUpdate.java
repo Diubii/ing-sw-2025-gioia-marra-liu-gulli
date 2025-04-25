@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 12L;
+    private static final long serialVersionUID = 12217367L;
 
     //    private  final ArrayList<Player> players;
     private final PlayerInfo playerInfo;

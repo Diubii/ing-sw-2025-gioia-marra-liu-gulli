@@ -15,7 +15,7 @@ public class MenuManager {
     public void setMenuText(GameState phase) {
         switch (phase) {
 
-            case BUILDING_START,BUILDING_END -> currentMenu = MenuText.BUILDING_MENU;
+            case BUILDING_START,BUILDING_TIMER -> currentMenu = MenuText.BUILDING_MENU;
             case SHIP_CHECK -> currentMenu = MenuText.CHECK_SHIP_MENU;
             default -> currentMenu = MenuText.NONE;
         }

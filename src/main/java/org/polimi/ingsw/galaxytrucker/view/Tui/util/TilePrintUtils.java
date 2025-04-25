@@ -2,8 +2,6 @@ package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitor;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
-
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import java.util.ArrayList;
  */
 public class TilePrintUtils {
 
-    private static final ComponentPrintVisitor componentPrintVisitor= new ComponentPrintVisitor();
+    private static ComponentPrintVisitor componentPrintVisitor= new ComponentPrintVisitor();
     //Visitor per i vari component che restituisce la corretta stringa
     //Butta fuori tipo gli interni
     //Tile1Line
