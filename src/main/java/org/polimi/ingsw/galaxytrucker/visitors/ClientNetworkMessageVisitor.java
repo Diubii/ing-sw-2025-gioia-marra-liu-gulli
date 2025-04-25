@@ -293,6 +293,21 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
     }
 
     @Override
+    public Void visit(SelectPlanetRequest selectPlanetRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(SelectPlanetResponse selectPlanetResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(SelectedPlanetUpdate selectedPlanetUpdate) {
+        return null;
+    }
+
+    @Override
     public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
         return null;
     }
