@@ -93,4 +93,8 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest);
     T visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse);
+
+    T visit(SelectPlanetRequest selectPlanetRequest);
+    T visit(SelectPlanetResponse selectPlanetResponse);
+    T visit(SelectedPlanetUpdate selectedPlanetUpdate);
 }

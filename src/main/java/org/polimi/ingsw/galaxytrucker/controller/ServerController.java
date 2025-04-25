@@ -428,8 +428,9 @@ public class ServerController {
 
 
     }
-@NeedsToBeCompleted
-//Se player inserisce un Nickname non esiste? cosa ricevo
+
+    @NeedsToBeCompleted
+    //Se player inserisce un Nickname non esiste? cosa ricevo
     public void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler) {
 
         LobbyManager myGame = getLobbyFromHandler(clientHandler);

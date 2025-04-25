@@ -45,7 +45,7 @@ public class LobbyManager {
 
     public int getPlayerShipFinishedSize(){
         synchronized (lock1){
-            return  this.playerShipFinished.size();
+            return this.playerShipFinished.size();
         }
     }
 

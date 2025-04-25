@@ -215,4 +215,17 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(PlayerRemovedUpdate removedPlayerUpdate) {
         return NetworkMessageType.RemovedPlayerUpdate;
     }
+
+    @Override
+    public NetworkMessageType visit(SelectPlanetRequest selectPlanetRequest) {
+        return NetworkMessageType.SelectPlanetRequest;
+    }
+    @Override
+    public NetworkMessageType visit(SelectPlanetResponse selectPlanetResponse) {
+        return NetworkMessageType.SelectPlanetResponse;
+    }
+    @Override
+    public NetworkMessageType visit(SelectedPlanetUpdate selectedPlanetUpdate) {
+        return NetworkMessageType.SelectedPlanetUpdate;
+    }
 }
