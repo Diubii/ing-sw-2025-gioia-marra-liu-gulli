@@ -39,7 +39,7 @@ class AdventureCardEffectsTest {
         ArrayList<Planet> planetsArrayList = new ArrayList<>();
         planetsArrayList.add(planet);
 
-        Planets planets = new Planets(1, 2, 2, "Pianeti", false, planetsArrayList);
+        Planets planets = new Planets(1, 2, 2, "Pianeti", false, planetsArrayList,false);
 
         Player diubi = new Player("Diubi", 0, 1, false);
         Player smattimat = new Player("Smattimat", 0, 2, false);
