@@ -33,7 +33,8 @@ public class AbandonedShip extends AdventureCard {
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
                    @JsonProperty("crewMembersLost") int crewMembersLost ,
-                   @JsonProperty("credits")  int credits )
+                   @JsonProperty("credits")  int credits ,
+                         @JsonProperty("affectsAll") boolean affectsAll)
             {
         this.id = id;
         this.level = level;
@@ -44,6 +45,7 @@ public class AbandonedShip extends AdventureCard {
         this.crewMembersLost = crewMembersLost;
         this.credits = credits;
         this.facultative = true;
+
     }
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {

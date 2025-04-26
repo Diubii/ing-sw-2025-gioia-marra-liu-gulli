@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
@@ -7,10 +8,9 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
-
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -49,7 +49,7 @@ public abstract class AdventureCard implements Serializable {
     protected int level;
     protected int daysLost;
     protected String name;
-    /** Indicates whether the card grants the ability to learn flight. */
+    /** Indicates whether the card has to be used in learning flights */
     protected boolean learningFlight;
     /** Indicates whether the effect of the card applies to all players. */
     protected boolean affectsAll; //OpenSpace, Stardust, Epidemic, MeteorSwarm
@@ -63,7 +63,6 @@ public abstract class AdventureCard implements Serializable {
      * @param lobbyManager The game's {@link LobbyManager}
      */
     public abstract void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
-    public abstract String[] accept(AdventureCardPrintVisitorInterface visitor);
     /**
      * Gets the unique identifier of the card.
      *
@@ -121,4 +120,5 @@ public abstract class AdventureCard implements Serializable {
     }
 
 
+    public abstract String[] accept(AdventureCardPrintVisitorInterface visitor);
 }

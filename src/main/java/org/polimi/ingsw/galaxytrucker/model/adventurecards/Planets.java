@@ -31,7 +31,8 @@ public class Planets extends AdventureCard {
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("planets") ArrayList<Planet> planets)
+                         @JsonProperty("planets") ArrayList<Planet> planets,
+                          @JsonProperty("affectsAll") boolean affectsAll)
 
     {
         this.id = id;

@@ -31,7 +31,12 @@ public class TilePrintUtils {
 
         //Ciclo da 0 a 6 per colonne
         for(int i =0; i<columns; i++){
-            tileRow[i]=getTileStrings(tileList.get(i+Offset));
+            if(i+Offset < tileList.size()) {
+                tileRow[i] = getTileStrings(tileList.get(i + Offset));
+            }
+            else{
+                tileRow[i]=getTileStrings(null);
+            }
         }
 
         return tileRow;

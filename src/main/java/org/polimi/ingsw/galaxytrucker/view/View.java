@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.view;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
+import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
@@ -35,12 +36,16 @@ public interface View {
 
     //building
     void showBuildingMenu();
+    void showFaceUpTiles();
+    void showShip(Ship ship);
     //asks_building
+    void askShowFaceUpTiles() throws IOException, ExecutionException, InterruptedException;
     void askRotation();
     void askPosition();
     void askViewAdventureDecks();
     void showTile(Tile tile);
-
+    void askChooseTile();
+    void askPickReservedTile(boolean isPicking);
 
     void askFetchShip();
     void askDrawTile();

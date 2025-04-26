@@ -17,27 +17,29 @@ public class FaceUpTileUpdate extends NetworkMessage {
     @Serial
     private static final long serialVersionUID = 43850L;
 
-        private ArrayList<Tile> faceUpTiles;
+        private List<Tile> faceUpTiles;
 
         public FaceUpTileUpdate() {
+
             super();
+            this.faceUpTiles = new ArrayList<>();
         }
 
         public FaceUpTileUpdate(int id, ArrayList<Tile> faceUpTiles) {
             super(id);
-            this.faceUpTiles = faceUpTiles;
+            this.faceUpTiles = new ArrayList<>(faceUpTiles);
         }
 
-        public ArrayList<Tile> getFaceUpTiles() {
+        public List<Tile> getFaceUpTiles() {
             return faceUpTiles;
         }
 
-        public void setFaceUpTiles(ArrayList<Tile> faceUpTiles) {
-            this.faceUpTiles = faceUpTiles;
+        public void setFaceUpTiles(List<Tile> faceUpTiles) {
+            this.faceUpTiles = new ArrayList<>(faceUpTiles);
         }
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException {
-        return null;
+        return visitor.visit(this);
     }
 }

@@ -336,17 +336,17 @@ public class TileCardsJsonUtility extends Application {
         EsPlanets.add(EsPianeta);
         EsPlanets.add(EsPianeta);
 
-        cards.add(new AbandonedShip(1,1,1,"Nave abbandonata",false,1,1));
-        cards.add(new AbandonedStation(1,1,2,"Stazione abbandonata",false,EsGoods,8));
-        cards.add(new CombatZone(1,1,2,"Zona Guerra",false,2,2,EsempioProj));
-        cards.add(new Epidemic(2,1,2,"Epidemia",true));
-        cards.add(new MeteorSwarm(1,1,1,"Meteoriti",false,EsempioProj));
-        cards.add(new OpenSpace(1,1,1,"Spazio aperto",false));
-        cards.add(new Pirates(1,1,1,"Pirati",false,1,EsempioProj,2));
-        cards.add(new Planets(1,1,1,"Pianeti",false,EsPlanets));
-        cards.add(new Slavers(2,1,1,"Schiavisti",false,1,1,1));
-        cards.add(new Smugglers(1,1,1,"Contrabbandieri",false,2,2,EsGoods));
-        cards.add(new Stardust(1,1,1,"Polvere di stelle",false));
+        cards.add(new AbandonedShip(1,1,1,"Nave abbandonata",false,1,1,false));
+        cards.add(new AbandonedStation(1,1,2,"Stazione abbandonata",false,EsGoods,8,false));
+        cards.add(new CombatZone(1,1,2,"Zona Guerra",false,2,2,EsempioProj,true));
+        cards.add(new Epidemic(2,1,2,"Epidemia",true,true));
+        cards.add(new MeteorSwarm(1,1,1,"Meteoriti",false,EsempioProj,true));
+        cards.add(new OpenSpace(1,1,1,"Spazio aperto",false,true));
+        cards.add(new Pirates(1,1,1,"Pirati",false,1,EsempioProj,2,false));
+        cards.add(new Planets(1,1,1,"Pianeti",false,EsPlanets,false));
+        cards.add(new Slavers(2,1,1,"Schiavisti",false,1,1,1,false));
+        cards.add(new Smugglers(1,1,1,"Contrabbandieri",false,2,2,EsGoods,false));
+        cards.add(new Stardust(1,1,1,"Polvere di stelle",false,true));
 
 
 

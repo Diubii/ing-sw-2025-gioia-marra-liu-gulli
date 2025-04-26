@@ -37,7 +37,8 @@ public class CombatZone extends AdventureCard {
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("crewMembersLost") int crewMembersLost,
                          @JsonProperty("goodsLost") int goodsLost,
-                         @JsonProperty("projectiles") ArrayList<Projectile> projectiles)
+                         @JsonProperty("projectiles") ArrayList<Projectile> projectiles,
+                         @JsonProperty("affectsAll") boolean affectsAll)
     {
         this.id = id;
         this.level = level;
@@ -48,6 +49,8 @@ public class CombatZone extends AdventureCard {
         this.crewMembersLost = crewMembersLost;
         this.goodsLost = goodsLost;
         this.projectiles = projectiles;
+        this.facultative = true;
+
     }
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {

@@ -31,7 +31,8 @@ public class MeteorSwarm extends AdventureCard {
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("meteors") ArrayList<Projectile> meteors)
+                         @JsonProperty("meteors") ArrayList<Projectile> meteors,
+                       @JsonProperty("affectsAll") boolean affectsAll)
     {
         this.id = id;
         this.level = level;

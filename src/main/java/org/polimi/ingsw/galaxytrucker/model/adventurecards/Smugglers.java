@@ -31,7 +31,9 @@ public class Smugglers extends AdventureCard {
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("firePower") int firePower,
                          @JsonProperty("penalty")int penalty,
-                         @JsonProperty("good") ArrayList<Good> goods)
+                         @JsonProperty("good") ArrayList<Good> goods,
+                         @JsonProperty("affectsAll") boolean affectsAll                  )
+
     {
         this.id = id;
         this.level = level;
@@ -42,6 +44,7 @@ public class Smugglers extends AdventureCard {
         this.firePower = firePower;
         this.penalty = penalty;
         this.goods = goods;
+
 
     }
 

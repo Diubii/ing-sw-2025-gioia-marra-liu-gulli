@@ -22,7 +22,8 @@ public class Stardust extends AdventureCard {
                          @JsonProperty("level") int level,
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight )
+                         @JsonProperty("learningFlight") boolean learningFlight,
+                        @JsonProperty("affectsAll") boolean affectsAll)
     {
         this.id = id;
         this.level = level;

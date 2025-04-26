@@ -40,7 +40,8 @@ public class Pirates extends AdventureCard {
                    @JsonProperty("learningFlight") boolean learningFlight,
                    @JsonProperty("firePower") int firePower ,
                    @JsonProperty("cannonFires") ArrayList<Projectile> cannonFires,
-                   @JsonProperty("credits") int credits) {
+                   @JsonProperty("credits") int credits,
+                   @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;
@@ -49,6 +50,7 @@ public class Pirates extends AdventureCard {
         this.firePower = firePower;
         this.cannonFires = cannonFires;
         this.credits = credits;
+        this.affectsAll = false;
     }
 
     public Pirates(ArrayList<Projectile> cannonFires, int firePower, int credits) {
