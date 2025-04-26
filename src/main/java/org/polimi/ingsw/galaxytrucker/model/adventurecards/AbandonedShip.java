@@ -11,6 +11,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This card introduces a scenario where humans, aliens, and credits are lost.
@@ -44,7 +45,7 @@ public class AbandonedShip extends AdventureCard {
         this.facultative = true;
     }
 
-    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
         aca.visitAbandonedShip(this, rankedPlayers, lobbyManager);
     }
 
