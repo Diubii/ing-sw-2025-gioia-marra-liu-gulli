@@ -389,7 +389,7 @@ public class ServerController {
 
         if (!isActionAllowed(myGame, GameAction.DRAW_TILE)) {
 
-            drawTileResponse = new DrawTileResponse(null);
+            drawTileResponse = new DrawTileResponse(null,message.getID());
             drawTileResponse.setErrorMessage("INVALID_STATE");
             clientHandler.sendMessage(drawTileResponse);
 
@@ -403,10 +403,10 @@ public class ServerController {
 
                 myTile = myGame.getTileBunch().drawFaceUpTile(message.getTile().getId());
                 if (myTile == null) {
-                    drawTileResponse = new DrawTileResponse(null);
+                    drawTileResponse = new DrawTileResponse(null,message.getID());
                     drawTileResponse.setErrorMessage("TAKEN");
                 } else {
-                    drawTileResponse = new DrawTileResponse(myTile);
+                    drawTileResponse = new DrawTileResponse(myTile,message.getID());
                     drawTileResponse.setErrorMessage("VALID");
                 }
 
@@ -414,10 +414,10 @@ public class ServerController {
 
                 myTile = myGame.getTileBunch().drawTile();
                 if (myTile == null) {
-                    drawTileResponse = new DrawTileResponse(null);
+                    drawTileResponse = new DrawTileResponse(null,message.getID());
                     drawTileResponse.setErrorMessage("EMPTY");
                 } else {
-                    drawTileResponse = new DrawTileResponse(myTile);
+                    drawTileResponse = new DrawTileResponse(myTile,message.getID());
                     drawTileResponse.setErrorMessage("VALID");
                 }
 
@@ -441,6 +441,7 @@ public class ServerController {
         synchronized (targetPlayer.getShip()) {
             targetShip = targetPlayer.getShip();
             shipViewUpdate = new ShipUpdate(targetShip, targetPlayer.getNickName());
+            shipViewUpdate.setShouldDisplay(true);
         }
         clientHandler.sendMessage(shipViewUpdate);
 

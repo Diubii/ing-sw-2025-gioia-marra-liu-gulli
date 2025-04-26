@@ -16,8 +16,8 @@ public class DrawTileResponse extends NetworkMessage implements Serializable {
     private final Tile tile;
     private String errorMessage;
 
-    public DrawTileResponse(Tile tile) {
-
+    public DrawTileResponse(Tile tile,int id) {
+        super(id);
         this.tile = tile;
     }
 
