@@ -45,16 +45,16 @@ public abstract class AdventureCard implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 99999L;
-    protected int id;
-    protected int level;
-    protected int daysLost;
-    protected String name;
+    int id;
+    int level;
+    int daysLost;
+    String name;
     /** Indicates whether the card has to be used in learning flights */
-    protected boolean learningFlight;
+    boolean learningFlight;
     /** Indicates whether the effect of the card applies to all players. */
-    protected boolean affectsAll; //OpenSpace, Stardust, Epidemic, MeteorSwarm
+    boolean affectsAll; //OpenSpace, Stardust, Epidemic, MeteorSwarm
     /** Indicates whether a player can choose to not activate the card. Used for {@link Planets}, {@link AbandonedShip} and {@link AbandonedStation}.*/
-    protected boolean facultative = false;
+    boolean facultative = false;
 
     /**
      * Activates the effect of the adventure card.

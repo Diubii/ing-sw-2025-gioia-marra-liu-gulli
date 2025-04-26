@@ -33,6 +33,10 @@ public class Planet  implements Serializable {
         return goods;
     }
 
+    public void setOccupied(boolean occupied) {
+        this.occupied = occupied;
+    }
+
     @JsonCreator
     public Planet(@JsonProperty("occupied") boolean occupied, @JsonProperty("goods") ArrayList<Good> goods) {
         this.occupied = occupied;

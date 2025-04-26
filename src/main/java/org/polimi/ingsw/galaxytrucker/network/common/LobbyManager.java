@@ -45,7 +45,7 @@ public class LobbyManager {
 
     public int getPlayerShipFinishedSize(){
         synchronized (lock1){
-            return  this.playerShipFinished.size();
+            return this.playerShipFinished.size();
         }
     }
 
@@ -147,7 +147,6 @@ public class LobbyManager {
     public GameController getGameController() {
         return gameController;
     }
-
 
     public String getNicknameFromColor(Color color){
         return (PlayerColors.entrySet().stream().filter(pair -> pair.getValue().equals(color))).map(Map.Entry::getKey).findFirst().orElse(null);

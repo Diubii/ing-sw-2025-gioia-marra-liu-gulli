@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public interface AdventureCardVisitorsInterface {
-    void visitAbandonedShip(AbandonedShip abandonedShip, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
+    void visitAbandonedShip(AbandonedShip abandonedShip, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
 
     void visitAbandonedStation(AbandonedStation abandonedStation, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
 
@@ -20,7 +20,7 @@ public interface AdventureCardVisitorsInterface {
 
     void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
 
-    void visitPlanets(Planets planets, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
+    void visitPlanets(Planets planets, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
 
     void visitStardust(Stardust stardust, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
 

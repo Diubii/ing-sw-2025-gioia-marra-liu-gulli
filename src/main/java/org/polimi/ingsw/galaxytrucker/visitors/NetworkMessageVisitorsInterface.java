@@ -38,7 +38,6 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(ShipUpdate shipUpdate);
 
-
     T visit(SERVER_INFO serverInfo);
 
     T visit(NUM_PLAYERS_REQUEST numPlayersRequest);
@@ -50,6 +49,8 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(DiscardTileRequest discardTileRequest) throws ExecutionException, InterruptedException;
 
     T visit(FinishBuildingRequest finishBuildingRequest) throws ExecutionException, InterruptedException;
+
+    T visit(PlayerRemovedUpdate removedPlayerUpdate);
 
 
 
@@ -92,4 +93,8 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest);
     T visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse);
+
+    T visit(SelectPlanetRequest selectPlanetRequest);
+    T visit(SelectPlanetResponse selectPlanetResponse);
+    T visit(SelectedPlanetUpdate selectedPlanetUpdate);
 }

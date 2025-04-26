@@ -13,6 +13,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterfac
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class Planets extends AdventureCard {
 
@@ -49,7 +50,7 @@ public class Planets extends AdventureCard {
         this.planets = planets;
     }
 
-    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
         aca.visitPlanets(this, rankedPlayers, lobbyManager);
     }
     public String[] accept(AdventureCardPrintVisitorInterface visitor){
