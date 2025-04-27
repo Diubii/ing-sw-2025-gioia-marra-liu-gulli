@@ -5,7 +5,9 @@ import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Engine;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -23,30 +25,14 @@ public class TileBunch {
 
     public TileBunch() {
         this.faceUpTiles = new ArrayList<>();
-        this.tiles = new ArrayList<>();
-        generateTiles();
+        try {
+            tiles = Util.generateTiles();
+        }catch (IOException e){
+            System.err.println(e.getMessage());
+        }
 //        getFaceUpTiles();
     }
 
-    /**
-     * Generates and initializes all tiles in the game.
-     * The tiles are stored in the {@code tiles} list.
-     */
-    private void generateTiles() {
-        int tiles_size = 152;
-        for (int i = 0; i < tiles_size; i++) {
-            //esempio per creazione solo a fine di testing
-//            int randomRotation = rand.nextInt(4)*90;
-            BatterySlot batterySlot = new BatterySlot(2);
-            ArrayList<Connector> connectors = new ArrayList<>();
-            connectors.add(Connector.UNIVERSAL);
-            connectors.add(Connector.UNIVERSAL);
-            connectors.add(Connector.UNIVERSAL);
-            connectors.add(Connector.UNIVERSAL);
-            Tile myTile = new Tile(i, 0, connectors, batterySlot);
-            tiles.add(myTile);
-        }
-    }
 
     public synchronized ArrayList<Tile> getFaceUpTiles() {
         return faceUpTiles;

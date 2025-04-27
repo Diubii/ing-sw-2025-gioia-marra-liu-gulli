@@ -419,10 +419,10 @@ public class ServerController {
 
                 myTile = myGame.getTileBunch().drawTile();
                 if (myTile == null) {
-                    drawTileResponse = new DrawTileResponse(null,message.getID());
+                    drawTileResponse = new DrawTileResponse(null, message.getID());
                     drawTileResponse.setErrorMessage("EMPTY");
                 } else {
-                    drawTileResponse = new DrawTileResponse(myTile,message.getID());
+                    drawTileResponse = new DrawTileResponse(myTile, message.getID());
                     drawTileResponse.setErrorMessage("VALID");
                 }
 

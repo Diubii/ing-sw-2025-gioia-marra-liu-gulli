@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 
-public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInterface<Void> {
+public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterface<Void> {
 
     ClientController clientController;
 
@@ -237,6 +237,11 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
     }
 
     @Override
+    public Void visit(GetFaceUpTilesResponse getFaceUpTilesResponse) {
+        return null;
+    }
+
+    @Override
     public Void visit(FaceUpTileUpdate faceUpTileUpdate) {
         return null;
     }
@@ -278,6 +283,16 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(SelectedPlanetUpdate selectedPlanetUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(DiscardCrewMembersRequest discardCrewMembersRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(DiscardCrewMembersResponse discardCrewMembersResponse) {
         return null;
     }
 

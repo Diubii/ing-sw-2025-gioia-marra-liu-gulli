@@ -26,8 +26,6 @@ import java.util.Queue;
  */
 public class Util {
 
-
-
     public static CardDeck createLvl1Deck() throws IOException {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
@@ -55,15 +53,25 @@ public class Util {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>( mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().filter(AdventureCard::isLearningFlight).toList());
+        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().filter(AdventureCard::isLearningFlight).toList());
 
         return new CardDeck(list, true);
 
     }
 
+    /**
+     * Generates the tiles of a game and puts them in an {@link ArrayList}
+     * @return The {@link ArrayList} of tiles
+     * @throws IOException
+     */
+    public static ArrayList<Tile> generateTiles() throws IOException {
+        File file = new File("src/main/resources/tiledata.json");
+        ObjectMapper mapper = new ObjectMapper();
 
+        ArrayList<Tile> list = new ArrayList<>(mapper.readValue(file, new TypeReference<ArrayList<Tile>>(){}));
 
-
+        return list;
+    }
 
     /**
      * Controlla se un motore è ben connesso alla nave, verificando che non sia bloccato da altri componenti.
