@@ -9,6 +9,7 @@ import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class AbandonedStation extends AdventureCard {
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("goods")   ArrayList<Good> goods,
-                         @JsonProperty("crewMembers")   int crewMemebers, @JsonProperty("affectsAll") Boolean affectsAll)
+                         @JsonProperty("crewMembers")   int crewMemebers,
+                         @JsonProperty("affectsAll") boolean affectsAll   )
     {
         this.id = id;
         this.level = level;
@@ -68,5 +70,11 @@ public class AbandonedStation extends AdventureCard {
      */
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
         aca.visitAbandonedStation(this, rankedPlayers, lobbyManager);
+    }
+
+
+
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

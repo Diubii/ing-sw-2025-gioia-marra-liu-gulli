@@ -9,8 +9,11 @@ import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
+
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This card introduces a scenario where humans, aliens, and credits are lost.
@@ -31,7 +34,8 @@ public class AbandonedShip extends AdventureCard {
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
                    @JsonProperty("crewMembersLost") int crewMembersLost ,
-                   @JsonProperty("credits")  int credits , @JsonProperty("affectsAll") Boolean affectsAll)
+                   @JsonProperty("credits")  int credits ,
+                         @JsonProperty("affectsAll") boolean affectsAll)
             {
         this.id = id;
         this.level = level;
@@ -44,8 +48,14 @@ public class AbandonedShip extends AdventureCard {
         this.facultative = true;
     }
 
-    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
         aca.visitAbandonedShip(this, rankedPlayers, lobbyManager);
+    }
+
+
+
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 
     public int getCrewMembersLost() {

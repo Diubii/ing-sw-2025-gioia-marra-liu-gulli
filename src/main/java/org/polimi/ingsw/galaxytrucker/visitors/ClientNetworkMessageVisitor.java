@@ -39,11 +39,6 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(DrawTileRequest drawTileRequest) {
-        try {
-            clientController.getClient().sendMessage(drawTileRequest);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            System.err.println("Error occurred while sending the DrawTileRequest " + e.getMessage());
-        }
         return null;
     }
 
@@ -69,47 +64,25 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(FetchShipRequest fetchShipRequest) {
-        try {
-            clientController.getClient().sendMessage(fetchShipRequest);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            System.err.println("Error occurred while sending the fetchshipRequest: " + e.getMessage());
-        }
 
         return null;
     }
     @Override
     public Void visit(CheckShipStatusRequest checkShipStatusRequest) {
-        try {
-            clientController.getClient().sendMessage(checkShipStatusRequest);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            System.err.println("Error occurred while sending the checkShipStatusRequest: " + e.getMessage());
-        }
+
         return null;
     }
 
     @Override
     public Void visit(DiscardTileRequest discardTileRequest) {
-        try {
-            clientController.getClient().sendMessage(discardTileRequest);
-//            clientController.setCurrentTileInHand(null);
-//            clientController.setCurrentTilePosition(null);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            System.err.println("Error occurred while sending the discardRequest: " + e.getMessage());
-        }
+
         return null;
 
     }
 
     @Override
     public Void visit(FinishBuildingRequest finishBuildingRequest) {
-        try {
-            clientController.getClient().sendMessage(finishBuildingRequest);
-//            clientController.setCurrentTileInHand(null);
-//            clientController.setCurrentTilePosition(null);
-//            clientController.setCurrentShip(null);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            System.err.println("Error occurred while sending the FinishBuildingRequest: " + e.getMessage());
-        }
+
         return null;
     }
 
@@ -161,6 +134,7 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(DrawTileResponse drawTileResponse) {
+        clientController.completeFuture(drawTileResponse);
         return null;
     }
 
@@ -199,7 +173,7 @@ public class ClientNetworkMessageVisitor implements  NetworkMessageVisitorsInter
 
     @Override
     public Void visit(TileDiscardedUpdate tileDiscardedUpdate) {
-        clientController.completeFuture(tileDiscardedUpdate);
+        clientController.handleTileDiscardUpdate(tileDiscardedUpdate);
         return null;
     }
 

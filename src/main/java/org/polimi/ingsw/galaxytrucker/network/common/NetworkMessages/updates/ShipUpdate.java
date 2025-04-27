@@ -18,7 +18,8 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
     private final Ship shipView;
 
     private final String nickName;
-    private Boolean onlyFix = false;
+    private Boolean  onlyFix = false;
+    private Boolean shouldDisplay = false;
 
     public ShipUpdate(Ship shipView, String nickName) {
         this.shipView = shipView;
@@ -43,5 +44,12 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
 
     public void setOnlyFix(Boolean onlyFix) {
         this.onlyFix = onlyFix;
+    }
+
+    public Boolean getShouldDisplay() {
+        return shouldDisplay;
+    }
+    public void setShouldDisplay(Boolean shouldDisplay) {
+        this.shouldDisplay = shouldDisplay;
     }
 }

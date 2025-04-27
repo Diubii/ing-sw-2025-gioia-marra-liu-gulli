@@ -12,7 +12,7 @@ import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
  * This Rows will then be composed in the TilePrintUtils.
  * 9 columns, 3 rows
  */
-public class ComponentPrintVisitor implements ComponentPrintVisitorInterface {
+public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]> {
     @Override
     public String[] visit(Component component) {
         String[] result = new String[]{

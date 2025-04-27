@@ -38,15 +38,19 @@ public interface View {
 
     //building
     void showBuildingMenu();
+    void showFaceUpTiles();
+    void showShip(Ship ship);
 
     void FetchMyShip();
 
     //asks_building
+    void askShowFaceUpTiles() throws IOException, ExecutionException, InterruptedException;
     void askRotation();
     void askPosition() throws ExecutionException;
     void askViewAdventureDecks();
     void showTile(Tile tile);
-
+    void askChooseTile();
+    void askPickReservedTile(boolean isPicking);
 
     void askFetchShip();
     void askDrawTile();
@@ -55,8 +59,6 @@ public interface View {
 
     void showcheckShipMenu();
     void showembarkCrewMenu();
-
-    void showShip(Ship targetShipView);
 
 
 //    public void askNickname(Thread thread) throws IOException;

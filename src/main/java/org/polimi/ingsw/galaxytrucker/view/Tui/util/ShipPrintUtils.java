@@ -37,6 +37,7 @@ public class ShipPrintUtils {
         //2-Poi prova a fare una navicella vuota e fare il print tile con il visitor solo per
         //Tile vuote non costruibili e tile non occupate
 
+        System.out.println("  |    4    | |    5    | |    6    | |    7    | |    8    | |    9    | |    10   | ");
 
             for ( r = 0; r < rows; r++) {
 
@@ -44,6 +45,11 @@ public class ShipPrintUtils {
             String[][] TilesStringRow = composeRow(ship,r);
 
             for (int i = 0; i < rowsEachTile; i++) {
+                if(i==0){System.out.print("_ ");}
+                if(i==1){System.out.print("  ");}
+                if(i==2){System.out.print((r+5)+" ");}
+                if(i==3){System.out.print("  ");}
+                if(i==4){System.out.print("_ ");}
                 for ( c = 0; c < cols; c++) {
                     System.out.print(TilesStringRow[c][i]);  // Stampo tutte le "prime righe" di ciscuna tile affiancate, poi seconde...
                 }

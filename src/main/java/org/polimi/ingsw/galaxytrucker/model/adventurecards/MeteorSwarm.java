@@ -6,6 +6,8 @@ import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
+
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
@@ -29,7 +31,8 @@ public class MeteorSwarm extends AdventureCard {
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("meteors") ArrayList<Projectile> meteors, @JsonProperty("affectsAll") Boolean affectsAll)
+                         @JsonProperty("meteors") ArrayList<Projectile> meteors,
+                       @JsonProperty("affectsAll") boolean affectsAll)
     {
         this.id = id;
         this.level = level;
@@ -46,5 +49,8 @@ public class MeteorSwarm extends AdventureCard {
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
         aca.visitMeteorSwarm(this, rankedPlayers, lobbyManager);
+    }
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

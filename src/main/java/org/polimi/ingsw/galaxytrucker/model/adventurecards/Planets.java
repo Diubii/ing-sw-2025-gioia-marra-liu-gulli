@@ -6,7 +6,10 @@ import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
+
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -29,7 +32,8 @@ public class Planets extends AdventureCard {
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("planets") ArrayList<Planet> planets, @JsonProperty("affectsAll") Boolean affectsAll)
+                         @JsonProperty("planets") ArrayList<Planet> planets,
+                          @JsonProperty("affectsAll") boolean affectsAll)
 
     {
         this.id = id;
@@ -40,7 +44,6 @@ public class Planets extends AdventureCard {
         this.affectsAll = false;
         this.planets = planets;
         this.facultative = true;
-        affectsAll = affectsAll;
     }
 
     public Planets(ArrayList<Planet> planets) {
@@ -49,5 +52,8 @@ public class Planets extends AdventureCard {
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
         aca.visitPlanets(this, rankedPlayers, lobbyManager);
+    }
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

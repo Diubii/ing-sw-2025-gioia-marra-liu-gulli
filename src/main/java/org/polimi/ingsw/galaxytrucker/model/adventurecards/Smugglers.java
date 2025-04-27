@@ -1,18 +1,17 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 
 public class Smugglers extends AdventureCard {
     @Serial
@@ -32,7 +31,9 @@ public class Smugglers extends AdventureCard {
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("firePower") int firePower,
                          @JsonProperty("penalty")int penalty,
-                         @JsonProperty("good") ArrayList<Good> goods, @JsonProperty("affectsAll") Boolean affectsAll)
+                         @JsonProperty("good") ArrayList<Good> goods,
+                         @JsonProperty("affectsAll") boolean affectsAll                  )
+
     {
         this.id = id;
         this.level = level;
@@ -43,7 +44,7 @@ public class Smugglers extends AdventureCard {
         this.firePower = firePower;
         this.penalty = penalty;
         this.goods = goods;
-        affectsAll = affectsAll;
+
 
     }
 
@@ -65,5 +66,8 @@ public class Smugglers extends AdventureCard {
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
         aca.visitSmugglers(this, rankedPlayers, lobbyManager);
+    }
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

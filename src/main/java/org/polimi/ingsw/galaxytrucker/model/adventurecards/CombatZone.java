@@ -6,6 +6,8 @@ import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
+
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
@@ -35,7 +37,8 @@ public class CombatZone extends AdventureCard {
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("crewMembersLost") int crewMembersLost,
                          @JsonProperty("goodsLost") int goodsLost,
-                         @JsonProperty("projectiles") ArrayList<Projectile> projectiles, @JsonProperty("affectsAll") Boolean affectsAll)
+                         @JsonProperty("projectiles") ArrayList<Projectile> projectiles,
+                         @JsonProperty("affectsAll") boolean affectsAll)
     {
         this.id = id;
         this.level = level;
@@ -46,6 +49,8 @@ public class CombatZone extends AdventureCard {
         this.crewMembersLost = crewMembersLost;
         this.goodsLost = goodsLost;
         this.projectiles = projectiles;
+        this.facultative = true;
+
     }
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
@@ -62,5 +67,8 @@ public class CombatZone extends AdventureCard {
 
     public ArrayList<Projectile> getProjectiles() {
         return projectiles;
+    }
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

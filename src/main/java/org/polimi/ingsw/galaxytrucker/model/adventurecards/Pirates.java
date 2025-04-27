@@ -8,7 +8,10 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
+
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -32,11 +35,13 @@ public class Pirates extends AdventureCard {
     @JsonCreator
     public Pirates(@JsonProperty("id") int id,
                    @JsonProperty("level") int level,
+                   @JsonProperty("daysLost") int daysLost,
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
                    @JsonProperty("firePower") int firePower ,
                    @JsonProperty("cannonFires") ArrayList<Projectile> cannonFires,
-                   @JsonProperty("credits") int credits,                    @JsonProperty("daysLost") int daysLost, @JsonProperty("affectsAll") Boolean affectsAll) {
+                   @JsonProperty("credits") int credits,
+                   @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;
@@ -45,7 +50,7 @@ public class Pirates extends AdventureCard {
         this.firePower = firePower;
         this.cannonFires = cannonFires;
         this.credits = credits;
-        affectsAll = affectsAll;
+        this.affectsAll = false;
     }
 
     public Pirates(ArrayList<Projectile> cannonFires, int firePower, int credits) {
@@ -69,5 +74,8 @@ public class Pirates extends AdventureCard {
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
         aca.visitPirates(this, rankedPlayers, lobbyManager);
+    }
+    public String[] accept(AdventureCardPrintVisitorInterface visitor){
+        return visitor.visit(this);
     }
 }

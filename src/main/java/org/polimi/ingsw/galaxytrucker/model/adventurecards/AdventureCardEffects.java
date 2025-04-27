@@ -7,12 +7,15 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateAdventureCardRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateDoubleEnginesRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.SelectPlanetRequest;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.ActivateAdventureCardResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.ActivateDoubleEnginesResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.SelectPlanetResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.FlightBoardUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.SelectedPlanetUpdate;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
@@ -23,14 +26,19 @@ import java.util.stream.Collectors;
 
 public class AdventureCardEffects implements AdventureCardVisitorsInterface {
     @Override
-    public void visitAbandonedShip(AbandonedShip abandonedShip, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
-//        player.addCredits(abandonedShip.getCredits());
-//        flightBoard.moveBoard(player.getNickName(), abandonedShip.getDaysLost());
+    public void visitAbandonedShip(AbandonedShip abandonedShip, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
+        for(Player player : rankedPlayers){
+            CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+            ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
+            lobbyManager.addPendingResponse(future, activateAdventureCardRequest.getID());
+            lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(activateAdventureCardRequest);
+            ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) future.get();
+        }
     }
 
     @Override
     public void visitAbandonedStation(AbandonedStation abandonedStation, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
-//        flightBoard.moveBoard(player.getNickName(), abandonedStation.getDaysLost());
+
     }
 
     @Override
@@ -50,7 +58,6 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 
     @Override
     public void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
-        FlightBoard flightBoard = lobbyManager.getRealGame().getFlightBoard();
         for(Player player : rankedPlayers){
             CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
             ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
@@ -59,48 +66,68 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             clientHandler.sendMessage(activateDoubleEnginesRequest); //Mando la richiesta di attivare eventuali motori doppi
             future.get(); //Aspetto che il player mandi la risposta
 
-            flightBoard.movePlayer(lobbyManager.getPlayerColors().get(player.getNickName()), player.getShip().calculateEnginePower()); //Muovo il player
-            lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(new FlightBoardUpdate(flightBoard))); //Invio la FlightBoard aggiornata a tutti i players
+            movePlayer(lobbyManager, player, player.getShip().calculateEnginePower());
         }
     }
 
     @NeedsToBeChecked("Non penso sia giusto inserire un selectedPlanetUpdate nell'addPendingResponse di shipUpdates")
     @Override
     public void visitPlanets(Planets planets, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
-        CompletableFuture<NetworkMessage> shipUpdates = new CompletableFuture<>();
+        ArrayList<CompletableFuture<NetworkMessage>> shipUpdates = new ArrayList<>();
+        ArrayList<Player> landedPlayers = new ArrayList<>();
+
         for(Player player : rankedPlayers){
             if(!planets.getPlanets().stream().allMatch(Planet::isOccupied)){ //Se non tutti i pianeti sono occupati
                 ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Ottengo il ClientHandler del player
                 CompletableFuture<NetworkMessage> selectedPlanetResponseFuture = new CompletableFuture<>();
 
-                ArrayList<Planet> notOccupiedPlanets = (ArrayList<Planet>) planets.getPlanets().stream().filter(planet -> !planet.isOccupied()).toList();
+                ArrayList<Planet> notOccupiedPlanets = new ArrayList<>(planets.getPlanets().stream().filter(planet -> !planet.isOccupied()).toList());
                 SelectPlanetRequest selectPlanetRequest = new SelectPlanetRequest(notOccupiedPlanets);
                 lobbyManager.addPendingResponse(selectedPlanetResponseFuture, selectPlanetRequest.getID()); //Notifico che sono in attesa della risposta della selezione dei pianeti
                 clientHandler.sendMessage(selectPlanetRequest); //Mando la richiesta di selezione dei pianeti
                 SelectPlanetResponse selectPlanetResponse = (SelectPlanetResponse) selectedPlanetResponseFuture.get(); //Aspetto che il player mandi la risposta
 
+                //TEST
+                //SelectPlanetResponse selectPlanetResponse = new SelectPlanetResponse(new Planet(false, null));
+                //selectedPlanetResponseFuture.complete(selectPlanetResponse);
+                //END TEST
+
                 Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
                 if(selectedPlanet != null){ //Se il player ha scelto
+                    selectedPlanet.setOccupied(true);
                     SelectedPlanetUpdate selectedPlanetUpdate = new SelectedPlanetUpdate(player.getNickName(), selectedPlanet);
                     lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(selectedPlanetUpdate)); //Broadcasto un SelectedPlanetUpdate
-                    lobbyManager.addPendingResponse(shipUpdates, selectedPlanetUpdate.getID());
+                    CompletableFuture<NetworkMessage> shipUpdateFuture = new CompletableFuture<>();
+                    lobbyManager.addPendingResponse(shipUpdateFuture, selectedPlanetUpdate.getID()); //Mi deve arrivare uno ShipUpdate
+                    shipUpdates.add(shipUpdateFuture);
+                    landedPlayers.add(player);
+
+                    //TEST
+                    //System.out.println("Simulando delay scelta player");
+                    //Thread.sleep(2000);
+                    //shipUpdateFuture.complete(new ShipUpdate(null, null));
+                    //END TEST
                 }
             }
             else break; //Se tutti i pianeti sono occupati usciamo dal ciclo
         }
 
-        while(lobbyManager.getPendingResponses().stream().anyMatch(pair -> pair.getValue().equals(shipUpdates))){ //Fino a quando attendiamo uno ShipUpdate
-            shipUpdates.get();
+        //Aspetto che arrivino tutti gli ShipUpdate del caso
+        for(CompletableFuture<NetworkMessage> future : shipUpdates){
+            future.get();
+            //System.out.println("Ottenuto ship update");
+        }
+
+        for(Player player : landedPlayers.reversed()){ //I landed players sono in ordine di rotta
+            movePlayer(lobbyManager, player, -planets.getDaysLost());
         }
     }
 
     @Override
     public void visitStardust(Stardust stardust, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
         //player.getShip().calcExposedConnectors();
-        FlightBoard flightBoard = lobbyManager.getRealGame().getFlightBoard();
         for(Player player : rankedPlayers.reversed()){ //Si parte dall'ultimo
-            flightBoard.movePlayer(lobbyManager.getPlayerColors().get(player.getNickName()), player.getShip().getnExposedConnector());
-            lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(new FlightBoardUpdate(flightBoard))); //Invio la FlightBoard aggiornata a tutti i players
+            movePlayer(lobbyManager, player, -player.getShip().getnExposedConnector());
         }
     }
 
@@ -117,5 +144,17 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
     @Override
     public void visitSmugglers(Smugglers smugglers, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
 
+    }
+
+    /**
+     * Moves a player in the game's flight board and sends an update to all clients.
+     * @param lobbyManager
+     * @param player
+     * @param steps
+     */
+    private void movePlayer(LobbyManager lobbyManager, Player player, int steps){
+        FlightBoard flightBoard = lobbyManager.getRealGame().getFlightBoard();
+        flightBoard.movePlayer(lobbyManager.getPlayerColors().get(player.getNickName()), steps);
+        lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(new FlightBoardUpdate(flightBoard)));
     }
 }

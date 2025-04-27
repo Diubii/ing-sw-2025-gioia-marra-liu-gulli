@@ -64,6 +64,8 @@ public class Tui implements View, Observable {
     private ExecutorService inputExecutor = Executors.newSingleThreadExecutor();
 
 
+    private volatile boolean viewingFaceUpTiles = false;
+
     public Tui(PrintStream out, Boolean isSocket, ClientController controller) {
         Tui.out = out;
         this.isSocket = isSocket;
@@ -305,6 +307,9 @@ public class Tui implements View, Observable {
         switch (phase) {
             case BUILDING_START, BUILDING_END -> showBuildingMenu();
             case SHIP_CHECK -> showcheckShipMenu();
+            default -> {
+                out.println("Please wait. No input is required at this stage.");
+            }
         }
     }
     @Override
@@ -335,6 +340,12 @@ public class Tui implements View, Observable {
             }
 
         }).start();
+    }
+
+    @Override
+    public void askShowFaceUpTiles() throws IOException, ExecutionException, InterruptedException {
+        viewingFaceUpTiles = true;
+        clientController.sendGetFaceUpTilesRequest();
     }
 
     @Override
@@ -406,9 +417,107 @@ public class Tui implements View, Observable {
     }
 
     @Override
+    public void showFaceUpTiles(){
+        List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
+        TilePrintUtils.printTileList(new ArrayList<>(faceUpTiles),3);
+    }
+
+
+
+    @Override
     public void askDrawTile() {
+        try{
+            boolean validInput = false;
+            do {
+                out.println("How do you want to draw a tile?");
+                out.println("1) draw a random tile(face down)");
+                out.println("2) choose a face up tile");
+                out.println("3) choose from your reserved tiles");
+                String choice = readLine("Choose(1/2/3) > ");
+                switch (choice){
+                    case "1":{
+                        clientController.handleDrawFaceDownTile();
+                        validInput = true;
+                        break;
+                    }
+                    case "2":{
+                        clientController.startChooseTile();
+                        validInput = true;
+                        break;
+
+                    }
+                    case "3":{
+                        askPickReservedTile(true);
+                        validInput = true;
+                        break;
+                    }
+
+                }
+
+            }while(!validInput);
+
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
     }
+
+    public void askChooseTile() {
+        try{
+            boolean validInput = false;
+            do{
+                String input = readLine("Enter the Tile ID to draw, or use R to refresh: ").trim().toLowerCase();
+
+                if(input.equalsIgnoreCase("R")){
+                    clientController.sendGetFaceUpTilesRequest();
+                }
+                else{
+                    List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
+
+                    try{
+                        int tileID = Integer.parseInt(input);
+                        Tile selectedTile = faceUpTiles.stream()
+                                .filter(t -> t.getId() == tileID)
+                                .findFirst()
+                                .orElse(null);
+                        if(selectedTile != null){
+                            clientController.handleChooseFaceUpTile(selectedTile);
+                            validInput = true;
+                        }else {
+                            out.println("Tile ID not found. Please try again.");
+                        }
+                    }catch (NumberFormatException e){
+                            out.println("Invalid tile ID. Please enter a number.");}
+                }
+
+            }while(!validInput);
+        } catch (ExecutionException | IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void askPickReservedTile(boolean isPicking) {
+        try {
+            boolean validInput = false;
+            int slotIndex = -1;
+            do {
+                String input = readLine("Enter the Slot Index to"+ (isPicking ? "pick" : "place")+"(1 or 2)> ");
+                if (input.equals("1") || input.equals("2")) {
+                    slotIndex = Integer.parseInt(input);
+                    validInput = true;
+                } else {
+                    out.println("Invalid input. Please enter 1 or 2.");
+                }
+            } while (!validInput);
+
+            clientController.handlePickReservedTile(slotIndex-1, isPicking);
+        } catch (ExecutionException | InterruptedException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public void askTilePlacement() {
@@ -425,9 +534,9 @@ public class Tui implements View, Observable {
 
             out.println("Do you want to place this tile at the current position and rotation? (y/n)");
             String input = readLine("> ").trim().toLowerCase();
-            Boolean confirm = input.equals("y");
+            boolean confirm = input.equals("y");
             if (confirm) {
-                clientController.handleTilePlacement(confirm);
+                clientController.handleTilePlacement(true);
             } else {
                 out.println("Tile not placed. You can rotate or move it again.");
                 showBuildingMenu();

@@ -389,7 +389,7 @@ public class ServerController {
 
         if (!isActionAllowed(myGame, GameAction.DRAW_TILE)) {
 
-            drawTileResponse = new DrawTileResponse(null);
+            drawTileResponse = new DrawTileResponse(null,message.getID());
             drawTileResponse.setErrorMessage("INVALID_STATE");
             clientHandler.sendMessage(drawTileResponse);
 
@@ -403,10 +403,10 @@ public class ServerController {
 
                 myTile = myGame.getTileBunch().drawFaceUpTile(message.getTile().getId());
                 if (myTile == null) {
-                    drawTileResponse = new DrawTileResponse(null);
+                    drawTileResponse = new DrawTileResponse(null,message.getID());
                     drawTileResponse.setErrorMessage("TAKEN");
                 } else {
-                    drawTileResponse = new DrawTileResponse(myTile);
+                    drawTileResponse = new DrawTileResponse(myTile,message.getID());
                     drawTileResponse.setErrorMessage("VALID");
                 }
 
@@ -414,10 +414,10 @@ public class ServerController {
 
                 myTile = myGame.getTileBunch().drawTile();
                 if (myTile == null) {
-                    drawTileResponse = new DrawTileResponse(null);
+                    drawTileResponse = new DrawTileResponse(null,message.getID());
                     drawTileResponse.setErrorMessage("EMPTY");
                 } else {
-                    drawTileResponse = new DrawTileResponse(myTile);
+                    drawTileResponse = new DrawTileResponse(myTile,message.getID());
                     drawTileResponse.setErrorMessage("VALID");
                 }
 
@@ -437,13 +437,14 @@ public class ServerController {
 
         Player targetPlayer = myGame.getRealGame().getPlayer(message.getTargetNickname());
         Ship targetShip;
-        FetchShipResponse fetchShipResponse;
+        ShipUpdate shipViewUpdate;
 
         synchronized (targetPlayer.getShip()) {
             targetShip = targetPlayer.getShip();
-            fetchShipResponse = new FetchShipResponse(message.getTargetNickname(),targetShip, message.getId());
+            shipViewUpdate = new ShipUpdate(targetShip, targetPlayer.getNickName());
+            shipViewUpdate.setShouldDisplay(true);
         }
-        clientHandler.sendMessage(fetchShipResponse);
+        clientHandler.sendMessage(shipViewUpdate);
 
     }
 

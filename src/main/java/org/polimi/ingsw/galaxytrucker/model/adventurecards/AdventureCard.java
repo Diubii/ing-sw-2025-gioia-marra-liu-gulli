@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
@@ -7,6 +8,8 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
@@ -43,16 +46,16 @@ public abstract class AdventureCard implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 99999L;
-    protected int id;
-    protected int level;
-    protected int daysLost;
-    protected String name;
+    int id;
+    int level;
+    int daysLost;
+    String name;
     /** Indicates whether the card has to be used in learning flights */
-    protected boolean learningFlight;
+    boolean learningFlight;
     /** Indicates whether the effect of the card applies to all players. */
-    protected boolean affectsAll; //OpenSpace, Stardust, Epidemic, MeteorSwarm
+    boolean affectsAll; //OpenSpace, Stardust, Epidemic, MeteorSwarm
     /** Indicates whether a player can choose to not activate the card. Used for {@link Planets}, {@link AbandonedShip} and {@link AbandonedStation}.*/
-    protected boolean facultative = false;
+    boolean facultative = false;
 
     /**
      * Activates the effect of the adventure card.
@@ -118,4 +121,5 @@ public abstract class AdventureCard implements Serializable {
     }
 
 
+    public abstract String[] accept(AdventureCardPrintVisitorInterface visitor);
 }

@@ -18,7 +18,7 @@ public class SelectPlanetResponse extends NetworkMessage implements Serializable
 
     private final Planet selectedPlanet;
 
-    SelectPlanetResponse(Planet selectedPlanet) {
+    public SelectPlanetResponse(Planet selectedPlanet) {
         this.selectedPlanet = selectedPlanet;
     }
 
