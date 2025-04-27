@@ -17,7 +17,7 @@ public class FaceUpTileUpdate extends NetworkMessage {
     @Serial
     private static final long serialVersionUID = 43850L;
 
-        private List<Tile> faceUpTiles;
+        private ArrayList<Tile> faceUpTiles;
 
         public FaceUpTileUpdate() {
 
@@ -30,11 +30,11 @@ public class FaceUpTileUpdate extends NetworkMessage {
             this.faceUpTiles = new ArrayList<>(faceUpTiles);
         }
 
-        public List<Tile> getFaceUpTiles() {
+        public ArrayList<Tile> getFaceUpTiles() {
             return faceUpTiles;
         }
 
-        public void setFaceUpTiles(List<Tile> faceUpTiles) {
+        public void setFaceUpTiles(ArrayList<Tile> faceUpTiles) {
             this.faceUpTiles = new ArrayList<>(faceUpTiles);
         }
 

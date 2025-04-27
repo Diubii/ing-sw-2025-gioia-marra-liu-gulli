@@ -53,12 +53,12 @@ public class ClientModel {
         return playerInfos;
     }
 
-    public List<Tile> getFaceUpTiles() {
-        return Collections.unmodifiableList(faceUpTiles);
+    public ArrayList<Tile> getFaceUpTiles() {
+        return faceUpTiles;
     }
-    public void setFaceUpTiles(List<Tile> faceUpTiles) {
+    public void setFaceUpTiles(ArrayList<Tile> faceUpTiles) {
 
-        this.faceUpTiles = new ArrayList<>(faceUpTiles);
+        this.faceUpTiles =  faceUpTiles;
     }
     public Tile[] getReservedTiles() {
         return reservedTiles;

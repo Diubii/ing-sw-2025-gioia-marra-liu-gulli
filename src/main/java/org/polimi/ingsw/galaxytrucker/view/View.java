@@ -29,6 +29,7 @@ public interface View {
     void askCreateRoom() throws ExecutionException;
     void showLobbies(List<LobbyInfo> lobbies);
 
+    void toShowCurrentMenu();
 //    void showPlayerJoined(HashMap<String, Color> playerInfo);
 
     void showPlayerJoined(PlayerInfo playerInfo);

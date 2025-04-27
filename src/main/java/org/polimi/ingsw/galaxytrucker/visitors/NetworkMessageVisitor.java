@@ -226,10 +226,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @Override
-    public Void visit(GetFaceUpTilesRequest getFaceUpTilesRequest) {
-        return null;
-    }
 
     @Override
     public Void visit(FaceUpTileUpdate faceUpTileUpdate) {

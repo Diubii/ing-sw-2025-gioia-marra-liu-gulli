@@ -82,7 +82,7 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(FlightBoardUpdate flightBoardUpdate);
 
-    T visit(GetFaceUpTilesRequest getFaceUpTilesRequest);
+
 
     T visit(FaceUpTileUpdate faceUpTileUpdate);
 

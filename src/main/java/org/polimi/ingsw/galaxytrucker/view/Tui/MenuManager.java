@@ -47,6 +47,7 @@ public class MenuManager {
         out.println("h. Place tile");
         out.println("i. Discard tile");
         out.println("j. Finish building");
+        out.println("k. Reserve a tile in one of the slot(1 o 2)");
         out.println("menu. show menu");
     }
 

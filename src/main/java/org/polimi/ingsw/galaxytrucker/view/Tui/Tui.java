@@ -55,7 +55,6 @@ public class Tui implements View, Observable {
 
 
     private  MenuManager menuManager = new MenuManager();
-    private GameState phase = GameState.LOBBY;
 
     private final Object panelLock  = new Object();
 
@@ -293,20 +292,22 @@ public class Tui implements View, Observable {
         } else {
             menuManager.setMenuText(phase);
             if (phaseUpdate.getState().equals(GameState.BUILDING_START) || phaseUpdate.getState().equals(GameState.SHIP_CHECK)) {
-                synchronized (outputLock) {
-
-                    menuManager.showCurrentMenu();
-                }
+                 toShowCurrentMenu();
                 handleChoiceForPhase(phase);
             }
         }
 
     }
 
+    public void toShowCurrentMenu(){
+        synchronized (outputLock) {
+            menuManager.showCurrentMenu();
+        }
+    }
     public void handleChoiceForPhase(GameState phase) {
         switch (phase) {
-            case BUILDING_START, BUILDING_END -> showBuildingMenu();
-            case SHIP_CHECK -> showcheckShipMenu();
+            case BUILDING_START -> showBuildingMenu();
+
             default -> {
                 out.println("Please wait. No input is required at this stage.");
             }
@@ -348,21 +349,21 @@ public class Tui implements View, Observable {
     @Override
     public void askShowFaceUpTiles() throws IOException, ExecutionException, InterruptedException {
         viewingFaceUpTiles = true;
-        clientController.sendGetFaceUpTilesRequest();
+
     }
 
     @Override
     public void askViewAdventureDecks(){
         try {
 
-            String DeckIDStr = readLine("Enter which Deck you want to view (1~3)> ").trim();
+            String DeckIDStr = readLine("Enter which Deck you want to view (1~4)> ").trim();
             int DeckID = Integer.parseInt(DeckIDStr);
-            if(DeckID < 1 || DeckID >3){
+            if(DeckID < 1 || DeckID >4){
                 out.println("Deck ID not valid. Please enter a number between 1 and 3.");
                 askViewAdventureDecks();
                 return;
             }
-            clientController.viewAdventureCardDeck(DeckID);
+            clientController.viewAdventureCardDeck(DeckID-1);
         } catch (Exception e) {
             out.println(" Error during ask view adventure Decks: " + e.getMessage());
         }
@@ -422,6 +423,7 @@ public class Tui implements View, Observable {
     @Override
     public void showFaceUpTiles(){
         List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
+        out.println("Face up tiles size: " + faceUpTiles.size());
         TilePrintUtils.printTileList(new ArrayList<>(faceUpTiles),3);
     }
 
@@ -474,7 +476,7 @@ public class Tui implements View, Observable {
                 String input = readLine("Enter the Tile ID to draw, or use R to refresh: ").trim().toLowerCase();
 
                 if(input.equalsIgnoreCase("R")){
-                    clientController.sendGetFaceUpTilesRequest();
+
                 }
                 else{
                     List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
@@ -496,12 +498,29 @@ public class Tui implements View, Observable {
                 }
 
             }while(!validInput);
-        } catch (ExecutionException | IOException | InterruptedException e) {
+        } catch ( InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void askPickReservedTile(boolean isPicking) {
+        Tile[] reservedTiles = clientController.getReservedTiles();
+
+        System.out.println("Reserved Slot 1:");
+        if (reservedTiles[0] != null) {
+            showTile(reservedTiles[0]);
+        } else {
+            System.out.println("Empty");
+        }
+
+        System.out.println("Reserved Slot 2:");
+        if (reservedTiles[1] != null) {
+            showTile(reservedTiles[1]);
+        } else {
+            System.out.println("Empty");
+        }
         try {
             boolean validInput = false;
             int slotIndex = -1;
@@ -533,8 +552,14 @@ public class Tui implements View, Observable {
             }
 
             out.println(" Current tile info:");
-            clientController.showTileInHand();
-
+            TilePrintUtils.printTile(clientController.getCurrentTileInHand());
+            if(clientController.getCurrentPosition() != null) {
+                out.println("Current position: " + clientController.getCurrentPosition().getX() + ", " + clientController.getCurrentPosition().getY());
+            }
+            else{
+                out.println("Current position: null");
+                showBuildingMenu();
+            }
             out.println("Do you want to place this tile at the current position and rotation? (y/n)");
             String input = readLine("> ").trim().toLowerCase();
             boolean confirm = input.equals("y");
