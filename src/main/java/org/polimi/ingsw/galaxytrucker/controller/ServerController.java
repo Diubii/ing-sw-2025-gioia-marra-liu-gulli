@@ -410,6 +410,11 @@ public class ServerController {
                     drawTileResponse.setErrorMessage("VALID");
                 }
 
+                FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
+                faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
+                ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+                broadCast(playerHandlers, faceUpTileUpdate);
+
             } else {
 
                 myTile = myGame.getTileBunch().drawTile();
@@ -663,9 +668,7 @@ public class ServerController {
 
             //broadCasto la nuova nave a tutti
             ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-            ArrayList<ClientHandler> playerHandlers =  new ArrayList<>(myGame.getPlayerHandlers().values()) ;
-
-            broadCast(playerHandlers, shipUpdate);
+            broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), shipUpdate);
 
         }
 
@@ -681,9 +684,13 @@ public class ServerController {
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         myGame.getTileBunch().returnTile(discardTileRequest.getTile());
-        ArrayList<ClientHandler> playerHandlers =  new ArrayList<>(myGame.getPlayerHandlers().values()) ;
 
+        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
         broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
+
+        FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
+        faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
+        broadCast(playerHandlers, faceUpTileUpdate);
     }
 
     @NeedsToBeCompleted
@@ -764,7 +771,13 @@ public class ServerController {
         //Sveglio visitOpenSpace
         myGame.completePendingResponse(activateDoubleEnginesResponse.getID(), activateDoubleEnginesResponse);
     }
-    
+
+    public void handleGetFaceUpTilesRequest(GetFaceUpTilesRequest getFaceUpTilesRequest, ClientHandler clientHandler) {
+        LobbyManager game = getLobbyFromHandler(clientHandler);
+        GetFaceUpTilesResponse getFaceUpTilesResponse = new GetFaceUpTilesResponse(game.getRealGame().getTileBunch().getFaceUpTiles());
+        clientHandler.sendMessage(getFaceUpTilesResponse);
+    }
+
     /*
     *
     * UTILS
