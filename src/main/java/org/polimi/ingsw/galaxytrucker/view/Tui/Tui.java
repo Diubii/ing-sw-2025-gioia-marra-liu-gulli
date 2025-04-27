@@ -266,7 +266,10 @@ public class Tui implements View, Observable {
     public void showBuildingMenu() {
         try {
             String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
+            if (input.equals("m")||input.equals("menu")||input.equals("?")) {
+                menuManager.showCurrentMenu();
 
+            }
 
             clientController.handleBuildingMenuChoice(input);
 
