@@ -14,6 +14,8 @@ public class PlayerInfo implements Serializable {
     private String NickName;
     private Ship ship;
 
+     private final Object shipLock = "";
+
     public Color getColor() {
         return color;
     }
@@ -29,10 +31,15 @@ public class PlayerInfo implements Serializable {
         this.NickName = NickName;
     }
     public Ship getShip() {
-        return ship;
+        synchronized (shipLock) {
+            return ship;
+        }
     }
     public void setShip(Ship ship) {
-        this.ship = ship;
+        synchronized (shipLock) {
+            this.ship = ship;
+        }
+
     }
 
 

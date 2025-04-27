@@ -46,7 +46,6 @@ public class AbandonedShip extends AdventureCard {
         this.crewMembersLost = crewMembersLost;
         this.credits = credits;
         this.facultative = true;
-
     }
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {

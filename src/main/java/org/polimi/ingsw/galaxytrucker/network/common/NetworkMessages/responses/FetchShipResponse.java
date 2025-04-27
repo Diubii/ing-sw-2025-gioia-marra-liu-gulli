@@ -16,11 +16,15 @@ public class FetchShipResponse extends NetworkMessage implements Serializable {
 
     private final String targetNickname;
 
-    @TemporaryType(temporaryType = "Ship", actualType = "ShipView")
     private final Ship targetShipView;
 
-    @TemporaryType(temporaryType = "Ship", actualType = "ShipView")
     public FetchShipResponse(String targetNickname, Ship targetShipView) {
+        this.targetNickname = targetNickname;
+        this.targetShipView = targetShipView;
+    }
+
+    public FetchShipResponse(String targetNickname, Ship targetShipView, int id) {
+        super(id);
         this.targetNickname = targetNickname;
         this.targetShipView = targetShipView;
     }

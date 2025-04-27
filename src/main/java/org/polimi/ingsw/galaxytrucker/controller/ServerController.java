@@ -367,7 +367,7 @@ public class ServerController {
 
                     myGame.getGameController().nextState();
                     broadCast(original, decksUpdate);
-                    broadCast(original, new PhaseUpdate(myGame.getGameController().getGameState()));
+                    broadCast(original, new PhaseUpdate(GameState.BUILDING_START));
                     //MANDARE I DECK -> -> ->
 
                     //dopo aver notificato tutti starto il gioco
@@ -503,6 +503,18 @@ public class ServerController {
 
         //devo chiedere in che posizione vuole essere
 
+        if (myGame.getPlayerShipFinishedSize() == 0) {
+            myGame.addPlayerShipFinished(nickname);
+
+            //allroa e' il primo e fa partire il timer, e lo aggiungo
+            startTimer(20, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
+        } else {
+            //mandare un messaggio "ATTENDENDO ... SCELTA PRECEDENTI"
+            myGame.addPlayerShipFinished(nickname);
+
+        }
+
+
         synchronized (positionLock) {
             int maxPos = myGame.getRealGame().getNumPlayers();
             int minPos = 1;
@@ -543,11 +555,7 @@ public class ServerController {
 
             Ship myShip = myGame.getRealGame().getPlayer(nickname).getShip();
 
-            if (myGame.getPlayerShipFinishedSize() == 0) {
-                //allroa e' il primo e fa partire il timer, e lo aggiungo
-                startTimer(60, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
-            }
-            myGame.addPlayerShipFinished(nickname);
+
 
 
             //se quando arriva building request il client e' aggiornato
@@ -582,7 +590,8 @@ public class ServerController {
         if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
             //se hanno finito tutti allora si passa alla fase di check_ship
             myGame.getGameController().nextState();
-            ArrayList<ClientHandler> playerHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
+            System.out.println("STATE: " + myGame.getGameController());
+            ArrayList<ClientHandler> playerHandlers =  new ArrayList<>(myGame.getPlayerHandlers().values()) ;
             broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
 
         }
@@ -757,11 +766,18 @@ public class ServerController {
 
     public void startTimer(int seconds, GameController gameController, ArrayList<ClientHandler> clients) {
         //mando a tutti la notifica di end_timer\
-        EndTimerUpdate endTimerUpdate = new EndTimerUpdate(seconds);
-        broadCast(clients, endTimerUpdate);
+        gameController.nextState();
+
+        PhaseUpdate timer = new PhaseUpdate(GameState.BUILDING_TIMER);
+        broadCast(clients, timer);
 
         // Timer scaduto → cambio stato
-        scheduler.schedule(gameController::nextState, seconds, TimeUnit.SECONDS);
+        scheduler.schedule(() -> {
+            gameController.nextState();
+            PhaseUpdate update = new PhaseUpdate(GameState.BUILDING_END);
+            broadCast(clients, update);
+
+        }, seconds, TimeUnit.SECONDS);
     }
 
     public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {

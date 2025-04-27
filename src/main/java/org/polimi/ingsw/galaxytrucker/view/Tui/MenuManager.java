@@ -3,8 +3,10 @@ package org.polimi.ingsw.galaxytrucker.view.Tui;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.enums.MenuText;
+import org.polimi.ingsw.galaxytrucker.view.View;
 
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import static java.lang.System.out;
 
@@ -15,7 +17,7 @@ public class MenuManager {
     public void setMenuText(GameState phase) {
         switch (phase) {
 
-            case BUILDING_START,BUILDING_END -> currentMenu = MenuText.BUILDING_MENU;
+            case BUILDING_START -> currentMenu = MenuText.BUILDING_MENU;
             case SHIP_CHECK -> currentMenu = MenuText.CHECK_SHIP_MENU;
             default -> currentMenu = MenuText.NONE;
         }
@@ -27,7 +29,9 @@ public class MenuManager {
             case BUILDING_MENU -> showBuildingMenu();
             case CHECK_SHIP_MENU -> showCheckShipMenu();
             case EMBARK_CREW_MENU -> showEmbarkCrewMenu();
-            default -> showNoneMenu();
+            default -> {
+                return;
+            }
 
         }
     }
@@ -51,6 +55,7 @@ public class MenuManager {
         out.println("a. View my ship");
         out.println("b. Remove tile");
         out.println("c. Send checkShip request");
+
 
     }
     public void showEmbarkCrewMenu() {
