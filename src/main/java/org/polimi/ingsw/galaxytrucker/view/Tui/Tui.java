@@ -308,7 +308,7 @@ public class Tui implements View, Observable {
             case BUILDING_START, BUILDING_END -> showBuildingMenu();
             case SHIP_CHECK -> showcheckShipMenu();
             default -> {
-                out.println("Please wait. No input is required at this stage.");
+//                out.println("Please wait. No input is required at this stage.");
             }
         }
     }
@@ -359,7 +359,7 @@ public class Tui implements View, Observable {
                 askViewAdventureDecks();
                 return;
             }
-            clientController.viewAdventureCardDeck(DeckID);
+            clientController.viewAdventureCardDeck(DeckID -1);
         } catch (Exception e) {
             out.println(" Error during ask view adventure Decks: " + e.getMessage());
         }

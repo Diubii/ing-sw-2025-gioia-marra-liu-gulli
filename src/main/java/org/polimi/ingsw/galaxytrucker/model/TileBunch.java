@@ -48,11 +48,11 @@ public class TileBunch {
         }
     }
 
-    public ArrayList<Tile> getFaceUpTiles() {
+    public synchronized ArrayList<Tile> getFaceUpTiles() {
         return faceUpTiles;
     }
 
-    public Tile drawFaceUpTile(int id) {
+    public synchronized Tile drawFaceUpTile(int id) {
         if (!faceUpTiles.isEmpty()) {
             for (Tile tile : faceUpTiles) {
                 if (tile.getId()== id) {
@@ -67,12 +67,13 @@ public class TileBunch {
     }
 
 
-    public Tile drawTile() {
+    public synchronized Tile drawTile() {
         if (!tiles.isEmpty()) {
             int randomIndex = rand.nextInt(tiles.size());
             Tile tile = tiles.get(randomIndex);
             tile.flip();
             faceUpTiles.add(tile);
+            tiles.remove(randomIndex);
             return tile;
         }
             return null;
@@ -80,17 +81,17 @@ public class TileBunch {
     }
 
 
-    public void removeTile(Tile tile){
+    public synchronized void removeTile(Tile tile){
         faceUpTiles.remove(tile);
         tiles.remove(tile);
     }
 
-    public void returnTile(Tile tile) {
+    public synchronized void returnTile(Tile tile) {
         faceUpTiles.add(tile);
     }
 
 
-    public int  getRemainingTiles(){
+    public synchronized int  getRemainingTiles(){
         return tiles.size();
     }
 }

@@ -663,7 +663,9 @@ public class ServerController {
 
             //broadCasto la nuova nave a tutti
             ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-            broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), shipUpdate);
+            ArrayList<ClientHandler> playerHandlers =  new ArrayList<>(myGame.getPlayerHandlers().values()) ;
+
+            broadCast(playerHandlers, shipUpdate);
 
         }
 
@@ -679,7 +681,9 @@ public class ServerController {
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         myGame.getTileBunch().returnTile(discardTileRequest.getTile());
-        broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), new TileDiscardedUpdate(discardTileRequest.getTile()));
+        ArrayList<ClientHandler> playerHandlers =  new ArrayList<>(myGame.getPlayerHandlers().values()) ;
+
+        broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
     }
 
     @NeedsToBeCompleted
@@ -753,7 +757,9 @@ public class ServerController {
 
         //Mando la shipUpdate
         ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
-        broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), shipUpdate);
+        ArrayList<ClientHandler> playerHandlers =  new ArrayList<>(myGame.getPlayerHandlers().values()) ;
+
+        broadCast(playerHandlers, shipUpdate);
 
         //Sveglio visitOpenSpace
         myGame.completePendingResponse(activateDoubleEnginesResponse.getID(), activateDoubleEnginesResponse);
@@ -841,7 +847,9 @@ public class ServerController {
             }
 
             ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
-            broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), shipUpdate);
+            ArrayList<ClientHandler> playerHandlers =  new ArrayList<>(myGame.getPlayerHandlers().values()) ;
+
+            broadCast(playerHandlers , shipUpdate);
 
         }
 

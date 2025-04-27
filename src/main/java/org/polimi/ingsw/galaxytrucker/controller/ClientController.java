@@ -58,7 +58,7 @@ public class ClientController implements Observer {
     private CompletableFuture<NetworkMessage> completableFuture;
     private Pair<Integer, CompletableFuture<NetworkMessage>> pair;
 
-    private ClientModel myModel = new ClientModel();
+    private final ClientModel myModel;
     private final NetworkMessageVisitorsInterface<Void> messageVisitor = new ClientNetworkMessageVisitor(this);
     private Tile currentTileInHand = null;
 
@@ -440,12 +440,9 @@ public class ClientController implements Observer {
         } catch (IOException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        new Thread(() -> {
-            try {
                 FaceUpTileUpdate update = (FaceUpTileUpdate) future.get();
                 handleFaceUpTileUpdate(update, true);
-            } catch (Exception e) {}
-        }).start();
+
 
     }
     public void handleFaceUpTileUpdate(FaceUpTileUpdate update, boolean shouldShow){
@@ -497,9 +494,9 @@ public class ClientController implements Observer {
     public void handleShipUpdate(ShipUpdate update)  {
         String owner = update.getNickName();
         Ship ship = update.getShipView();
-        view.showGenericMessage("In Update: " + owner);
+//        view.showGenericMessage("In Update: " + owner);
         if(owner != null ) {
-            view.showGenericMessage("Ship belongs to: " + owner);
+//            view.showGenericMessage("Ship belongs to: " + owner);
             if (getNickname().equals(owner)) {
                 synchronized (myModel.getMyInfo()) {
                     myModel.getMyInfo().setShip(ship);  // per avere la versione l'utima del mio ship dal lato server

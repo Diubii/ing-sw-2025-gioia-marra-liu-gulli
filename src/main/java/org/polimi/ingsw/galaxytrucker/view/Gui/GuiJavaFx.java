@@ -205,8 +205,18 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
+    public void showFaceUpTiles() {
+
+    }
+
+    @Override
     public void FetchMyShip() {
         return;
+    }
+
+    @Override
+    public void askShowFaceUpTiles() throws IOException, ExecutionException, InterruptedException {
+
     }
 
     @Override
@@ -232,6 +242,16 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void showTile(Tile tile) {
         showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName());
+    }
+
+    @Override
+    public void askChooseTile() {
+
+    }
+
+    @Override
+    public void askPickReservedTile(boolean isPicking) {
+
     }
 
     @Override
