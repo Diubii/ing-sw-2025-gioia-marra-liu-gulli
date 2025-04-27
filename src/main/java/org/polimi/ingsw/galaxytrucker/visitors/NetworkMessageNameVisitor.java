@@ -153,7 +153,12 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
 
     @Override
     public NetworkMessageType visit(GetFaceUpTilesRequest getFaceUpTilesRequest) {
-        return null;
+        return NetworkMessageType.GetFaceUpTilesRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(GetFaceUpTilesResponse getFaceUpTilesResponse) {
+        return NetworkMessageType.GetFaceUpTilesResponse;
     }
 
     @Override

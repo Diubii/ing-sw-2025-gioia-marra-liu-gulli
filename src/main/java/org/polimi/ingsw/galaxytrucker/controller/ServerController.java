@@ -758,7 +758,13 @@ public class ServerController {
         //Sveglio visitOpenSpace
         myGame.completePendingResponse(activateDoubleEnginesResponse.getID(), activateDoubleEnginesResponse);
     }
-    
+
+    public void handleGetFaceUpTilesRequest(GetFaceUpTilesRequest getFaceUpTilesRequest, ClientHandler clientHandler) {
+        LobbyManager game = getLobbyFromHandler(clientHandler);
+        GetFaceUpTilesResponse getFaceUpTilesResponse = new GetFaceUpTilesResponse(game.getRealGame().getTileBunch().getFaceUpTiles());
+        clientHandler.sendMessage(getFaceUpTilesResponse);
+    }
+
     /*
     *
     * UTILS

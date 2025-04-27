@@ -228,6 +228,12 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(GetFaceUpTilesRequest getFaceUpTilesRequest) {
+        serverController.handleGetFaceUpTilesRequest(getFaceUpTilesRequest, clientHandler);
+        return null;
+    }
+
+    @Override
+    public Void visit(GetFaceUpTilesResponse getFaceUpTilesResponse) {
         return null;
     }
 
