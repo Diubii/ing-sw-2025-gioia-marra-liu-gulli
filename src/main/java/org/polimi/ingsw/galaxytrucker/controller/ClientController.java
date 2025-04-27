@@ -5,6 +5,7 @@ import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
+import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -47,6 +48,8 @@ public class ClientController implements Observer {
 
     private Client client;
 
+
+
     private final ExecutorService taskQueue;
     private View view;
     ExecutorService inputExecutor = Executors.newSingleThreadExecutor();
@@ -62,6 +65,8 @@ public class ClientController implements Observer {
     private Tile currentTileInHand = null;
 
     private Position currentPosition;
+    private ClientPhaseController clientPhaseController = new ClientPhaseController(this);
+
     private GameState phase = GameState.LOBBY;
 
     public ClientModel getMyModel() {
@@ -101,6 +106,7 @@ public class ClientController implements Observer {
             }
         });
     }
+
 
 
 
@@ -178,7 +184,7 @@ public class ClientController implements Observer {
 
     }
 
-    public void handleCreateOrJoinChoice(String choice) {
+    public void handleCreateOrJoinChoice(String choice) throws ExecutionException {
         if ("a".equals(choice)) {
             view.askCreateRoom();
         } else if ("b".equals(choice)) {
@@ -205,6 +211,7 @@ public class ClientController implements Observer {
             try {
                 JoinRoomResponse response = (JoinRoomResponse) future.get();
                 if (response.getOperationSuccess()) {
+                    clientPhaseController.setPhase(PLAYER_PHASE.BUILDING);
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
@@ -265,23 +272,25 @@ public class ClientController implements Observer {
         }
 
 
-            try {
+        try {
 
-                JoinRoomResponse response = (JoinRoomResponse) future.get();
-                if (response.getOperationSuccess()) {
-                    view.showGenericMessage("Successfully joined the lobby! Waiting for other players...");
+            JoinRoomResponse response = (JoinRoomResponse) future.get();
+            if (response.getOperationSuccess()) {
+                clientPhaseController.setPhase(PLAYER_PHASE.LOBBY);
 
-                    myModel.getMyInfo().setColor(response.getColor());
-                    myModel.getMyInfo().setShip(response.getMyShip());
-                    myModel.getMyInfo().setNickName(getNickname());
+                view.showGenericMessage("Successfully joined the lobby! Waiting for other players...");
 
-                } else {
-                    view.showGenericMessage("Failed to join the lobby: " + response.getErrMess());
-                    view.askRoomCode();
-                }
-            } catch (Exception e) {
-                view.showGenericMessage("Error waiting for join room response: " + e.getStackTrace());
+                myModel.getMyInfo().setColor(response.getColor());
+                myModel.getMyInfo().setShip(response.getMyShip());
+                myModel.getMyInfo().setNickName(getNickname());
+
+            } else {
+                view.showGenericMessage("Failed to join the lobby: " + response.getErrMess());
+                view.askRoomCode();
             }
+        } catch (Exception e) {
+            view.showGenericMessage("Error waiting for join room response: " + e.getStackTrace());
+        }
 
     }
 
@@ -303,7 +312,48 @@ public class ClientController implements Observer {
 
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate){
 
-        phase = phaseUpdate.getState();
+
+//        if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
+//            if (clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER)){
+//                //allora  devo gestirla
+//                view.forceReset();
+//                clientPhaseController.handlePhaseUpdate(phaseUpdate);
+//
+//                try {
+//                    clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
+//                    client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
+//
+//                } catch (IOException | ExecutionException | InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+////                clientPhaseController.handlePhaseUpdate(phaseUpdate);
+//                return;
+//            }
+//        }
+
+        if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
+            if (clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER)){
+                view.forceReset();
+                clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
+                try {
+                    client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
+
+                } catch (IOException | ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return;
+            }
+
+
+            view.handlePhaseUpdate(phaseUpdate);
+            return;
+
+        }
+
+
+
+//        clientPhaseController.handlePhaseUpdate(phaseUpdate);
         view.handlePhaseUpdate(phaseUpdate);
 
     }
@@ -338,19 +388,30 @@ public class ClientController implements Observer {
                 }
                 case "e" -> showTileInHand();
                 case "f" -> view.askRotation();
-                case "g" -> view.askPosition();
+                case "g" -> {
+                    try {
+                        view.askPosition();
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 case "h" -> view.askTilePlacement();
                 case "i" -> sendDiscardrequest();
                 case "j" -> {
                   try {
+                      clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
                     client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
                   } catch (IOException | ExecutionException | InterruptedException e) {
                         throw new RuntimeException(e);
                 }
             }
+
+                case "reset" -> {
+                  break;
+                }
                 default -> {
                     new Thread(() -> {
-                    view.showGenericMessage("Invalid option. Please try again.");
+                    view.showGenericMessage("Invalid option." + input+ " Please try again.");
                     view.showBuildingMenu();}).start();
                 }
             }
@@ -393,15 +454,34 @@ public class ClientController implements Observer {
 
     public void handleFetchShip(String targetNickname){
 
+        FetchShipRequest request = new FetchShipRequest(targetNickname);
+        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+        setCompletableFuture(future, request.getId());
+        try {
+            client.sendMessage(request);
+            new Thread(()-> {
+                view.showGenericMessage("Failed to send join room request.");
+            });    } catch (Exception e) {
+            new Thread(()-> {
+                view.showGenericMessage("Failed to send join room request.");
+            });    }
 
-    FetchShipRequest request = new FetchShipRequest(targetNickname);
-    try {
-        client.sendMessage(request);
-        view.showGenericMessage("Request sent. Waiting for server...");
-    } catch (Exception e) {
-        view.showGenericMessage("Failed to send request: " + e.getMessage());
 
-    }
+        try {
+
+            FetchShipResponse response = (FetchShipResponse) future.get();
+            if (response.getTargetNickname().equals(targetNickname)) {
+
+                view.showShip(response.getTargetShipView());
+
+            } else {
+                view.showGenericMessage("Failed to spy your enemy");
+            }
+        } catch (Exception e) {
+            view.showGenericMessage("Failed to spy your enemy");
+        }
+
+
     }
     public void viewAdventureCardDeck(int DeckID){
         ArrayList<CardDeck> cardDecks = myModel.getCardDecks();
@@ -420,9 +500,9 @@ public class ClientController implements Observer {
     public void handleShipUpdate(ShipUpdate update){
             String owner = update.getNickName();
             Ship ship = update.getShipView();
-            view.showGenericMessage("In Update: " + owner);
+//            view.showGenericMessage("In Update: " + owner);
      if(owner != null ) {
-         view.showGenericMessage("Ship belongs to: " + owner);
+//         view.showGenericMessage("Ship belongs to: " + owner);
          if (getNickname().equals(owner)) {
              synchronized (myModel.getMyInfo()) {
                  myModel.getMyInfo().setShip(ship);  // per avere la versione l'utima del mio ship dal lato server
@@ -521,7 +601,11 @@ public class ClientController implements Observer {
         if(currentShip.getInvalidPositions().contains(pos)||currentShip.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
           new Thread(() -> {
               view.showGenericMessage("Invalid position. Please try again.");
-              view.askPosition();
+              try {
+                  view.askPosition();
+              } catch (ExecutionException e) {
+                  throw new RuntimeException(e);
+              }
           }).start();
         }
         else{
@@ -616,5 +700,32 @@ public void sendDiscardrequest(){
             }
 
         }).start();
+    }
+
+    public boolean getIsSocket() {
+        return isSocket;
+    }
+
+
+
+    public void handleCheckShipChoice(String input) {
+        new Thread(() -> {
+
+            switch (input) {
+                case "a" -> view.askFetchShip();
+//            case "b" -> viewAdventureDecks();
+//            case "c" -> client.sendMessage(new ShowFaceUpTilesRequest());
+
+                default -> {
+                    new Thread(() -> {
+                        view.showGenericMessage("Invalid option. Please try again.");
+                        view.showcheckShipMenu();}).start();
+                }
+            }
+
+
+
+        }).start();
+
     }
 }

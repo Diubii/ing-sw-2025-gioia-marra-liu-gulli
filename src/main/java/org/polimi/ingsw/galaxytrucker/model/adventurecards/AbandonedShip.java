@@ -31,7 +31,7 @@ public class AbandonedShip extends AdventureCard {
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
                    @JsonProperty("crewMembersLost") int crewMembersLost ,
-                   @JsonProperty("credits")  int credits )
+                   @JsonProperty("credits")  int credits , @JsonProperty("affectsAll") Boolean affectsAll)
             {
         this.id = id;
         this.level = level;

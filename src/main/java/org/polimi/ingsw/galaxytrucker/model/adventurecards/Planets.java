@@ -29,7 +29,7 @@ public class Planets extends AdventureCard {
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("planets") ArrayList<Planet> planets)
+                         @JsonProperty("planets") ArrayList<Planet> planets, @JsonProperty("affectsAll") Boolean affectsAll)
 
     {
         this.id = id;
@@ -40,6 +40,7 @@ public class Planets extends AdventureCard {
         this.affectsAll = false;
         this.planets = planets;
         this.facultative = true;
+        affectsAll = affectsAll;
     }
 
     public Planets(ArrayList<Planet> planets) {

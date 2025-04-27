@@ -16,8 +16,11 @@ public class FetchShipRequest extends NetworkMessage implements Serializable {
     private final String targetNickname;
 
     public FetchShipRequest(String targetNickname) {
+
+        super();
         this.targetNickname = targetNickname;
     }
+
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
@@ -32,4 +35,7 @@ public class FetchShipRequest extends NetworkMessage implements Serializable {
         return targetNickname;
     }
 
+    public int getId() {
+        return this.getID();
+    }
 }

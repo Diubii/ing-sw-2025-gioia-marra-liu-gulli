@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutionException;
         @JsonSubTypes.Type(value = Stardust.class, name = "Stardust"),
 
 
+
 })
 public abstract class AdventureCard implements Serializable {
 

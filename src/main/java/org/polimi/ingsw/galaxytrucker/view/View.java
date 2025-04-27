@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface View {
+    void forceReset();
+
     void askNickname() throws IOException, ExecutionException, InterruptedException;
 
     void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException;
@@ -24,7 +26,7 @@ public interface View {
 
     void askJoinOrCreateRoom();
     void askRoomCode();
-    void askCreateRoom();
+    void askCreateRoom() throws ExecutionException;
     void showLobbies(List<LobbyInfo> lobbies);
 
 //    void showPlayerJoined(HashMap<String, Color> playerInfo);
@@ -41,7 +43,7 @@ public interface View {
 
     //asks_building
     void askRotation();
-    void askPosition();
+    void askPosition() throws ExecutionException;
     void askViewAdventureDecks();
     void showTile(Tile tile);
 

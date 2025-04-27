@@ -14,7 +14,7 @@ public class PlayerInfo implements Serializable {
     private String NickName;
     private Ship ship;
 
-    transient private final Object shipLock = new Object();
+     private final Object shipLock = "";
 
     public Color getColor() {
         return color;

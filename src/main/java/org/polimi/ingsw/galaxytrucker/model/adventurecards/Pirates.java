@@ -32,12 +32,11 @@ public class Pirates extends AdventureCard {
     @JsonCreator
     public Pirates(@JsonProperty("id") int id,
                    @JsonProperty("level") int level,
-                   @JsonProperty("daysLost") int daysLost,
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
                    @JsonProperty("firePower") int firePower ,
                    @JsonProperty("cannonFires") ArrayList<Projectile> cannonFires,
-                   @JsonProperty("credits") int credits) {
+                   @JsonProperty("credits") int credits,                    @JsonProperty("daysLost") int daysLost, @JsonProperty("affectsAll") Boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;
@@ -46,6 +45,7 @@ public class Pirates extends AdventureCard {
         this.firePower = firePower;
         this.cannonFires = cannonFires;
         this.credits = credits;
+        affectsAll = affectsAll;
     }
 
     public Pirates(ArrayList<Projectile> cannonFires, int firePower, int credits) {

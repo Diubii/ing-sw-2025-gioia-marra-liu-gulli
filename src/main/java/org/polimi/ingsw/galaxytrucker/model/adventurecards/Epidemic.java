@@ -22,7 +22,7 @@ public class Epidemic extends AdventureCard {
                          @JsonProperty("level") int level,
                          @JsonProperty("daysLost") int daysLost,
                          @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight)
+                         @JsonProperty("learningFlight") boolean learningFlight, @JsonProperty("affectsAll") Boolean affectsAll)
     {
         this.id = id;
         this.level = level;

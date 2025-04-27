@@ -45,7 +45,7 @@ public class AbandonedStation extends AdventureCard {
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("goods")   ArrayList<Good> goods,
-                         @JsonProperty("crewMembers")   int crewMemebers)
+                         @JsonProperty("crewMembers")   int crewMemebers, @JsonProperty("affectsAll") Boolean affectsAll)
     {
         this.id = id;
         this.level = level;

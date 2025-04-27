@@ -10,6 +10,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
@@ -69,6 +70,11 @@ public class GuiJavaFx implements View {
 
 
     @Override
+    public void forceReset() {
+
+    }
+
+    @Override
     public void askNickname() {
         Platform.runLater(() -> {
             VBox layout = new VBox(10);
@@ -87,8 +93,20 @@ public class GuiJavaFx implements View {
             VBox layout = new VBox(10);
             Button create = new Button("Create Room");
             Button join = new Button("Join Room");
-            create.setOnAction(e -> controller.handleCreateOrJoinChoice("a"));
-            join.setOnAction(e -> controller.handleCreateOrJoinChoice("b"));
+            create.setOnAction(e -> {
+                try {
+                    controller.handleCreateOrJoinChoice("a");
+                } catch (ExecutionException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            join.setOnAction(e -> {
+                try {
+                    controller.handleCreateOrJoinChoice("b");
+                } catch (ExecutionException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
             layout.getChildren().addAll(new Label("Choose an option:"), create, join);
             primaryStage.setScene(new Scene(layout, 300, 150));
         });
@@ -163,6 +181,11 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
+    public void handleChoiceForPhase(GameState phase) {
+
+    }
+
+    @Override
     public void handlePhaseUpdate(PhaseUpdate update) {
         showGenericMessage("Phase changed: " + update.getState().name());
     }
@@ -199,6 +222,11 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void askPosition() {
         showGenericMessage("Not yet implemented");
+    }
+
+    @Override
+    public void askViewAdventureDecks() {
+
     }
 
     @Override

@@ -367,7 +367,7 @@ public class ServerController {
 
                     myGame.getGameController().nextState();
                     broadCast(original, decksUpdate);
-                    broadCast(original, new PhaseUpdate(myGame.getGameController().getGameState()));
+                    broadCast(original, new PhaseUpdate(GameState.BUILDING_START));
                     //MANDARE I DECK -> -> ->
 
                     //dopo aver notificato tutti starto il gioco
@@ -506,9 +506,11 @@ public class ServerController {
             myGame.addPlayerShipFinished(nickname);
 
             //allroa e' il primo e fa partire il timer, e lo aggiungo
-            startTimer(60, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
+            startTimer(20, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
         } else {
             //mandare un messaggio "ATTENDENDO ... SCELTA PRECEDENTI"
+            myGame.addPlayerShipFinished(nickname);
+
         }
 
 
@@ -587,7 +589,8 @@ public class ServerController {
         if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
             //se hanno finito tutti allora si passa alla fase di check_ship
             myGame.getGameController().nextState();
-            ArrayList<ClientHandler> playerHandlers = (ArrayList<ClientHandler>) myGame.getPlayerHandlers().values();
+            System.out.println("STATE: " + myGame.getGameController());
+            ArrayList<ClientHandler> playerHandlers =  new ArrayList<>(myGame.getPlayerHandlers().values()) ;
             broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
 
         }

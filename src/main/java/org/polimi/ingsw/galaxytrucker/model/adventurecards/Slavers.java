@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
@@ -10,6 +11,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 import java.io.Serial;
 import java.util.ArrayList;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Slavers extends AdventureCard {
 
 
@@ -35,7 +37,7 @@ public class Slavers extends AdventureCard {
                    @JsonProperty("learningFlight") boolean learningFlight,
                    @JsonProperty("firePower") int firePower ,
                    @JsonProperty("penalty") int penalty,
-                   @JsonProperty("credits") int credits) {
+                   @JsonProperty("credits") int credits, @JsonProperty("affectsAll") Boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;
@@ -44,6 +46,9 @@ public class Slavers extends AdventureCard {
         this.firePower = firePower;
         this.penalty = penalty;
         this.credits = credits;
+
+        this.affectsAll = false;
+
     }
 
     public Slavers(int penalty, int firePower,int credits) {

@@ -35,7 +35,7 @@ public class CombatZone extends AdventureCard {
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("crewMembersLost") int crewMembersLost,
                          @JsonProperty("goodsLost") int goodsLost,
-                         @JsonProperty("projectiles") ArrayList<Projectile> projectiles)
+                         @JsonProperty("projectiles") ArrayList<Projectile> projectiles, @JsonProperty("affectsAll") Boolean affectsAll)
     {
         this.id = id;
         this.level = level;
