@@ -41,8 +41,7 @@ public class CentralHousingUnit extends Component {
     public Boolean getIsColored() {
         return isColored;
     }
-    public void removehumanCrewNumber() {
-
+    public void removeHumanCrewMember() {
         if (humanCrewNumber > 0) humanCrewNumber--;
     }
 

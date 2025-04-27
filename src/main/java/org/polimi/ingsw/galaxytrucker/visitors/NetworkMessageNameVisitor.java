@@ -233,4 +233,14 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(SelectedPlanetUpdate selectedPlanetUpdate) {
         return NetworkMessageType.SelectedPlanetUpdate;
     }
+
+    @Override
+    public NetworkMessageType visit(DiscardCrewMembersRequest discardCrewMembersRequest) {
+        return NetworkMessageType.DiscardCrewMembersRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(DiscardCrewMembersResponse discardCrewMembersResponse) {
+        return NetworkMessageType.DiscardCrewMembersResponse;
+    }
 }

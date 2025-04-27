@@ -4,35 +4,77 @@ import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.network.client.Client;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateAdventureCardRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateDoubleEnginesRequest;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DiscardCrewMembersRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.SelectPlanetRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.ActivateAdventureCardResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.ActivateDoubleEnginesResponse;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DiscardCrewMembersResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.SelectPlanetResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.FlightBoardUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.SelectedPlanetUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 public class AdventureCardEffects implements AdventureCardVisitorsInterface {
     @Override
     public void visitAbandonedShip(AbandonedShip abandonedShip, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
         for(Player player : rankedPlayers){
+
+            //Chiedo al player se vuole attivare la carta
             CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
             ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
             lobbyManager.addPendingResponse(future, activateAdventureCardRequest.getID());
             lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(activateAdventureCardRequest);
             ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) future.get();
+
+            if(activateAdventureCardResponse.isActivated()){
+                DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(abandonedShip.getCrewMembersLost()); //Il client deve scartare un tot di equipaggio
+                lobbyManager.addPendingResponse(future, discardCrewMembersRequest.getID());
+                lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(discardCrewMembersRequest); //Mando al player la richiesta
+                DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) future.get(); //Aspetto la risposta
+
+                ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+                for(Position position : discardCrewMembersResponse.getHousingPositions()){ //Per ogni posizione (assumo posizioni duplicate per scartare più volte dalla stessa housing unit)
+                    Component housingUnit = player.getShip().getComponentFromPosition(position); //Prendo la housingUnit dalla position data
+                    String componentName = componentNameVisitor.visit(housingUnit); //Visitor
+
+                    if(componentName.equals("CentralHousingUnit")){
+                        ((CentralHousingUnit) housingUnit).removeHumanCrewMember();
+                    }
+                    else{ //Altrimenti è una ModularHousingUnit
+                        ModularHousingUnit modularHousingUnit = (ModularHousingUnit) housingUnit;
+
+                        if(modularHousingUnit.getHumanCrewNumber() > 0){ //Ci sono solo umani
+                            modularHousingUnit.removeHumanCrewMember();
+                        }
+                        else{ //Ci sono solo alieni
+                            modularHousingUnit.removeAlienCrew();
+                        }
+                    }
+                }
+
+                //Broadcasto nuova nave
+                ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
+                lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(shipUpdate));
+
+                player.addCredits(abandonedShip.getCredits()); //Accredito crediti
+
+                movePlayer(lobbyManager, player, -abandonedShip.getDaysLost()); //Sposto il player
+                break; //Solo un player può attivare la carta
+            }
         }
     }
 

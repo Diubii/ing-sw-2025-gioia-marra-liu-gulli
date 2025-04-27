@@ -287,4 +287,14 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
         return null;
     }
+
+    @Override
+    public Void visit(DiscardCrewMembersRequest discardCrewMembersRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(DiscardCrewMembersResponse discardCrewMembersResponse) {
+        return null;
+    }
 }
