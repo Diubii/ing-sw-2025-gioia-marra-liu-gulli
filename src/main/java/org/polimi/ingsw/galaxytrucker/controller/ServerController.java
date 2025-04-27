@@ -410,6 +410,11 @@ public class ServerController {
                     drawTileResponse.setErrorMessage("VALID");
                 }
 
+                FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
+                faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
+                ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+                broadCast(playerHandlers, faceUpTileUpdate);
+
             } else {
 
                 myTile = myGame.getTileBunch().drawTile();
@@ -675,11 +680,16 @@ public class ServerController {
 
     }
 
-    @NeedsToBeCompleted
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         myGame.getTileBunch().returnTile(discardTileRequest.getTile());
-        broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), new TileDiscardedUpdate(discardTileRequest.getTile()));
+
+        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+        broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
+
+        FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
+        faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
+        broadCast(playerHandlers, faceUpTileUpdate);
     }
 
     @NeedsToBeCompleted
