@@ -60,7 +60,7 @@ public class ClientController implements Observer {
     private CompletableFuture<NetworkMessage> completableFuture;
     private Pair<Integer, CompletableFuture<NetworkMessage>> pair;
 
-    private ClientModel myModel = new ClientModel();
+    private final ClientModel myModel;
     private final NetworkMessageVisitorsInterface<Void> messageVisitor = new ClientNetworkMessageVisitor(this);
     private Tile currentTileInHand = null;
 
@@ -310,7 +310,6 @@ public class ClientController implements Observer {
     }
 
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate){
-        phase = phaseUpdate.getState();
 
 
 //        if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
@@ -373,24 +372,18 @@ public class ClientController implements Observer {
                     view.askViewAdventureDecks();
                 }
                 case "c" -> {
+
+                        sendGetFaceUpTilesRequest();
+                }
+                case "d" -> {
                     try {
-                        getFaceUpTilesRequest();
+                        sendShipUpdate();
                     } catch (IOException | ExecutionException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                }
-                case "d" -> {
-
                     if (currentTileInHand != null) {
                         view.showGenericMessage("You already have a tile in hand! Place it or discard it before drawing a new one.");
-                        view.showBuildingMenu();
-                        return;
                     } else {
-                        try {
-                            sendShipUpdate();
-                        } catch (IOException | ExecutionException | InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
                         view.askDrawTile();
                     }
                 }
@@ -413,17 +406,7 @@ public class ClientController implements Observer {
                       throw new RuntimeException(e);
                   }
             }
-
-                case "k" -> {
-                    if (currentTileInHand == null) {
-                    view.showGenericMessage("You don't have a tile in hand! Draw one before placing it.");
-                    view.showBuildingMenu();
-                    return;
-                    }else{
-                        view.askPickReservedTile(false);
-                    }
-
-                }
+                case "k" -> view.askPickReservedTile(false);
 
                 case "reset" -> {
                   break;
@@ -437,7 +420,8 @@ public class ClientController implements Observer {
         }).start();
     }
 
-//case(a)
+
+    //case(a)
     public void sendShipUpdate() throws IOException, ExecutionException, InterruptedException {
                     ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
                     currentPosition = null;
@@ -483,9 +467,9 @@ public class ClientController implements Observer {
     public void handleShipUpdate(ShipUpdate update)  {
         String owner = update.getNickName();
         Ship ship = update.getShipView();
-        view.showGenericMessage("In Update: " + owner);
+//        view.showGenericMessage("In Update: " + owner);
         if(owner != null ) {
-            view.showGenericMessage("Ship belongs to: " + owner);
+//            view.showGenericMessage("Ship belongs to: " + owner);
             if (getNickname().equals(owner)) {
                 synchronized (myModel.getMyInfo()) {
                     myModel.getMyInfo().setShip(ship);  // per avere la versione l'utima del mio ship dal lato server
@@ -532,6 +516,8 @@ public class ClientController implements Observer {
 
 //case (c)
 
+    private void sendGetFaceUpTilesRequest() {
+    }
 
     public void getFaceUpTilesRequest() throws IOException, ExecutionException, InterruptedException {
 

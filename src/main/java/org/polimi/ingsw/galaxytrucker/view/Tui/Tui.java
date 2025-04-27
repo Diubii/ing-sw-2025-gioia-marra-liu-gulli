@@ -55,6 +55,7 @@ public class Tui implements View, Observable {
 
 
     private  MenuManager menuManager = new MenuManager();
+    private GameState phase = GameState.LOBBY;
 
     private final Object panelLock  = new Object();
 
@@ -309,7 +310,7 @@ public class Tui implements View, Observable {
             case BUILDING_START -> showBuildingMenu();
 
             default -> {
-                out.println("Please wait. No input is required at this stage.");
+//                out.println("Please wait. No input is required at this stage.");
             }
         }
     }

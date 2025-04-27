@@ -27,7 +27,7 @@ public enum NetworkMessageType {
     LandOnPlanetRequest, LandOnPlanetResponse,
     PickPlanetGoodsRequest, PickPlanetGoodsResponse,
     ActivateComponentRequest, ActivateComponentResponse,
-    DiscardCrewRequest, DiscardCrewResponse,
+    DiscardCrewMembersRequest, DiscardCrewMembersResponse,
     DiscardGoodsRequest, DiscardGoodsResponse,
     ClaimDerelictRewardRequest, ClaimDerelictRewardResponse,
     PlayerEndFlightRequest, PlayerEndFlightResponse,
@@ -68,5 +68,6 @@ public enum NetworkMessageType {
     DeclareEnginePowerRequest,
     DeclareEnginePowerResponse, MatchInfoUpdate, DecksUpdate, FlightBoardUpdate,
     RemovedPlayerUpdate,
-    SelectPlanetRequest, SelectPlanetResponse, SelectedPlanetUpdate
+    SelectPlanetRequest, SelectPlanetResponse, SelectedPlanetUpdate,
+    GetFaceUpTilesRequest, GetFaceUpTilesResponse,
 }

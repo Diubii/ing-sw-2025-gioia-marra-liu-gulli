@@ -139,7 +139,6 @@ public class LobbyManager {
         }
     }
 
-
     public TileBunch getTileBunch() {
         return tileBunch;
     }

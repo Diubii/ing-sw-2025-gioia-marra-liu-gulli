@@ -97,4 +97,7 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(SelectPlanetRequest selectPlanetRequest);
     T visit(SelectPlanetResponse selectPlanetResponse);
     T visit(SelectedPlanetUpdate selectedPlanetUpdate);
+
+    T visit(DiscardCrewMembersRequest discardCrewMembersRequest);
+    T visit(DiscardCrewMembersResponse discardCrewMembersResponse);
 }
