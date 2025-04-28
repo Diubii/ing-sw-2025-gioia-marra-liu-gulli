@@ -92,6 +92,9 @@ public class Tui implements View, Observable {
         }).start();
 
         String input = currentInputFuture.get();
+
+        if (input.contains("RESET")) input = "RESET";
+
         return input;
     }
 
@@ -315,24 +318,20 @@ public class Tui implements View, Observable {
 
     @Override
     public void showBuildingMenu() {
-        boolean valid = false;
-        do {
-            try {
-                String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
-                if (input.equals("m") || input.equals("menu") || input.equals("?")) {
-                    menuManager.showCurrentMenu();
-                }
-                    clientController.handleBuildingMenuChoice(input);
+        try {
+            String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
+            if (checkReset(input)) return;;
+            while (input.equals("m") || input.equals("menu") || input.equals("?")) {
+                menuManager.showCurrentMenu();
+                input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
 
-                valid = true;
-            } catch (IllegalArgumentException e) {
-                out.println("Invalid option. Please try again: " + e.getMessage());
-
-            } catch (Exception e) {
-                out.println("Unexpected error: " + e.getMessage());
-                e.printStackTrace();
             }
-        } while (!valid);
+
+            clientController.handleBuildingMenuChoice(input);
+
+        } catch (Exception e) {
+            out.println(" Error: " + e.getMessage());
+        }
     }
 
     @Override
@@ -365,9 +364,15 @@ public class Tui implements View, Observable {
             try {
                 String DeckIDStr = readLine("Enter which Deck you want to view (1~4)> ").trim();
                 int DeckID = Integer.parseInt(DeckIDStr);
+
+                if (checkReset(DeckIDStr)) return;;
+
+
                 if (DeckID < 1 || DeckID > 4) {
                     out.println("Deck ID not valid. Please enter a number between 1 and 4.");
-                } else {
+                }
+
+                else {
                     clientController.viewAdventureCardDeck(DeckID - 1);
                     valid = true;
                 }
@@ -401,6 +406,8 @@ public class Tui implements View, Observable {
             try {
                 out.println("Enter rotation degree (90, 180, 270, or 360): ");
                 String input = readLine("> ").trim();
+                if (checkReset(input)) return;;
+
                 int rotation = InputUtils.parseRotation(input);
                 clientController.rotateCurrentTile(rotation);
                 valid = true;
@@ -415,14 +422,16 @@ public class Tui implements View, Observable {
     @Override
     public void askPosition() throws ExecutionException {
         boolean valid = false;
+        Position pos = null;
         do {
             try {
                 String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
-                Position pos = InputUtils.parseCoordinate(input);
-                clientController.moveCurrentTile(pos.getY()-5, pos.getX()-4);
+                if (checkReset(input)) return;;
+                 pos = InputUtils.parseCoordinate(input);
+                clientController.setCurrentPos(pos.getX()-4, pos.getY()-5);
                 valid = true;
             } catch (IllegalArgumentException e) {
-                out.println("Invalid format. Please enter coordinates in format (x,y), like (4,5), either the coordinates are out of bounds, or the coordinates are not available. ");
+                out.println(e.getMessage() + pos.getY() );
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (Exception e) {
@@ -441,13 +450,15 @@ public class Tui implements View, Observable {
     @Override
     public void showFaceUpTiles() {
         List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
+
         int size = faceUpTiles.size();
 
-        if (size == 0) {
-            out.println("No face up tiles. Try again later or choose another option from the menu. ");
+        if (size == 0){
+            out.println("Face up Tiles is empty");
             showBuildingMenu();
             return;
         }
+
         out.println("Face up tiles size: " + faceUpTiles.size());
         TilePrintUtils.printTileList(new ArrayList<>(faceUpTiles), 3);
         showBuildingMenu();
@@ -464,6 +475,9 @@ public class Tui implements View, Observable {
                 out.println("2) choose a face up tile");
                 out.println("3) choose from your reserved tiles");
                 String choice = readLine("Choose(1/2/3) > ");
+
+                if (checkReset(choice)) return;;
+
                 switch (choice) {
                     case "1": {
                         clientController.handleDrawFaceDownTile();
@@ -482,6 +496,8 @@ public class Tui implements View, Observable {
                         break;
                     }
 
+
+
                 }
 
             } while (!validInput);
@@ -499,6 +515,7 @@ public class Tui implements View, Observable {
             boolean validInput = false;
             do {
                 String input = readLine("Enter the Tile ID to draw, or use R to refresh: ").trim().toLowerCase();
+                if (checkReset(input)) return;;
 
                 if (input.equalsIgnoreCase("R")) {
 
@@ -551,6 +568,8 @@ public class Tui implements View, Observable {
             int slotIndex = -1;
             do {
                 String input = readLine("Enter the Slot Index to" + (isPicking ? "pick" : "place") + "(1 or 2)> ");
+                if (checkReset(input)) return;;
+
                 if (input.equals("1") || input.equals("2")) {
                     slotIndex = Integer.parseInt(input);
                     validInput = true;
@@ -582,20 +601,23 @@ public class Tui implements View, Observable {
                 out.println("Current position: " + clientController.getCurrentPosition().getX() + ", " + clientController.getCurrentPosition().getY());
             } else {
                 out.println("Current position: null");
-                showBuildingMenu();
+                askPosition();
             }
             out.println("Do you want to place this tile at the current position and rotation? (y/n)");
             String input = readLine("> ").trim().toLowerCase();
+            if (checkReset(input)) return;;
+
             boolean confirm = input.equals("y");
             if (confirm) {
                 clientController.handleTilePlacement(true);
             } else {
+                clientController.resetCurrentPos();
                 out.println("Tile not placed. You can rotate or move it again.");
                 showBuildingMenu();
             }
 
         } catch (Exception e) {
-            out.println(" Error during tile placement: " + e.getMessage());
+            out.println(" Error during tile placement "); e.printStackTrace();;
         }
 
     }
@@ -655,13 +677,13 @@ public class Tui implements View, Observable {
     public void showGenericMessage(String message) {
 
         synchronized (outputLock) {
-            System.out.print("\r"); // Torna all'inizio della riga
-            System.out.print(" ".repeat(100)); // Cancella eventuale scrittura
-            System.out.print("\r"); // Torna di nuovo all'inizio
+            System.out.print("\n"); // Torna all'inizio della riga
+//            System.out.print(" ".repeat(100)); // Cancella eventuale scrittura
+//            System.out.print("\r"); // Torna di nuovo all'inizio
             System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
 
             // Ripristina il prompt e quello che l'utente aveva scritto
-//            System.out.print("> " + liveInputBuffer.toString());
+            System.out.print("> ");
         }
 
     }
@@ -809,6 +831,11 @@ public class Tui implements View, Observable {
         for (Observer observer : observers) {
             observer.update(message);
         }
+    }
+
+
+    private Boolean checkReset(String input){
+        return input.equals("reset");
     }
 }
 

@@ -53,6 +53,7 @@ public class MenuManager {
     }
 
     public void showCheckShipMenu() {
+        clearConsole();
         out.println("\n Check Ship Phase Menu:");
         out.println("a. View my ship");
         out.println("b. Remove tile");
@@ -61,6 +62,7 @@ public class MenuManager {
 
     }
     public void showEmbarkCrewMenu() {
+        clearConsole();
         out.println("\n Embark Crew Phase Menu:");
         out.println("a. View my ship");
         out.println("b. Allocate crew in cabins");
@@ -68,6 +70,11 @@ public class MenuManager {
 
     public void showNoneMenu() {
         out.println("\n No menu available at this stage. Please wait ...");
+    }
+
+    public static void clearConsole() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
 

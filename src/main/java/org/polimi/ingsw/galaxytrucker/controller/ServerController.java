@@ -606,7 +606,7 @@ public class ServerController {
 
     public void handlePlaceTileRequest(PlaceTileRequest placeTileRequest, ClientHandler clientHandler) throws InvalidTilePosition {
 
-        PlaceTileResponse placeTileResponse = new PlaceTileResponse(null);
+        PlaceTileResponse placeTileResponse = new PlaceTileResponse(null, placeTileRequest.getID());
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         String nickname = myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
         Player myPlayer = myGame.getRealGame().getPlayer(nickname);
@@ -641,7 +641,7 @@ public class ServerController {
             //controllo se la posizione non è occupata
             for (Slot slot : Slots) {
                 Tile tempTile = slot.getTile();
-                if (tempTile.getId() == myTile.getId()) {
+                if (tempTile != null && tempTile.getId() == myTile.getId()) {
 
                     //esiste gia la tile
                     placeTileResponse.setMessage("INVALID_POS");
@@ -662,20 +662,25 @@ public class ServerController {
             placeTileResponse.setMessage("SUCCESS");
 
             //da capire se ha senso creare una PlaceTileResponse
-            clientHandler.sendMessage(placeTileResponse);
-
 
 
             //broadCasto la nuova nave a tutti
             ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-            broadCast((ArrayList<ClientHandler>) myGame.getPlayerHandlers().values(), shipUpdate);
+            ArrayList<ClientHandler> handlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+            broadCast(handlers, shipUpdate);
+            clientHandler.sendMessage(placeTileResponse);
 
+
+        } else {
+            PlaceTileResponse resp = new PlaceTileResponse(null, placeTileRequest.getID());
+            resp.setMessage("INVALID \n" + placeTileRequest.getPos().getX() + placeTileRequest.getPos().getY());
+            clientHandler.sendMessage(resp);
         }
 
 
 
-
         }
+
 
 
     }
@@ -687,7 +692,7 @@ public class ServerController {
 
         ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
         broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
-
+//
         FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
         faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
         broadCast(playerHandlers, faceUpTileUpdate);

@@ -8,23 +8,26 @@ import java.util.List;
 public class InputUtils {
 
     public static Position parseCoordinate(String input) throws IllegalArgumentException {
-        if (input == null) throw new IllegalArgumentException("Input is null");
+        if (input == null || input.isBlank()) {
+            throw new IllegalArgumentException("Input is null or blank");
+        }
 
-        // remove all brackets.
+        // Rimuove parentesi tonde e spazi
         String cleaned = input.replaceAll("[()\\s]", "");
 
-        // "x,y"
+        // Split sui caratteri ','
         String[] parts = cleaned.split(",");
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid coordinate format. Please use (x,y)");
+
+        if (parts.length != 2 || parts[0].isBlank() || parts[1].isBlank()) {
+            throw new IllegalArgumentException("Invalid coordinate format. Expected format: (x,y)");
         }
 
         try {
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
-            return new Position(x, y);
+            return new Position(y, x);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Coordinates must be numbers.");
+            throw new IllegalArgumentException("Coordinates must be valid integers.");
         }
     }
     private static final List<Integer> VALID_ROTATIONS = Arrays.asList(90, 180, 270, 360);
