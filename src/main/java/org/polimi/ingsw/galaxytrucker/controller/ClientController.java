@@ -310,6 +310,7 @@ public class ClientController implements Observer {
     }
 
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate){
+        phase = phaseUpdate.getState();
 
 
 //        if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
@@ -358,7 +359,6 @@ public class ClientController implements Observer {
     }
 
     public void handleBuildingMenuChoice(String input) {
-        new Thread(() -> {
 
             switch (input) {
                 case "menu", "?", "m" -> view.handleChoiceForPhase(phase);
@@ -376,16 +376,20 @@ public class ClientController implements Observer {
                         sendGetFaceUpTilesRequest();
                 }
                 case "d" -> {
-                    try {
-                        sendShipUpdate();
-                    } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
                     if (currentTileInHand != null) {
-                        view.showGenericMessage("You already have a tile in hand! Place it or discard it before drawing a new one.");
-                    } else {
-                        view.askDrawTile();
-                    }
+                    view.showGenericMessage("You already have a tile in hand! Place it or discard it before drawing a new one.");
+                    view.showBuildingMenu();
+
+                } else {
+                    view.askDrawTile();
+                        try {
+                            sendShipUpdate();
+                        } catch (IOException | ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                }
+
+
                 }
                 case "e" -> showTileInHand();
                 case "f" -> view.askRotation();
@@ -417,7 +421,7 @@ public class ClientController implements Observer {
                     view.showBuildingMenu();}).start();
                 }
             }
-        }).start();
+
     }
 
 
@@ -435,8 +439,7 @@ public class ClientController implements Observer {
     public void handleFetchShip(String targetNickname){
 
         FetchShipRequest request = new FetchShipRequest(targetNickname);
-        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        setCompletableFuture(future, request.getId());
+
         try {
             client.sendMessage(request);
              } catch (Exception e) {
@@ -444,19 +447,6 @@ public class ClientController implements Observer {
                 return;
         }
 
-        try {
-
-            FetchShipResponse response = (FetchShipResponse) future.get();
-            if (response.getTargetNickname().equals(targetNickname)) {
-
-                view.showShip(response.getTargetShipView());
-
-            } else {
-                view.showGenericMessage("Failed to spy your enemy");
-            }
-        } catch (Exception e) {
-            view.showGenericMessage("Failed to spy your enemy");
-        }
 
 
     }
@@ -487,15 +477,19 @@ public class ClientController implements Observer {
             }
             if(update.getShouldDisplay()){
                 view.showShip(ship);
+                view.handleChoiceForPhase(phase);
 
+            }
+            else{
+                return;
             }
 
         }
         else{
             view.showGenericMessage("No ship belongs to this player.");
-
+            view.handleChoiceForPhase(phase);
         }
-       view.handleChoiceForPhase(phase);
+
     }
 
 //case (b)
@@ -668,23 +662,26 @@ public class ClientController implements Observer {
     }
 
 // g
-    public void moveCurrentTile(int x, int y) throws ExecutionException {
-        Position pos = new Position(x, y);
-        Ship currentShip = myModel.getMyInfo().getShip();
-        if(currentShip.getInvalidPositions().contains(pos)||currentShip.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
+public void moveCurrentTile(int x, int y) throws ExecutionException {
+    Position pos = new Position(x, y);
+    Ship ship = myModel.getMyInfo().getShip();
 
-            view.showGenericMessage("Invalid position. Please try again.");
-            view.askPosition();
-
-        }
-        else{
-            currentPosition = pos;
-            view.showGenericMessage("Tile moved successfully.");
-            view.showBuildingMenu();
-        }
-
+    if (pos.getX() < 0 || pos.getY() < 0 ||
+            pos.getX() >= ship.getShipBoard()[0].length ||
+            pos.getY() >= ship.getShipBoard().length) {
+        throw new IllegalArgumentException("Position out of bounds.");
     }
-// h
+
+    if (ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
+        throw new IllegalArgumentException("Invalid position: cannot place tile here.");
+    }
+
+    currentPosition = pos;
+    view.showGenericMessage("Tile moved successfully.");
+    view.showBuildingMenu();
+}
+
+    // h
     public void handleTilePlacement(Boolean confirm) throws InvalidTilePosition {
         if (currentPosition == null || currentTileInHand == null) {
             view.showGenericMessage("No tile or position selected.");
@@ -743,12 +740,14 @@ public class ClientController implements Observer {
     }
 
     public void handleTileDiscardUpdate(TileDiscardedUpdate update){
-        Tile discardedTile = update.getTile();
-        synchronized (myModel){
-            myModel.getFaceUpTiles().add(discardedTile);
-        }
-        view.showGenericMessage("A tile has been discarded and added back to face-up tiles.");
-        view.showBuildingMenu();
+        new Thread(() -> {
+            Tile discardedTile = update.getTile();
+            synchronized (myModel) {
+                myModel.getFaceUpTiles().add(discardedTile);
+            }
+            view.showGenericMessage("A tile has been discarded and added back to face-up tiles.");
+            view.showBuildingMenu();
+        }).start();
     }
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {
 

@@ -54,10 +54,10 @@ public class Tui implements View, Observable {
     private final ArrayList<Observer> observers = new ArrayList<>();
 
 
-    private  MenuManager menuManager = new MenuManager();
+    private MenuManager menuManager = new MenuManager();
     private GameState phase = GameState.LOBBY;
 
-    private final Object panelLock  = new Object();
+    private final Object panelLock = new Object();
 
 
     private volatile boolean shouldExit = false;
@@ -82,12 +82,12 @@ public class Tui implements View, Observable {
 
         new Thread(() -> {
 
-                System.out.print(prompt);
-                Scanner scanner = new Scanner(System.in);
-                if (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    currentInputFuture.complete(line);
-                }
+            System.out.print(prompt);
+            Scanner scanner = new Scanner(System.in);
+            if (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                currentInputFuture.complete(line);
+            }
 
         }).start();
 
@@ -101,9 +101,6 @@ public class Tui implements View, Observable {
             currentInputFuture.complete("RESET");
         }
     }
-
-
-
 
 
     public void start() throws ExecutionException, IOException, InterruptedException {
@@ -188,8 +185,8 @@ public class Tui implements View, Observable {
             int maxPlayers;
             boolean isLearningMatch;
             synchronized (outputLock) {
-                 maxPlayersStr = readLine("Set MAX players for Game (2-4): ");
-                 maxPlayers = Integer.parseInt(maxPlayersStr);
+                maxPlayersStr = readLine("Set MAX players for Game (2-4): ");
+                maxPlayers = Integer.parseInt(maxPlayersStr);
 
                 if (maxPlayers < 2 || maxPlayers > 4) {
 
@@ -284,8 +281,8 @@ public class Tui implements View, Observable {
 
         GameState phase = phaseUpdate.getState();
 
-        if (phase.equals(GameState.BUILDING_TIMER)){
-            new Thread(()->{
+        if (phase.equals(GameState.BUILDING_TIMER)) {
+            new Thread(() -> {
 
                 showGenericMessage("TIMER STARTED !!");
             }).start();
@@ -293,18 +290,19 @@ public class Tui implements View, Observable {
         } else {
             menuManager.setMenuText(phase);
             if (phaseUpdate.getState().equals(GameState.BUILDING_START) || phaseUpdate.getState().equals(GameState.SHIP_CHECK)) {
-                 toShowCurrentMenu();
+                toShowCurrentMenu();
                 handleChoiceForPhase(phase);
             }
         }
 
     }
 
-    public void toShowCurrentMenu(){
+    public void toShowCurrentMenu() {
         synchronized (outputLock) {
             menuManager.showCurrentMenu();
         }
     }
+
     public void handleChoiceForPhase(GameState phase) {
         switch (phase) {
             case BUILDING_START -> showBuildingMenu();
@@ -314,11 +312,12 @@ public class Tui implements View, Observable {
             }
         }
     }
+
     @Override
     public void showBuildingMenu() {
         try {
             String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
-            if (input.equals("m")||input.equals("menu")||input.equals("?")) {
+            if (input.equals("m") || input.equals("menu") || input.equals("?")) {
                 menuManager.showCurrentMenu();
 
             }
@@ -331,15 +330,15 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void FetchMyShip(){
-        new Thread(()->{
-            try{
+    public void FetchMyShip() {
+        new Thread(() -> {
+            try {
                 clientController.handleFetchShip(clientController.getNickname());
                 menuManager.showCurrentMenu();
 
 
             } catch (Exception e) {
-                showGenericMessage("Error fetching ship: " + e.getMessage() +", please try again");
+                showGenericMessage("Error fetching ship: " + e.getMessage() + ", please try again");
                 FetchMyShip();
                 throw new RuntimeException(e);
             }
@@ -354,85 +353,96 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void askViewAdventureDecks(){
-        try {
-
-            String DeckIDStr = readLine("Enter which Deck you want to view (1~4)> ").trim();
-            int DeckID = Integer.parseInt(DeckIDStr);
-            if(DeckID < 1 || DeckID >4){
-                out.println("Deck ID not valid. Please enter a number between 1 and 3.");
-                askViewAdventureDecks();
-                return;
+    public void askViewAdventureDecks() {
+        boolean valid = false;
+        do {
+            try {
+                String DeckIDStr = readLine("Enter which Deck you want to view (1~4)> ").trim();
+                int DeckID = Integer.parseInt(DeckIDStr);
+                if (DeckID < 1 || DeckID > 4) {
+                    out.println("Deck ID not valid. Please enter a number between 1 and 4.");
+                } else {
+                    clientController.viewAdventureCardDeck(DeckID - 1);
+                    valid = true;
+                }
+            } catch (Exception e) {
+                out.println("Error during ask view adventure Decks: " + e.getMessage());
             }
-            clientController.viewAdventureCardDeck(DeckID-1);
-        } catch (Exception e) {
-            out.println(" Error during ask view adventure Decks: " + e.getMessage());
-        }
-
+        } while (!valid);
     }
 
     @Override
     public void askFetchShip() {
-        new Thread(()->{
-            try{
-                String targetName = readLine("Enter the nickname of the player to fetch their ship ");
+        boolean success = false;
+        do {
+            try {
+                String targetName = readLine("Enter the nickname of the player to fetch their ship: ").trim();
                 clientController.handleFetchShip(targetName);
+                success = true;
                 menuManager.showCurrentMenu();
-
-
             } catch (InterruptedException | ExecutionException e) {
-                showGenericMessage("Error fetching ship: " + e.getMessage() +", please try again");
-                askFetchShip();
-                throw new RuntimeException(e);
+                showGenericMessage("Error fetching ship: " + e.getMessage() + ", please try again");
+            } catch (Exception e) {
+                showGenericMessage("Unexpected error: " + e.getMessage());
             }
-
-        }).start();
+        } while (!success);
     }
 
     @Override
     public void askRotation() {
-        try {
-            out.println("Enter rotation degree (90, 180, 270, or 360): ");
-            String input = readLine("> ").trim();
-            int rotation = InputUtils.parseRotation(input);
-            clientController.rotateCurrentTile(rotation);
-
-        } catch (Exception e) {
-            out.println(" Error during tile rotation: " + e.getMessage());
-        }
-
+        boolean valid = false;
+        do {
+            try {
+                out.println("Enter rotation degree (90, 180, 270, or 360): ");
+                String input = readLine("> ").trim();
+                int rotation = InputUtils.parseRotation(input);
+                clientController.rotateCurrentTile(rotation);
+                valid = true;
+            } catch (IllegalArgumentException e) {
+                out.println("Invalid input: " + e.getMessage());
+            } catch (Exception e) {
+                out.println("Unexpected error: " + e.getMessage());
+            }
+        } while (!valid);
     }
 
     @Override
     public void askPosition() throws ExecutionException {
-        try {
-            String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
-            Position pos = InputUtils.parseCoordinate(input);
-            clientController.moveCurrentTile(pos.getX(),pos.getY());
-
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        boolean valid = false;
+        do {
+            try {
+                String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
+                Position pos = InputUtils.parseCoordinate(input);
+                clientController.moveCurrentTile(pos.getX(), pos.getY());
+                valid = true;
+            } catch (IllegalArgumentException e) {
+                out.println("Invalid format. Please enter coordinates in format (x,y), like (2,3).");
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (Exception e) {
+                out.println("Unexpected error: " + e.getMessage());
+            }
+        } while (!valid);
     }
-@NeedsToBeCompleted
+
+    @NeedsToBeCompleted
 // TileView
     @Override
     public void showTile(Tile tile) {
-    TilePrintUtils.printTile(tile);
+        TilePrintUtils.printTile(tile);
     }
 
     @Override
-    public void showFaceUpTiles(){
+    public void showFaceUpTiles() {
         List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
         out.println("Face up tiles size: " + faceUpTiles.size());
-        TilePrintUtils.printTileList(new ArrayList<>(faceUpTiles),3);
+        TilePrintUtils.printTileList(new ArrayList<>(faceUpTiles), 3);
     }
-
 
 
     @Override
     public void askDrawTile() {
-        try{
+        try {
             boolean validInput = false;
             do {
                 out.println("How do you want to draw a tile?");
@@ -440,19 +450,19 @@ public class Tui implements View, Observable {
                 out.println("2) choose a face up tile");
                 out.println("3) choose from your reserved tiles");
                 String choice = readLine("Choose(1/2/3) > ");
-                switch (choice){
-                    case "1":{
+                switch (choice) {
+                    case "1": {
                         clientController.handleDrawFaceDownTile();
                         validInput = true;
                         break;
                     }
-                    case "2":{
+                    case "2": {
                         clientController.startChooseTile();
                         validInput = true;
                         break;
 
                     }
-                    case "3":{
+                    case "3": {
                         askPickReservedTile(true);
                         validInput = true;
                         break;
@@ -460,7 +470,7 @@ public class Tui implements View, Observable {
 
                 }
 
-            }while(!validInput);
+            } while (!validInput);
 
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
@@ -471,35 +481,35 @@ public class Tui implements View, Observable {
     }
 
     public void askChooseTile() {
-        try{
+        try {
             boolean validInput = false;
-            do{
+            do {
                 String input = readLine("Enter the Tile ID to draw, or use R to refresh: ").trim().toLowerCase();
 
-                if(input.equalsIgnoreCase("R")){
+                if (input.equalsIgnoreCase("R")) {
 
-                }
-                else{
+                } else {
                     List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
 
-                    try{
+                    try {
                         int tileID = Integer.parseInt(input);
                         Tile selectedTile = faceUpTiles.stream()
                                 .filter(t -> t.getId() == tileID)
                                 .findFirst()
                                 .orElse(null);
-                        if(selectedTile != null){
+                        if (selectedTile != null) {
                             clientController.handleChooseFaceUpTile(selectedTile);
                             validInput = true;
-                        }else {
+                        } else {
                             out.println("Tile ID not found. Please try again.");
                         }
-                    }catch (NumberFormatException e){
-                            out.println("Invalid tile ID. Please enter a number.");}
+                    } catch (NumberFormatException e) {
+                        out.println("Invalid tile ID. Please enter a number.");
+                    }
                 }
 
-            }while(!validInput);
-        } catch ( InterruptedException e) {
+            } while (!validInput);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
@@ -526,7 +536,7 @@ public class Tui implements View, Observable {
             boolean validInput = false;
             int slotIndex = -1;
             do {
-                String input = readLine("Enter the Slot Index to"+ (isPicking ? "pick" : "place")+"(1 or 2)> ");
+                String input = readLine("Enter the Slot Index to" + (isPicking ? "pick" : "place") + "(1 or 2)> ");
                 if (input.equals("1") || input.equals("2")) {
                     slotIndex = Integer.parseInt(input);
                     validInput = true;
@@ -535,8 +545,8 @@ public class Tui implements View, Observable {
                 }
             } while (!validInput);
 
-            clientController.handlePickReservedTile(slotIndex-1, isPicking);
-        } catch (ExecutionException | InterruptedException e){
+            clientController.handlePickReservedTile(slotIndex - 1, isPicking);
+        } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -554,10 +564,9 @@ public class Tui implements View, Observable {
 
             out.println(" Current tile info:");
             TilePrintUtils.printTile(clientController.getCurrentTileInHand());
-            if(clientController.getCurrentPosition() != null) {
+            if (clientController.getCurrentPosition() != null) {
                 out.println("Current position: " + clientController.getCurrentPosition().getX() + ", " + clientController.getCurrentPosition().getY());
-            }
-            else{
+            } else {
                 out.println("Current position: null");
                 showBuildingMenu();
             }
@@ -583,7 +592,7 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void showcheckShipMenu(){
+    public void showcheckShipMenu() {
         try {
             String input = readLine("\nChoose an option (a–c) or menu: ").trim().toLowerCase();
 
@@ -594,6 +603,7 @@ public class Tui implements View, Observable {
             out.println(" Error: " + e.getMessage());
         }
     }
+
     @Override
     public void showembarkCrewMenu() {
 
@@ -609,15 +619,15 @@ public class Tui implements View, Observable {
 
         String input;
 
-            System.out.println("Free positions: ");
-            for (Integer i : validPositions) {
-                System.out.println(" --> " + i);
-            }
+        System.out.println("Free positions: ");
+        for (Integer i : validPositions) {
+            System.out.println(" --> " + i);
+        }
 
-             input = readLine(" Choose one > ").trim().toLowerCase();
-            while (Integer.parseInt(input) < validPositions.getFirst() || Integer.parseInt(input) > validPositions.getLast()) {
-                askFlightBoardPosition(validPositions, id);
-            }
+        input = readLine(" Choose one > ").trim().toLowerCase();
+        while (Integer.parseInt(input) < validPositions.getFirst() || Integer.parseInt(input) > validPositions.getLast()) {
+            askFlightBoardPosition(validPositions, id);
+        }
 
 
         AskPositionResponse askPositionResponse = new AskPositionResponse(id, Integer.parseInt(input));
@@ -630,21 +640,17 @@ public class Tui implements View, Observable {
 
     public void showGenericMessage(String message) {
 
-            synchronized (outputLock) {
-                System.out.print("\r"); // Torna all'inizio della riga
-                System.out.print(" ".repeat(100)); // Cancella eventuale scrittura
-                System.out.print("\r"); // Torna di nuovo all'inizio
-                System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
+        synchronized (outputLock) {
+            System.out.print("\r"); // Torna all'inizio della riga
+            System.out.print(" ".repeat(100)); // Cancella eventuale scrittura
+            System.out.print("\r"); // Torna di nuovo all'inizio
+            System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
 
-                // Ripristina il prompt e quello che l'utente aveva scritto
+            // Ripristina il prompt e quello che l'utente aveva scritto
 //            System.out.print("> " + liveInputBuffer.toString());
-            }
+        }
 
     }
-
-
-
-
 
 
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
@@ -659,80 +665,77 @@ public class Tui implements View, Observable {
         CrewInitUpdate crewInitUpdate = new CrewInitUpdate();
 
 
-        for (Position pos: housinPos){
+        for (Position pos : housinPos) {
 
             Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
 
-            if (tempSlot != null){
-                if (tempSlot.getTile() != null){
+            if (tempSlot != null) {
+                if (tempSlot.getTile() != null) {
 
                     ModularHousingUnit housing = (ModularHousingUnit) tempSlot.getTile().getMyComponent();
 
-                  if (Util.checkNearLFS(pos, housing.getAlienColor(),myShip )){
+                    if (Util.checkNearLFS(pos, housing.getAlienColor(), myShip)) {
 
-                      if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.PURPLE) && nPurpleAliens == 0) {
-                          CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
-                      }
+                        if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.PURPLE) && nPurpleAliens == 0) {
+                            CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
+                        } else if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.BROWN) && nBrownAliens == 0) {
+                            CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
+                        }
+                    }
 
-                      else if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.BROWN) && nBrownAliens == 0) {
-                          CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
-                      }
-                  }
+                    CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
 
-                  CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
+                    String choice = readLine("Choose (1/2/3)>");
+                    boolean correct = false;
 
-                  String choice = readLine("Choose (1/2/3)>");
-                  boolean correct = false;
+                    while (!correct)
+                        switch (choice) {
+                            case "1": {
+                                if (nPurpleAliens == 0) {
+                                    nPurpleAliens++;
+                                    correct = true;
+                                    crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
 
-                  while (!correct)
-                  switch (choice){
-                      case "1": {
-                          if (nPurpleAliens == 0) {
-                              nPurpleAliens++;
-                              correct = true;
-                              crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
+                                } else {
 
-                          } else {
+                                    if (nBrownAliens == 0) {
+                                        CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
+                                    }
+                                    CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
 
-                              if (nBrownAliens == 0) {
-                                  CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
-                              }
-                              CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
-
-                               choice = readLine("Choose (1/2/3)>");
-                               break;
+                                    choice = readLine("Choose (1/2/3)>");
+                                    break;
 
 
-                          }
+                                }
 
-                      }
+                            }
 
-                      case "2": {
-                          if (nBrownAliens == 0) {
-                              nBrownAliens++;
-                              correct = true;
-                              crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.BROWN));
+                            case "2": {
+                                if (nBrownAliens == 0) {
+                                    nBrownAliens++;
+                                    correct = true;
+                                    crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.BROWN));
 
-                          } else {
+                                } else {
 
-                              if (nPurpleAliens == 0) {
-                                  CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
-                              }
-                              CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
+                                    if (nPurpleAliens == 0) {
+                                        CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
+                                    }
+                                    CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
 
-                              choice = readLine("Choose (1/2/3)>");
-                              break;
+                                    choice = readLine("Choose (1/2/3)>");
+                                    break;
 
 
-                          }
-                      }
+                                }
+                            }
 
-                      case "3": {
-                          crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
+                            case "3": {
+                                crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
 
-                      }
-                  }
-
+                            }
+                        }
 
 
                 }
@@ -745,7 +748,6 @@ public class Tui implements View, Observable {
         notifyObservers(crewInitUpdate);
 
     }
-
 
 
     public void showFlightBoard() throws NoSuchFieldException, ClassNotFoundException, IllegalAccessException {
@@ -761,7 +763,6 @@ public class Tui implements View, Observable {
         colorsToPrint = (ArrayList<Color>) myFB.getFlightBoardMap().getFlightBoardMapSlots().stream().map(FlightBoardMapSlot::getPlayerToken).toList();
 
         FlightBoardTUI.printPistaRettangolare(colorsToPrint);
-
 
 
     }
@@ -782,8 +783,8 @@ public class Tui implements View, Observable {
         for (Observer observer : observers) {
             try {
                 observer.update(message);
-            }
-            catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition | InterruptedException e) {
+            } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition |
+                     InterruptedException e) {
                 System.err.println(e.getMessage());
             }
         }
