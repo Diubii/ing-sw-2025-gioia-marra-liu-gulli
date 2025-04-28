@@ -49,6 +49,7 @@ public class MenuManager {
         out.println("j. Finish building");
         out.println("k. Reserve a tile in one of the slot(1 o 2)");
         out.println("menu. show menu");
+        out.println("reset. reset ");
     }
 
     public void showCheckShipMenu() {

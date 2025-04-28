@@ -31,12 +31,7 @@ public class TilePrintUtils {
 
         //Ciclo da 0 a 6 per colonne
         for(int i =0; i<columns; i++){
-            if(i+Offset < tileList.size()) {
-                tileRow[i] = getTileStrings(tileList.get(i + Offset));
-            }
-            else{
-                tileRow[i]=getTileStrings(null);
-            }
+            tileRow[i]=getTileStrings(tileList.get(i+Offset));
         }
 
         return tileRow;
@@ -47,8 +42,10 @@ public class TilePrintUtils {
         int r, c;
 
         rows = tileList.size() / columns;
+        int lastRow = tileList.size()%columns;
+        if(lastRow!=0) rows++;
         for (r = 0; r < rows; r++) {
-
+            if(r == rows-1 && lastRow!= 0) columns= lastRow;
             //Ottengo tutta la Riga di Tiles e per ciascuna le righe di cui è fatta
             String[][] TilesStringRow = composeRow(tileList, r, columns);
 
@@ -62,7 +59,7 @@ public class TilePrintUtils {
         }
     }
 
-                                     /**
+    /**
      * Prints a Tile directly to console
      * @param tile
      */

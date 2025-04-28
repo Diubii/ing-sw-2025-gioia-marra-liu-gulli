@@ -662,7 +662,7 @@ public class ServerController {
             placeTileResponse.setMessage("SUCCESS");
 
             //da capire se ha senso creare una PlaceTileResponse
-//            clientHandler.sendMessage(placeTileResponse);
+            clientHandler.sendMessage(placeTileResponse);
 
 
 

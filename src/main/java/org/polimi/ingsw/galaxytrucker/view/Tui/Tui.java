@@ -315,18 +315,24 @@ public class Tui implements View, Observable {
 
     @Override
     public void showBuildingMenu() {
-        try {
-            String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
-            if (input.equals("m") || input.equals("menu") || input.equals("?")) {
-                menuManager.showCurrentMenu();
+        boolean valid = false;
+        do {
+            try {
+                String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
+                if (input.equals("m") || input.equals("menu") || input.equals("?")) {
+                    menuManager.showCurrentMenu();
+                }
+                    clientController.handleBuildingMenuChoice(input);
 
+                valid = true;
+            } catch (IllegalArgumentException e) {
+                out.println("Invalid option. Please try again: " + e.getMessage());
+
+            } catch (Exception e) {
+                out.println("Unexpected error: " + e.getMessage());
+                e.printStackTrace();
             }
-
-            clientController.handleBuildingMenuChoice(input);
-
-        } catch (Exception e) {
-            out.println(" Error: " + e.getMessage());
-        }
+        } while (!valid);
     }
 
     @Override
@@ -413,10 +419,10 @@ public class Tui implements View, Observable {
             try {
                 String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
                 Position pos = InputUtils.parseCoordinate(input);
-                clientController.moveCurrentTile(pos.getX(), pos.getY());
+                clientController.moveCurrentTile(pos.getY()-5, pos.getX()-4);
                 valid = true;
             } catch (IllegalArgumentException e) {
-                out.println("Invalid format. Please enter coordinates in format (x,y), like (2,3).");
+                out.println("Invalid format. Please enter coordinates in format (x,y), like (4,5), either the coordinates are out of bounds, or the coordinates are not available. ");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (Exception e) {
@@ -435,8 +441,16 @@ public class Tui implements View, Observable {
     @Override
     public void showFaceUpTiles() {
         List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
+        int size = faceUpTiles.size();
+
+        if (size == 0) {
+            out.println("No face up tiles. Try again later or choose another option from the menu. ");
+            showBuildingMenu();
+            return;
+        }
         out.println("Face up tiles size: " + faceUpTiles.size());
         TilePrintUtils.printTileList(new ArrayList<>(faceUpTiles), 3);
+        showBuildingMenu();
     }
 
 

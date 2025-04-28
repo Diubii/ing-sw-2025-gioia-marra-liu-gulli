@@ -380,7 +380,8 @@ public class ClientController implements Observer {
                 }
                 case "c" -> {
 
-                        sendGetFaceUpTilesRequest();
+                     view.showFaceUpTiles();
+
                 }
                 case "d" -> {
                     if (currentTileInHand != null) {
@@ -417,7 +418,15 @@ public class ClientController implements Observer {
                       throw new RuntimeException(e);
                   }
             }
-                case "k" -> view.askPickReservedTile(false);
+                case "k" -> {
+                    if(currentTileInHand != null) {
+                        view.askPickReservedTile(false);
+                    }
+                    else{
+                        view.showGenericMessage("You don't have a tile in hand!");
+                        view.showBuildingMenu();
+                    }
+                }
 
                 case "reset" -> {
                   break;
@@ -530,13 +539,7 @@ public class ClientController implements Observer {
     private void sendGetFaceUpTilesRequest() {
     }
 
-    public void getFaceUpTilesRequest() throws IOException, ExecutionException, InterruptedException {
 
-        view.showFaceUpTiles();
-        view.showGenericMessage("Fetching face-up tiles...");
-        view.showBuildingMenu();
-
-    }
     public void handleFaceUpTileUpdate(FaceUpTileUpdate update, boolean shouldShow){
 //        List<Tile> faceUpTiles = update.getFaceUpTiles();
 //        synchronized (myModel) {
@@ -663,9 +666,17 @@ public class ClientController implements Observer {
 @NeedsToBeCompleted
 //cambiare metodi di stampa
     public void showTileInHand() {
+    if(currentTileInHand != null && currentPosition != null) {
 
-        view.showTile(currentTileInHand);
-        view.showGenericMessage("Tile in hand successfully.");
+            view.showTile(currentTileInHand);
+
+        if (currentPosition != null) {
+            view.showGenericMessage("Tile in Position: " + currentPosition.getX() + ", " + currentPosition.getY() + " in hand.");
+        }
+    }
+    else{
+        view.showGenericMessage("No tile in hand.");
+    }
         view.showBuildingMenu();
     }
 
@@ -679,11 +690,10 @@ public class ClientController implements Observer {
     }
 
 // g
-public void moveCurrentTile(int x, int y) throws ExecutionException {
-    Position pos = new Position(x, y);
+public void moveCurrentTile(int y, int x) throws ExecutionException {
+    Position pos = new Position(y, x);
     Ship ship = myModel.getMyInfo().getShip();
-
-    if (pos.getX() < 0 || pos.getY() < 0 ||
+ if (pos.getX() < 0 || pos.getY() < 0 ||
             pos.getX() >= ship.getShipBoard()[0].length ||
             pos.getY() >= ship.getShipBoard().length) {
         throw new IllegalArgumentException("Position out of bounds.");
@@ -759,11 +769,10 @@ public void moveCurrentTile(int x, int y) throws ExecutionException {
     public void handleTileDiscardUpdate(TileDiscardedUpdate update){
         new Thread(() -> {
             Tile discardedTile = update.getTile();
-            synchronized (myModel) {
+            synchronized (myModel.getFaceUpTiles()) {
                 myModel.getFaceUpTiles().add(discardedTile);
             }
-            view.showGenericMessage("A tile has been discarded and added back to face-up tiles.");
-            view.showBuildingMenu();
+
         }).start();
     }
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {
