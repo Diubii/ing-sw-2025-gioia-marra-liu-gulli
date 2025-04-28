@@ -2,9 +2,7 @@ package org.polimi.ingsw.galaxytrucker.controller;
 
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -15,6 +13,7 @@ import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientRMI;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -30,7 +29,6 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ClientNetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageNameVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 
 import java.io.FilterInputStream;
@@ -334,8 +332,8 @@ public class ClientController implements Observer {
 
         if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
             if (clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER)){
-                view.forceReset();
                 clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
+                view.forceReset();
                 try {
                     client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
 
@@ -380,7 +378,7 @@ public class ClientController implements Observer {
                 }
                 case "c" -> {
 
-                        sendGetFaceUpTilesRequest();
+                        view.showFaceUpTiles();
                 }
                 case "d" -> {
                     if (currentTileInHand != null) {
@@ -678,24 +676,27 @@ public class ClientController implements Observer {
 
     }
 
-// g
-public void moveCurrentTile(int x, int y) throws ExecutionException {
-    Position pos = new Position(x, y);
+//
+
+public void resetCurrentPos(){
+        currentPosition = null;
+}
+
+public void setCurrentPos(int x, int y) throws ExecutionException {
+    Position pos = new Position(y, x);
     Ship ship = myModel.getMyInfo().getShip();
 
-    if (pos.getX() < 0 || pos.getY() < 0 ||
-            pos.getX() >= ship.getShipBoard()[0].length ||
-            pos.getY() >= ship.getShipBoard().length) {
-        throw new IllegalArgumentException("Position out of bounds.");
+    if (!Util.inBoundaries(pos.getY(), pos.getX()) ||  ship.getInvalidPositions().contains(pos)) {
+        throw new IllegalArgumentException("Invalid Position" + pos.getY() + pos.getX());
     }
 
-    if (ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
-        throw new IllegalArgumentException("Invalid position: cannot place tile here.");
-    }
+//    if (ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
+//        throw new IllegalArgumentException("Invalid position: cannot place tile here.");
+//    }
 
     currentPosition = pos;
-    view.showGenericMessage("Tile moved successfully.");
-    view.showBuildingMenu();
+//    view.showGenericMessage("Tile moved successfully.");
+//    view.showBuildingMenu();
 }
 
     // h
@@ -711,6 +712,7 @@ public void moveCurrentTile(int x, int y) throws ExecutionException {
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
+        resetCurrentPos();
 
         try {
             client.sendMessage(request);
@@ -759,11 +761,11 @@ public void moveCurrentTile(int x, int y) throws ExecutionException {
     public void handleTileDiscardUpdate(TileDiscardedUpdate update){
         new Thread(() -> {
             Tile discardedTile = update.getTile();
-            synchronized (myModel) {
+            synchronized (myModel.getFaceUpTiles()) {
                 myModel.getFaceUpTiles().add(discardedTile);
             }
-            view.showGenericMessage("A tile has been discarded and added back to face-up tiles.");
-            view.showBuildingMenu();
+//            view.showGenericMessage("A tile has been discarded and added back to face-up tiles.");
+//            view.showBuildingMenu();
         }).start();
     }
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {

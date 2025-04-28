@@ -14,7 +14,9 @@ public class PlaceTileResponse extends NetworkMessage implements Serializable {
 
     private String message;
 
-    public PlaceTileResponse(String message) {
+    public PlaceTileResponse(String message, int id) {
+
+        super(id);
         this.message = message;
     }
 
