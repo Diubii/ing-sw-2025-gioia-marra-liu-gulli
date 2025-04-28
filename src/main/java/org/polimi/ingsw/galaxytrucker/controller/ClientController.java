@@ -364,12 +364,19 @@ public class ClientController implements Observer {
                 case "menu", "?", "m" -> view.handleChoiceForPhase(phase);
                 case "a" -> view.askFetchShip();
                 case "b" -> {
-                    try {
-                        sendShipUpdate();
-                    } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                    if(myModel.getCardDecks().size() != 1) {
+
+                        try {
+                            sendShipUpdate();
+                        } catch (IOException | ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        view.askViewAdventureDecks();
                     }
-                    view.askViewAdventureDecks();
+                    else{
+                        view.showGenericMessage("You are not allowed to spy on the learningMatch!");
+                        view.showBuildingMenu();
+                    }
                 }
                 case "c" -> {
 
@@ -495,11 +502,21 @@ public class ClientController implements Observer {
 //case (b)
     public void viewAdventureCardDeck(int DeckID){
         ArrayList<CardDeck> cardDecks = myModel.getCardDecks();
+
+        CardDeck deck = cardDecks.get(DeckID);
+        boolean spyable = deck.isSpyable();
         if(!cardDecks.isEmpty()){
-            CardDeck deck = cardDecks.get(DeckID);
-            int colums = 4;
-            CardPrintUtils.printDeck(deck, colums);
-            view.showGenericMessage("Deck  "+ DeckID + " received successfully. ");
+
+                if (spyable) {
+                    int colums = 4;
+                    CardPrintUtils.printDeck(deck, colums);
+                    DeckID++;
+                    view.showGenericMessage("Deck  " + DeckID + " received successfully. ");
+                } else {
+                    view.showGenericMessage("You are not allowed to spy on this deck!");
+                    view.showBuildingMenu();
+                }
+
 
 //
         }else{
