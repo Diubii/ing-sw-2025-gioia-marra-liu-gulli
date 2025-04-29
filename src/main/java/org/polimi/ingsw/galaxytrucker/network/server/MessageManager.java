@@ -5,7 +5,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitor;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

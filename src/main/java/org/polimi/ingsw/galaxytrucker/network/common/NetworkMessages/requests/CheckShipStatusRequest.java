@@ -1,7 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,10 +13,14 @@ public class CheckShipStatusRequest extends NetworkMessage implements Serializab
     @Serial
     private static final long serialVersionUID = 3091283L;
 
-    private final ArrayList<Integer> removedTilesId = new ArrayList<>();
+    private  ArrayList<Integer> removedTilesId = new ArrayList<>();
 
     public void addRemovedTileId(int id) {
         removedTilesId.add(id);
+    }
+
+    public void setRemovedTilesId(ArrayList<Integer> removedTilesId) {
+        this.removedTilesId = removedTilesId;
     }
 
     public void removeRemovedTileId(int id) {
@@ -25,6 +29,10 @@ public class CheckShipStatusRequest extends NetworkMessage implements Serializab
 
     public ArrayList<Integer> getRemovedTilesId() {
         return removedTilesId;
+    }
+
+    public CheckShipStatusRequest(){
+        super();
     }
 
 

@@ -17,12 +17,29 @@ public class ClientModel {
         this.myInfo = new PlayerInfo();
         this.playerInfos = new ArrayList<>();
     }
+
+
+    private ArrayList<Integer> tilesToRemove = new ArrayList<>();
     private PlayerInfo myInfo;
     private ArrayList<PlayerInfo> playerInfos;
     private FlightBoard flightBoard;
     private ArrayList<CardDeck> cardDecks = new ArrayList<>();
     private ArrayList<Tile>  faceUpTiles = new ArrayList<>();
     private Tile[] reservedTiles = new Tile[2];
+
+    public ArrayList<Integer> getTilesToRemove() {
+        return tilesToRemove;
+    }
+
+    public void setTilesToRemove(ArrayList<Integer> tilesToRemove) {
+        this.tilesToRemove = tilesToRemove;
+    }
+
+    public void addTileToRemove(Integer tileID) {
+        this.tilesToRemove.add(tileID);
+    }
+
+
     public ArrayList<CardDeck> getCardDecks() {
         return cardDecks;
     }

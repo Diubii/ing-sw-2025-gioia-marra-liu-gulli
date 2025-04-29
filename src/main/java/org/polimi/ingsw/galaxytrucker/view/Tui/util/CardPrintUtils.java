@@ -16,11 +16,13 @@ public class CardPrintUtils {
 
     private static AdventureCardPrintVisitor adventureCardPrintVisitor= new AdventureCardPrintVisitor();
 
-    public static String[][] composeRow(ArrayList<AdventureCard> CardList, int row, int columns) {
+    public static String[][] composeRow(ArrayList<AdventureCard> CardList, int row, int columns,int lastRow) {
         String[][] tileRow = new String[columns][5];
 
         int Offset= row*columns;
 
+        //Se è l'ultima dopo aver calcolato l'offset deve fare solo le colonne dell'ultima fila
+        if(lastRow!=0) columns=lastRow;
 
         //Ciclo da 0 a 6 per colonne
         for(int i =0; i<columns; i++){
@@ -31,15 +33,23 @@ public class CardPrintUtils {
     }
 
     public static void printDeck(CardDeck deck,int columns) {
-        int rows = deck.getCards().size()/columns, rowsEachCard = 7;
+        int rows = deck.getCards().size()/columns, rowsEachCard = 9;
         int r, c;
 
-
+        int lastRow = deck.getCards().size()%columns;
+        if(lastRow!=0) rows++;
         //Compone la riga come per la nave per stamparle affiancate
         for ( r = 0; r < rows; r++) {
+            String[][] TilesStringRow;
+            if(r == rows-1 && lastRow!= 0){
+                //Ottengo tutta la Riga di Tiles e per ciascuna le righe di cui è fatta
+                TilesStringRow = composeRow(deck.getCards(), r, columns,lastRow);
+                columns=lastRow; //Per l'ultima
+            }
+            else{
+                TilesStringRow = composeRow(deck.getCards(), r, columns,0);
+            }
 
-            //Ottengo tutta la Riga di Tiles e per ciascuna le righe di cui è fatta
-            String[][] TilesStringRow = composeRow(deck.getCards(), r, columns);
 
             for (int i = 0; i < rowsEachCard; i++) {
 

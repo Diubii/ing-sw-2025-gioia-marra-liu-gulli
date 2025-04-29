@@ -48,6 +48,8 @@ public class ServerController {
     private final ArrayList<LobbyInfo> lobbyInfos = new ArrayList<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final Object positionLock = new Object();
+    private final Object checkShipLock = new Object();
+
     private ArrayList<Tile> gameTiles;
 
 
@@ -470,21 +472,30 @@ public class ServerController {
                 .toList();
 
         for (Slot slot : Slots) {
-            if (message.getRemovedTilesId().contains(slot.getTile().getId())) {
+            if (slot.getTile() != null && message.getRemovedTilesId().contains(slot.getTile().getId())) {
                 ship.removeTile(slot.getTile(), slot.getPosition(), true);
             }
         }
 
         Boolean result = ship.checkShip();
-        CheckShipStatusResponse response = new CheckShipStatusResponse(ship, result);
+        ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
+        CheckShipStatusResponse response = new CheckShipStatusResponse(ship, result,message.getID());
+        clientHandler.sendMessage(shipUpdate);
         clientHandler.sendMessage(response);
 
 
 
         if (result) {
-            myGame.getGameController().addCompletedShip();
-            if (myGame.getRealGame().getNumPlayers() == myGame.getGameController().getnCompletedShips()){
-                myGame.getGameController().nextState();
+            synchronized (checkShipLock) {
+                myGame.getGameController().addCompletedShip();
+                if (myGame.getRealGame().getNumPlayers() == myGame.getGameController().getnCompletedShips() && !myGame.getGameController().getGameState().equals(GameState.CREW_INIT)) {
+                    myGame.getGameController().nextState();
+
+                    ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+
+                    PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.CREW_INIT);
+                    broadCast(playerHandlers, phaseUpdate);
+                }
             }
         }
 
@@ -503,22 +514,29 @@ public class ServerController {
         String nickname = myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
         AskPositionUpdate askPositionUpdate;
         ArrayList<Integer> validPos = new ArrayList<>();
+        Boolean flag = false;
 
         // [1] fisso l'ultima tile di Player
 
         //devo chiedere in che posizione vuole essere
 
-        if (myGame.getPlayerShipFinishedSize() == 0) {
-            myGame.addPlayerShipFinished(nickname);
+        synchronized (myGame.lock5) {
+            if (myGame.getPlayerShipFinishedSize() == 0) {
+                myGame.addPlayerShipFinished(nickname);
 
-            //allroa e' il primo e fa partire il timer, e lo aggiungo
-            startTimer(20, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
-        } else {
-            //mandare un messaggio "ATTENDENDO ... SCELTA PRECEDENTI"
-            myGame.addPlayerShipFinished(nickname);
+
+
+                //allroa e' il primo e fa partire il timer, e lo aggiungo
+                startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
+            } else {
+
+                if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers() -1) flag = true;
+                //mandare un messaggio "ATTENDENDO ... SCELTA PRECEDENTI"
+                myGame.addPlayerShipFinished(nickname);
+
+            }
 
         }
-
 
         synchronized (positionLock) {
             int maxPos = myGame.getRealGame().getNumPlayers();
@@ -533,6 +551,7 @@ public class ServerController {
             }
 
             askPositionUpdate = new AskPositionUpdate(validPos);
+            askPositionUpdate.nickname = nickname;
             CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
 
             //aggiungo alle pending responses
@@ -578,7 +597,7 @@ public class ServerController {
 
                     //trovo la tile e la fisso
                     for (Slot slot : slots) {
-                        if (slot.getTile().getId() == lastTileId) {
+                        if (slot.getTile() != null && slot.getTile().getId() == lastTileId) {
                             myShip.getShipBoard()[slot.getPosition().getY()][slot.getPosition().getX()].getTile().setFixed(true);
                             break;
                         }
@@ -592,7 +611,7 @@ public class ServerController {
         }
 
         //controllo se tutti hanno finito
-        if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
+        if (flag) {
             //se hanno finito tutti allora si passa alla fase di check_ship
             myGame.getGameController().nextState();
             System.out.println("STATE: " + myGame.getGameController());

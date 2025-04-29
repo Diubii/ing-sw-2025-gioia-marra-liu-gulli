@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.util.Pair;
 
@@ -76,24 +77,46 @@ public class Tui implements View, Observable {
 
 
     private volatile CompletableFuture<String> currentInputFuture = null;
+    private static final AtomicBoolean stopInput = new AtomicBoolean(false);
+
+    private Boolean flag  = false;
+
+    // Metodo per bloccare l'input manualmente
+    public static void blockInput() {
+        stopInput.set(true);
+    }
+
+    // Metodo per sbloccare l'input manualmente
+    public static void unblockInput() {
+        stopInput.set(false);
+    }
 
     public String readLine(String prompt) throws InterruptedException, ExecutionException {
         currentInputFuture = new CompletableFuture<>();
+        flag = false;
+
 
         new Thread(() -> {
-
-            System.out.print(prompt);
             Scanner scanner = new Scanner(System.in);
-            if (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                currentInputFuture.complete(line);
-            }
+
+                System.out.print(prompt);
+                if (scanner.hasNextLine() ) {
+                    String line = scanner.nextLine();
+                    if (flag){
+                        Thread.currentThread().interrupt();
+
+                    }
+                    currentInputFuture.complete(line);
+                }
 
         }).start();
 
         String input = currentInputFuture.get();
 
-        if (input.contains("RESET")) input = "RESET";
+        if (input.contains("RESET")) {
+            flag = true;
+            input = "RESET";
+        }
 
         return input;
     }
@@ -102,6 +125,7 @@ public class Tui implements View, Observable {
     public void forceReset() {
         if (currentInputFuture != null && !currentInputFuture.isDone()) {
             currentInputFuture.complete("RESET");
+
         }
     }
 
@@ -292,7 +316,7 @@ public class Tui implements View, Observable {
             return;
         } else {
             menuManager.setMenuText(phase);
-            if (phaseUpdate.getState().equals(GameState.BUILDING_START) || phaseUpdate.getState().equals(GameState.SHIP_CHECK)) {
+            if (phaseUpdate.getState().equals(GameState.BUILDING_START) || phaseUpdate.getState().equals(GameState.SHIP_CHECK) || phaseUpdate.getState().equals(GameState.CREW_INIT)) {
                 toShowCurrentMenu();
                 handleChoiceForPhase(phase);
             }
@@ -309,6 +333,8 @@ public class Tui implements View, Observable {
     public void handleChoiceForPhase(GameState phase) {
         switch (phase) {
             case BUILDING_START -> showBuildingMenu();
+            case SHIP_CHECK -> showcheckShipMenu();
+            case CREW_INIT -> showembarkCrewMenu();
 
             default -> {
 //                out.println("Please wait. No input is required at this stage.");
@@ -431,7 +457,7 @@ public class Tui implements View, Observable {
                 clientController.setCurrentPos(pos.getX()-4, pos.getY()-5);
                 valid = true;
             } catch (IllegalArgumentException e) {
-                out.println(e.getMessage() + pos.getY() );
+                out.println(e.getMessage() );
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (Exception e) {
@@ -605,7 +631,7 @@ public class Tui implements View, Observable {
             }
             out.println("Do you want to place this tile at the current position and rotation? (y/n)");
             String input = readLine("> ").trim().toLowerCase();
-            if (checkReset(input)) return;;
+            if (checkReset(input)) return;
 
             boolean confirm = input.equals("y");
             if (confirm) {
@@ -633,7 +659,9 @@ public class Tui implements View, Observable {
             String input = readLine("\nChoose an option (a–c) or menu: ").trim().toLowerCase();
 
 
+
             clientController.handleCheckShipChoice(input);
+
 
         } catch (Exception e) {
             out.println(" Error: " + e.getMessage());
@@ -643,7 +671,81 @@ public class Tui implements View, Observable {
     @Override
     public void showembarkCrewMenu() {
 
+        try {
+            String input = readLine("\nChoose an option (a–b) or menu: ").trim().toLowerCase();
+
+
+
+            clientController.handleEmbarkCrewMenu(Character.toString(input.charAt(input.length()-1)));
+
+
+        } catch (Exception e) {
+            out.println(" Error: " + e.getMessage());
+        }
     }
+
+    @Override
+    public void askRemoveTile(Ship ship) {
+
+        boolean valid = false;
+        Position pos1 = null;
+        do {
+            try {
+                String input = readLine("Enter position to remove the Tile from(format: (x,y)): ").trim();
+                pos1 = InputUtils.parseCoordinate(input);
+
+                Position pos = new Position(pos1.getY() - 5, pos1.getX() - 4);
+
+                if (!Util.inBoundaries(pos.getY(), pos.getX()) || ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() == null) {
+
+                    throw new IllegalArgumentException("Invalid Position" + pos.getY() + pos.getX());
+
+                }
+//                valid = true;
+
+                Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+                Tile tile = ship.getShipBoard()[pos.getY()][pos.getX()].getTile();
+
+
+                clientController.getMyModel().addTileToRemove(tile.getId());
+                ship.removeTile(tile, pos, true);
+
+                if (ship.remaningTiles() == 0){
+                    System.out.println("Your ship is a ghost, go back to the menuuuuuu");
+                    showcheckShipMenu();
+                    return;
+                }
+
+                String input2 = readLine("Do you want to finish? (y/n)").trim().toLowerCase();
+
+
+                while (!input2.equals("n") && !input2.equals("y")) {
+
+
+                    System.out.println("Invalid input. Please enter (y/n))");
+                    input2 = readLine("Do you want to finish? (y/n)").trim().toLowerCase();
+
+
+                }
+                if (input2.equals("y")) {
+                    menuManager.showCurrentMenu();
+                    showcheckShipMenu();
+                    valid = true;
+                }
+
+
+            } catch (IllegalArgumentException e) {
+                out.println(e.getMessage());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (Exception e) {
+                out.println("Unexpected error: " + e.getMessage());
+            }
+        } while (!valid);
+
+        showcheckShipMenu();
+    }
+
 
     @Override
     public void showShip(Ship targetShipView) {
@@ -653,20 +755,27 @@ public class Tui implements View, Observable {
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
 
-        String input;
 
+
+        String input1;
+
+        MenuManager.clearConsole();
         System.out.println("Free positions: ");
         for (Integer i : validPositions) {
             System.out.println(" --> " + i);
         }
 
-        input = readLine(" Choose one > ").trim().toLowerCase();
-        while (Integer.parseInt(input) < validPositions.getFirst() || Integer.parseInt(input) > validPositions.getLast()) {
+        input1 = readLine(" Choose one > ").trim().toLowerCase();
+        int size = input1.length();
+        char input = input1.charAt(size-1);
+
+
+        while (Integer.parseInt(Character.toString(input)) < validPositions.getFirst() || Integer.parseInt(Character.toString(input)) > validPositions.getLast()) {
             askFlightBoardPosition(validPositions, id);
         }
 
 
-        AskPositionResponse askPositionResponse = new AskPositionResponse(id, Integer.parseInt(input));
+        AskPositionResponse askPositionResponse = new AskPositionResponse(id, Integer.parseInt(Character.toString(input)));
 
         clientController.getClient().sendMessage(askPositionResponse);
 
@@ -689,6 +798,7 @@ public class Tui implements View, Observable {
     }
 
 
+    @Override
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
 
         //salvo tutte le posizioni delle housing
@@ -699,6 +809,8 @@ public class Tui implements View, Observable {
         int nPurpleAliens = 0;
 
         CrewInitUpdate crewInitUpdate = new CrewInitUpdate();
+
+        System.out.println("N OF HOUSING " + housinPos.size());
 
 
         for (Position pos : housinPos) {
@@ -768,7 +880,7 @@ public class Tui implements View, Observable {
                             }
 
                             case "3": {
-                                crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
+                                crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
 
                             }
                         }
@@ -835,7 +947,7 @@ public class Tui implements View, Observable {
 
 
     private Boolean checkReset(String input){
-        return input.equals("reset");
+        return input.equals("reset") || input.equals("RESET");
     }
 }
 

@@ -19,6 +19,7 @@ public class MenuManager {
 
             case BUILDING_START -> currentMenu = MenuText.BUILDING_MENU;
             case SHIP_CHECK -> currentMenu = MenuText.CHECK_SHIP_MENU;
+            case CREW_INIT -> currentMenu = MenuText.EMBARK_CREW_MENU;
             default -> currentMenu = MenuText.NONE;
         }
 

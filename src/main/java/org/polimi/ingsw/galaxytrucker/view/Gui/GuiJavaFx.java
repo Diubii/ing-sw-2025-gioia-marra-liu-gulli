@@ -285,6 +285,16 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
+    public void askRemoveTile(Ship ship) {
+
+    }
+
+    @Override
+    public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
+
+    }
+
+    @Override
     public void showShip(Ship targetShipView) {
         return;
     }

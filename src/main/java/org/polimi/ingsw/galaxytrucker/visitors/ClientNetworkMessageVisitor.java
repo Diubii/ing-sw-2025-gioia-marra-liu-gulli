@@ -8,6 +8,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

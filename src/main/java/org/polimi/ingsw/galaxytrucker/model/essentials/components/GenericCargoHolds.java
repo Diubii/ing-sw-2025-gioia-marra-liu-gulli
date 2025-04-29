@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
 import java.util.ArrayList;
@@ -66,12 +68,14 @@ public class GenericCargoHolds extends Component {
 
     }
 
-    public boolean isSpecial(){
-        return special;
-    }
 
     @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
+    }
+
+    public Boolean isSpecial() {
+
+        return special;
     }
 }

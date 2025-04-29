@@ -46,4 +46,5 @@ module org.polimi.ingsw.galaxytrucker {
     exports org.polimi.ingsw.galaxytrucker.controller;
     exports org.polimi.ingsw.galaxytrucker.exceptions;
     exports org.polimi.ingsw.galaxytrucker.model.essentials.components;
+    exports org.polimi.ingsw.galaxytrucker.visitors.Network;
 }

@@ -10,7 +10,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.Ni
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 
 import java.io.*;
 import java.net.Socket;
