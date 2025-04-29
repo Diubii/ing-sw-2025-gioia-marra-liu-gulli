@@ -248,13 +248,13 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
     @Override
-    public Void visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest) {
+    public Void visit(ActivateComponentRequest activateDoubleEnginesRequest) {
         return null;
     }
 
     @Override
-    public Void visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse){
-        serverController.handleActivateDoubleEnginesResponse(activateDoubleEnginesResponse, clientHandler);
+    public Void visit(ActivateComponentResponse activateComponentResponse){
+        serverController.handleActivateDoubleEnginesResponse(activateComponentResponse, clientHandler);
         return null;
     }
 

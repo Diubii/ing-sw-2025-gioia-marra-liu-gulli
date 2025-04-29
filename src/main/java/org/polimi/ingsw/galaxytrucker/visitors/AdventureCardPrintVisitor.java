@@ -18,7 +18,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
                 "┌----------------┐",
                 "|   Abb. Ship    |",
                 "|                |",
-                "|  -"+card.getCrewMembersLost() + " Crew       |",
+                "|  -"+card.getRequiredCrewMembers() + " Crew       |",
                 "|                |",
                 "|  +"+card.getCredits()+" Credit     |",
                 "|                |",
@@ -34,7 +34,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
                 "┌----------------┐",
                 "|  Abb. Station  |",
                 "|                |",
-                "|  Crew: "+card.getCrewMemebers()+"       |",
+                "|  Crew: "+card.getRequiredCrewMembers()+"       |",
                 "|                |",
                 "|  Merci:              |",
                 "|                |",
@@ -135,8 +135,8 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
 
         for(int i=0; i< card.getMeteors().size(); i++){
 
-            if( card.getMeteors().get(i).getDirection()== ProjectileDirection.FRONT
-                    ||card.getMeteors().get(i).getDirection()== ProjectileDirection.BOTTOM ){
+            if( card.getMeteors().get(i).getDirection()== ProjectileDirection.UP
+                    ||card.getMeteors().get(i).getDirection()== ProjectileDirection.DOWN){
                 if(i==0){
                     sb.append("|      ");
                     sb2.append("|      ");
@@ -177,7 +177,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
                 DoubleLinePrec = true;
 
 
-                if(card.getMeteors().get(i).getDirection() == ProjectileDirection.FRONT){
+                if(card.getMeteors().get(i).getDirection() == ProjectileDirection.UP){
                     sb.append("↓ ");
                     if( card.getMeteors().get(i).getSize() == ProjectileSize.BIG){
                         sb2.append("● ");

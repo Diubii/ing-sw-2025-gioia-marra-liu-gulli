@@ -1,6 +1,5 @@
 package org.polimi.ingsw.galaxytrucker;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
@@ -319,7 +318,7 @@ public class TileCardsJsonUtility extends Application {
     public void handleJsonCiascuna(ActionEvent actionEvent) {
 
         //Esempio Proiettili
-        Projectile EsProiettile = new Projectile(ProjectileType.Meteor, ProjectileDirection.FRONT, ProjectileSize.BIG);
+        Projectile EsProiettile = new Projectile(ProjectileType.Meteor, ProjectileDirection.UP, ProjectileSize.BIG);
         ArrayList<Projectile> EsempioProj = new ArrayList<>();
         EsempioProj.add(EsProiettile);
         EsempioProj.add(EsProiettile);

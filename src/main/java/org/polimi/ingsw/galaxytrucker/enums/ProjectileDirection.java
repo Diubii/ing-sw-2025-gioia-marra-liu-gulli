@@ -1,6 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.enums;
 
 public enum ProjectileDirection {
+            UP,
 
-    FRONT, RIGHT, BOTTOM, LEFT
+    LEFT,         RIGHT,
+
+           DOWN
 }

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ public class Shield extends Component {
         return new ArrayList<>(protectedSides);
     }
 
-    public Boolean getCharged() {
+    public Boolean isCharged() {
         return charged;
     }
 

@@ -17,6 +17,22 @@ public class DoubleEngine extends Engine{
         this.charged = charged;
     }
 
+    @Override
+    public int getEnginePower() {
+        calculatePower();
+        return enginePower;
+    }
+
+    private void calculatePower() {
+        if(getRotation()!=0){
+            if(charged) enginePower = 2;
+            else enginePower = 1;
+        }
+        else{
+            enginePower = 0;
+        }
+    }
+
     public Boolean getCharged() {
         return charged;
     }

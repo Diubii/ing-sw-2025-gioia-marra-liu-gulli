@@ -1,9 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
 import javafx.util.Pair;
-import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
-import org.polimi.ingsw.galaxytrucker.enums.Connector;
-import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
+import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
@@ -37,7 +36,7 @@ public class Ship implements Serializable {
     private ArrayList<Pair<Good, Pair<Position, Slot>>> listOfGoods;
     private ArrayList<Good> listNotLoadedGoods;
     private Tile lastTile;
-    private  Boolean synch;
+    private Boolean synch;
 
 
     private Boolean learningMatch;
@@ -171,7 +170,7 @@ public class Ship implements Serializable {
         return nCrew;
     }
 
-    public Boolean getSynch(){
+    public Boolean getSynch() {
         return synch;
     }
 
@@ -312,53 +311,52 @@ public class Ship implements Serializable {
 
     /**
      * Rimuove una tile dalla nave.
+     * // @param tile La tile da rimuovere.
      *
-     * @param tile La tile da rimuovere.
-     * @param pos  La posizione della tile da rimuovere.
+     * @param pos La posizione della tile da rimuovere.
      */
-    public void removeTile(Tile tile, Position pos, Boolean isNormalRemove) {
-        ComponentNameVisitor visitor = new ComponentNameVisitor();
-
-        if (tile != null && tile.getMyComponent() != null) {
-            System.out.println("STO ELIMIMANDO" + pos.getY() + pos.getX());
+    public void removeTile(Position pos, Boolean isNormalRemove) {
+        //ComponentNameVisitor visitor = new ComponentNameVisitor();
+        //if (tile != null && tile.getMyComponent() != null) {
+        System.out.println("STO ELIMIMANDO" + pos.getY() + pos.getX());
 //LOGICA PER AGGIORNARE LE POSIZIONI AL PRIMO INSERIMENTO
-            switch (tile.getMyComponent().accept(visitor)) {
-                case "BatterySlot":
-                    batteryPos.remove(pos);
-                    break;
-                case "Cannon":
-                    cannonPos.remove(pos);
-                    break;
-                case "Engine":
-                    enginePos.remove(pos);
-                    break;
-                case "ModularHousingUnit":
-                    housingPos.remove(pos);
-                    break;
-                case "GenericCargoHolds": {
-                    GenericCargoHolds test = (GenericCargoHolds) tile.getMyComponent();
-                    Boolean s = test.isSpecial();
-                    if (s) {
-                        redStoragePos.remove(pos);
-                    } else storagePos.remove(pos);
-                }
+//            switch (tile.getMyComponent().accept(visitor)) {
+//                case "BatterySlot":
+//                    batteryPos.remove(pos);
+//                    break;
+//                case "Cannon":
+//                    cannonPos.remove(pos);
+//                    break;
+//                case "Engine":
+//                    enginePos.remove(pos);
+//                    break;
+//                case "ModularHousingUnit":
+//                    housingPos.remove(pos);
+//                    break;
+//                case "GenericCargoHolds": {
+//                    GenericCargoHolds test = (GenericCargoHolds) tile.getMyComponent();
+//                    Boolean s = test.isSpecial();
+//                    if (s) {
+//                        redStoragePos.remove(pos);
+//                    } else storagePos.remove(pos);
+//                }
+//
+//                case "LifeSupportSystem":
+//                    lssPos.remove(pos);
+//                    break;
+//            }
 
-                case "LifeSupportSystem":
-                    lssPos.remove(pos);
-                    break;
-            }
-
-            //se sto distruggendo e non semplicemente eliminando le aggiungo alle broken
-            if (!isNormalRemove) {
-                brokenPositions.add(pos);
-            }
-
-            destroyedTiles++;
-            shipBoard[pos.getY()][pos.getX()].removeTile();
-
+        //se sto distruggendo e non semplicemente eliminando le aggiungo alle broken
+        if (!isNormalRemove) {
+            brokenPositions.add(pos);
         }
 
+        destroyedTiles++;
+        shipBoard[pos.getY()][pos.getX()].removeTile();
+
     }
+
+    //}
 
     /**
      * Calcola il numero di connettori esposti nella nave.
@@ -489,14 +487,14 @@ public class Ship implements Serializable {
 
                         }
 
-                        if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Cannon") || shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("DoubleCannon") ) {
+                        if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Cannon") || shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("DoubleCannon")) {
 
-                                Boolean temp = Util.CannonWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
-                                shipBoard[i][j].getTile().setWellConnected(temp);
-                                return temp;
-                            }
+                            Boolean temp = Util.CannonWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+                            shipBoard[i][j].getTile().setWellConnected(temp);
+                            return temp;
+                        }
 
-                            if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
+                        if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
 
                             AlienColor al = null;
                             ModularHousingUnit temp = (ModularHousingUnit) shipBoard[i][j].getTile().getMyComponent();
@@ -573,14 +571,13 @@ public class Ship implements Serializable {
                         .toList();
 
 
+                for (Slot slot : Slots) {
 
-                    for (Slot slot : Slots) {
+                    if (slot.getPosition().equals(temp) && slot.getLastAction()) {
+                        System.out.println("TILE DA RIM " + slot.getPosition().getY() + " " + slot.getPosition().getX());
 
-                        if (slot.getPosition().equals(temp) && slot.getLastAction()) {
-                            System.out.println("TILE DA RIM " + slot.getPosition().getY() + " " + slot.getPosition().getX());
-
-                            toRemove.add(board); // Segna la board per la rimozione
-                            toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
+                        toRemove.add(board); // Segna la board per la rimozione
+                        toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
 
 //                            Ship t2 = toAdd.getLast();
 //                            Ship tSh = new Ship(getLearningMatch());
@@ -588,12 +585,12 @@ public class Ship implements Serializable {
 //                            System.out.println("GETTRONC + ADD : SIZE" + toAdd.size());
 //                            System.out.println(tSh.toString());
 
-                            break;
-                        } else {
-                            if (slot.getPosition().equals(temp)) System.out.println("EXTRA");
+                        break;
+                    } else {
+                        if (slot.getPosition().equals(temp)) System.out.println("EXTRA");
 
-                        }
                     }
+                }
 
 
                 // Rimuove gli elementi segnati
@@ -635,7 +632,7 @@ public class Ship implements Serializable {
                 if (shipBoard[pos.getY() - 1][pos.getX()].getTile().getWellConnected()) {
                     System.out.println("OK");
 
-                    villagers.add(new Pair<>(ProjectileDirection.FRONT, shipBoard[pos.getY() - 1][pos.getX()]));
+                    villagers.add(new Pair<>(ProjectileDirection.UP, shipBoard[pos.getY() - 1][pos.getX()]));
 
                 } else {
                     brokenPos.add(new Position(pos.getY() - 1, pos.getX()));
@@ -673,7 +670,7 @@ public class Ship implements Serializable {
                 if (shipBoard[pos.getY() + 1][pos.getX()].getTile().getWellConnected()) {
                     System.out.println("OK");
 
-                    villagers.add(new Pair<>(ProjectileDirection.BOTTOM, shipBoard[pos.getY() + 1][pos.getX()]));
+                    villagers.add(new Pair<>(ProjectileDirection.DOWN, shipBoard[pos.getY() + 1][pos.getX()]));
 
                 } else {
                     brokenPos.add(new Position(pos.getY() + 1, pos.getX()));
@@ -800,7 +797,7 @@ public class Ship implements Serializable {
                         if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("Shield")) {
 
                             Shield tempShield = (Shield) tempTile.getMyComponent();
-                            if (tempShield.getCharged()) sides.addAll(tempShield.getProtectedSides());
+                            if (tempShield.isCharged()) sides.addAll(tempShield.getProtectedSides());
 
                         }
                     }
@@ -885,21 +882,21 @@ public class Ship implements Serializable {
 
         return false;
     }
-    public int remaningTiles(){
+
+    public int remaningTiles() {
         int remaingTiles = 0;
-        List<Tile> tiles =Arrays.stream(this.getShipBoard())
+        List<Tile> tiles = Arrays.stream(this.getShipBoard())
                 .flatMap(Arrays::stream).map(Slot::getTile)
                 .filter(Objects::nonNull)
                 .toList();
 
 
-        for (Tile tile : tiles){
-            if(tile!=null){
+        for (Tile tile : tiles) {
+            if (tile != null) {
                 remaingTiles++;
             }
             return remaingTiles;
         }
-
 
 
         return 0;
@@ -909,12 +906,37 @@ public class Ship implements Serializable {
         return setAsideTiles;
     }
 
-    public int calculateEnginePower(){
+    public int calculateEnginePower() {
         return getEnginePos().stream().mapToInt(p -> ((Engine) getComponentFromPosition(p)).getEnginePower()).sum();
     }
 
-    public Component getComponentFromPosition(Position position){
+    public Float calculateFirePower() {
+        return (float) getCannonPos().stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();
+    }
+
+    public Component getComponentFromPosition(Position position) {
         return shipBoard[position.getX()][position.getY()].getTile().getMyComponent();
+    }
+
+    public ArrayList<Position> getComponentPositionsFromName(String componentName) {
+
+        ArrayList<Position> positions = new ArrayList<>();
+
+        List<Slot> Slots = Arrays.stream(shipBoard)
+                .flatMap(Arrays::stream)
+                .filter(Objects::nonNull)
+                .toList();
+
+        for (Slot slot : Slots) {
+            Position p = slot.getPosition();
+            Tile tile = slot.getTile();
+            if (tile != null && tile.getMyComponent().accept(new ComponentNameVisitor()).equals(componentName)) {
+                positions.add(p);
+            }
+        }
+
+        return positions;
+
     }
 
     public Tile getLastTile() {
@@ -923,5 +945,128 @@ public class Ship implements Serializable {
 
     public void setLastTile(Tile tile) {
         lastTile = tile;
+    }
+
+    /**
+     * Removes the first tile hit by the projectile if the conditions to destroy it are met.
+     *
+     * @param projectile The projectile.
+     * @param diceRoll   Result of the dice rolled by the player.
+     * @author Alessandro Giuseppe Gioia
+     */
+    @NeedsToBeCompleted("Controllare per tronconi.")
+    public void reactToProjectile(Projectile projectile, int diceRoll) {
+        Position pos = getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll);
+        if(pos == null) return; //Se non trova nessun componente il colpo va a vuoto
+
+        if (projectile.getType() == ProjectileType.CannonFire) {
+            if (projectile.getSize() == ProjectileSize.BIG) {
+                removeTile(pos, false);
+            }
+            else if (projectile.getSize() == ProjectileSize.LITTLE){
+                if(!protectWithFirstAvailableCorrectlyOrientedChargedShield(projectile.getDirection())){
+                    removeTile(pos, false);
+                }
+            }
+        } else if (projectile.getType() == ProjectileType.Meteor) {
+            if (projectile.getSize() == ProjectileSize.BIG) {
+                if(!protectWithFirstAvailableCannon(projectile.getDirection())){
+                    removeTile(pos, false);
+                }
+            }
+            else if (projectile.getSize() == ProjectileSize.LITTLE) {
+                ArrayList<Connector> tileConnectors = shipBoard[pos.getX()][pos.getY()].getTile().getSides();
+                int index = -1;
+
+                switch (projectile.getDirection()) {
+                    case UP    -> index = 0;
+                    case RIGHT -> index = 1;
+                    case DOWN  -> index = 2;
+                    case LEFT  -> index = 3;
+                }
+
+                if(tileConnectors.get(index) != Connector.EMPTY){ //Se non è un lato liscio
+                    if(!protectWithFirstAvailableCorrectlyOrientedChargedShield(projectile.getDirection())){ //Se non c'è uno shield disponibile a proteggere
+                        removeTile(pos, false);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Finds the first available charged shield oriented according to the direction from which the projectile will come from and protects
+     * the ship with it, discharging it.
+     *
+     * @param direction The direction which the projectile will come from.
+     * @return {@code true} if the ship is protected, {@code false} if it is not.
+     * @author Alessandro Giuseppe Gioia
+     */
+    private boolean protectWithFirstAvailableCannon(ProjectileDirection direction) {
+        for (Position cannonPos : getComponentPositionsFromName("Cannon")) {
+            Cannon cannon = (Cannon) getComponentFromPosition(cannonPos);
+            if(cannon.getRotation() == direction.ordinal()){
+                return true;
+            }
+        }
+
+        for (Position cannonPos : getComponentPositionsFromName("DoubleCannon")) {
+            DoubleCannon doubleCannon = (DoubleCannon) getComponentFromPosition(cannonPos);
+            if(doubleCannon.getRotation() == direction.ordinal() && doubleCannon.isCharged()){
+                doubleCannon.setCharged(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finds the first available charged shield oriented according to the direction from which the projectile will come from and protects
+     * the ship with it, discharging it.
+     *
+     * @param direction The direction which the projectile will come from.
+     * @return {@code true} if the ship is protected, {@code false} if it is not.
+     * @author Alessandro Giuseppe Gioia
+     */
+    private boolean protectWithFirstAvailableCorrectlyOrientedChargedShield(ProjectileDirection direction) {
+        for (Position shieldPos : getComponentPositionsFromName("Shield")) {
+            Shield shield = (Shield) getComponentFromPosition(shieldPos);
+            if (shield.isCharged() && shield.getProtectedSides().contains(direction)) {
+                shield.setCharged(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finds the direction of the first component given a direction to search according to it, and the row/column to search in.
+     *
+     * @param direction  The direction which the search has to start from.
+     * @param fixedIndex The row or column to search in.
+     * @return The {@link Position} of the component on the shipboard.
+     * @author Alessandro Giuseppe Gioia
+     */
+    public Position getFirstComponentFromDirectionAndIndex(ProjectileDirection direction, int fixedIndex) {
+        int variableIndex = 0;
+        switch (direction) {
+            case UP, RIGHT -> variableIndex = 11;
+            case DOWN, LEFT -> variableIndex = 3;
+        }
+
+        Position componentPosition = new Position(0, 0);
+        do {
+            switch (direction) {
+                case UP, RIGHT -> variableIndex--;
+                case DOWN, LEFT -> variableIndex++;
+            }
+
+            switch (direction) {
+                case LEFT, RIGHT -> componentPosition.setPos(fixedIndex, variableIndex);
+                case UP, DOWN -> componentPosition.setPos(variableIndex, fixedIndex);
+            }
+        } while (getComponentFromPosition(componentPosition) != null && variableIndex >= 4 && variableIndex <= 10);
+
+        return componentPosition;
     }
 }
