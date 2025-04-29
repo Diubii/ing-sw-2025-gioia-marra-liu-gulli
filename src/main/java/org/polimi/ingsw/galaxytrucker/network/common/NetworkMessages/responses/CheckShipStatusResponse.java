@@ -4,7 +4,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
 import java.io.Serializable;
 
@@ -13,7 +13,8 @@ public class CheckShipStatusResponse extends NetworkMessage implements Serializa
     private final Ship ship;
     private final Boolean isValid;
 
-    public CheckShipStatusResponse(Ship ship, Boolean isValid) {
+    public CheckShipStatusResponse(Ship ship, Boolean isValid,int id)
+    {   super(id);
         this.ship = ship;
         this.isValid = isValid;
     }

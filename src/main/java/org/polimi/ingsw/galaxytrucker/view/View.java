@@ -61,6 +61,10 @@ public interface View {
     void showcheckShipMenu();
     void showembarkCrewMenu();
 
+    void askRemoveTile(Ship ship);
+
+    void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException;
+
 
 //    public void askNickname(Thread thread) throws IOException;
 }

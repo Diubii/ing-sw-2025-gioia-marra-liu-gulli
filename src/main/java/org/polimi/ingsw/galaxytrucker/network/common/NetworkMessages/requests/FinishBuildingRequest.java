@@ -5,7 +5,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,6 +17,7 @@ public class FinishBuildingRequest extends NetworkMessage implements Serializabl
 
     private final Ship ship;
     private final Tile lastTile;
+    public String name;
 
     public FinishBuildingRequest(Ship ship, Tile lastTile) {
         this.ship = ship;

@@ -16,13 +16,13 @@ public class ShipPrintUtils {
      * @return
      */
     public static String[][] composeRow(Ship ship,int row) {
-            String[][] shipRow = new String[7][5];
-            //Ciclo da 0 a 6 per colonne
-            for(int i =0; i<7; i++){
-                shipRow[i]=getTileStrings(ship.getShipBoard()[row][i].getTile());
-            }
+        String[][] shipRow = new String[7][5];
+        //Ciclo da 0 a 6 per colonne
+        for(int i =0; i<7; i++){
+            shipRow[i]=getTileStrings(ship.getShipBoard()[row][i].getTile(),false);
+        }
 
-            return shipRow;
+        return shipRow;
     }
 
     /**
@@ -39,7 +39,7 @@ public class ShipPrintUtils {
 
         System.out.println("  |    4    | |    5    | |    6    | |    7    | |    8    | |    9    | |    10   | ");
 
-            for ( r = 0; r < rows; r++) {
+        for ( r = 0; r < rows; r++) {
 
             //Ottengo tutta la Riga di Tiles e per ciascuna le righe di cui è fatta
             String[][] TilesStringRow = composeRow(ship,r);

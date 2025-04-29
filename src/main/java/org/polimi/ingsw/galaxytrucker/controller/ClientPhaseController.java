@@ -40,12 +40,14 @@ public class ClientPhaseController {
             }
 
             case BUILDING_TIMER -> {
+
+                if (phase == PLAYER_PHASE.FINISH_BUILDING) {return;}
                 phase = PLAYER_PHASE.BUILDING_TIMER;
             }
 
-            case BUILDING_END -> {
-                phase = PLAYER_PHASE.FINISH_BUILDING;
-            }
+            case CREW_INIT -> phase = PLAYER_PHASE.CREW_CHOICE;
+
+
 
         }
     }

@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors.Network;
 
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;

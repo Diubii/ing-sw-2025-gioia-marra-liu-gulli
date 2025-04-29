@@ -29,7 +29,7 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ClientNetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
-import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -208,7 +208,7 @@ public class ClientController implements Observer {
             try {
                 JoinRoomResponse response = (JoinRoomResponse) future.get();
                 if (response.getOperationSuccess()) {
-                    clientPhaseController.setPhase(PLAYER_PHASE.BUILDING);
+                    clientPhaseController.setPhase(PLAYER_PHASE.LOBBY);
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
@@ -331,11 +331,18 @@ public class ClientController implements Observer {
 //        }
 
         if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
-            if (clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER)){
-                clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
+            if (clientPhaseController.getPhase().equals(PLAYER_PHASE.FINISH_BUILDING) ){ return;}
+            if ( clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER ) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING)){
+
                 view.forceReset();
+
+                clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
+
                 try {
-                    client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
+                    FinishBuildingRequest finishBuildingRequest = new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile());
+                    finishBuildingRequest.name = getNickname();
+
+                    client.sendMessage(finishBuildingRequest);
 
                 } catch (IOException | ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
@@ -351,7 +358,7 @@ public class ClientController implements Observer {
 
 
 
-//        clientPhaseController.handlePhaseUpdate(phaseUpdate);
+        clientPhaseController.handlePhaseUpdate(phaseUpdate);
         view.handlePhaseUpdate(phaseUpdate);
 
     }
@@ -359,8 +366,14 @@ public class ClientController implements Observer {
     public void handleBuildingMenuChoice(String input) {
 
             switch (input) {
-                case "menu", "?", "m" -> view.handleChoiceForPhase(phase);
-                case "a" -> view.askFetchShip();
+                case "menu", "?", "m" -> {
+                    view.handleChoiceForPhase(phase);
+                    break;
+                }
+                case "a" -> {
+                    view.askFetchShip();
+                    break;
+                }
                 case "b" -> {
                     if(myModel.getCardDecks().size() != 1) {
 
@@ -375,10 +388,13 @@ public class ClientController implements Observer {
                         view.showGenericMessage("You are not allowed to spy on the learningMatch!");
                         view.showBuildingMenu();
                     }
+
+                    break;
                 }
                 case "c" -> {
 
                         view.showFaceUpTiles();
+                        break;
                 }
                 case "d" -> {
                     if (currentTileInHand != null) {
@@ -394,28 +410,52 @@ public class ClientController implements Observer {
                         }
                 }
 
+                    break;
 
                 }
-                case "e" -> showTileInHand();
-                case "f" -> view.askRotation();
+                case "e" -> {
+                    showTileInHand();
+                    break;
+                }
+                case "f" -> {
+                    view.askRotation();
+                    break;
+                }
                 case "g" -> {
                     try {
                         view.askPosition();
                     } catch (ExecutionException e) {
                         throw new RuntimeException(e);
                     }
+
+                    break;
                 }
-                case "h" -> view.askTilePlacement();
-                case "i" -> sendDiscardRequest();
+                case "h" -> {
+                    view.askTilePlacement();
+                    break;
+                }
+                case "i" -> {
+                    sendDiscardRequest();
+                    break;
+                }
                 case "j" -> {
                   try {
                       clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
-                    client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
+
+                      FinishBuildingRequest finishBuildingRequest = new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile());
+                      finishBuildingRequest.name = getNickname();
+
+                      client.sendMessage(finishBuildingRequest);
                   } catch (IOException | ExecutionException | InterruptedException e) {
                       throw new RuntimeException(e);
                   }
+
+                    break;
             }
-                case "k" -> view.askPickReservedTile(false);
+                case "k" -> {
+                    view.askPickReservedTile(false);
+                    break;
+                }
 
                 case "reset" -> {
                   break;
@@ -424,6 +464,7 @@ public class ClientController implements Observer {
                     new Thread(() -> {
                     view.showGenericMessage("Invalid option." + input+ " Please try again.");
                     view.showBuildingMenu();}).start();
+                    break;
                 }
             }
 
@@ -512,7 +553,6 @@ public class ClientController implements Observer {
                     view.showGenericMessage("Deck  " + DeckID + " received successfully. ");
                 } else {
                     view.showGenericMessage("You are not allowed to spy on this deck!");
-                    view.showBuildingMenu();
                 }
 
 
@@ -731,6 +771,8 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             } catch (Exception e) {
                 view.showGenericMessage("Error during tile placement: " + e.getMessage());
             }finally {
+
+                currentTileInHand = null;
                 view.showBuildingMenu();
             }
 
@@ -743,6 +785,8 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     public void sendDiscardRequest() {
         if (currentTileInHand == null) {
             view.showGenericMessage("No tile in hand to discard.");
+            view.showBuildingMenu();
+
             return;
         }
 
@@ -910,15 +954,32 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         new Thread(() -> {
 
             switch (input) {
-                case "a" -> view.askFetchShip();
-//            case "b" -> viewAdventureDecks();
-//            case "c" -> client.sendMessage(new ShowFaceUpTilesRequest());
+                case "a" -> {
+                    view.showShip(myModel.getMyInfo().getShip());
+                    view.showcheckShipMenu();
+                }
+            case "b" -> {
+                    if (myModel.getMyInfo().getShip().remaningTiles() > 0)
+                    {
+                        view.askRemoveTile(myModel.getMyInfo().getShip());
+                    } else {
+                        System.out.println("OPTION DISABLED< YOU HAVE NO TILE");
+                        view.showcheckShipMenu();
+                    }
+
+                        }
+            case "c" -> handleCheckShipRequest();
+            case "menu","m","?" ->{
+                view.handleChoiceForPhase(phase);
+
+            }
+
 
                 default -> {
-                    new Thread(() -> {
-                        view.showGenericMessage("Invalid option. Please try again.");
-                        view.showcheckShipMenu();}).start();
+                    view.showGenericMessage("Invalid option. Please try again.");
+                    view.showcheckShipMenu();
                 }
+
             }
 
 
@@ -928,4 +989,38 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     }
 
 
+    public void handleEmbarkCrewMenu(String string) {
+        new Thread(()->{
+
+            switch (string){
+                case "a" -> {
+                    view.showShip(myModel.getMyInfo().getShip());
+                    view.showembarkCrewMenu();
+                    break;
+                }
+
+                case "b" -> {
+                    try {
+                        view.chooseCrew(myModel.getMyInfo().getShip());
+                    } catch (ExecutionException | InterruptedException | IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                }
+
+                case "menu","m","?" ->{
+                    view.handleChoiceForPhase(phase);
+
+                }
+
+
+                default -> {
+                    view.showGenericMessage("Invalid option. Please try again.");
+                    view.showembarkCrewMenu();
+                }
+
+            }
+
+        }).start();
+    }
 }

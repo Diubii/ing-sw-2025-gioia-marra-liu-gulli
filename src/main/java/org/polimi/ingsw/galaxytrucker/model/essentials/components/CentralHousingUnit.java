@@ -42,11 +42,15 @@ public class CentralHousingUnit extends Component {
         return isColored;
     }
     public void removeHumanCrewMember() {
+
         if (humanCrewNumber > 0) humanCrewNumber--;
     }
 
     @Override
+
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }
+
+
 }

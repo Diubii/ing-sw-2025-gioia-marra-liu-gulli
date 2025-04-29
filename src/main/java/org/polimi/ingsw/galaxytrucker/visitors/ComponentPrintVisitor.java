@@ -84,7 +84,7 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
                 "  DEng   ",
                 "         "
         };
-        result = AddActiveIndicator(result, component.isCharged());
+        result = AddActiveIndicator(result, component.getCharged());
         return AddEngineFire(result,component.getRotation());
     }
 
@@ -104,16 +104,33 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
         String[] result = new String[]{
                 "         ",
                 "   Sto   ",
-                component.getnMaxContainers()+"        "
+                "         "
         };
         sb = new StringBuilder(result[1]);
         if(component.isSpecial()){
             sb.setCharAt(2, 'S');
         }
-        else{
+        else {
             sb.setCharAt(2, 'N');
         }
         result[1] = sb.toString();
+        sb = new StringBuilder();
+        sb.append(component.getnMaxContainers()).append(" ");
+        int j=0;
+        for( j=0; j < component.getGoods().size(); j++){
+            switch (component.getGoods().get(j).getColor()){
+                case RED -> sb.append(RED).append("█").append(RESET);
+                case BLUE -> sb.append(BLUE).append("█").append(RESET);
+                case GREEN -> sb.append(GREEN).append("█").append(RESET);
+                case YELLOW -> sb.append(BRIGHT_YELLOW).append("█").append(RESET);
+            }
+
+        }
+        int spazi= 9-2-j;
+        for(j=0; j < spazi; j++){
+            sb.append(" ");
+        }
+        result[2] = sb.toString();
         return AddRotationIndicator(result,component.getRotation());
     }
 

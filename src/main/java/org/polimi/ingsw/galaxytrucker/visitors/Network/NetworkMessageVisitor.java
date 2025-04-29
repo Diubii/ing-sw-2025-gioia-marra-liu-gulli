@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors.Network;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;

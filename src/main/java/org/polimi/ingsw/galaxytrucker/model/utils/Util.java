@@ -108,12 +108,28 @@ public class Util {
         Position sud = new Position(S.getPosition().getY() + 1, S.getPosition().getX());
         Position est = new Position(S.getPosition().getY(), S.getPosition().getX() + 1);
         Position ovest = new Position(S.getPosition().getY(), S.getPosition().getX() - 1);
-        switch (T.getRotation()){
-            case 0: if (!tempIP.contains(nord) && inBoundaries(nord.getY(), nord.getX()) && P.getShipBoard()[nord.getY()][nord.getX()].getTile() != null) wellConnected = false;
-            case 90: if (!tempIP.contains(ovest) && inBoundaries(ovest.getY(), ovest.getX()) && P.getShipBoard()[ovest.getY()][ovest.getX()].getTile() != null) wellConnected = false;
-            case 180: if (!tempIP.contains(sud) && inBoundaries(sud.getY(), sud.getX()) && P.getShipBoard()[sud.getY()][sud.getX()].getTile() != null) wellConnected = false;
-            case 270: if (!tempIP.contains(est) && inBoundaries(est.getY(), est.getX()) && P.getShipBoard()[est.getY()][est.getX()].getTile() != null) wellConnected = false;
 
+        switch (T.getRotation()) {
+            case 0:
+                if (!tempIP.contains(nord) && inBoundaries(nord.getY(), nord.getX()) && P.getShipBoard()[nord.getY()][nord.getX()].getTile() != null) {
+                    wellConnected = false;
+                }
+                break;
+            case 90:
+                if (!tempIP.contains(ovest) && inBoundaries(ovest.getY(), ovest.getX()) && P.getShipBoard()[ovest.getY()][ovest.getX()].getTile() != null) {
+                    wellConnected = false;
+                }
+                break;
+            case 180:
+                if (!tempIP.contains(sud) && inBoundaries(sud.getY(), sud.getX()) && P.getShipBoard()[sud.getY()][sud.getX()].getTile() != null) {
+                    wellConnected = false;
+                }
+                break;
+            case 270:
+                if (!tempIP.contains(est) && inBoundaries(est.getY(), est.getX()) && P.getShipBoard()[est.getY()][est.getX()].getTile() != null) {
+                    wellConnected = false;
+                }
+                break;
         }
 
         return wellConnected;
@@ -231,7 +247,7 @@ public class Util {
         } else c4 = null;
 
 
-        if ((c1 == T.getSides().get(0) || c1 == null) && (c2 == T.getSides().get(1) || c2 == null) && (c3 == T.getSides().get(2) || c3 == null) && (c4 == T.getSides().get(3) || c4 == null)) {
+        if ((compatible(c1,T.getSides().get(0)) || c1 == null) && (compatible(c2,T.getSides().get(1) )|| c2 == null) && (compatible(c2,T.getSides().get(2)) || c3 == null) && (compatible(c3,T.getSides().get(3)) || c4 == null)) {
             return new Pair<>(true, sum);
         }
 
@@ -324,7 +340,11 @@ public class Util {
 
     public static Boolean compatible(Connector connector1, Connector connector2) {
 
-        if (connector1.equals(Connector.EMPTY)) return false;
+        if (connector1 == null && connector2 != null) return true;
+        if (connector1 != null && connector2 == null) return true;
+
+
+        if (connector1.equals(Connector.EMPTY) && !connector2.equals(Connector.EMPTY)) return false;
         if (connector1.equals(connector2)) return true;
         if (connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY)) return true;
         return connector2.equals(Connector.UNIVERSAL);

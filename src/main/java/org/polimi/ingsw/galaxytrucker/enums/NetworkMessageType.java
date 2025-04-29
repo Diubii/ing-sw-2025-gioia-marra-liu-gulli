@@ -69,5 +69,5 @@ public enum NetworkMessageType {
     DeclareEnginePowerResponse, MatchInfoUpdate, DecksUpdate, FlightBoardUpdate,
     RemovedPlayerUpdate,
     SelectPlanetRequest, SelectPlanetResponse, SelectedPlanetUpdate,
-    GetFaceUpTilesRequest, GetFaceUpTilesResponse,
+    GetFaceUpTilesRequest, GetFaceUpTilesResponse, FaceUpTileUpdate,
 }

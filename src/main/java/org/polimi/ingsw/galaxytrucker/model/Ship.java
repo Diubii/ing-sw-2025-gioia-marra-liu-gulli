@@ -276,10 +276,16 @@ public class Ship implements Serializable {
             case "BatterySlot":
                 batteryPos.add(pos);
                 break;
-            case "CannonSlot":
+            case "Cannon":
                 cannonPos.add(pos);
                 break;
-            case "EngineSlot":
+            case "Engine":
+                enginePos.add(pos);
+                break;
+            case "DoubleCannon":
+                cannonPos.add(pos);
+                break;
+            case "DoubleEngine":
                 enginePos.add(pos);
                 break;
             case "ModularHousingUnit":
@@ -291,6 +297,8 @@ public class Ship implements Serializable {
                 if (s) {
                     redStoragePos.add(pos);
                 } else storagePos.add(pos);
+
+                break;
             }
 
             case "LifeSupportSystem":
@@ -346,7 +354,7 @@ public class Ship implements Serializable {
             }
 
             destroyedTiles++;
-            getShipBoard()[pos.getY()][pos.getX()].removeTile();
+            shipBoard[pos.getY()][pos.getX()].removeTile();
 
         }
 
@@ -465,6 +473,8 @@ public class Ship implements Serializable {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 7; j++) {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
+                    String name = shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor());
+
                     if (!Util.wellConnectedConnectors(this, shipBoard[i][j], shipBoard[i][j].getTile()).getKey()) {
 
                         shipBoard[i][j].getTile().setWellConnected(false);
@@ -874,6 +884,25 @@ public class Ship implements Serializable {
         }
 
         return false;
+    }
+    public int remaningTiles(){
+        int remaingTiles = 0;
+        List<Tile> tiles =Arrays.stream(this.getShipBoard())
+                .flatMap(Arrays::stream).map(Slot::getTile)
+                .filter(Objects::nonNull)
+                .toList();
+
+
+        for (Tile tile : tiles){
+            if(tile!=null){
+                remaingTiles++;
+            }
+            return remaingTiles;
+        }
+
+
+
+        return 0;
     }
 
     public Slot[] getSetAsideTiles() {

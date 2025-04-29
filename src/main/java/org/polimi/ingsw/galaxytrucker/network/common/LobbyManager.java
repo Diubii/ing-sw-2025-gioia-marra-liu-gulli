@@ -26,6 +26,13 @@ public class LobbyManager {
 
     //locks
 
+    final public Object  lock5 = new Object();
+
+    public Object getLock5() {
+        return lock5;
+    }
+
+
     final Object lock1 = new Object();
     final Object lock2 = new Object();
     final Object lock3 = new Object();

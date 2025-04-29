@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors.Network;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
@@ -154,7 +154,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
 
     @Override
     public NetworkMessageType visit(FaceUpTileUpdate faceUpTileUpdate) {
-        return null;
+        return NetworkMessageType.FaceUpTileUpdate;
     }
 
     @Override
