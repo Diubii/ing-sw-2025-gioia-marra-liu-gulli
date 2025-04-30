@@ -39,6 +39,8 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.*;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardPrintUtils.printFlightBoard;
+
 
 public class Tui implements View, Observable {
 
@@ -134,6 +136,8 @@ public class Tui implements View, Observable {
 
         MenuManager.clearConsole();
         System.out.println("\r".repeat(100));
+
+
         String banner = "\033[1;34m" + // Colore Blu Chiaro
                 "   __    _   __    _   _  __ _  __  _____ ___  _ __  __  _    ___  ___    ___\n" +
                 " ,'_/  .' \\ / /  .' \\ | |/,'| |/,' /_  _// o |/// /,'_/ / //7/ _/ / o | ,' _/\n" +

@@ -108,9 +108,9 @@ public class TilePrintUtils {
                     "└----"+tile.getSides().get(2).ordinal()+"----┘ "
             };
             sb.append("ID: "+tile.getId());
-            if(tile.getId()>100){
+            if(tile.getId()>99){
                 sb.append("     ");
-            }else if( tile.getId()>10){
+            }else if( tile.getId()>9){
                 sb.append("      ");
             }else{
                 sb.append("       ");
