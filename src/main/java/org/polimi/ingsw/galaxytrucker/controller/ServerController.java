@@ -21,7 +21,6 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
@@ -473,7 +472,7 @@ public class ServerController {
 
         for (Slot slot : Slots) {
             if (slot.getTile() != null && message.getRemovedTilesId().contains(slot.getTile().getId())) {
-                ship.removeTile(slot.getTile(), slot.getPosition(), true);
+                ship.removeTile(slot.getPosition(), true);
             }
         }
 
@@ -774,7 +773,7 @@ public class ServerController {
         myGame.getGameController().notify();
     }
 
-    public void handleActivateDoubleEnginesResponse(ActivateDoubleEnginesResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
+    public void handleActivateDoubleEnginesResponse(ActivateComponentResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         Player player = getPlayerFromClientHandler(clientHandler);
         Ship ship = player.getShip();

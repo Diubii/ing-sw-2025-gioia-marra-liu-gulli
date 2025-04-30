@@ -256,12 +256,12 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
-    public Void visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest){
+    public Void visit(ActivateComponentRequest activateDoubleEnginesRequest){
         return null;
     }
 
     @Override
-    public Void visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse) {
+    public Void visit(ActivateComponentResponse activateComponentResponse) {
         return null;
     }
 

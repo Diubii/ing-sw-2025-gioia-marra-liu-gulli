@@ -2,10 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.polimi.ingsw.galaxytrucker.controller.GameController;
-import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
@@ -13,6 +10,8 @@ import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterfac
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
 /**
  * Represents an Abandoned Station adventure card.
  * The card allows the player to gain or lose goods based on the card's effect.
@@ -28,7 +27,7 @@ public class AbandonedStation extends AdventureCard {
 
     private final int crewMemebers;
 
-    public int getCrewMemebers() {
+    public int getRequiredCrewMembers() {
         return crewMemebers;
     }
 
@@ -68,7 +67,7 @@ public class AbandonedStation extends AdventureCard {
      * @param rankedPlayers
      * @param lobbyManager
      */
-    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
         aca.visitAbandonedStation(this, rankedPlayers, lobbyManager);
     }
 
