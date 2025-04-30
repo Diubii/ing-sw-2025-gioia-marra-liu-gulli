@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.utils;
 import org.junit.jupiter.api.Test;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 
+import javax.smartcardio.Card;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,8 @@ class UtilTest {
     void createLvl1Deck() throws IOException {
 
         CardDeck dexk = Util.createLvl1Deck();
+
+
         System.out.println(dexk.pop().getName());
     }
 

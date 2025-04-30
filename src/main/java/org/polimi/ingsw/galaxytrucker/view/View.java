@@ -2,6 +2,9 @@ package org.polimi.ingsw.galaxytrucker.view;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
@@ -63,7 +66,7 @@ public interface View {
 
     void askRemoveTile(Ship ship);
 
-    void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException;
+    void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
 
 
 //    public void askNickname(Thread thread) throws IOException;

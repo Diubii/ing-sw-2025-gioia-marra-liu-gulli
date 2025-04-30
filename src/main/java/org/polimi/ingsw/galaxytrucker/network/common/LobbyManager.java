@@ -23,6 +23,8 @@ public class LobbyManager {
     private final GameController gameController;
     private final ArrayList<String> playerShipFinished = new ArrayList<>();
     private ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> pendingResponses;
+    public final Object positionLock = new Object();
+    public final Object checkShipLock = new Object();
 
     //locks
 

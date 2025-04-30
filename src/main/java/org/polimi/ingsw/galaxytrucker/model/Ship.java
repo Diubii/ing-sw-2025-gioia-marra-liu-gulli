@@ -924,4 +924,27 @@ public class Ship implements Serializable {
     public void setLastTile(Tile tile) {
         lastTile = tile;
     }
+
+
+    public ArrayList<Position> getComponentPosition(String componentName){
+
+        ArrayList<Position> positions = new ArrayList<>();
+
+        List<Slot> Slots = Arrays.stream(shipBoard)
+                .flatMap(Arrays::stream)
+                .filter(Objects::nonNull)
+                .toList();
+
+        for (Slot slot: Slots){
+            Position p = slot.getPosition();
+            Tile tile = slot.getTile();
+            if (tile != null && tile.getMyComponent().accept(new ComponentNameVisitor()).equals(componentName)){
+                positions.add(p);
+            }
+        }
+
+        return positions;
+
+    }
+
 }

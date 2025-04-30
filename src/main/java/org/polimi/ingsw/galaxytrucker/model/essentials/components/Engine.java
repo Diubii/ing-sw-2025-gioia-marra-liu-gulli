@@ -17,10 +17,11 @@ public class Engine extends Component {
         this.enginePower = enginePower;
     }
     public int getEnginePower() {
+        calculatePower();
         return enginePower;
     }
 
-    public void calculatePower() {
+    private void calculatePower() {
         if (getRotation() != 0) {
             enginePower = 0;
         }

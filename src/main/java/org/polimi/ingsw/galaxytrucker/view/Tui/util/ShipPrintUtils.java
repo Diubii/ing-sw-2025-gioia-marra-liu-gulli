@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.*;
 
@@ -19,7 +20,18 @@ public class ShipPrintUtils {
         String[][] shipRow = new String[7][5];
         //Ciclo da 0 a 6 per colonne
         for(int i =0; i<7; i++){
-            shipRow[i]=getTileStrings(ship.getShipBoard()[row][i].getTile(),false);
+            String[] result;
+            if(ship.getInvalidPositions().contains(new Position(row,i))){
+                result = new String[]{
+                        "            ",
+                        "            ",
+                        "            ",
+                        "            ",
+                        "            "};
+            }else{
+                result = getTileStrings(ship.getShipBoard()[row][i].getTile(),false);
+            }
+            shipRow[i]= result;
         }
 
         return shipRow;

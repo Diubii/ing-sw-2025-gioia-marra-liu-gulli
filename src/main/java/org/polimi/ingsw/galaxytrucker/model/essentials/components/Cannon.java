@@ -16,10 +16,11 @@ public class Cannon extends Component {
         this.FirePower = firePower;
     }
     public Float getFirePower() {
+        calculateFP();
         return FirePower;
     }
 
-    public void calculateFP(){
+    private void calculateFP(){
 
         if (getRotation() != 0) {
             FirePower = FirePower/2;

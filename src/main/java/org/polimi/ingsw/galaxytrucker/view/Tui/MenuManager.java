@@ -37,6 +37,8 @@ public class MenuManager {
         }
     }
     public void showBuildingMenu() {
+
+        clearConsole();
         out.println("\n Building Phase Menu:");
         out.println("a. Show ship for each player");
         out.println("b. Show Adventure card deck");
@@ -58,6 +60,7 @@ public class MenuManager {
         out.println("a. View my ship");
         out.println("b. Remove tile");
         out.println("c. Send checkShip request");
+        out.println("menu. show menu");
 
 
     }
