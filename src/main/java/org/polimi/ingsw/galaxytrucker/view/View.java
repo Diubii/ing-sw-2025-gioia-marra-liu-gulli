@@ -48,7 +48,7 @@ public interface View {
     void FetchMyShip();
 
     //asks_building
-    void askShowFaceUpTiles() throws IOException, ExecutionException, InterruptedException;
+    void askShowFaceUpTiles();
     void askRotation();
     void askPosition() throws ExecutionException;
     void askViewAdventureDecks();

@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 
@@ -40,7 +41,11 @@ public class OpenSpace extends AdventureCard {
     }
 
     public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
-        aca.visitOpenSpace(this, rankedPlayers, lobbyManager);
+        try {
+            aca.visitOpenSpace(this, rankedPlayers, lobbyManager);
+        } catch (PlayerNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     public String[] accept(AdventureCardPrintVisitorInterface visitor){
         return visitor.visit(this);

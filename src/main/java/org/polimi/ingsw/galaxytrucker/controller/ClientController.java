@@ -373,7 +373,7 @@ public class ClientController implements Observer {
                 }
                 case "c" -> {
 
-                        view.showFaceUpTiles();
+                        view.askShowFaceUpTiles();
                         break;
                 }
                 case "d" -> {
@@ -546,11 +546,11 @@ public class ClientController implements Observer {
 
 
     public void handleFaceUpTileUpdate(FaceUpTileUpdate update){
+
         ArrayList<Tile> faceUpTiles = update.getFaceUpTiles();
         synchronized (myModel.getFaceUpTiles()) {
             myModel.setFaceUpTiles(faceUpTiles);
         }
-
 
     }
 
@@ -608,8 +608,8 @@ public class ClientController implements Observer {
             return;
         }
         view.showGenericMessage("--Current face-up tiles--");
-        view.showFaceUpTiles();
 
+        view.showFaceUpTiles();
         view.askChooseTile();
     }
 
@@ -652,14 +652,14 @@ public class ClientController implements Observer {
                         view.showGenericMessage("An error occurred while processing the response: " + e.getMessage());
 
                     }
-
+                    view.showBuildingMenu();
                 }).start();
+
 
     }
 
 
-@NeedsToBeCompleted
-//cambiare metodi di stampa
+
     public void showTileInHand() {
 
         view.showTile(currentTileInHand);
@@ -764,13 +764,13 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     }
 
     public void handleTileDiscardUpdate(TileDiscardedUpdate update){
-        new Thread(() -> {
-            Tile discardedTile = update.getTile();
-            synchronized (myModel.getFaceUpTiles()) {
-                myModel.getFaceUpTiles().add(discardedTile);
-            }
-
-        }).start();
+//        new Thread(() -> {
+//            Tile discardedTile = update.getTile();
+//            synchronized (myModel.getFaceUpTiles()) {
+//                myModel.getFaceUpTiles().add(discardedTile);
+//            }
+//
+//        }).start();
     }
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {
 
@@ -927,7 +927,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
                     }
 
                         }
-//            case "c" -> handleCheckShipRequest();
+            case "c" -> handleCheckShipRequest();
             case "menu","m","?" ->{
                 view.handleChoiceForPhase(phase);
 

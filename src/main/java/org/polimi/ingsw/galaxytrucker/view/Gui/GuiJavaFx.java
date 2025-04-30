@@ -220,7 +220,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void askShowFaceUpTiles() throws IOException, ExecutionException, InterruptedException {
+    public void askShowFaceUpTiles()  {
 
     }
 

@@ -384,8 +384,9 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void askShowFaceUpTiles() throws IOException, ExecutionException, InterruptedException {
-        viewingFaceUpTiles = true;
+    public void askShowFaceUpTiles() {
+        showFaceUpTiles();
+        showBuildingMenu();
 
     }
 
@@ -494,7 +495,7 @@ public class Tui implements View, Observable {
 
         out.println("Face up tiles size: " + faceUpTiles.size());
         TilePrintUtils.printTileList(new ArrayList<>(faceUpTiles), 3);
-        showBuildingMenu();
+
     }
 
 
@@ -542,20 +543,29 @@ public class Tui implements View, Observable {
     }
 
     public void askChooseTile() {
+
         try {
             boolean validInput = false;
             do {
+                List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
+                if (faceUpTiles.isEmpty()) {
+                    out.println("No tiles available to choose.");
+                    break;
+                }
+
                 String input = readLine("Enter the Tile ID to draw, or use R to refresh: ").trim().toLowerCase();
                 if (checkReset(input)) return;;
 
                 if (input.equalsIgnoreCase("R")) {
+                    out.println("Refreshing tile list");
+                    Thread.sleep(200);
+                    showFaceUpTiles();
 
                 } else {
-                    List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
 
                     try {
                         int tileID = Integer.parseInt(input);
-                        Tile selectedTile = faceUpTiles.stream()
+                        Tile selectedTile = clientController.getMyModel().getFaceUpTiles().stream()
                                 .filter(t -> t.getId() == tileID)
                                 .findFirst()
                                 .orElse(null);
@@ -571,62 +581,104 @@ public class Tui implements View, Observable {
                 }
 
             } while (!validInput);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
+
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void askPickOrPlaceReservedTile(boolean isPicking) {
-        if(clientController.hasTileInHand()){
+    private void showTileSlots(){
         Tile[] reservedTiles = clientController.getReservedTiles();
 
-        if (reservedTiles[0] == null || reservedTiles[1] == null) {
-            System.out.println("Reserved Slot 1:");
+
+                out.println("Reserved Slot 1:");
             if (reservedTiles[0] != null) {
                 showTile(reservedTiles[0]);
             } else {
-                System.out.println("Empty");
+                out.println("Empty");
             }
 
-            System.out.println("Reserved Slot 2:");
+               out.println("Reserved Slot 2:");
             if (reservedTiles[1] != null) {
                 showTile(reservedTiles[1]);
             } else {
-                System.out.println("Empty");
+                out.println("Empty");
             }
-            try {
-                boolean validInput = false;
-                int slotIndex = -1;
-                do {
-                    String input = readLine("Enter the Slot Index to" + (isPicking ? "pick" : "place") + "(1 or 2)> ");
-                    if (checkReset(input)) return;
-                    ;
+    }
+    public void askPickOrPlaceReservedTile(boolean isPicking) {
 
-                    if (input.equals("1") || input.equals("2")) {
-                        slotIndex = Integer.parseInt(input);
-                        validInput = true;
-                    } else {
-                        out.println("Invalid input. Please enter 1 or 2.");
+        Tile[] reservedTiles = clientController.getReservedTiles();
+        if(isPicking) {
+            if (!clientController.hasTileInHand()) {
+                if ((reservedTiles[0] != null || reservedTiles[1] != null)) {
+                    showTileSlots();
+                    try {
+                        boolean validInput = false;
+                        int slotIndex = -1;
+                        do {
+                            String input = readLine("Enter the Slot Index to pick (1 or 2)> ");
+                            if (checkReset(input)) return;
+
+                            if (input.equals("1") || input.equals("2")) {
+                                slotIndex = Integer.parseInt(input);
+                                validInput = true;
+                            } else {
+                                out.println("Invalid input. Please enter 1 or 2.");
+                            }
+                        } while (!validInput);
+
+                        clientController.handlePickReservedTile(slotIndex - 1, true);
+                    } catch (ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
-                } while (!validInput);
-
-                clientController.handlePickReservedTile(slotIndex - 1, isPicking);
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
+                } else {
+                    showGenericMessage("There is no tile to pick");
+                    showBuildingMenu();
+                }
+            } else {
+                showGenericMessage("You already have a tile in hand to place ");
+                showBuildingMenu();
             }
         }
-        else{
-            showGenericMessage("There are no area to place a tile");
-            showBuildingMenu();
+        if(!isPicking) {
+            if (clientController.hasTileInHand() && !isPicking) {
+                if ((reservedTiles[0] == null || reservedTiles[1] == null)) {
+                    showTileSlots();
+                    try {
+                        boolean validInput = false;
+                        int slotIndex = -1;
+                        do {
+                            String input = readLine("Enter the Slot Index to place (1 or 2)> ");
+                            if (checkReset(input)) return;
+
+                            if (input.equals("1") || input.equals("2")) {
+                                slotIndex = Integer.parseInt(input);
+                                validInput = true;
+                            } else {
+                                out.println("Invalid input. Please enter 1 or 2.");
+                            }
+                        } while (!validInput);
+
+                        clientController.handlePickReservedTile(slotIndex - 1, false);
+                    } catch (ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    showGenericMessage("There is no place to place the tile");
+                    showBuildingMenu();
+                }
+            } else {
+                showGenericMessage("You have no tile in hand to place");
+                showBuildingMenu();
+            }
+
         }
-        }else{
-            showGenericMessage("You don't have a tile to place");
-            showBuildingMenu();
 
 
-        }
+
+
+
+
 
     }
 

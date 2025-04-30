@@ -58,7 +58,7 @@ public class TileBunch {
             int randomIndex = rand.nextInt(tiles.size());
             Tile tile = tiles.get(randomIndex);
             tile.flip();
-            faceUpTiles.add(tile);
+
             tiles.remove(randomIndex);
             return tile;
         }

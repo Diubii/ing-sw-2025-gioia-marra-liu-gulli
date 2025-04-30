@@ -707,11 +707,15 @@ public class ServerController {
 
     @NeedsToBeCompleted
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) {
+
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        myGame.getTileBunch().getFaceUpTiles();
+        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
         myGame.getTileBunch().returnTile(discardTileRequest.getTile());
 
-        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+
         broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
+
 //
         FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
         faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
