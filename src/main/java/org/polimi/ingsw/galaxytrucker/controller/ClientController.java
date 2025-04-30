@@ -874,9 +874,8 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
     public void handleDecksUpdate(DecksUpdate decksUpdate) {
 
-        synchronized (myModel.getCardDecks()){
             myModel.setCardDecks(decksUpdate.getDecks());
-        }
+
     }
 
     public void handleFlightBoardUpdate(FlightBoardUpdate flightBoardUpdate) {
@@ -949,6 +948,50 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     }
 
 
+
+
+
+     public void handleCheckShipRequest(){
+
+            CheckShipStatusRequest checkShipStatusRequest = new CheckShipStatusRequest();
+
+            checkShipStatusRequest.setRemovedTilesId(myModel.getTilesToRemove());
+
+            CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+            setCompletableFuture(future, checkShipStatusRequest.getID());
+
+            try{
+                client.sendMessage(checkShipStatusRequest);
+            } catch (IOException | ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            new Thread(()->{
+                try{
+                    CheckShipStatusResponse response = (CheckShipStatusResponse) future.get();
+                    boolean isValid = response.getIsValid();
+                    if(isValid){
+                        view.showGenericMessage("Your ship is immaculate!");
+                        view.showGenericMessage("Wait to start choosing your crew...");
+                        return;
+
+                    }
+                    else{
+                        view.showGenericMessage("Ship need to be re-check");
+                        myModel.getMyInfo().setShip(response.getShip());
+
+                    }
+                    view.showcheckShipMenu();
+
+                }catch (ExecutionException | InterruptedException e) {
+                    view.showGenericMessage("Check Ship err");
+                    throw new RuntimeException(e);
+                }
+
+
+         }).start();
+
+     }
+
     public void handleEmbarkCrewMenu(String string) {
         new Thread(()->{
 
@@ -961,8 +1004,10 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
                 case "b" -> {
                     try {
-                        view.chooseCrew(myModel.getMyInfo().getShip());
-                    } catch (ExecutionException | InterruptedException | IOException e) {
+                            view.chooseCrew(myModel.getMyInfo().getShip());
+
+                    } catch (ExecutionException | InterruptedException | IOException | InvalidTilePosition |
+                             TooManyPlayersException | PlayerAlreadyExistsException e) {
                         throw new RuntimeException(e);
                     }
                     break;

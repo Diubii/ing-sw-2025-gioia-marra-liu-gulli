@@ -70,4 +70,6 @@ public enum NetworkMessageType {
     RemovedPlayerUpdate,
     SelectPlanetRequest, SelectPlanetResponse, SelectedPlanetUpdate,
     GetFaceUpTilesRequest, GetFaceUpTilesResponse, FaceUpTileUpdate,
+    SellGoodsRequest, SellGoodsResponse,
+    GameMessage
 }

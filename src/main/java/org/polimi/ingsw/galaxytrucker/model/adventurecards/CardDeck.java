@@ -95,7 +95,7 @@ public class CardDeck implements Serializable {
      * @author Alessandro Giuseppe Gioia
      */
     public void shuffle(){
-        Collections.shuffle(cards);
+//        Collections.shuffle(cards);
     }
 
     /**

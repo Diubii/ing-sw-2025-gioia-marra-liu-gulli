@@ -10,8 +10,25 @@ import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
 public class MatchInfoUpdate extends NetworkMessage implements Serializable {
+
+    private final String leaderNickname;
+    private final int remainingCards;
+
+    public MatchInfoUpdate(String leaderNickname, int remainingCards) {
+        this.leaderNickname = leaderNickname;
+        this.remainingCards = remainingCards;
+    }
+
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException {
         return visitor.visit(this);
+    }
+
+    public String getLeaderNickname() {
+        return leaderNickname;
+    }
+
+    public int getRemainingCards() {
+        return remainingCards;
     }
 }

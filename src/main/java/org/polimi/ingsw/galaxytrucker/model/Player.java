@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
+import org.polimi.ingsw.galaxytrucker.enums.PlayerState;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
@@ -22,14 +23,14 @@ public class Player {
     private List<Good> ListOfGoods;
     private List<Good> ListUnloadedGoods;
 
+    private PlayerState playerState;
+
     public Player(String nickname, int nCredits, int placement, Boolean learningMatch) {
         this.nickname = nickname;
         this.nCredits = 0;
         this.placement = placement;
         this.ship = new Ship(learningMatch); //Rivedere
     }
-
-
 
     public String getNickName() {
         return nickname;
@@ -61,5 +62,13 @@ public class Player {
 
     public  void replaceShip(Ship ship) {
         this.ship = ship;
+    }
+
+    public PlayerState getPlayerState() {
+        return playerState;
+    }
+
+    public void setPlayerState(PlayerState playerState) {
+        this.playerState = playerState;
     }
 }

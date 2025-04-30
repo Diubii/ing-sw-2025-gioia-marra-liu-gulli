@@ -25,10 +25,10 @@ public class AbandonedStation extends AdventureCard {
 
 
 
-    private final int crewMemebers;
+    private final int requiredCrewMembers;
 
     public int getRequiredCrewMembers() {
-        return crewMemebers;
+        return requiredCrewMembers;
     }
 
     /**
@@ -45,7 +45,7 @@ public class AbandonedStation extends AdventureCard {
                          @JsonProperty("name") String name,
                          @JsonProperty("learningFlight") boolean learningFlight,
                          @JsonProperty("goods")   ArrayList<Good> goods,
-                         @JsonProperty("crewMembers")   int crewMemebers,
+                         @JsonProperty("requiredCrewMembers")   int requiredCrewMembers,
                          @JsonProperty("affectsAll") boolean affectsAll   )
     {
         this.id = id;
@@ -55,7 +55,7 @@ public class AbandonedStation extends AdventureCard {
         this.learningFlight = learningFlight;
         this.affectsAll = false;
         this.goods = goods;
-        this.crewMemebers = crewMemebers;
+        this.requiredCrewMembers = requiredCrewMembers;
     }
 
 

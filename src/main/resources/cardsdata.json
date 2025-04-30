@@ -424,7 +424,7 @@
     "daysLost": 1,
     "name": "Nave abbandonata",
     "learningFlight": false,
-    "crewMembersLost": 2,
+    "requiredCrewMembers": 2,
     "credits": 3,
     "affectsAll": false
   },
@@ -435,7 +435,7 @@
     "daysLost": 1,
     "name": "Nave abbandonata",
     "learningFlight": true,
-    "crewMembersLost": 3,
+    "requiredCrewMembers": 3,
     "credits": 4,
     "affectsAll": false
   },
@@ -455,7 +455,7 @@
       }
     ],
     "affectsAll": false,
-    "crewMembers": 5
+    "requiredCrewMembers": 5
   },
   {
     "type": "AbandonedStation",
@@ -473,7 +473,7 @@
       }
     ],
     "affectsAll": false,
-    "crewMembers": 6
+    "requiredCrewMembers": 6
   },
   {
     "type": "Slavers",
@@ -940,7 +940,7 @@
     "daysLost": 1,
     "name": "Nave abbandonata",
     "learningFlight": false,
-    "crewMembersLost": 4,
+    "requiredCrewMembers": 4,
     "credits": 6,
     "affectsAll": false
   },
@@ -951,7 +951,7 @@
     "daysLost": 2,
     "name": "Nave abbandonata",
     "learningFlight": false,
-    "crewMembersLost": 5,
+    "requiredCrewMembers": 5,
     "credits": 8,
     "affectsAll": false
   },
@@ -971,7 +971,7 @@
       }
     ],
     "affectsAll": false,
-    "crewMembers": 7
+    "requiredCrewMembers": 7
   },
   {
     "type": "AbandonedStation",
@@ -992,6 +992,6 @@
       }
     ],
     "affectsAll": false,
-    "crewMembers": 7
+    "requiredCrewMembers": 7
   }
 ]

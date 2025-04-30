@@ -46,8 +46,7 @@ public class ServerController {
     private final ArrayList<String> usedNicknames = new ArrayList<>();
     private final ArrayList<LobbyInfo> lobbyInfos = new ArrayList<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final Object positionLock = new Object();
-    private final Object checkShipLock = new Object();
+
 
     private ArrayList<Tile> gameTiles;
 
@@ -355,15 +354,17 @@ public class ServerController {
 
                     //creo i deck
 
-                    myGame.getRealGame().setFlightDeck();
-
-                    CardDeck flightDeck = myGame.getRealGame().getFlightDeck();
-
+                    //creo flightDeck
+                    myGame.getRealGame().createDecks();
                     ArrayList<CardDeck> decks = myGame.getRealGame().getDecks();
+
+
+//                    CardDeck flightDeck = myGame.getRealGame().createFlightDeck(decks);
+
 
                     DecksUpdate decksUpdate = new DecksUpdate();
                     decksUpdate.setDecks(decks);
-                    decksUpdate.setFlightDeck(flightDeck);
+                    decksUpdate.setFlightDeck(null);
 
 
                     myGame.getGameController().nextState();
@@ -485,7 +486,7 @@ public class ServerController {
 
 
         if (result) {
-            synchronized (checkShipLock) {
+            synchronized (myGame.checkShipLock) {
                 myGame.getGameController().addCompletedShip();
                 if (myGame.getRealGame().getNumPlayers() == myGame.getGameController().getnCompletedShips() && !myGame.getGameController().getGameState().equals(GameState.CREW_INIT)) {
                     myGame.getGameController().nextState();
@@ -537,7 +538,7 @@ public class ServerController {
 
         }
 
-        synchronized (positionLock) {
+        synchronized (myGame.positionLock) {
             int maxPos = myGame.getRealGame().getNumPlayers();
             int minPos = 1;
             ArrayList<Integer> takenPos = myGame.getRealGame().getFlightBoard().getOccupiedPositions();
@@ -565,6 +566,7 @@ public class ServerController {
 
             Color playerColor = myGame.getPlayerColors().get(nickname);
             myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, response.getPosition());
+            myGame.getRealGame().getPlayer(nickname).setPlacement(response.getPosition());
 
             ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
             broadCast(playerHandlers, new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
@@ -683,9 +685,9 @@ public class ServerController {
 
 
             //broadCasto la nuova nave a tutti
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
             ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-            ArrayList<ClientHandler> handlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-            broadCast(handlers, shipUpdate);
+            broadCast(playerHandlers, shipUpdate);
             clientHandler.sendMessage(placeTileResponse);
 
 

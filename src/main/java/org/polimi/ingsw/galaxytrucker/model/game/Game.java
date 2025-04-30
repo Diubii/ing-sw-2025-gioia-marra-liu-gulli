@@ -3,14 +3,12 @@ package org.polimi.ingsw.galaxytrucker.model.game;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 
-import javax.smartcardio.Card;
 import java.io.IOException;
 import java.util.*;
 
@@ -77,6 +75,7 @@ public class Game {
     public CardDeck getFlightDeck() {
         return flightDeck;
     }
+
 
     public void initFlightBoard() {
         this.flightBoard = new FlightBoard(learningMatch);
@@ -221,14 +220,14 @@ public class Game {
             decks.add(deck);
         }
 
-        return decks;
+        return new ArrayList<>(decks);
     }
 
     public CardDeck createFlightDeck(ArrayList<CardDeck> decks) {
         CardDeck flightDeck = new CardDeck(true);
 
         for(CardDeck deck : decks){
-            flightDeck = flightDeck.merge(deck);
+            flightDeck = flightDeck.merge(new CardDeck(deck.getCards(), deck.isSpyable()));
         }
 
         flightDeck.shuffle();
@@ -239,24 +238,22 @@ public class Game {
         return flightDeck;
     }
 
-    public void setFlightDeck() throws IOException {
+    public void createDecks() throws IOException {
 
         ArrayList<CardDeck> decks = new ArrayList<>();
 
 
         if (learningMatch){
             Decks.add(Util.createLearningDeck());
-            decks.addAll(Decks);
+//            decks.addAll(Decks);
         } else {
 
             ArrayList<CardDeck> tempDecks = createBuildingCardDecks(Util.createLvl1Deck(), Util.createLvl2Deck());
-            this.Decks.addAll(tempDecks);
-            decks.addAll(Decks);
+            Decks = new ArrayList<>(tempDecks);
+//            decks.addAll(Decks);
 
         }
 
-        flightDeck = createFlightDeck(decks);
-        System.out.println("SIZE DECKS " + Decks.size());
 
     }
 

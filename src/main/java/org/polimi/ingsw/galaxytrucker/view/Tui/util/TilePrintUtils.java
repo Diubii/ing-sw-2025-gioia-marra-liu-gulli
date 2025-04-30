@@ -59,7 +59,7 @@ public class TilePrintUtils {
             for (int i = 0; i < rowsEachTile; i++) {
 
                 for (c = 0; c < columns; c++) {
-                    System.out.print(TilesStringRow[c][i]);  // Stampo tutte le "prime righe" di ciscuna tile affiancate, poi seconde...
+                    System.out.print(TilesStringRow[c][i]);  // Stampo tutte le "prime righe" di ciascuna tile affiancate, poi seconde...
                 }
                 System.out.println(); // vai a capo dopo una riga
             }
@@ -108,9 +108,9 @@ public class TilePrintUtils {
                     "└----"+tile.getSides().get(2).ordinal()+"----┘ "
             };
             sb.append("ID: "+tile.getId());
-            if(tile.getId()>100){
+            if(tile.getId()>99){
                 sb.append("     ");
-            }else if( tile.getId()>10){
+            }else if( tile.getId()>9){
                 sb.append("      ");
             }else{
                 sb.append("       ");

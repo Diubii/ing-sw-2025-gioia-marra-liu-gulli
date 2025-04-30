@@ -242,6 +242,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
+    @NeedsToBeCompleted
     @Override
     public Void visit(ActivateAdventureCardResponse activateAdventureCardResponse){
         return null;
@@ -263,6 +264,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
+    @NeedsToBeCompleted
     @Override
     public Void visit(SelectPlanetResponse selectPlanetResponse) {
         return null;
@@ -278,8 +280,25 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
+    @NeedsToBeCompleted
     @Override
     public Void visit(DiscardCrewMembersResponse discardCrewMembersResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(SellGoodsRequest sellGoodsRequest) {
+        return null;
+    }
+
+    @NeedsToBeCompleted
+    @Override
+    public Void visit(SellGoodsResponse sellGoodsResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(GameMessage gameMessage) {
         return null;
     }
 

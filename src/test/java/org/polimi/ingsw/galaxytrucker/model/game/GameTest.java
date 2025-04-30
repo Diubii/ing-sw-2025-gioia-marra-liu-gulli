@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class GameTest {
 
     @Test
@@ -17,9 +15,9 @@ class GameTest {
     }
 
     @Test
-    void setFlightDeck() throws IOException {
+    void createDecks() throws IOException {
 
         Game game = new Game();
-        game.setFlightDeck();
+        game.createDecks();
     }
 }

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
 public class ModularHousingUnit extends CentralHousingUnit{
@@ -80,12 +78,18 @@ public class ModularHousingUnit extends CentralHousingUnit{
     }
 
     public void addHumanCrew(){
-        super.setHumanCrewNumber(2);;
+        super.setHumanCrewNumber(2);
     }
 
-    @Override
-    public int getHumanCrewNumber() {
-        return super.getHumanCrewNumber();
+    public int getHumanCrewNumber(){
+        int result = 0;
+        switch (alienColor){
+            case PURPLE -> result = getNPurpleAlien();
+            case BROWN -> result = getNBrownAlien();
+            case EMPTY -> result = this.getHumanCrewNumber();
+            default -> throw new IllegalStateException("Multiversal housing issue.");
+        }
+        return result;
     }
 
     public AlienColor getAlienColor(){
