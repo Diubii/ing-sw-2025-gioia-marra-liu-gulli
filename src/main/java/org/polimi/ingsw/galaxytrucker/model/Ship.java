@@ -633,7 +633,7 @@ public class Ship implements Serializable {
                 if (shipBoard[pos.getY() - 1][pos.getX()].getTile().getWellConnected()) {
                     System.out.println("OK");
 
-                    villagers.add(new Pair<>(ProjectileDirection.FRONT, shipBoard[pos.getY() - 1][pos.getX()]));
+                    villagers.add(new Pair<>(ProjectileDirection.UP, shipBoard[pos.getY() - 1][pos.getX()]));
 
                 } else {
                     brokenPos.add(new Position(pos.getY() - 1, pos.getX()));
@@ -671,7 +671,7 @@ public class Ship implements Serializable {
                 if (shipBoard[pos.getY() + 1][pos.getX()].getTile().getWellConnected()) {
                     System.out.println("OK");
 
-                    villagers.add(new Pair<>(ProjectileDirection.BOTTOM, shipBoard[pos.getY() + 1][pos.getX()]));
+                    villagers.add(new Pair<>(ProjectileDirection.DOWN, shipBoard[pos.getY() + 1][pos.getX()]));
 
                 } else {
                     brokenPos.add(new Position(pos.getY() + 1, pos.getX()));
@@ -798,7 +798,7 @@ public class Ship implements Serializable {
                         if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("Shield")) {
 
                             Shield tempShield = (Shield) tempTile.getMyComponent();
-                            if (tempShield.getCharged()) sides.addAll(tempShield.getProtectedSides());
+                            if (tempShield.isCharged()) sides.addAll(tempShield.getProtectedSides());
 
                         }
                     }
@@ -1065,5 +1065,10 @@ public class Ship implements Serializable {
         } while (getComponentFromPosition(componentPosition) != null && variableIndex >= 4 && variableIndex <= 10);
 
         return componentPosition;
+    }
+
+
+    public Float calculateFirePower() {
+        return (float) getCannonPos().stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();
     }
 }

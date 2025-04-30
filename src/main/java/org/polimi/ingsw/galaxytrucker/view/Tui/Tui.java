@@ -710,7 +710,7 @@ public class Tui implements View, Observable {
 
 
                 clientController.getMyModel().addTileToRemove(tile.getId());
-                ship.removeTile(tile, pos, true);
+                ship.removeTile(pos, true);
 
                 if (ship.remaningTiles() == 0){
                     System.out.println("Your ship is a ghost, go back to the menuuuuuu");
@@ -805,7 +805,7 @@ public class Tui implements View, Observable {
 
         //salvo tutte le posizioni delle housing
 
-        ArrayList<Position> housinPos = myShip.getComponentPosition("ModularHousingUnit");
+        ArrayList<Position> housinPos = myShip.getComponentPositionsFromName("ModularHousingUnit");
 
         int nBrownAliens = 0;
         int nPurpleAliens = 0;
