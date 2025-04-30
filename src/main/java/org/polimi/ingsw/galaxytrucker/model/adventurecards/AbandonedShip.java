@@ -20,7 +20,7 @@ public class AbandonedShip extends AdventureCard {
     @Serial
     private static final long serialVersionUID = 999991L;
     /** The number of humans lost. */
-    private final int crewMembersLost;
+    private final int requiredCrewMembers;
     /** The amount of credits lost or gained. */
     private final int credits;
 
@@ -30,7 +30,7 @@ public class AbandonedShip extends AdventureCard {
                    @JsonProperty("daysLost") int daysLost,
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
-                   @JsonProperty("crewMembersLost") int crewMembersLost ,
+                   @JsonProperty("requiredCrewMembers") int requiredCrewMembers,
                    @JsonProperty("credits")  int credits ,
                          @JsonProperty("affectsAll") boolean affectsAll)
             {
@@ -40,7 +40,7 @@ public class AbandonedShip extends AdventureCard {
         this.name = name;
         this.learningFlight = learningFlight;
         this.affectsAll = false;
-        this.crewMembersLost = crewMembersLost;
+        this.requiredCrewMembers = requiredCrewMembers;
         this.credits = credits;
         this.facultative = true;
     }
@@ -49,14 +49,12 @@ public class AbandonedShip extends AdventureCard {
         aca.visitAbandonedShip(this, rankedPlayers, lobbyManager);
     }
 
-
-
     public String[] accept(AdventureCardPrintVisitorInterface visitor){
         return visitor.visit(this);
     }
 
     public int getRequiredCrewMembers() {
-        return crewMembersLost;
+        return requiredCrewMembers;
     }
 
 

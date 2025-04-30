@@ -59,7 +59,7 @@ public class TilePrintUtils {
             for (int i = 0; i < rowsEachTile; i++) {
 
                 for (c = 0; c < columns; c++) {
-                    System.out.print(TilesStringRow[c][i]);  // Stampo tutte le "prime righe" di ciscuna tile affiancate, poi seconde...
+                    System.out.print(TilesStringRow[c][i]);  // Stampo tutte le "prime righe" di ciascuna tile affiancate, poi seconde...
                 }
                 System.out.println(); // vai a capo dopo una riga
             }

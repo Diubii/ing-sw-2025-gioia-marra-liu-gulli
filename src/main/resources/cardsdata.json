@@ -44,17 +44,17 @@
     "cannonFires": [
       {
         "type": "CannonFire",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
         "type": "CannonFire",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "BIG"
       },
       {
         "type": "CannonFire",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       }
     ],
@@ -116,7 +116,7 @@
     "meteors": [
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "BIG"
       },
       {
@@ -142,12 +142,12 @@
     "meteors": [
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
@@ -162,7 +162,7 @@
       },
       {
         "type": "Meteor",
-        "direction": "BOTTOM",
+        "direction": "DOWN",
         "size": "LITTLE"
       }
     ],
@@ -178,17 +178,17 @@
     "meteors": [
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "BIG"
       },
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "BIG"
       }
     ],
@@ -406,12 +406,12 @@
     "projectiles": [
       {
         "type": "CannonFire",
-        "direction": "BOTTOM",
+        "direction": "DOWN",
         "size": "LITTLE"
       },
       {
         "type": "CannonFire",
-        "direction": "BOTTOM",
+        "direction": "DOWN",
         "size": "BIG"
       }
     ],
@@ -424,7 +424,7 @@
     "daysLost": 1,
     "name": "Nave abbandonata",
     "learningFlight": false,
-    "crewMembersLost": 2,
+    "requiredCrewMembers": 2,
     "credits": 3,
     "affectsAll": false
   },
@@ -435,7 +435,7 @@
     "daysLost": 1,
     "name": "Nave abbandonata",
     "learningFlight": true,
-    "crewMembersLost": 3,
+    "requiredCrewMembers": 3,
     "credits": 4,
     "affectsAll": false
   },
@@ -455,7 +455,7 @@
       }
     ],
     "affectsAll": false,
-    "crewMemebers": 5
+    "requiredCrewMembers": 5
   },
   {
     "type": "AbandonedStation",
@@ -473,7 +473,7 @@
       }
     ],
     "affectsAll": false,
-    "crewMemebers": 6
+    "requiredCrewMembers": 6
   },
   {
     "type": "Slavers",
@@ -520,17 +520,17 @@
     "cannonFires": [
       {
         "type": "CannonFire",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "BIG"
       },
       {
         "type": "CannonFire",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
         "type": "CannonFire",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "BIG"
       }
     ],
@@ -592,12 +592,12 @@
     "meteors": [
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
@@ -628,22 +628,22 @@
     "meteors": [
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "BIG"
       },
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "BIG"
       },
       {
         "type": "Meteor",
-        "direction": "BOTTOM",
+        "direction": "DOWN",
         "size": "LITTLE"
       },
       {
         "type": "Meteor",
-        "direction": "BOTTOM",
+        "direction": "DOWN",
         "size": "LITTLE"
       }
     ],
@@ -659,12 +659,12 @@
     "meteors": [
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
         "type": "Meteor",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
@@ -912,7 +912,7 @@
     "projectiles": [
       {
         "type": "CannonFire",
-        "direction": "FRONT",
+        "direction": "UP",
         "size": "LITTLE"
       },
       {
@@ -927,7 +927,7 @@
       },
       {
         "type": "CannonFire",
-        "direction": "BOTTOM",
+        "direction": "DOWN",
         "size": "BIG"
       }
     ],
@@ -940,7 +940,7 @@
     "daysLost": 1,
     "name": "Nave abbandonata",
     "learningFlight": false,
-    "crewMembersLost": 4,
+    "requiredCrewMembers": 4,
     "credits": 6,
     "affectsAll": false
   },
@@ -951,7 +951,7 @@
     "daysLost": 2,
     "name": "Nave abbandonata",
     "learningFlight": false,
-    "crewMembersLost": 5,
+    "requiredCrewMembers": 5,
     "credits": 8,
     "affectsAll": false
   },
@@ -971,7 +971,7 @@
       }
     ],
     "affectsAll": false,
-    "crewMemebers": 7
+    "requiredCrewMembers": 7
   },
   {
     "type": "AbandonedStation",
@@ -992,6 +992,6 @@
       }
     ],
     "affectsAll": false,
-    "crewMemebers": 7
+    "requiredCrewMembers": 7
   }
 ]
