@@ -21,7 +21,6 @@ public class Cannon extends Component {
     }
 
     private void calculateFP(){
-
         if (getRotation() != 0) {
             FirePower = FirePower/2;
         }

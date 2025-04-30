@@ -91,8 +91,8 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(ActivateAdventureCardRequest activateAdventureCardRequest);
     T visit(ActivateAdventureCardResponse activateAdventureCardResponse);
 
-    T visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest);
-    T visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse);
+    T visit(ActivateComponentRequest activateComponentRequest);
+    T visit(ActivateComponentResponse activateComponentResponse);
 
     T visit(SelectPlanetRequest selectPlanetRequest);
     T visit(SelectPlanetResponse selectPlanetResponse);

@@ -228,7 +228,7 @@ public class Util {
             sum += 1;
             c2 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile().getSides().get(3);
         } else c2 = null;
-        //BOTTOM
+        //DOWN
 
         if (mySlot.getPosition().getY() + 1 < 5 && TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile() != null) {
             c3 = TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile().getSides().get(0);

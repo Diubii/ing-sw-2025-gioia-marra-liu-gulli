@@ -73,7 +73,7 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
                 "         "
         };
         //Aggiungere se attivo
-        result = AddActiveIndicator(result, component.getCharged());
+        result = AddActiveIndicator(result, component.isCharged());
         return AddRotationIndicator(result,component.getRotation());
     }
 
@@ -183,7 +183,7 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
                 "   Shl   ",
                 "         "
         };
-        result = AddActiveIndicator(result, component.getCharged());
+        result = AddActiveIndicator(result, component.isCharged());
         StringBuilder sb;
         switch (component.getRotation()){
             case 90:

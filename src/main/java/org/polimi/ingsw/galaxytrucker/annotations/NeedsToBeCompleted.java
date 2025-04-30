@@ -5,4 +5,5 @@ package org.polimi.ingsw.galaxytrucker.annotations;
  * @author Alessandro Giuseppe Gioia
  */
 public @interface NeedsToBeCompleted {
+    String value() default "";
 }

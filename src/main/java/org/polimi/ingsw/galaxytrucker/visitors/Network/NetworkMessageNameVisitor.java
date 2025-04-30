@@ -198,12 +198,12 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     }
 
     @Override
-    public NetworkMessageType visit(ActivateDoubleEnginesRequest activateDoubleEnginesRequest) {
+    public NetworkMessageType visit(ActivateComponentRequest activateDoubleEnginesRequest) {
         return NetworkMessageType.DeclareEnginePowerRequest;
     }
 
     @Override
-    public NetworkMessageType visit(ActivateDoubleEnginesResponse activateDoubleEnginesResponse) {
+    public NetworkMessageType visit(ActivateComponentResponse activateComponentResponse) {
         return NetworkMessageType.DeclareEnginePowerResponse;
     }
 

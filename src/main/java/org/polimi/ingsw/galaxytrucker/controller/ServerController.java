@@ -473,7 +473,7 @@ public class ServerController {
 
         for (Slot slot : Slots) {
             if (slot.getTile() != null && message.getRemovedTilesId().contains(slot.getTile().getId())) {
-                ship.removeTile(slot.getTile(), slot.getPosition(), true);
+                ship.removeTile(slot.getPosition(), true);
             }
         }
 
@@ -774,7 +774,7 @@ public class ServerController {
         myGame.getGameController().notify();
     }
 
-    public void handleActivateDoubleEnginesResponse(ActivateDoubleEnginesResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
+    public void handleActivateDoubleEnginesResponse(ActivateComponentResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         Player player = getPlayerFromClientHandler(clientHandler);
         Ship ship = player.getShip();
