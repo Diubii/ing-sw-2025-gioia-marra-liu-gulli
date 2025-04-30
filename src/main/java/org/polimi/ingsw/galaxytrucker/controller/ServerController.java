@@ -566,6 +566,7 @@ public class ServerController {
 
             Color playerColor = myGame.getPlayerColors().get(nickname);
             myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, response.getPosition());
+            myGame.getRealGame().getPlayer(nickname).setPlacement(response.getPosition());
 
             ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
             broadCast(playerHandlers, new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));

@@ -62,10 +62,14 @@ public class FlightBoard implements Serializable{
     }
 
     public ArrayList<Color> getRankedPlayers() {
-        return (ArrayList<Color>) playerSteps.entrySet().stream()
+        return new ArrayList<>(playerSteps.entrySet().stream()
                 .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))  // Ordine decrescente
                 .map(Map.Entry::getKey)  // Estraggo solo i Color
-                .toList();
+                .toList());
+    }
+
+    public void removePlayer(Color token){
+        playerSteps.remove(token);
     }
 
     @NeedsToBeCompleted

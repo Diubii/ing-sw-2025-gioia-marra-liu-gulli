@@ -155,11 +155,11 @@ public class Ship implements Serializable {
     }
 
     public int getNPurpleAlien() {
-        return purpleAlien;
+        return (int) getComponentPositionsFromName("ModularHousingUnit").stream().filter(p -> ((ModularHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getNPurpleAlien() > 0).count();
     }
 
     public int getNBrownAlien() {
-        return brownAlien;
+        return (int) getComponentPositionsFromName("ModularHousingUnit").stream().filter(p -> ((ModularHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getNBrownAlien() > 0).count();
     }
 
     public Boolean getLearningMatch() {
@@ -167,7 +167,8 @@ public class Ship implements Serializable {
     }
 
     public int getnCrew() {
-        return nCrew;
+        return getComponentPositionsFromName("ModularHousingUnit").stream().map(p -> ((ModularHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getHumanCrewNumber()).reduce(0, Integer::sum)
+                + getComponentPositionsFromName("CentralHousingUnit").stream().map(p -> ((CentralHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getHumanCrewNumber()).reduce(0, Integer::sum);
     }
 
     public Boolean getSynch(){
@@ -908,7 +909,12 @@ public class Ship implements Serializable {
     }
 
     public int calculateEnginePower(){
-        return getEnginePos().stream().mapToInt(p -> ((Engine) getComponentFromPosition(p)).getEnginePower()).sum();
+        int enginePower = getEnginePos().stream().mapToInt(p -> ((Engine) getComponentFromPosition(p)).getEnginePower()).sum();
+        if(enginePower != 0){
+            enginePower += getNBrownAlien() * 2;
+        }
+
+        return enginePower;
     }
 
     public Component getComponentFromPosition(Position position){
@@ -942,98 +948,6 @@ public class Ship implements Serializable {
 
     public void setLastTile(Tile tile) {
         lastTile = tile;
-    }
-
-    /**
-     * Removes the first tile hit by the projectile if the conditions to destroy it are met.
-     *
-     * @param projectile The projectile.
-     * @param diceRoll   Result of the dice rolled by the player.
-     * @author Alessandro Giuseppe Gioia
-     */
-    @NeedsToBeCompleted("Controllare per tronconi.")
-    public void reactToProjectile(Projectile projectile, int diceRoll) {
-        Position pos = getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll);
-        if(pos == null) return; //Se non trova nessun componente il colpo va a vuoto
-
-        if (projectile.getType() == ProjectileType.CannonFire) {
-            if (projectile.getSize() == ProjectileSize.BIG) {
-                removeTile(pos, false);
-            }
-            else if (projectile.getSize() == ProjectileSize.LITTLE){
-                if(!protectWithFirstAvailableCorrectlyOrientedChargedShield(projectile.getDirection())){
-                    removeTile(pos, false);
-                }
-            }
-        } else if (projectile.getType() == ProjectileType.Meteor) {
-            if (projectile.getSize() == ProjectileSize.BIG) {
-                if(!protectWithFirstAvailableCannon(projectile.getDirection())){
-                    removeTile(pos, false);
-                }
-            }
-            else if (projectile.getSize() == ProjectileSize.LITTLE) {
-                ArrayList<Connector> tileConnectors = shipBoard[pos.getX()][pos.getY()].getTile().getSides();
-                int index = -1;
-
-                switch (projectile.getDirection()) {
-                    case UP    -> index = 0;
-                    case RIGHT -> index = 1;
-                    case DOWN  -> index = 2;
-                    case LEFT  -> index = 3;
-                }
-
-                if(tileConnectors.get(index) != Connector.EMPTY){ //Se non è un lato liscio
-                    if(!protectWithFirstAvailableCorrectlyOrientedChargedShield(projectile.getDirection())){ //Se non c'è uno shield disponibile a proteggere
-                        removeTile(pos, false);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Finds the first available charged shield oriented according to the direction from which the projectile will come from and protects
-     * the ship with it, discharging it.
-     *
-     * @param direction The direction which the projectile will come from.
-     * @return {@code true} if the ship is protected, {@code false} if it is not.
-     * @author Alessandro Giuseppe Gioia
-     */
-    private boolean protectWithFirstAvailableCannon(ProjectileDirection direction) {
-        for (Position cannonPos : getComponentPositionsFromName("Cannon")) {
-            Cannon cannon = (Cannon) getComponentFromPosition(cannonPos);
-            if(cannon.getRotation() == direction.ordinal()){
-                return true;
-            }
-        }
-
-        for (Position cannonPos : getComponentPositionsFromName("DoubleCannon")) {
-            DoubleCannon doubleCannon = (DoubleCannon) getComponentFromPosition(cannonPos);
-            if(doubleCannon.getRotation() == direction.ordinal() && doubleCannon.isCharged()){
-                doubleCannon.setCharged(false);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Finds the first available charged shield oriented according to the direction from which the projectile will come from and protects
-     * the ship with it, discharging it.
-     *
-     * @param direction The direction which the projectile will come from.
-     * @return {@code true} if the ship is protected, {@code false} if it is not.
-     * @author Alessandro Giuseppe Gioia
-     */
-    private boolean protectWithFirstAvailableCorrectlyOrientedChargedShield(ProjectileDirection direction) {
-        for (Position shieldPos : getComponentPositionsFromName("Shield")) {
-            Shield shield = (Shield) getComponentFromPosition(shieldPos);
-            if (shield.isCharged() && shield.getProtectedSides().contains(direction)) {
-                shield.setCharged(false);
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

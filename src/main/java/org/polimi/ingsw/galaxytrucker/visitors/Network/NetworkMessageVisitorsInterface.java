@@ -100,4 +100,9 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(DiscardCrewMembersRequest discardCrewMembersRequest);
     T visit(DiscardCrewMembersResponse discardCrewMembersResponse);
+
+    T visit(SellGoodsRequest sellGoodsRequest);
+    T visit(SellGoodsResponse sellGoodsResponse);
+
+    T visit(GameMessage gameMessage);
 }

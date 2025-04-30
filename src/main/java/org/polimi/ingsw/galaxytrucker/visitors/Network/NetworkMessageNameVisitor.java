@@ -234,4 +234,21 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(DiscardCrewMembersResponse discardCrewMembersResponse) {
         return NetworkMessageType.DiscardCrewMembersResponse;
     }
+
+    @Override
+    public NetworkMessageType visit(SellGoodsRequest sellGoodsRequest) {
+        return NetworkMessageType.SellGoodsRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(SellGoodsResponse sellGoodsResponse) {
+        return NetworkMessageType.SellGoodsResponse;
+    }
+
+    @Override
+    public NetworkMessageType visit(GameMessage gameMessage) {
+        return NetworkMessageType.GameMessage;
+    }
+
+
 }
