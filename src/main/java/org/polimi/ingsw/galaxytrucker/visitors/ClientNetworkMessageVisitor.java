@@ -237,6 +237,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(FaceUpTileUpdate faceUpTileUpdate) {
+        clientController.handleFaceUpTileUpdate(faceUpTileUpdate);
         return null;
     }
 

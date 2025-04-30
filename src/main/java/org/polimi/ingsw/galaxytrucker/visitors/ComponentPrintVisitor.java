@@ -248,17 +248,17 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
         switch (rot){
             case 90:
                 sb = new StringBuilder(res[1]);
-                sb.replace(0,1 , ORANGE+"▲"+RESET);
+                sb.replace(0,1 , ORANGE+"◀"+RESET);
                 res[1] = sb.toString();
                 break;
             case 180:
                 sb = new StringBuilder(res[2]);
-                sb.replace(4,5 , ORANGE+"▲"+RESET);
-                res[2] = sb.toString();
+                sb.replace(4,5 , ORANGE+"▼"+RESET);
+                res[0] = sb.toString();
                 break;
             case 270:
                 sb = new StringBuilder(res[1]);
-                sb.replace(7,8 , ORANGE+"▲"+RESET);
+                sb.replace(7,8 , ORANGE+"▶"+RESET);
                 res[1] = sb.toString();
                 break;
             default:

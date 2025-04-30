@@ -89,5 +89,20 @@ public class ClientModel {
         }
     }
 
+    public PlayerInfo getPlayerInfoByNickname(String nickname) {
+        if (myInfo != null && myInfo.getNickName().equals(nickname)) {
+            return myInfo;
+        }
 
+        synchronized (playerInfos) {
+            return playerInfos.stream()
+                    .filter(info -> info.getNickName().equals(nickname))
+                    .findFirst()
+                    .orElse(null);
+        }
+    }
+
+    public boolean hasPlayerWithNickname(String nickname) {
+        return getPlayerInfoByNickname(nickname) != null;
+    }
 }

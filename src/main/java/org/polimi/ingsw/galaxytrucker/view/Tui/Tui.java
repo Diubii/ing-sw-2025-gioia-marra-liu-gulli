@@ -416,13 +416,14 @@ public class Tui implements View, Observable {
                 String targetName = readLine("Enter the nickname of the player to fetch their ship: ").trim();
                 clientController.handleFetchShip(targetName);
                 success = true;
-                menuManager.showCurrentMenu();
+
             } catch (InterruptedException | ExecutionException e) {
                 showGenericMessage("Error fetching ship: " + e.getMessage() + ", please try again");
             } catch (Exception e) {
                 showGenericMessage("Unexpected error: " + e.getMessage());
             }
         } while (!success);
+
     }
 
     @Override
@@ -517,12 +518,10 @@ public class Tui implements View, Observable {
 
                     }
                     case "3": {
-                        askPickReservedTile(true);
+                        askPickOrPlaceReservedTile(true);
                         validInput = true;
                         break;
                     }
-
-
 
                 }
 
@@ -573,41 +572,56 @@ public class Tui implements View, Observable {
         }
     }
 
-    public void askPickReservedTile(boolean isPicking) {
+    public void askPickOrPlaceReservedTile(boolean isPicking) {
+        if(clientController.hasTileInHand()){
         Tile[] reservedTiles = clientController.getReservedTiles();
 
-        System.out.println("Reserved Slot 1:");
-        if (reservedTiles[0] != null) {
-            showTile(reservedTiles[0]);
-        } else {
-            System.out.println("Empty");
+        if (reservedTiles[0] == null || reservedTiles[1] == null) {
+            System.out.println("Reserved Slot 1:");
+            if (reservedTiles[0] != null) {
+                showTile(reservedTiles[0]);
+            } else {
+                System.out.println("Empty");
+            }
+
+            System.out.println("Reserved Slot 2:");
+            if (reservedTiles[1] != null) {
+                showTile(reservedTiles[1]);
+            } else {
+                System.out.println("Empty");
+            }
+            try {
+                boolean validInput = false;
+                int slotIndex = -1;
+                do {
+                    String input = readLine("Enter the Slot Index to" + (isPicking ? "pick" : "place") + "(1 or 2)> ");
+                    if (checkReset(input)) return;
+                    ;
+
+                    if (input.equals("1") || input.equals("2")) {
+                        slotIndex = Integer.parseInt(input);
+                        validInput = true;
+                    } else {
+                        out.println("Invalid input. Please enter 1 or 2.");
+                    }
+                } while (!validInput);
+
+                clientController.handlePickReservedTile(slotIndex - 1, isPicking);
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else{
+            showGenericMessage("There are no area to place a tile");
+            showBuildingMenu();
+        }
+        }else{
+            showGenericMessage("You don't have a tile to place");
+            showBuildingMenu();
+
+
         }
 
-        System.out.println("Reserved Slot 2:");
-        if (reservedTiles[1] != null) {
-            showTile(reservedTiles[1]);
-        } else {
-            System.out.println("Empty");
-        }
-        try {
-            boolean validInput = false;
-            int slotIndex = -1;
-            do {
-                String input = readLine("Enter the Slot Index to" + (isPicking ? "pick" : "place") + "(1 or 2)> ");
-                if (checkReset(input)) return;;
-
-                if (input.equals("1") || input.equals("2")) {
-                    slotIndex = Integer.parseInt(input);
-                    validInput = true;
-                } else {
-                    out.println("Invalid input. Please enter 1 or 2.");
-                }
-            } while (!validInput);
-
-            clientController.handlePickReservedTile(slotIndex - 1, isPicking);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 
@@ -623,8 +637,9 @@ public class Tui implements View, Observable {
 
             out.println(" Current tile info:");
             TilePrintUtils.printTile(clientController.getCurrentTileInHand());
+
             if (clientController.getCurrentPosition() != null) {
-                out.println("Current position: " + clientController.getCurrentPosition().getX() + ", " + clientController.getCurrentPosition().getY());
+                out.println("Current position:  X: " + clientController.getCurrentPosition().getX() + ",  Y:" + clientController.getCurrentPosition().getY());
             } else {
                 out.println("Current position: null");
                 askPosition();
@@ -657,12 +672,7 @@ public class Tui implements View, Observable {
     public void showcheckShipMenu() {
         try {
             String input = readLine("\nChoose an option (a–c) or menu: ").trim().toLowerCase();
-
-
-
             clientController.handleCheckShipChoice(input);
-
-
         } catch (Exception e) {
             out.println(" Error: " + e.getMessage());
         }
@@ -673,12 +683,7 @@ public class Tui implements View, Observable {
 
         try {
             String input = readLine("\nChoose an option (a–b) or menu: ").trim().toLowerCase();
-
-
-
             clientController.handleEmbarkCrewMenu(Character.toString(input.charAt(input.length()-1)));
-
-
         } catch (Exception e) {
             out.println(" Error: " + e.getMessage());
         }
@@ -701,14 +706,14 @@ public class Tui implements View, Observable {
                     throw new IllegalArgumentException("Invalid Position" + pos.getY() + pos.getX());
 
                 }
-//                valid = true;
 
-                Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+
+
                 Tile tile = ship.getShipBoard()[pos.getY()][pos.getX()].getTile();
 
 
                 clientController.getMyModel().addTileToRemove(tile.getId());
-                ship.removeTile(tile, pos, true);
+                ship.removeTile( pos, true);
 
                 if (ship.remaningTiles() == 0){
                     System.out.println("Your ship is a ghost, go back to the menuuuuuu");

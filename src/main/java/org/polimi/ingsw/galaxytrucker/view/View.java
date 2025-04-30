@@ -51,7 +51,7 @@ public interface View {
     void askViewAdventureDecks();
     void showTile(Tile tile);
     void askChooseTile();
-    void askPickReservedTile(boolean isPicking);
+    void askPickOrPlaceReservedTile(boolean isPicking);
 
     void askFetchShip();
     void askDrawTile();

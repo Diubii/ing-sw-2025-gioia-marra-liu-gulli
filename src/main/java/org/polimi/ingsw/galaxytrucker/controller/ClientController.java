@@ -310,26 +310,6 @@ public class ClientController implements Observer {
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate){
         phase = phaseUpdate.getState();
 
-
-//        if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
-//            if (clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER)){
-//                //allora  devo gestirla
-//                view.forceReset();
-//                clientPhaseController.handlePhaseUpdate(phaseUpdate);
-//
-//                try {
-//                    clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
-//                    client.sendMessage(new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile()));
-//
-//                } catch (IOException | ExecutionException | InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-////                clientPhaseController.handlePhaseUpdate(phaseUpdate);
-//                return;
-//            }
-//        }
-
         if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
             if (clientPhaseController.getPhase().equals(PLAYER_PHASE.FINISH_BUILDING) ){ return;}
             if ( clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER ) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING)){
@@ -421,23 +401,20 @@ public class ClientController implements Observer {
                     view.askRotation();
                     break;
                 }
-                case "g" -> {
-                    try {
-                        view.askPosition();
-                    } catch (ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
 
-                    break;
-                }
-                case "h" -> {
+                case "g" -> {
                     view.askTilePlacement();
                     break;
                 }
-                case "i" -> {
+                case "h" -> {
                     sendDiscardRequest();
                     break;
                 }
+                case "i" -> {
+                    view.askPickOrPlaceReservedTile(false);
+                    break;
+                }
+
                 case "j" -> {
                   try {
                       clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
@@ -452,10 +429,6 @@ public class ClientController implements Observer {
 
                     break;
             }
-                case "k" -> {
-                    view.askPickReservedTile(false);
-                    break;
-                }
 
                 case "reset" -> {
                   break;
@@ -484,41 +457,47 @@ public class ClientController implements Observer {
 
     public void handleFetchShip(String targetNickname){
 
-        FetchShipRequest request = new FetchShipRequest(targetNickname);
+        boolean exists;
+        exists= myModel.hasPlayerWithNickname(targetNickname);
+        if(exists) {
+            FetchShipRequest request = new FetchShipRequest(targetNickname);
 
-        try {
-            client.sendMessage(request);
-             } catch (Exception e) {
-            view.showGenericMessage("Failed to send fetch ship request: " + e.getMessage());
+            try {
+                client.sendMessage(request);
+            } catch (Exception e) {
+                view.showGenericMessage("Failed to send fetch ship request: " + e.getMessage());
                 return;
+            }
+
         }
-
-
+        else{
+            view.showGenericMessage("No player with nickname " + targetNickname + " found. Please try again.");
+            view.askFetchShip();
+        }
 
     }
 
 
-    @NeedsToBeCompleted
-    // metodo nel view o altri class per stampare ship
+
     public void handleShipUpdate(ShipUpdate update)  {
         String owner = update.getNickName();
         Ship ship = update.getShipView();
-//        view.showGenericMessage("In Update: " + owner);
+
         if(owner != null ) {
-//            view.showGenericMessage("Ship belongs to: " + owner);
+
             if (getNickname().equals(owner)) {
                 synchronized (myModel.getMyInfo()) {
-                    myModel.getMyInfo().setShip(ship);  // per avere la versione l'utima del mio ship dal lato server
+                    myModel.getMyInfo().setShip(ship);
                 }
             }else {
                 synchronized (myModel.getPlayerInfos()){
-                    myModel.getPlayerInfos().stream()
-                            .filter(info -> info.getNickName().equals(owner))
-                            .findFirst()
-                            .ifPresentOrElse(
-                                    info -> info.setShip(ship),
-                                    () -> view.showGenericMessage("Player with nickname " + owner + " not found.")
-                            );
+                    PlayerInfo playerInfo = myModel.getPlayerInfoByNickname(owner);
+                    if(playerInfo != null){
+                        playerInfo.setShip(ship);
+                    }
+                    else{
+                        view.showGenericMessage("Player with nickname " + owner + " not found.");
+                    }
                 }
             }
             if(update.getShouldDisplay()){
@@ -547,7 +526,7 @@ public class ClientController implements Observer {
         if(!cardDecks.isEmpty()){
 
                 if (spyable) {
-                    int colums = 4;
+                    int colums = 3;
                     CardPrintUtils.printDeck(deck, colums);
                     DeckID++;
                     view.showGenericMessage("Deck  " + DeckID + " received successfully. ");
@@ -565,37 +544,17 @@ public class ClientController implements Observer {
 
 //case (c)
 
-    private void sendGetFaceUpTilesRequest() {
-    }
 
-    public void getFaceUpTilesRequest() throws IOException, ExecutionException, InterruptedException {
-
-        view.showFaceUpTiles();
-        view.showGenericMessage("Fetching face-up tiles...");
-        view.showBuildingMenu();
-
-    }
-    public void handleFaceUpTileUpdate(FaceUpTileUpdate update, boolean shouldShow){
-//        List<Tile> faceUpTiles = update.getFaceUpTiles();
-//        synchronized (myModel) {
-//            myModel.setFaceUpTiles(faceUpTiles);
-//        }
-//        if(shouldShow){
-//            showFaceUpTiles(faceUpTiles);
-//        }
-        view.showBuildingMenu();
-    }
-
-    private void showFaceUpTiles(List<Tile> tiles) {
-        if (tiles == null || tiles.isEmpty()) {
-            view.showGenericMessage("No face-up tiles available.");
-            view.showBuildingMenu();
-        } else {
-            view.showFaceUpTiles();
-            view.showBuildingMenu();
-            return;
+    public void handleFaceUpTileUpdate(FaceUpTileUpdate update){
+        ArrayList<Tile> faceUpTiles = update.getFaceUpTiles();
+        synchronized (myModel.getFaceUpTiles()) {
+            myModel.setFaceUpTiles(faceUpTiles);
         }
+
+
     }
+
+
 
 
     //case(d) draw tile
@@ -645,6 +604,7 @@ public class ClientController implements Observer {
         List<Tile> tiles = myModel.getFaceUpTiles();
         if(tiles == null || tiles.isEmpty()){
             view.showGenericMessage("No face-up tiles available.");
+            view.showBuildingMenu();
             return;
         }
         view.showGenericMessage("--Current face-up tiles--");
@@ -795,6 +755,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         try {
             client.sendMessage(request);
             currentTileInHand = null;
+            currentPosition = null;
             view.showGenericMessage("Tile discarded successfully.");
             view.showBuildingMenu();
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -808,8 +769,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             synchronized (myModel.getFaceUpTiles()) {
                 myModel.getFaceUpTiles().add(discardedTile);
             }
-//            view.showGenericMessage("A tile has been discarded and added back to face-up tiles.");
-//            view.showBuildingMenu();
+
         }).start();
     }
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {
@@ -968,7 +928,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
                     }
 
                         }
-            case "c" -> handleCheckShipRequest();
+//            case "c" -> handleCheckShipRequest();
             case "menu","m","?" ->{
                 view.handleChoiceForPhase(phase);
 

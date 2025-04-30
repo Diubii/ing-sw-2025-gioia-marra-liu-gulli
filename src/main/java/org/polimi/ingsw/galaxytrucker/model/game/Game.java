@@ -34,7 +34,7 @@ public class Game {
     private boolean gameStarted;
     private boolean learningMatch;
 
-    private final ArrayList<CardDeck> Decks;
+    private ArrayList<CardDeck> Decks;
     private CardDeck flightDeck;
 
 
@@ -250,7 +250,7 @@ public class Game {
         } else {
 
             ArrayList<CardDeck> tempDecks = createBuildingCardDecks(Util.createLvl1Deck(), Util.createLvl2Deck());
-            Decks.addAll(tempDecks);
+            this.Decks.addAll(tempDecks);
             decks.addAll(Decks);
 
         }

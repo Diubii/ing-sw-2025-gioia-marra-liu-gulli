@@ -255,7 +255,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void askPickReservedTile(boolean isPicking) {
+    public void askPickOrPlaceReservedTile(boolean isPicking) {
 
     }
 

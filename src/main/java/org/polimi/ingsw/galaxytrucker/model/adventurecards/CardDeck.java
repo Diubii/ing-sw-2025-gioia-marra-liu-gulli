@@ -84,8 +84,8 @@ public class CardDeck implements Serializable {
      * @return {@link CardDeck}
     */
     public CardDeck merge(CardDeck cd) {
-        while(cd.getSize()!=0){
-            cards.addFirst(cd.pop());
+        for (AdventureCard c : cd.getCards()) {
+            cards.addFirst(c);
         }
         return this;
     }

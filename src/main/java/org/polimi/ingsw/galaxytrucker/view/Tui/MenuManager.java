@@ -38,17 +38,16 @@ public class MenuManager {
     }
     public void showBuildingMenu() {
         out.println("\n Building Phase Menu:");
-        out.println("a. Show ship for each player");
+        out.println("a. select the ship you want to view");
         out.println("b. Show Adventure card deck");
         out.println("c. Show face-up tiles on table");
-        out.println("d. Draw a tile (random or specific)");
+        out.println("d. Draw a tile (randomly or choose one)");
         out.println("e. Show tile in hand");
-        out.println("f. Rotate tile in hand (left or right)");
-        out.println("g. Move tile (to ship or reserve)");
-        out.println("h. Place tile");
-        out.println("i. Discard tile");
+        out.println("f. Rotate tile in hand ");
+        out.println("g. Place tile");
+        out.println("h. Discard tile");
+        out.println("i. Reserve a tile in one of the slot(1 o 2)");
         out.println("j. Finish building");
-        out.println("k. Reserve a tile in one of the slot(1 o 2)");
         out.println("menu. show menu");
         out.println("reset. reset ");
     }

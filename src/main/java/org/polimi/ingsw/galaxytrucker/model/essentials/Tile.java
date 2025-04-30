@@ -125,10 +125,23 @@ public class Tile implements Serializable {
     }
 
     public void rotate(int addRotation) {
-        Rotation += addRotation;
-        Rotation %= 360;
 
+        Rotation = (Rotation + addRotation) % 360;
         myComponent.setRotation(Rotation);
+        int numRotation = ((addRotation %360 ) +360)%360/90;
+        for (int i = 0; i < numRotation; i++) {
+            rotateSides90();
+        }
+    }
+
+    private void rotateSides90() {
+        if (sides == null || sides.size() != 4) return;
+
+        Connector temp = sides.get(3);
+        sides.set(3, sides.get(2));
+        sides.set(2, sides.get(1));
+        sides.set(1, sides.get(0));
+        sides.set(0, temp);
     }
 
     public boolean isFlipped(){
