@@ -68,6 +68,10 @@ public interface View {
 
     void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
 
+    void showFlightBoard();
+    void showCurrentAdventureCard();
+
+
 
 //    public void askNickname(Thread thread) throws IOException;
 }

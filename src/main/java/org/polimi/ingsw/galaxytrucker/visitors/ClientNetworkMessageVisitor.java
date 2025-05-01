@@ -163,6 +163,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(CheckShipStatusResponse checkShipStatusResponse) {
+        clientController.completeFuture(checkShipStatusResponse);
         return null;
     }
 
@@ -215,6 +216,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(MatchInfoUpdate matchInfoUpdate) {
+        clientController.handleMatchInfoUpdate(matchInfoUpdate);
         return null;
     }
 
@@ -243,6 +245,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate){
+        clientController.handleDrawnAdventureCardUpdate(drawnAdventureCardUpdate);
         return null;
     }
 
@@ -303,6 +306,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(GameMessage gameMessage) {
+        clientController.handleGameMessage(gameMessage);
         return null;
     }
 

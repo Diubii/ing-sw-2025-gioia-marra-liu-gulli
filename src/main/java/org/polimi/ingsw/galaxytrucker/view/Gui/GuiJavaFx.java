@@ -81,7 +81,17 @@ public class GuiJavaFx implements View {
             Label label = new Label("Enter your nickname:");
             TextField input = new TextField();
             Button submit = new Button("Submit");
-            submit.setOnAction(e -> controller.handleNicknameInput(input.getText().trim()));
+            submit.setOnAction(e -> {
+                try {
+                    controller.handleNicknameInput(input.getText().trim());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ExecutionException ex) {
+                    throw new RuntimeException(ex);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
             layout.getChildren().addAll(label, input, submit);
             primaryStage.setScene(new Scene(layout, 300, 150));
         });
@@ -291,6 +301,16 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
+
+    }
+
+    @Override
+    public void showFlightBoard() {
+
+    }
+
+    @Override
+    public void showCurrentAdventureCard() {
 
     }
 

@@ -2,13 +2,16 @@ package org.polimi.ingsw.galaxytrucker.controller;
 
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
@@ -66,6 +69,8 @@ public class ClientController implements Observer {
     private ClientPhaseController clientPhaseController = new ClientPhaseController(this);
 
     private GameState phase = GameState.LOBBY;
+
+    private AdventureCard currentAdventureCard;
 
     public ClientModel getMyModel() {
         return myModel;
@@ -151,7 +156,45 @@ public class ClientController implements Observer {
         }).start();
     }
 
-    public void handleNicknameInput(String nickname){
+    /**
+     * Handles the user input for a nickname.
+     * <p>
+     * Validates the nickname format locally before sending a {@link NicknameRequest}
+     * to the server.
+
+     * @param nickname the nickname input provided by the user
+     */
+
+    private boolean isNicknameLegal(String nickname) {
+        //no accetta nickname == null o la string vuota
+        if (nickname == null || nickname.trim().isEmpty()) return false;
+        //nickname deve  corrispondere a una stringa che contiene solo lettere (a-z o A-Z), numeri (0-9) o il carattere di sottolineatura (_) e che ha almeno un carattere.
+        return nickname.matches("^[a-zA-Z0-9_]+$");
+    }
+
+
+    /**
+     * Handles the nickname input provided by the user.
+     * <p>
+     * This method first validates the nickname legally.
+     * If the nickname is invalid, an error message is displayed
+     * and the user is prompted to enter it again.
+      * <p>
+     * If the nickname is valid, a {@link NicknameRequest} is sent to the server.
+     * The method then waits for a {@link NicknameResponse}.
+     * If the server confirms the nickname is valid,
+     * it is set as the current nickname and the user proceeds to the next step.
+     * Otherwise, an error is shown and the user is prompted to try a different nickname.
+     *
+     * @param nickname the nickname input provided by the user
+     */
+
+    public void handleNicknameInput(String nickname) throws IOException, ExecutionException, InterruptedException {
+        if(!isNicknameLegal(nickname)) {
+            view.showGenericMessage("Invalid nickname. It must  contain only letters, numbers, or underscores.");
+            view.askNickname();
+            return;
+        }
         NicknameRequest request = new NicknameRequest(nickname);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
@@ -887,6 +930,23 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         } else {
             myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
         }
+        if(phase == GameState.FLIGHT){
+            view.showFlightBoard();
+        }
+
+    }
+
+    public void handleGameMessage(GameMessage gameMessage) {
+        view.showGenericMessage(gameMessage.getMessage());
+    }
+
+    public void handleMatchInfoUpdate(MatchInfoUpdate matchInfoUpdate) {
+        view.showGenericMessage("Il giocatore: " + matchInfoUpdate.getLeaderNickname() + " ha pescato, rimangono: " + matchInfoUpdate.getRemainingCards()+ " carte.");
+    }
+
+    public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
+        currentAdventureCard = drawnAdventureCardUpdate.getCard();
+        view.showCurrentAdventureCard();
 
     }
 
@@ -1027,5 +1087,30 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             }
 
         }).start();
+    }
+
+    public void handleActivateComponentRequest(ActivateComponentRequest request) {
+        ActivatableComponent component = request.getActivatableComponentType();
+
+        //Invoca metodo della view chiedere se giocagtore vuole attivare il component
+
+
+    }
+
+    public void handleActivateComponentResponse(ActivatableComponent component,ArrayList<Position> componentPos, ArrayList<Position> battPos){
+        //Tornare lista di componenti e batterie
+
+        //Inviare la response
+        ActivateComponentResponse resp = new ActivateComponentResponse(component,componentPos,battPos);//tipo e liste)
+        try{
+            client.sendMessage(resp);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public AdventureCard getCurrentAdventureCard() {
+        return currentAdventureCard;
     }
 }

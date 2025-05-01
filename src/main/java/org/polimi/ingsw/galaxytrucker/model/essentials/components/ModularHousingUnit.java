@@ -17,11 +17,12 @@ public class ModularHousingUnit extends CentralHousingUnit{
         super(color,humanCrew);
         this.nBrownAlien = nBrownAlien;
         this.nPurpleAlien = nPurpleAlien;
-        this.alienColor = alienColor;
+        this.alienColor = alienColor != null ? alienColor : AlienColor.EMPTY;
     }
 
     public ModularHousingUnit() {
         super(Color.EMPTY);
+        this.alienColor = AlienColor.EMPTY;
     }
 
 
@@ -86,7 +87,7 @@ public class ModularHousingUnit extends CentralHousingUnit{
         switch (alienColor){
             case PURPLE -> result = getNPurpleAlien();
             case BROWN -> result = getNBrownAlien();
-            case EMPTY -> result = this.getHumanCrewNumber();
+            case EMPTY -> result = super.getHumanCrewNumber();
             default -> throw new IllegalStateException("Multiversal housing issue.");
         }
         return result;

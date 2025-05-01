@@ -10,6 +10,7 @@ import javafx.util.Pair;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 
@@ -550,6 +551,7 @@ public class Tui implements View, Observable {
                 List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
                 if (faceUpTiles.isEmpty()) {
                     out.println("No tiles available to choose.");
+                    showBuildingMenu();
                     break;
                 }
 
@@ -585,6 +587,7 @@ public class Tui implements View, Observable {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     private void showTileSlots(){
@@ -818,8 +821,6 @@ public class Tui implements View, Observable {
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
 
-
-
         String input1;
 
         MenuManager.clearConsole();
@@ -860,6 +861,23 @@ public class Tui implements View, Observable {
 
     }
 
+    public void chooseComponent(Ship myShip, ActivatableComponent component) {
+
+//        ArrayList<Position> activatedComponentPositions;
+//        ArrayList<Position> usedBatteryPositions;
+//
+//        //Ciclo while
+//        //Menu attivare altro ( fino a esaurimento batterie ( conto numero) / utente dice no)
+//
+//            Position compPos = askPosition(component.name()); //Verifica anche tipo
+//            Position battPos = askPosition("batteria");
+//            //Verifico che slot batteria indicato ne abbia ancora e
+//            // in lista di posizioni utilizzate non sia già usato
+//
+//        //
+//
+//        clientController.handleActivateComponentResponse(component,activatedComponentPositions,usedBatteryPositions);
+    }
 
     @Override
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException{
@@ -959,23 +977,16 @@ public class Tui implements View, Observable {
     }
 
 
-    public void showFlightBoard() throws NoSuchFieldException, ClassNotFoundException, IllegalAccessException {
+    public void showFlightBoard() {
         FlightBoard myFB = clientController.getMyModel().getFlightBoard();
-        ArrayList<Color> colorsToPrint = new ArrayList<>();
-
-//        for (int i = 0; i < myFB.getFlightBoardMap().getFlightBoardMapSlots().size(); i++) {
-//
-//            Color color  = myFB.getFlightBoardMap().getFlightBoardMapSlots().get(i).getPlayerToken();
-//            colorsToPrint.add(color);
-//        }
-
-        colorsToPrint = (ArrayList<Color>) myFB.getFlightBoardMap().getFlightBoardMapSlots().stream().map(FlightBoardMapSlot::getPlayerToken).toList();
-
-        FlightBoardTUI.printPistaRettangolare(colorsToPrint);
-
+        FlightBoardPrintUtils.printFlightBoard(myFB);
 
     }
 
+    @Override
+    public void showCurrentAdventureCard() {
+        CardPrintUtils.printCard(clientController.getCurrentAdventureCard());
+    }
 
     @Override
     public void addObserver(Observer observer) {
