@@ -22,6 +22,10 @@ public class LobbyManager {
     private TileBunch tileBunch = null;
     private final GameController gameController;
     private final ArrayList<String> playerShipFinished = new ArrayList<>();
+    private final ArrayList<String> playerCrewFinished = new ArrayList<>();
+
+
+
     private ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> pendingResponses;
     public final Object positionLock = new Object();
     public final Object checkShipLock = new Object();
@@ -57,6 +61,29 @@ public class LobbyManager {
             return this.playerShipFinished.size();
         }
     }
+
+
+    public int getPlayerCrewFinishedSize(){
+        synchronized (lock4){
+            return this.playerCrewFinished.size();
+        }
+    }
+
+    public void addPlayerCrewFinished(String playerNickname){
+        synchronized (lock4){
+            playerCrewFinished.add(playerNickname);
+        }
+    }
+
+    public int getPlayerCrewSize(){
+        synchronized (lock4){
+            return this.playerCrewFinished.size();
+        }
+    }
+
+
+
+
 
     public void addPendingResponse(CompletableFuture<NetworkMessage> response, Integer id) {
 

@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.NicknameRequest;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
@@ -26,6 +27,8 @@ public class SocketClientHandler implements Runnable, ClientHandler {
     private ObjectInputStream input;
     private final Socket clientSocket;
     private final ServerController serverController;
+    NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
+
 
     private String testSignal;
 
@@ -58,7 +61,6 @@ public class SocketClientHandler implements Runnable, ClientHandler {
     }
 
     private void ConnectionManager() throws IOException, ExecutionException, InterruptedException {
-        NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 synchronized (inputLock) {
@@ -92,9 +94,8 @@ public class SocketClientHandler implements Runnable, ClientHandler {
 
 
     public synchronized void sendMessage(NetworkMessage message) {
-
-
         try {
+            output.reset();  // 🔁 Forza la riscrittura dell'intero oggetto
             output.writeObject(message);
             output.flush();
         } catch (IOException e) {

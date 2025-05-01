@@ -199,6 +199,12 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(CrewInitUpdate crewInitUpdate) {
+
+        try {
+            clientController.handleCrewInitUpdate(crewInitUpdate);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 

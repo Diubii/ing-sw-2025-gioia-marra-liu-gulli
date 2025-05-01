@@ -22,6 +22,7 @@ public class Player {
 
     private List<Good> ListOfGoods;
     private List<Good> ListUnloadedGoods;
+    private final Object shipLock = new Object();
 
     private PlayerState playerState;
 
@@ -37,7 +38,9 @@ public class Player {
     }
 
     public Ship getShip() {
-        return ship;
+        synchronized (shipLock) {
+            return ship;
+        }
     }
 
     public void addCredits(int credits) {

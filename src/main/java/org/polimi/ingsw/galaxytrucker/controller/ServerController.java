@@ -446,11 +446,10 @@ public class ServerController {
         Ship targetShip;
         ShipUpdate shipViewUpdate;
 
-        synchronized (targetPlayer.getShip()) {
             targetShip = targetPlayer.getShip();
             shipViewUpdate = new ShipUpdate(targetShip, targetPlayer.getNickName());
             shipViewUpdate.setShouldDisplay(true);
-        }
+
         clientHandler.sendMessage(shipViewUpdate);
 
     }
@@ -679,7 +678,7 @@ public class ServerController {
 //            //la ship e' aggiornata
 //            myShip.setSynch(true);
             //setto il messaggio
-            placeTileResponse.setMessage("SUCCESS");
+            placeTileResponse.setMessage("VALID");
 
             //da capire se ha senso creare una PlaceTileResponse
 
@@ -693,7 +692,7 @@ public class ServerController {
 
         } else {
             PlaceTileResponse resp = new PlaceTileResponse(null, placeTileRequest.getID());
-            resp.setMessage("INVALID \n" + placeTileRequest.getPos().getX() + placeTileRequest.getPos().getY());
+            resp.setMessage("INVALID_POS");
             clientHandler.sendMessage(resp);
         }
 
@@ -744,7 +743,7 @@ public class ServerController {
             Tile tempTile = s.getTile();
             Position tempPos = s.getPosition();
 
-            if (positions.contains(tempPos)) {
+            if (positions.contains(tempPos) && s.getTile() != null) {
 
                 AlienColor color = crewInitUpdate.getCrewPos().stream().filter(pair -> pair.getKey().equals(tempPos)).map(Pair::getValue).findFirst().get();
 
@@ -765,13 +764,28 @@ public class ServerController {
         }
 
         //dopo aver implementato la lista di quelli che hanno finito e si broadcasta la fase nuova
-        new Thread(() -> {
-            try {
-                myGame.getGameController().startFlight();
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
+
+
+        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+        ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
+        broadCast(playerHandlers, shipUpdate);
+
+
+        myGame.addPlayerCrewFinished(myPlayer.getNickName());
+        if (myGame.getPlayerCrewSize() == myGame.getRealGame().getNumPlayers()) {
+
+            myGame.getGameController().nextState();
+            PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.FLIGHT);
+            broadCast(playerHandlers, phaseUpdate);
+
+            new Thread(() -> {
+                try {
+                    myGame.getGameController().startFlight();
+                } catch (ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
 
     public void handleActivateAdventureCardResponse(ActivateAdventureCardResponse activateAdventureCardResponse, ClientHandler clientHandler) {

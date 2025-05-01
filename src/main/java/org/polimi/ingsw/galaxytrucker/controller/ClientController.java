@@ -537,6 +537,11 @@ public class ClientController implements Observer {
                     PlayerInfo playerInfo = myModel.getPlayerInfoByNickname(owner);
                     if(playerInfo != null){
                         playerInfo.setShip(ship);
+                        if(update.getShouldDisplay()){
+                            view.showShip(playerInfo.getShip());
+                            view.handleChoiceForPhase(phase);
+
+                        }
                     }
                     else{
                         view.showGenericMessage("Player with nickname " + owner + " not found.");
@@ -755,7 +760,6 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        resetCurrentPos();
 
         try {
             client.sendMessage(request);
@@ -770,12 +774,15 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             try {
                 PlaceTileResponse response = (PlaceTileResponse) future.get();
                 view.showGenericMessage(response.getMessage());
+                if (response.getMessage().equals("VALID")){
+                    resetCurrentPos();
+                    currentTileInHand = null;
+                }
 
             } catch (Exception e) {
                 view.showGenericMessage("Error during tile placement: " + e.getMessage());
             }finally {
 
-                currentTileInHand = null;
                 view.showBuildingMenu();
             }
 
@@ -1112,5 +1119,9 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
     public AdventureCard getCurrentAdventureCard() {
         return currentAdventureCard;
+    }
+
+    public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate) throws IOException, ExecutionException, InterruptedException {
+        client.sendMessage(crewInitUpdate);
     }
 }

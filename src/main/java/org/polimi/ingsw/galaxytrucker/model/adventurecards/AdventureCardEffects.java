@@ -298,6 +298,8 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         FlightBoard flightBoard = lobbyManager.getRealGame().getFlightBoard();
         flightBoard.movePlayer(lobbyManager.getPlayerColors().get(player.getNickName()), steps);
         FlightBoardUpdate fbu = new FlightBoardUpdate(flightBoard);
+        String message = "Player " + player.getNickName() + "moved " + steps + " steps!";
+        broadcast(lobbyManager, new GameMessage(message));
         broadcast(lobbyManager, fbu);
     }
 

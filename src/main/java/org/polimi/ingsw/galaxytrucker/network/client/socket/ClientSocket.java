@@ -51,14 +51,6 @@ public class ClientSocket implements Client, Observable {
                 try {
                     message = (NetworkMessage) inputStream.readObject();
 
-//                    if (message.accept(new ComponentNameVisitor()).equals("LOBBY_INFO")){
-//
-//                        LOBBY_INFO m2 = (LOBBY_INFO) message;
-//
-//                        System.out.println(m2.getIsFirst());
-//                    }
-
-
                 } catch (IOException | ClassNotFoundException e) {
                     readExecutionQueue.shutdownNow();
                 }
