@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
+import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileType;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
@@ -12,9 +13,7 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
-import org.polimi.ingsw.galaxytrucker.model.game.Game;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateAdventureCardRequest;
@@ -68,7 +67,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         }
     }
 
-    @NeedsToBeCompleted
+    @NeedsToBeChecked("Sempre il problema di riuscire ad identificare lo ship update")
     @Override
     public void visitAbandonedStation(AbandonedStation abandonedStation, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
         ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
@@ -80,7 +79,11 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) sendMessageAndGetResponse(lobbyManager, player, activateAdventureCardRequest);
 
             if (activateAdventureCardResponse.isActivated()) {
-
+                ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName()); //TODO: Trovare un metodo per identificare lo ship update
+                CompletableFuture<NetworkMessage> shipUpdateFuture = new CompletableFuture<>();
+                lobbyManager.addPendingResponse(shipUpdateFuture, shipUpdate.getID()); //Mi deve arrivare uno ShipUpdate
+                shipUpdateFuture.get(); //Aspetto che arrivi lo ship update
+                movePlayer(lobbyManager, player, -abandonedStation.getDaysLost());
             }
         }
     }
@@ -168,20 +171,31 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 
         Random rand = new Random();
         final Player targetPlayer = minFirePowerPlayer;
+        int diceRoll;
+        String message;
         for (Projectile projectile : combatZone.getProjectiles()) {
-            if (projectile.getSize() == ProjectileSize.LITTLE && !targetPlayer.getShip().getComponentPositionsFromName("Shield").isEmpty()) { //Se il proiettile è piccolo si possono attivare gli scudi, se esistono
-                sendMessageAndGetResponse(lobbyManager, targetPlayer, new ActivateComponentRequest(ActivatableComponent.Shield));
-            } else if (projectile.getSize() == ProjectileSize.BIG && projectile.getType() == ProjectileType.Meteor) {
-                //Se nessun cannone punta verso il meteorite chiedo l'attivazione di un CannoneDoppio, se esiste
-                if (targetPlayer.getShip().getComponentPositionsFromName("Cannon").stream().noneMatch(p -> targetPlayer.getShip().getComponentFromPosition(p).getRotation() == projectile.getDirection().ordinal())
-                        && !targetPlayer.getShip().getComponentPositionsFromName("DoubleCannon").isEmpty()) {
-                    sendMessageAndGetResponse(lobbyManager, minFirePowerPlayer, new ActivateComponentRequest(ActivatableComponent.DoubleCannon));
+            diceRoll = rand.nextInt(2, 13);
+
+            message = "Stai per essere colpito da un " + projectile.getType().name() + " da " + projectile.getDirection().name() + ", indice " + diceRoll + "!";
+            sendGameMessage(lobbyManager, minFirePowerPlayer, message);
+
+            if (targetPlayer.getShip().getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll) != null) { //Se il proiettile va a colpire un componente, vediamo se il player può proteggersi
+                if (projectile.getSize() == ProjectileSize.LITTLE && playerCanDefendThemselvesWithAShield(targetPlayer, projectile)) { //Se il proiettile è piccolo si possono attivare gli scudi, se ne esistono orientati correttamente
+                    message = "Però puoi proteggerti con uno scudo!";
+                    sendGameMessage(lobbyManager, minFirePowerPlayer, message);
+                    sendMessageAndGetResponse(lobbyManager, targetPlayer, new ActivateComponentRequest(ActivatableComponent.Shield));
+                } else if (projectile.getSize() == ProjectileSize.BIG && projectile.getType() == ProjectileType.Meteor) { //Se il proiettile è una meteora grande si possono attivare cannoni doppi
+                    //Se nessun cannone punta verso il meteorite chiedo l'attivazione di un CannoneDoppio, se esiste
+                    if (playerCanDefendThemselvesWithASingleCannon(targetPlayer, projectile, diceRoll)) {
+                        message = "Ti proteggerà un cannone singolo!";
+                        sendGameMessage(lobbyManager, minFirePowerPlayer, message);
+                    } else if (playerCanDefendThemselvesWithADoubleCannon(targetPlayer, projectile, diceRoll)) {
+                        message = "Però puoi proteggerti con un cannone doppio!";
+                        sendGameMessage(lobbyManager, minFirePowerPlayer, message);
+                        sendMessageAndGetResponse(lobbyManager, minFirePowerPlayer, new ActivateComponentRequest(ActivatableComponent.DoubleCannon));
+                    }
                 }
             }
-
-            int diceRoll = rand.nextInt(2, 13);
-            gameMessage.setMessage("Stai per ricevere delle cannonate da " + projectile.getDirection().name() + ", indice " + diceRoll + "!");
-            lobbyManager.getPlayerHandlers().get(minFirePowerPlayer.getNickName()).sendMessage(gameMessage);
 
             lobbyManager.getGameController().reactToProjectile(minFirePowerPlayer, projectile, diceRoll);
             ShipUpdate shipUpdate = new ShipUpdate(minFirePowerPlayer.getShip(), minFirePowerPlayer.getNickName());
@@ -199,7 +213,58 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 
     @Override
     public void visitMeteorSwarm(MeteorSwarm meteorSwarm, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+        Random rand = new Random();
+        int diceRoll;
+        ActivateComponentRequest activateShieldRequest = new ActivateComponentRequest(ActivatableComponent.Shield);
+        ActivateComponentRequest activateDoubleCannonRequest = new ActivateComponentRequest(ActivatableComponent.DoubleCannon);
+        for (Projectile projectile : meteorSwarm.getMeteors()) {
+            diceRoll = rand.nextInt(2, 13);
+            broadcast(lobbyManager, new GameMessage("Stai per essere colpito da un " + projectile.getType().name() + " da " + projectile.getDirection().name() + ", indice " + diceRoll + "!"));
 
+            ArrayList<CompletableFuture<NetworkMessage>> futures = new ArrayList<>();
+
+            //Per ogni giocatore vedo se deve difendersi e se ne ha la possibilità
+            if (projectile.getSize() == ProjectileSize.LITTLE) {
+                for (Player player : rankedPlayers) {
+                    if (player.getShip().getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll) != null && playerCanDefendThemselvesWithAShield(player, projectile)) {
+                        sendGameMessage(lobbyManager, player, "Puoi difenderti con uno scudo!");
+                        sendMessageAndDeferGetResponse(lobbyManager, player, activateShieldRequest, futures);
+                    }
+                }
+            } else if (projectile.getSize() == ProjectileSize.BIG) {
+                for (Player player : rankedPlayers) {
+                    if (player.getShip().getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll) != null) {
+                        if (playerCanDefendThemselvesWithASingleCannon(player, projectile, diceRoll)) { //Prima controllo se si può difendere con un cannone singolo
+                            sendGameMessage(lobbyManager, player, "Ti proteggerà un cannone singolo!");
+                        } else if (playerCanDefendThemselvesWithADoubleCannon(player, projectile, diceRoll)) { //Altrimenti faccio ricorso a un eventuale cannone doppio
+                            sendGameMessage(lobbyManager, player, "Puoi difenderti con un cannone doppio!");
+                            sendMessageAndDeferGetResponse(lobbyManager, player, activateDoubleCannonRequest, futures); //Metto la risposta nella lista delle future che devo aspettare
+                        }
+                    }
+                }
+            }
+
+            //Se c'è gente che deve difendersi, notifico i player.
+            if (!futures.isEmpty())
+                broadcast(lobbyManager, new GameMessage("Aspettando che gli tutti i giocatori scelgano se difendersi o meno...")); //TODO: Mandarlo solo ai giocatori in attesa
+
+            //Aspetto che tutti scelgano
+            for (CompletableFuture<NetworkMessage> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            //Dò il via al proiettile e mando ship update
+            for (Player player : rankedPlayers) {
+                lobbyManager.getGameController().reactToProjectile(player, projectile, diceRoll);
+
+                ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
+                broadcast(lobbyManager, shipUpdate);
+            }
+        }
     }
 
     @NeedsToBeCompleted("Disattivare motori doppi")
@@ -209,7 +274,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
             sendMessageAndGetResponse(lobbyManager, player, activateDoubleEnginesRequest);
             int playerEnginePower = player.getShip().calculateEnginePower();
-            if(playerEnginePower == 0){
+            if (playerEnginePower == 0) {
                 lobbyManager.getGameController().removePlayerFromGame(player.getNickName());
                 continue;
             }
@@ -331,7 +396,55 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         return future.get(); //Aspetto che il player mandi la risposta
     }
 
+    private void sendMessageAndDeferGetResponse(LobbyManager lobbyManager, Player player, NetworkMessage message, ArrayList<CompletableFuture<NetworkMessage>> futures) {
+        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+        ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
+        lobbyManager.addPendingResponse(future, message.getID()); //Notifico che sono in attesa di una risposta
+        clientHandler.sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
+        futures.add(future);
+    }
+
+    private void sendGameMessage(LobbyManager lobbyManager, Player player, String message) {
+        GameMessage gameMessage = new GameMessage(message);
+        gameMessage.setMessage(message);
+        lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
+    }
+
     private void broadcast(LobbyManager lobbyManager, NetworkMessage message) {
         lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(message));
+    }
+
+    /**
+     * Checks if a player has a shield orientated the same way of the incoming projectile. Does not check for same row/column.
+     *
+     * @param player
+     * @param projectile
+     * @author Alessandro Giuseppe Gioia
+     */
+    private boolean playerCanDefendThemselvesWithAShield(Player player, Projectile projectile) {
+        if (projectile.getSize() == ProjectileSize.BIG) return false;
+        else
+            return player.getShip().getComponentPositionsFromName("Shield").stream().anyMatch(p -> ((Shield) player.getShip().getComponentFromPosition(p)).getProtectedSides().contains(projectile.getDirection()));
+    }
+
+    private boolean playerCanDefendThemselvesWithASingleCannon(Player player, Projectile projectile, int diceRoll) {
+        if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.BIG) return false;
+        else return player.getShip().getComponentPositionsFromName("Cannon").stream().anyMatch(p -> {
+            Cannon c = (Cannon) player.getShip().getComponentFromPosition(p);
+            if (c.getRotation() == projectile.getDirection().ordinal()) {
+                return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
+            } else return false;
+        });
+    }
+
+    private boolean playerCanDefendThemselvesWithADoubleCannon(Player player, Projectile projectile, int diceRoll) {
+        if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.BIG) return false;
+        else
+            return player.getShip().getComponentPositionsFromName("DoubleCannon").stream().anyMatch(p -> {
+                DoubleCannon c = (DoubleCannon) player.getShip().getComponentFromPosition(p);
+                if (c.getRotation() == projectile.getDirection().ordinal()) {
+                    return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
+                } else return false;
+            });
     }
 }
