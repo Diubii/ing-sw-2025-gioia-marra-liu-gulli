@@ -1,11 +1,14 @@
 package org.polimi.ingsw.galaxytrucker.view.Tui;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
@@ -19,8 +22,11 @@ import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.Planets;
 import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMapSlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
