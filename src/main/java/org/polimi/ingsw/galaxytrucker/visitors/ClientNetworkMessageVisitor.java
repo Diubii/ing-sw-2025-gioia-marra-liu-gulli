@@ -156,10 +156,6 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
 
 
-    @Override
-    public Void visit(NUM_PLAYERS_REQUEST numPlayersRequest) {
-        return null;
-    }
 
     @Override
     public Void visit(CheckShipStatusResponse checkShipStatusResponse) {
@@ -257,6 +253,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(ActivateAdventureCardRequest activateAdventureCardRequest) {
+        clientController.handleActivateAdventureCardRequest(activateAdventureCardRequest);
         return null;
     }
 
@@ -278,6 +275,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(SelectPlanetRequest selectPlanetRequest) {
+        clientController.handleSelectPlanetRequest(selectPlanetRequest);
         return null;
     }
 
@@ -288,6 +286,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(SelectedPlanetUpdate selectedPlanetUpdate) {
+        clientController.handleSelectPlanetUpdate(selectedPlanetUpdate);
         return null;
     }
 
@@ -319,7 +318,23 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
+    public Void visit(DrawAdventureCardRequest drawAdventureCardRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(EndTurnUpdate endTurnUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest) {
+        return null;
+    }
+
+    @Override
     public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
+        clientController.handlePlayerRemovedUpdate(removedPlayerUpdate);
         return null;
     }
 }

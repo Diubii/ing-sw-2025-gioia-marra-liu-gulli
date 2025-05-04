@@ -1,21 +1,21 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
+import javafx.geometry.Pos;
 import javafx.util.Pair;
-import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.*;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientRMI;
@@ -353,7 +353,8 @@ public class ClientController implements Observer {
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate){
         phase = phaseUpdate.getState();
 
-        if (phaseUpdate.getState().equals(GameState.BUILDING_END)){
+
+        if (phase.equals(GameState.BUILDING_END)){
             if (clientPhaseController.getPhase().equals(PLAYER_PHASE.FINISH_BUILDING) ){ return;}
             if ( clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER ) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING)){
 
@@ -537,11 +538,6 @@ public class ClientController implements Observer {
                     PlayerInfo playerInfo = myModel.getPlayerInfoByNickname(owner);
                     if(playerInfo != null){
                         playerInfo.setShip(ship);
-                        if(update.getShouldDisplay()){
-                            view.showShip(playerInfo.getShip());
-                            view.handleChoiceForPhase(phase);
-
-                        }
                     }
                     else{
                         view.showGenericMessage("Player with nickname " + owner + " not found.");
@@ -552,9 +548,6 @@ public class ClientController implements Observer {
                 view.showShip(ship);
                 view.handleChoiceForPhase(phase);
 
-            }
-            else{
-                return;
             }
 
         }
@@ -943,19 +936,6 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
     }
 
-    public void handleGameMessage(GameMessage gameMessage) {
-        view.showGenericMessage(gameMessage.getMessage());
-    }
-
-    public void handleMatchInfoUpdate(MatchInfoUpdate matchInfoUpdate) {
-        view.showGenericMessage("Il giocatore: " + matchInfoUpdate.getLeaderNickname() + " ha pescato, rimangono: " + matchInfoUpdate.getRemainingCards()+ " carte.");
-    }
-
-    public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
-        currentAdventureCard = drawnAdventureCardUpdate.getCard();
-        view.showCurrentAdventureCard();
-
-    }
 
     public void handleAskPositionUpdate(AskPositionUpdate askPositionUpdate) {
         new Thread(()->{
@@ -1096,6 +1076,154 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         }).start();
     }
 
+
+
+
+    public void handleGameMessage(GameMessage gameMessage) {
+
+        view.showGenericMessage(gameMessage.getMessage());
+    }
+
+    public void handleMatchInfoUpdate(MatchInfoUpdate matchInfoUpdate) {
+
+        int remainCards = matchInfoUpdate.getRemainingCards();
+        String leaderNickname = matchInfoUpdate.getLeaderNickname();
+
+
+        boolean amLeader = leaderNickname.equals(getNickname());
+        myModel.setLeader(amLeader);
+        if(amLeader){
+            view.askDrawCard();
+        }
+        else{
+            view.showGenericMessage("No sei il leader del questo turno. Dovresti aspettare il leader pesca la carta.");
+        }
+
+        view.showGenericMessage("Il giocatore: " + leaderNickname + " è il leader, rimangono: " + remainCards+ "  carte.");
+    }
+
+    public void sendDrawAdventureCardRequest(){
+        DrawAdventureCardRequest request = new DrawAdventureCardRequest();
+        try{
+            client.sendMessage(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
+        currentAdventureCard = drawnAdventureCardUpdate.getCard();
+        String nameCard = currentAdventureCard.getName();
+
+
+    view.showCurrentAdventureCard();
+    }
+
+    public void handleActivateAdventureCardRequest(ActivateAdventureCardRequest activateAdventureCardRequest) {
+            view.askActivateAdventureCard();
+    }
+    public void sendActivateAdventureCardResponse(boolean confirm){
+        ActivateAdventureCardResponse response = new ActivateAdventureCardResponse(confirm);
+        try{
+            client.sendMessage(response);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+//planet
+    //Select Planet
+    public void handleSelectPlanetRequest(SelectPlanetRequest request) {
+        ArrayList<Planet> landablePlanet = request.getLandablePlanets();
+        view.askSelectPlanetChoice(landablePlanet);
+
+
+    }
+// Dopo aver ricevuto una SelectPlanetRequest, chiedo al giocatore quale pianeta vuole scegliere.
+// Quando il giocatore ha fatto la sua scelta, devo inviare sia il pianeta selezionato sia l'indice corrispondente,
+// in modo che, quando ricevo un SelectPlanetUpdate, possa notificare a tutti i giocatori
+// quale giocatore ha scelto quale pianeta (usando l'indice del pianeta).
+
+    public void sendSelectPlanetResponse(Planet planet, int planetIndex){
+        SelectPlanetResponse response = new SelectPlanetResponse(planet,planetIndex);
+        try{
+            client.sendMessage(response);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    //Notifica: il giocatore (nome del giocatore) ha selezionato il pianeta x
+    //Poi se selectingPlayerNickname uguale a mio nickname, va a chiedere all'utente come
+    // vuole mettere i goods nella sua ship
+    public void handleSelectPlanetUpdate(SelectedPlanetUpdate update) {
+        String selectingPlayerNickname = update.getSelectingPlayerNickname();
+        view.showGenericMessage("Player " + selectingPlayerNickname + "ha seliozionato il pianeta " + update.getPlanetIndex());
+        if(selectingPlayerNickname.equals(getNickname())){
+            Planet selectedPlanet = update.getSelectedPlanet();
+            myModel.setSelectedPlanet(selectedPlanet);
+            view.askLoadGoodChoice();
+
+        }
+
+    }
+
+    public void handleLoadGoodChoice(String input) {
+        if (input == null) return;
+
+
+
+        switch (input.toLowerCase()) {
+            case "l" -> view.askSelectGoodToLoad(myModel.getSelectedPlanet(), myModel.getMyInfo().getShip());
+            case "d" -> view.askSelectGoodToDiscard(myModel.getSelectedPlanet(), myModel.getMyInfo().getShip());
+
+            case "f" -> {
+                view.showGenericMessage(" Caricamento merci completato.");
+                try {
+                    sendShipForGoodUpdate();
+                } catch (Exception e) {
+                    view.showGenericMessage("Errore durante l'invio della nave: " + e.getMessage());
+                }
+            }
+            default -> {
+                view.showGenericMessage(" Comando non riconosciuto. Usa L, D o F.");
+            }
+        }
+    }
+
+
+    public void placeMerci(int goodIndex, Good good, Position pos) {
+        Ship ship = myModel.getMyInfo().getShip();
+        Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+        GenericCargoHolds hold = (GenericCargoHolds) slot.getTile().getMyComponent();
+        hold.playerLoadGood(good);
+        myModel.getSelectedPlanet().getGoods().remove(goodIndex);
+
+    }
+
+
+    public void sendShipForGoodUpdate() throws IOException, ExecutionException, InterruptedException {
+        ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
+        client.sendMessage(update);
+    }
+
+    public ArrayList<Good> getDiscardPositionGoods(Position pos) {
+        Ship ship = getMyShip();
+        Slot slot = getSlot(ship,pos);
+        GenericCargoHolds hold = (GenericCargoHolds) slot.getTile().getMyComponent();
+        ArrayList<Good> goodsInHold = hold.getGoods();
+        return goodsInHold;
+
+    }
+
+    public void discardGood(int GoodIndex, Position pos) {
+        Slot slot = getSlot(getMyShip(),pos);
+        GenericCargoHolds hold = (GenericCargoHolds) slot.getTile().getMyComponent();
+        hold.removeGood(hold.getGoods().get(GoodIndex));
+
+    }
+
+
+
     public void handleActivateComponentRequest(ActivateComponentRequest request) {
         ActivatableComponent component = request.getActivatableComponentType();
 
@@ -1137,6 +1265,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         }
     }
 
+
     //da chiamare nel visitor
     public void handleTronconiRequest(){
         //Lista di ship
@@ -1158,5 +1287,62 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate) throws IOException, ExecutionException, InterruptedException {
         client.sendMessage(crewInitUpdate);
+    }
+
+
+    public ArrayList<Position> getOccupiedCargoHolds(Ship ship){
+        ArrayList<Position> cargoHolds = getCargoHolds(ship);
+        ArrayList<Position> occupied = new ArrayList<>();
+
+        for (Position pos : cargoHolds) {
+            Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+            if (slot != null && slot.getTile() != null) {
+                Component c = slot.getTile().getMyComponent();
+                if (c instanceof GenericCargoHolds hold && !hold.isEmpty()) {
+                    occupied.add(pos);
+                }
+            }
+        }
+        return occupied;
+
+    }
+
+    public ArrayList<Position> getAvailableCargoHolds(Ship ship,Good good) {
+        ArrayList<Position> cargoHolds = getCargoHolds(ship);
+        ArrayList<Position> available = new ArrayList<>();
+
+        for (Position pos : cargoHolds) {
+            Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+            if (slot != null && slot.getTile() != null) {
+                Component c = slot.getTile().getMyComponent();
+                if (c instanceof GenericCargoHolds hold && !hold.isFull() ) {
+                    if(good.getColor() == Color.RED ) {
+                        if(hold.isSpecial()) {
+                            available.add(pos);
+                        }
+                    }
+                    else{
+                        available.add(pos);
+
+                    }
+                }
+            }
+        }
+        return available;
+    }
+
+    private ArrayList<Position> getCargoHolds(Ship ship) {
+        return ship.getComponentPositionsFromName("GenericCargoHolds");
+    }
+    public void handlePlayerRemovedUpdate(PlayerRemovedUpdate update) {
+        String nickname = update.getNickname();
+        view.showGenericMessage(" Il giocatore " + nickname + " ha lasciato la partita.");
+    }
+    public Ship getMyShip(){
+        return myModel.getMyInfo().getShip();
+    }
+    private Slot getSlot(Ship ship, Position pos){
+        Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+        return slot;
     }
 }

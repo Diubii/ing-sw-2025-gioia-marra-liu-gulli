@@ -6,16 +6,15 @@ import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
-import org.polimi.ingsw.galaxytrucker.observer.Observable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -71,9 +70,18 @@ public interface View {
     void chooseDiscardCrew(Ship myShip,int nCrewToDiscard ) throws ExecutionException, InterruptedException;
     void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException;
     void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
-
+// Flight
+    void askDrawCard();
     void showFlightBoard();
     void showCurrentAdventureCard();
+
+    void askActivateAdventureCard();
+    void askDiscardCrew(int nCrewToDiscard, Ship myShip);
+    void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
+    void askLoadGood(Planet selectedPlanet, Ship myShip) throws ExecutionException, InterruptedException;
+    void askLoadGoodChoice();
+    void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip);
+    void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip);
 
 
 

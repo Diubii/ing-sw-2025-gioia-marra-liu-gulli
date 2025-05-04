@@ -31,11 +31,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @NeedsToBeCompleted
-    @Override
-    public Void visit(NUM_PLAYERS_REQUEST numPlayersRequest) {
-        return null;
-    }
+
 
     @Override
     public Void visit(NicknameRequest nicknameRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
@@ -299,6 +295,21 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(GameMessage gameMessage) {
+        return null;
+    }
+
+    @Override
+    public Void visit(DrawAdventureCardRequest drawAdventureCardRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(EndTurnUpdate endTurnUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest) {
         return null;
     }
 

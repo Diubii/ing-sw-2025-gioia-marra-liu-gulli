@@ -18,10 +18,12 @@ public class SelectedPlanetUpdate extends NetworkMessage implements Serializable
 
     private final String selectingPlayerNickname; //Così gli altri player possono visualizzare nome e colore sul pianeta scelto nella GUI perlomeno
     private final Planet selectedPlanet;
+    private final int planetIndex;
 
-    public SelectedPlanetUpdate(String selectingPlayerNickname, Planet selectedPlanet) {
+    public SelectedPlanetUpdate(String selectingPlayerNickname, Planet selectedPlanet, int planetIndex) {
         this.selectingPlayerNickname = selectingPlayerNickname;
         this.selectedPlanet = selectedPlanet;
+        this.planetIndex = planetIndex;
     }
 
     @Override
@@ -35,5 +37,8 @@ public class SelectedPlanetUpdate extends NetworkMessage implements Serializable
 
     public Planet getSelectedPlanet() {
         return selectedPlanet;
+    }
+    public int getPlanetIndex() {
+        return planetIndex;
     }
 }

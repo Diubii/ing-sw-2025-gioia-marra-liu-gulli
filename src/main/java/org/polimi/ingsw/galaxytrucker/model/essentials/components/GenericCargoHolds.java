@@ -55,6 +55,15 @@ public class GenericCargoHolds extends Component {
             }
         }
     }
+    public void playerLoadGood(Good g) {
+        if (Goods == null) {
+            Goods = new ArrayList<>();
+        }
+        if (Goods.size() < nMaxContainers)
+            Goods.add(g);
+
+
+    }
 
     public void removeGood(Good g) {
         if (Goods != null) {
@@ -77,5 +86,12 @@ public class GenericCargoHolds extends Component {
     public Boolean isSpecial() {
 
         return special;
+    }
+
+    public boolean isFull() {
+        return Goods.size() >= nMaxContainers;
+    }
+    public boolean isEmpty(){
+        return Goods.isEmpty();
     }
 }

@@ -302,7 +302,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                 Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
                 if (selectedPlanet != null) { //Se il player ha scelto
                     selectedPlanet.setOccupied(true);
-                    SelectedPlanetUpdate selectedPlanetUpdate = new SelectedPlanetUpdate(player.getNickName(), selectedPlanet);
+                    SelectedPlanetUpdate selectedPlanetUpdate = new SelectedPlanetUpdate(player.getNickName(), selectedPlanet,selectPlanetResponse.getPlanetIndex());
                     broadcast(lobbyManager, selectedPlanetUpdate); //Broadcasto un SelectedPlanetUpdate
                     CompletableFuture<NetworkMessage> shipUpdateFuture = new CompletableFuture<>();
                     lobbyManager.addPendingResponse(shipUpdateFuture, selectedPlanetUpdate.getID()); //Mi deve arrivare uno ShipUpdate

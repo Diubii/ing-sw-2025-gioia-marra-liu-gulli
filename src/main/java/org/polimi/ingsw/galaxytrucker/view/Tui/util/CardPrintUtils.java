@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitor;
@@ -69,6 +70,15 @@ public class CardPrintUtils {
         }
     }
 
+    public static String colorBlock(Good good) {
+        return switch (good.getColor()) {
+            case RED -> TuiColor.RED + " █ " + TuiColor.RESET;
+            case BLUE -> TuiColor.BLUE + " █ " + TuiColor.RESET;
+            case GREEN -> TuiColor.GREEN + " █ " + TuiColor.RESET;
+            case YELLOW -> TuiColor.BRIGHT_YELLOW + " █ " + TuiColor.RESET;
+            default -> " ";
+        };
+    }
     public static String[] getCardStrings(AdventureCard card){
         return card.accept(adventureCardPrintVisitor);
     }

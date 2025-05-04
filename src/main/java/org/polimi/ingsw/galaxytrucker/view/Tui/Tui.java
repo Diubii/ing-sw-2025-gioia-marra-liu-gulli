@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,11 +23,14 @@ import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
+import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
@@ -42,6 +46,7 @@ import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.*;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+
 
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardPrintUtils.printFlightBoard;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.InputUtils.parseCoordinate;
@@ -368,6 +373,7 @@ public class Tui implements View, Observable {
 
 
         GameState phase = phaseUpdate.getState();
+        menuManager.showPhaseStart(phase);
 
         if (phase.equals(GameState.BUILDING_TIMER)) {
             new Thread(() -> {
@@ -1153,6 +1159,240 @@ public class Tui implements View, Observable {
 
     }
 
+    @Override
+    public void askActivateAdventureCard() {
+        askYesNoConfirmation(
+                "Congratulazioni, soddisfi i requisiti. Vuoi attivare l'effetto della carta?",
+                () -> clientController.sendActivateAdventureCardResponse(true),
+                () -> {clientController.sendActivateAdventureCardResponse(false);
+                    showGenericMessage("Hai scelto di non attivare l'effetto. In attesa della scelta degli altri giocatori");
+                }
+        );
+    }
+
+    @Override
+    public void askDrawCard() {
+        askYesConfirmation(
+                "Sei il leader. Inserire un 'y' per pescare la carta avventura: ",
+                clientController::sendDrawAdventureCardRequest
+        );
+    }
+
+    @Override
+    public void askDiscardCrew(int nCrewToDiscard,Ship myShip) {
+
+        out.println("Hai scelto di accettare l'effetto della carta, per favore scarta  "+ nCrewToDiscard+ " membri dell'equipaggio ");
+        ArrayList<Position> housePos = myShip.getComponentPositionsFromName("ModularHousingUnit");
+
+        if(!housePos.isEmpty()){
+            for (Position pos : housePos) {
+                Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
+                if(tempSlot != null){
+                    if(tempSlot.getTile()!=null){
+
+                    }
+                }
+            }
+        }
+
+
+
+    }
+// chiedere di selezionare uno dei pianeti disponibili
+    @Override
+    public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
+        int size = planetChoices.size();
+        boolean validInput = false;
+
+        do {
+            try {
+                String input = readLine("Scegli un pianeta (1-" + size + "), oppure '0' per non scegliere: ").trim();
+
+
+                if (!isValidNumberInRange(input, 0, size)) {
+                    System.out.println("Input non valido. Inserisci un numero tra 0 e " + size + ".");
+                    continue;
+                }
+
+                int choice = Integer.parseInt(input);
+
+                if (choice == 0) {
+                    clientController.sendSelectPlanetResponse(null, -1);
+                } else {
+                    Planet selected = planetChoices.get(choice - 1);
+                    clientController.sendSelectPlanetResponse(selected, choice - 1);
+                }
+
+                validInput = true;
+
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } while (!validInput);
+    }
+
+
+
+    @Override
+    public void askLoadGood(Planet selectedPlanet, Ship myShip) throws ExecutionException, InterruptedException {
+//        ArrayList<Position> availableCargoHolds = clientController.getAvailableCargoHolds(myShip);
+//        ArrayList<Good> goods = selectedPlanet.getGoods();
+//        String input = readLine("Cosa vuoi fare? [L]oad, [D]iscard, [F]inish: ").trim().toLowerCase();
+//        if (availableCargoHolds.isEmpty()) {
+//            out.println("Nessuna cargo holds disponibile per caricare merci!");
+//
+//            return;
+//        }
+//        while (!goods.isEmpty() && !availableCargoHolds.isEmpty()) {
+//            displayGoods(goods);
+//
+//            for (int i = 0; i < availableCargoHolds.size(); i++) {
+//                Position pos = availableCargoHolds.get(i);
+//                out.println("[" + (i + 1) + "] " + pos);
+//            }
+//
+
+//        }
+
+    }
+    @Override
+    public void askLoadGoodChoice() {
+        String input = null;
+        boolean valid = false;
+
+        do {
+            try {
+                input = readLine("Cosa vuoi fare? [L]Load, [D]Discard, [F]Finish: ").trim().toLowerCase();
+                if (input.toLowerCase().matches("[ldf]")) {
+                    valid = true;
+                } else {
+                    out.println("Input non valido. Inserisci L, D o F.");
+                }
+            } catch (Exception e) {
+                out.println("Errore nella lettura dell'input: " + e.getMessage());
+            }
+        } while (!valid);
+
+        clientController.handleLoadGoodChoice(input);
+
+
+    }
+    @Override
+    public void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip)  {
+        ArrayList<Good> goods = selectedPlanet.getGoods();
+
+
+        if (goods.isEmpty()) {
+            out.println(" Nessuna merce disponibile sul pianeta.");
+            askLoadGoodChoice();
+            return;
+        }
+
+        out.println(" Merci disponibili:");
+        displayGoods(goods);
+
+        int goodIndex = -1;
+        while (goodIndex < 0 || goodIndex >= goods.size()) {
+            try {
+                String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + "): ");
+                goodIndex = Integer.parseInt(input) - 1;
+            } catch (Exception e) {
+                out.println("Input non valido.");
+            }
+        }
+//selezionare il good in base di index del merci cioe indece+1 della merce nella list
+        Good selectedGood = goods.get(goodIndex);
+
+        ArrayList<Position> availableCargoHolds = clientController.getAvailableCargoHolds(myShip, selectedGood);
+        //in base a quale goods e e cargo holds type ritorno availableCargoHolds
+        //tipo se good e rosso anche cargo holds deve essere rosso
+        if (availableCargoHolds.isEmpty()) {
+            out.println(" Nessun cargo hold disponibile sulla nave.");
+            askLoadGoodChoice();
+            return;
+        }
+
+//        out.println(" Cargo holds disponibili:");
+//        for (int i = 0; i < availableCargoHolds.size(); i++) {
+//            out.println("[" + (i + 1) + "] Posizione: " + availableCargoHolds.get(i));
+//        }
+//        int posIndex = -1;
+//        while (posIndex < 0 || posIndex >= availableCargoHolds.size()) {
+//            try {
+//                String input = readLine("Seleziona una posizione cargo (1-" + availableCargoHolds.size() + "): ");
+//                posIndex = Integer.parseInt(input) - 1;
+//            } catch (Exception e) {
+//                out.println("Input non valido.");
+//            }
+//        }
+        Position selectedPos = null;
+       Position pos = null;
+        while (selectedPos == null) {
+
+            try {
+                String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7): ");
+                pos = parseCoordinate(input);
+
+                if (availableCargoHolds.contains(pos)) {
+                    selectedPos = new Position(pos.getY() - 5,pos.getX() - 4) ;
+                } else {
+                    out.println("Questa posizione non è disponibile.");
+                }
+            } catch (Exception e) {
+                out.println("Formato non valido. Usa es. 6,7");
+            }
+        }
+        clientController.placeMerci(goodIndex,selectedGood, selectedPos);
+        out.println("Merce caricata.");
+
+        askLoadGoodChoice();
+    }
+
+
+
+
+    @Override
+    public void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip) {
+        ArrayList<Position> occupiedPositions = clientController.getOccupiedCargoHolds(myShip);
+        Position selectedPos = null;
+        Position pos = null;
+        while (selectedPos == null) {
+
+            try {
+                String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7): ");
+                pos = parseCoordinate(input);
+
+                if (occupiedPositions.contains(pos)) {
+                    selectedPos = new Position(pos.getY() - 5,pos.getX() - 4) ;
+                } else {
+                    out.println("Questa posizione non è disponibile.");
+                }
+            } catch (Exception e) {
+                out.println("Formato non valido. Usa es. 6,7");
+            }
+        }
+
+       ArrayList<Good> goods = clientController.getDiscardPositionGoods(selectedPos);
+        out.println(" Merci disponibili:");
+        displayGoods(goods);
+        int goodIndex = -1;
+        while (goodIndex < 0 || goodIndex >= goods.size()) {
+            try {
+                String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + "): ");
+                goodIndex = Integer.parseInt(input) - 1;
+            } catch (Exception e) {
+                out.println("Input non valido.");
+            }
+        }
+        clientController.discardGood(goodIndex,pos);
+        out.println("Merce scartata.");
+        askLoadGoodChoice();
+
+
+
+    }
+
+
 
     public void showFlightBoard() {
         FlightBoard myFB = clientController.getMyModel().getFlightBoard();
@@ -1160,6 +1400,13 @@ public class Tui implements View, Observable {
 
     }
 
+    public void displayGoods(List<Good> goods) {
+        out.println("Merci disponibili:");
+        for (int i = 0; i < goods.size(); i++) {
+            out.println("[" + (i + 1) + "] " + CardPrintUtils.colorBlock(goods.get(i)));
+        }
+        out.println("[0] Salta");
+    }
     @Override
     public void showCurrentAdventureCard() {
         CardPrintUtils.printCard(clientController.getCurrentAdventureCard());
@@ -1197,6 +1444,58 @@ public class Tui implements View, Observable {
 
     private Boolean checkReset(String input){
         return input.equals("reset") || input.equals("RESET");
+    }
+
+
+    private void askYesConfirmation(String prompt, Runnable onYesAction) {
+        boolean validInput = false;
+        String input;
+        do {
+            try {
+                input = readLine(prompt).trim().toLowerCase();
+                if ("y".equals(input)) {
+                    onYesAction.run();
+                    validInput = true;
+                } else {
+                    System.out.println("Input non valido. Inserisci solo 'y' per confermare.");
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } while (!validInput);
+    }
+    private void askYesNoConfirmation(String prompt, Runnable onYes, Runnable onNo) {
+        boolean validInput = false;
+        String input;
+        do {
+            try {
+                input = readLine(prompt).trim().toLowerCase();
+                switch (input) {
+                    case "y", "yes" -> {
+                        onYes.run();
+                        validInput = true;
+                    }
+                    case "n", "no" -> {
+                        onNo.run();
+                        validInput = true;
+                    }
+                    default -> System.out.println("Input non valido. Inserisci 'y' per sì o 'n' per no.");
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } while (!validInput);
+
+    }
+    public static boolean isValidNumberInRange(String input, int min, int max) {
+        if (input == null || input.isBlank()) return false;
+
+        try {
+            int value = Integer.parseInt(input.trim());
+            return value >= min && value <= max;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
 
