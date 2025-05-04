@@ -27,5 +27,4 @@ public interface AdventureCardPrintVisitorInterface {
     public String[] visit(Smugglers card);
 
     public String[] visit(Stardust card);
-
 }

@@ -1,18 +1,14 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
+import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
-import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
-import org.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
-import org.polimi.ingsw.galaxytrucker.enums.ProjectileType;
+import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
-import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
-import org.polimi.ingsw.galaxytrucker.model.Planet;
-import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.model.Projectile;
+import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
@@ -90,8 +86,6 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 
     @Override
     public void visitCombatZone(CombatZone combatZone, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
-        GameMessage gameMessage = new GameMessage();
-
         //Parte 1: minor equipaggio = demozione
         int minCrewMembers = 0;
         Player minCrewMembersPlayer = null;
@@ -108,8 +102,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         }
 
         assert minCrewMembersPlayer != null;
-        gameMessage.setMessage(minCrewMembersPlayer.getNickName() + " ha il minor numero di membri dell'equipaggio!");
-        broadcast(lobbyManager, gameMessage);
+        broadcastGameMessage(lobbyManager, minCrewMembersPlayer.getNickName() + " ha il minor numero di membri dell'equipaggio!");
 
         movePlayer(lobbyManager, minCrewMembersPlayer, -combatZone.getDaysLost());
 
@@ -135,8 +128,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         }
 
         assert minEnginePowerPlayer != null;
-        gameMessage.setMessage(minEnginePowerPlayer.getNickName() + " ha la minor potenza motrice, quindi!");
-        broadcast(lobbyManager, gameMessage);
+        broadcastGameMessage(lobbyManager, minEnginePowerPlayer.getNickName() + " ha la minor potenza motrice, quindi!");
 
         //Richiedo al player le posizioni delle housing unit da cui rimuovere equipaggio
         DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(combatZone.getCrewMembersLost());
@@ -166,8 +158,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         }
 
         assert minFirePowerPlayer != null;
-        gameMessage.setMessage(minFirePowerPlayer.getNickName() + " ha la minor potenza di fuoco, quindi subisce delle cannonate!");
-        broadcast(lobbyManager, gameMessage);
+        broadcastGameMessage(lobbyManager, minFirePowerPlayer.getNickName() + " ha la minor potenza di fuoco, quindi subisce delle cannonate!");
 
         Random rand = new Random();
         final Player targetPlayer = minFirePowerPlayer;
@@ -206,9 +197,74 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
     @NeedsToBeCompleted
     @Override
     public void visitEpidemic(Epidemic epidemic, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+        ArrayList<Position> housings = new ArrayList<>();
+        Ship ship;
+        ModularHousingUnit modularHousingUnit;
         for (Player player : rankedPlayers) {
+            ship = player.getShip();
 
+            //Prendo tutte le housing units
+            housings.addAll(ship.getComponentPositionsFromName("CentralHousingUnit"));
+            housings.addAll(ship.getComponentPositionsFromName("ModularHousingUnit"));
+
+//            CentralHousingUnit centralHousingUnit = (CentralHousingUnit) ship.getComponentFromPosition(housings.getFirst());
+//            ArrayList<Pair<Position, Tile>> connectedModularHousingUnitsToCentralHousingUnitWithPositions = ship.getConnectedHousingUnitTiles(housings.getFirst());
+//            housings.removeFirst();
+//
+//            for(Pair<Position, Tile> connectedModularHousingUnitToCentralHousingUnitWithPosition : connectedModularHousingUnitsToCentralHousingUnitWithPositions) {
+//                modularHousingUnit = (ModularHousingUnit) connectedModularHousingUnitToCentralHousingUnitWithPosition.getValue().getMyComponent();
+//
+//                if(centralHousingUnit.getNCrewMembers() != 0 && modularHousingUnit.getNCrewMembers() != 0) {
+//                    centralHousingUnit.removeCrewMember();
+//                    modularHousingUnit.removeCrewMember();
+//                }
+//
+//                housings.remove(connectedModularHousingUnitToCentralHousingUnitWithPosition.getKey());
+//            }
+//
+//            for(Position modularHousingUnitPosition : housings) {
+//                modularHousingUnit = (ModularHousingUnit) ship.getComponentFromPosition(modularHousingUnitPosition);
+//
+//                ArrayList<Pair<Position, Tile>> connectedModularHousingUnitsWithPosition = ship.getConnectedHousingUnitTiles(modularHousingUnitPosition);
+//
+//                for(Pair<Position, Tile> connectedModularHousingUnitWithPosition : connectedModularHousingUnitsWithPosition) {
+//                    ModularHousingUnit connectedModularHousingUnit = (ModularHousingUnit) connectedModularHousingUnitWithPosition.getValue().getMyComponent();
+//
+//                    if(modularHousingUnit.getNCrewMembers() != 0 && connectedModularHousingUnit.getNCrewMembers() != 0) {
+//                        modularHousingUnit.removeCrewMember();
+//                        connectedModularHousingUnit.removeCrewMember();
+//                    }
+//
+//                    housings.remove(connectedModularHousingUnitWithPosition.getKey());
+//                }
+//            }
+
+            for(Position housingUnitPosition : housings) {
+                //Dynamic binding, anche se faccio il cast a CentralHousingUnit il tipo dinamico potrebbe essere ModularHousingUnit
+                CentralHousingUnit housingUnit = (CentralHousingUnit) ship.getComponentFromPosition(housingUnitPosition);
+
+                ArrayList<Pair<Position, Tile>> connectedHousingUnitTilesWithPositions = ship.getConnectedHousingUnitTiles(housingUnitPosition);
+                for(Pair<Position, Tile> connectedHousingUnitTileWithPosition : connectedHousingUnitTilesWithPositions) {
+                    //Dynamic binding, anche se faccio il cast a CentralHousingUnit il tipo dinamico potrebbe essere ModularHousingUnit
+                    CentralHousingUnit connectedHousingUnit = (CentralHousingUnit) connectedHousingUnitTileWithPosition.getValue().getMyComponent();
+
+                    //Se entrambe le housingUnits hanno equipaggio, lo rimuovo da entrambe
+                    if(housingUnit.getNCrewMembers() != 0 && connectedHousingUnit.getNCrewMembers() != 0) {
+                        housingUnit.removeCrewMember();
+                        connectedHousingUnit.removeCrewMember();
+                    }
+
+                    //Se nella housing unit connessa non ci sono più membri la rimuovo dalle housing units da controllare
+                    if(connectedHousingUnit.getNCrewMembers() == 0) housings.remove(connectedHousingUnitTileWithPosition.getKey());
+
+                    //Se nella housing unit che stiamo guardando non ci sono più membri, esco dal foreach
+                    if(housingUnit.getNCrewMembers() == 0)
+                        break;
+                }
+            }
         }
+
+
     }
 
     @Override
@@ -219,7 +275,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         ActivateComponentRequest activateDoubleCannonRequest = new ActivateComponentRequest(ActivatableComponent.DoubleCannon);
         for (Projectile projectile : meteorSwarm.getMeteors()) {
             diceRoll = rand.nextInt(2, 13);
-            broadcast(lobbyManager, new GameMessage("Stai per essere colpito da un " + projectile.getType().name() + " da " + projectile.getDirection().name() + ", indice " + diceRoll + "!"));
+            broadcastGameMessage(lobbyManager, "Stai per essere colpito da un " + projectile.getType().name() + " da " + projectile.getDirection().name() + ", indice " + diceRoll + "!");
 
             ArrayList<CompletableFuture<NetworkMessage>> futures = new ArrayList<>();
 
@@ -244,7 +300,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                 }
             }
 
-            //Se c'è gente che deve difendersi, notifico i player.
+            //Se c'è gente che deve difendersi, notifico i player
             if (!futures.isEmpty())
                 broadcast(lobbyManager, new GameMessage("Aspettando che gli tutti i giocatori scelgano se difendersi o meno...")); //TODO: Mandarlo solo ai giocatori in attesa
 
@@ -375,12 +431,12 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             String componentName = componentNameVisitor.visit(housingUnit); //Visitor
 
             if (componentName.equals("CentralHousingUnit")) {
-                ((CentralHousingUnit) housingUnit).removeHumanCrewMember();
+                ((CentralHousingUnit) housingUnit).removeCrewMember();
             } else { //Altrimenti è una ModularHousingUnit
                 ModularHousingUnit modularHousingUnit = (ModularHousingUnit) housingUnit;
 
-                if (modularHousingUnit.getHumanCrewNumber() > 0) { //Ci sono solo umani
-                    modularHousingUnit.removeHumanCrewMember();
+                if (modularHousingUnit.getNCrewMembers() > 0) { //Ci sono solo umani
+                    modularHousingUnit.removeCrewMember();
                 } else { //Ci sono solo alieni
                     modularHousingUnit.removeAlienCrew();
                 }
@@ -408,6 +464,10 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         GameMessage gameMessage = new GameMessage(message);
         gameMessage.setMessage(message);
         lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
+    }
+
+    private void broadcastGameMessage(LobbyManager lobbyManager, String message) {
+        broadcast(lobbyManager, new GameMessage(message));
     }
 
     private void broadcast(LobbyManager lobbyManager, NetworkMessage message) {

@@ -1,7 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
 import javafx.util.Pair;
-import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
@@ -12,6 +11,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Rappresenta la nave del giocatore, composta da una griglia di {@link Slot}
@@ -167,8 +167,8 @@ public class Ship implements Serializable {
     }
 
     public int getnCrew() {
-        return getComponentPositionsFromName("ModularHousingUnit").stream().map(p -> ((ModularHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getHumanCrewNumber()).reduce(0, Integer::sum)
-                + getComponentPositionsFromName("CentralHousingUnit").stream().map(p -> ((CentralHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getHumanCrewNumber()).reduce(0, Integer::sum);
+        return getComponentPositionsFromName("ModularHousingUnit").stream().map(p -> ((ModularHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getNCrewMembers()).reduce(0, Integer::sum)
+                + getComponentPositionsFromName("CentralHousingUnit").stream().map(p -> ((CentralHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getNCrewMembers()).reduce(0, Integer::sum);
     }
 
     public Boolean getSynch(){
@@ -499,9 +499,9 @@ public class Ship implements Serializable {
 
                             AlienColor al = null;
                             ModularHousingUnit temp = (ModularHousingUnit) shipBoard[i][j].getTile().getMyComponent();
-                            if (temp.getNBrownAlien() > temp.getNPurpleAlien() && temp.getHumanCrewNumber() == 0)
+                            if (temp.getNBrownAlien() > temp.getNPurpleAlien() && temp.getNCrewMembers() == 0)
                                 al = AlienColor.BROWN;
-                            if (temp.getNPurpleAlien() > temp.getNBrownAlien() && temp.getHumanCrewNumber() == 0)
+                            if (temp.getNPurpleAlien() > temp.getNBrownAlien() && temp.getNCrewMembers() == 0)
                                 al = AlienColor.PURPLE;
 
                             if (al != null) {
@@ -918,7 +918,7 @@ public class Ship implements Serializable {
     }
 
     public Component getComponentFromPosition(Position position){
-        return shipBoard[position.getX()][position.getY()].getTile().getMyComponent();
+        return shipBoard[position.getY()][position.getX()].getTile().getMyComponent();
     }
 
     public ArrayList<Position> getComponentPositionsFromName(String componentName) {
@@ -981,6 +981,62 @@ public class Ship implements Serializable {
         return componentPosition;
     }
 
+    public Tile getTileFromPosition(Position position) {
+        return shipBoard[position.getY()][position.getX()].getTile();
+    }
+
+    /**
+     * Finds all connected {@link Tile}s and their position to the one in the given position.
+     * @param position
+     * @return An {@link ArrayList} of {@link Pair}s containing the {@link Position} of the tile and the tile itself.
+     * @author Alessandro Giuseppe Gioia
+     */
+    public ArrayList<Pair<Position, Tile>> getConnectedTiles(Position position) {
+        ArrayList<Pair<Position, Tile>> connectedTilesWithPosition = new ArrayList<>();
+
+        int positionX = position.getX();
+        int positionY = position.getY();
+
+        int positionUp = position.getY() + 1;
+        int positionRight = position.getX() + 1;
+        int positionDown = position.getY() - 1;
+        int positionLeft = position.getX() - 1;
+
+        Tile tile = getTileFromPosition(position);
+
+        Tile tileUp = shipBoard[positionUp][positionX].getTile();
+        Tile tileRight = shipBoard[positionY][positionRight].getTile();
+        Tile tileDown = shipBoard[positionDown][positionX].getTile();
+        Tile tileLeft = shipBoard[positionY][positionLeft].getTile();
+
+        if(tileUp != null && tile.getSides().get(0).equals(tileUp.getSides().get(2))){
+            connectedTilesWithPosition.add(new Pair<>(new Position(positionUp, positionX), tile));
+        }
+        if(tileRight != null && tile.getSides().get(1).equals(tileRight.getSides().get(3))){
+            connectedTilesWithPosition.add(new Pair<>(new Position(positionY, positionRight), tile));
+        }
+        if(tileDown != null && tile.getSides().get(2).equals(tileDown.getSides().get(0))){
+            connectedTilesWithPosition.add(new Pair<>(new Position(positionDown, positionX), tile));
+        }
+        if(tileLeft != null && tile.getSides().get(3).equals(tileLeft.getSides().get(1))){
+            connectedTilesWithPosition.add(new Pair<>(new Position(positionY, positionLeft), tile));
+        }
+
+        return connectedTilesWithPosition;
+    }
+
+    /**
+     * Finds all connected housing unit components to the one in the given position.
+     * @param position
+     * @return An {@link ArrayList} of {@link Pair}s containing the {@link Position} of the housing unit and the tile of it.
+     * @author Alessandro Giuseppe Gioia
+     */
+    public ArrayList<Pair<Position, Tile>> getConnectedHousingUnitTiles(Position position) {
+        ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+        return getConnectedTiles(position).stream()
+                .filter(p -> (p.getValue().getMyComponent().accept(componentNameVisitor).equals("CentralHousingUnit") || p.getValue().getMyComponent().accept(componentNameVisitor).equals("ModularHousingUnit")))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
 
     public Float calculateFirePower() {
         return (float) getCannonPos().stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();

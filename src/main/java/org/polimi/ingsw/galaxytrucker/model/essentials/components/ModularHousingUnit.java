@@ -74,6 +74,15 @@ public class ModularHousingUnit extends CentralHousingUnit{
     }
 
     @Override
+    public void removeCrewMember(){
+        switch (alienColor) {
+            case EMPTY -> removeCrewMember();
+            case BROWN -> removeBrownAlien();
+            case PURPLE -> removePurpleAlien();
+        }
+    }
+
+    @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }
@@ -82,12 +91,13 @@ public class ModularHousingUnit extends CentralHousingUnit{
         super.setHumanCrewNumber(2);
     }
 
-    public int getHumanCrewNumber(){
+    @Override
+    public int getNCrewMembers(){
         int result = 0;
         switch (alienColor){
             case PURPLE -> result = getNPurpleAlien();
             case BROWN -> result = getNBrownAlien();
-            case EMPTY -> result = super.getHumanCrewNumber();
+            case EMPTY -> result = super.getNCrewMembers();
             default -> throw new IllegalStateException("Multiversal housing issue.");
         }
         return result;

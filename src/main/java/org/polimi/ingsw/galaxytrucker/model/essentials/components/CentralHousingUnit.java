@@ -29,7 +29,7 @@ public class CentralHousingUnit extends Component {
     public Color getColor() {
         return color;
     }
-    public int getHumanCrewNumber() {
+    public int getNCrewMembers() {
         return humanCrewNumber;
     }
     public void setHumanCrewNumber(int humanCrewNumber) {
@@ -41,7 +41,7 @@ public class CentralHousingUnit extends Component {
     public Boolean getIsColored() {
         return isColored;
     }
-    public void removeHumanCrewMember() {
+    public void removeCrewMember() {
 
         if (humanCrewNumber > 0) humanCrewNumber--;
     }

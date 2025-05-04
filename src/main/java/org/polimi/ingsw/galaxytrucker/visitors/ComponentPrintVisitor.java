@@ -50,7 +50,7 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
         String[] result = new String[]{
                 "         ",
                 "   CCab  ",
-                component.getHumanCrewNumber()+"        "
+                component.getNCrewMembers()+"        "
         };
         //Aggiunere lettera colore
         sb = new StringBuilder(result[1]);
@@ -159,7 +159,7 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
         String[] result = new String[]{
                 "         ",
                 "   Cab   ",
-                component.getHumanCrewNumber()+"        "
+                component.getNCrewMembers()+"        "
         };
         //Aggiungere indicatore di alieno
         sb = new StringBuilder(result[2]);

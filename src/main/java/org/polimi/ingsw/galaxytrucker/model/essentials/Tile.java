@@ -73,7 +73,6 @@ public class Tile implements Serializable {
 //        this.mySlot = other.mySlot; // Se vuoi un riferimento al solito Slot, altrimenti escludilo
     }
 
-
     public void setId(int id) {
         this.id = id;
     }
@@ -85,7 +84,6 @@ public class Tile implements Serializable {
     public Component getMyComponent() {
         return myComponent;
     }
-
 
 //    public void setMySlot(Slot mySlot2) {
 //
@@ -160,7 +158,6 @@ public class Tile implements Serializable {
         this.wellConnected = wellConnected;
     }
 
-
     public void testPrint(){
         System.out.print(this.id);
         //System.out.print(this.myComponent.getName());
@@ -175,6 +172,4 @@ public class Tile implements Serializable {
     public void setFixed(Boolean fixed) {
         this.fixed = fixed;
     }
-
-
 }
