@@ -266,7 +266,8 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
-    public Void visit(ActivateComponentRequest activateDoubleEnginesRequest){
+    public Void visit(ActivateComponentRequest activateComponentRequest){
+        clientController.handleActivateComponentRequest(activateComponentRequest);
         return null;
     }
 
@@ -292,6 +293,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(DiscardCrewMembersRequest discardCrewMembersRequest) {
+        clientController.hardleDiscardCrewMembersRequest(discardCrewMembersRequest);
         return null;
     }
 

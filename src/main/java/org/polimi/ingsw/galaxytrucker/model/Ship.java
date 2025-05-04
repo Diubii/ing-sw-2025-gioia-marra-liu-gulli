@@ -143,6 +143,11 @@ public class Ship implements Serializable {
     }
 
     public int getnBatterieLeft() {
+        ArrayList<Position> batteryPos = getComponentPositionsFromName("BatterySlot");
+        int nBatterieLeft = 0;
+        for (Position pos : batteryPos) {
+            nBatterieLeft += ((BatterySlot)getComponentFromPosition(pos)).getBatteriesLeft();
+        }
         return nBatterieLeft;
     }
 
@@ -918,7 +923,7 @@ public class Ship implements Serializable {
     }
 
     public Component getComponentFromPosition(Position position){
-        return shipBoard[position.getX()][position.getY()].getTile().getMyComponent();
+        return shipBoard[position.getY()][position.getX()].getTile().getMyComponent();
     }
 
     public ArrayList<Position> getComponentPositionsFromName(String componentName) {
