@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
@@ -8,11 +9,41 @@ import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitor;
 
 import java.util.ArrayList;
 
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.RESET;
+
 
 /**
  * Methods to Print a Card to console
  */
 public class CardPrintUtils {
+
+   public static void printPlanetList(ArrayList<Planet> planets){
+       StringBuilder sb;
+       for(int i=0; i< planets.size(); i++){
+           sb = new StringBuilder();
+           if(planets.get(i).isOccupied()){
+               sb.append("Occ");
+           }
+           else{
+               sb.append("   ");
+           }
+           sb.append(" P").append(i+1).append(": ");
+
+           int j=0;
+           for( j=0; j < planets.get(i).getGoods().size(); j++){
+               switch (planets.get(i).getGoods().get(j).getColor()){
+                   case RED -> sb.append(RED).append("█").append(RESET);
+                   case BLUE -> sb.append(BLUE).append("█").append(RESET);
+                   case GREEN -> sb.append(GREEN).append("█").append(RESET);
+                   case YELLOW -> sb.append(BRIGHT_YELLOW).append("█").append(RESET);
+                   case EMPTY -> sb.append(" ");
+               }
+
+           }
+           System.out.println(sb.toString());
+       }
+   }
 
     private static AdventureCardPrintVisitor adventureCardPrintVisitor= new AdventureCardPrintVisitor();
 
