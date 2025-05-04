@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.view;
 
+import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
@@ -66,6 +67,9 @@ public interface View {
 
     void askRemoveTile(Ship ship);
 
+    void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException;
+    void chooseDiscardCrew(Ship myShip,int nCrewToDiscard ) throws ExecutionException, InterruptedException;
+    void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException;
     void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
 
     void showFlightBoard();

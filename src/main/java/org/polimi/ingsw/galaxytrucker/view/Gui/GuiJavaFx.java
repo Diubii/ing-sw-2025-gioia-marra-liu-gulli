@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
@@ -296,6 +297,21 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void askRemoveTile(Ship ship) {
+
+    }
+
+    @Override
+    public void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException {
+
+    }
+
+    @Override
+    public void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) throws ExecutionException, InterruptedException {
+
+    }
+
+    @Override
+    public void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException {
 
     }
 

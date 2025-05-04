@@ -30,6 +30,7 @@ public class Shield extends Component {
         return new ArrayList<>(protectedSides);
     }
 
+    @Override
     public Boolean isCharged() {
         return charged;
     }

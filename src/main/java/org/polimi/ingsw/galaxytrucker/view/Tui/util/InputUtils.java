@@ -7,6 +7,7 @@ import java.util.List;
 
 public class InputUtils {
 
+
     public static Position parseCoordinate(String input) throws IllegalArgumentException {
         if (input == null || input.isBlank()) {
             throw new IllegalArgumentException("Input is null or blank");

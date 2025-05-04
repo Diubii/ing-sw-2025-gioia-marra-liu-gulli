@@ -33,7 +33,9 @@ public class DoubleEngine extends Engine{
         }
     }
 
-    public Boolean getCharged() {
+
+    @Override
+    public Boolean isCharged() {
         return charged;
     }
 

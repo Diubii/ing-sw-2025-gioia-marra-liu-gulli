@@ -1099,16 +1099,19 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     public void handleActivateComponentRequest(ActivateComponentRequest request) {
         ActivatableComponent component = request.getActivatableComponentType();
 
-        //Invoca metodo della view chiedere se giocagtore vuole attivare il component
-
-
+        //Invoca metodo della view fare scegliere al giocatore i componenti da attivare e le batterie da usare
+        try {
+            view.chooseComponent(myModel.getMyInfo().getShip(), component);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void handleActivateComponentResponse(ActivatableComponent component,ArrayList<Position> componentPos, ArrayList<Position> battPos){
         //Tornare lista di componenti e batterie
 
         //Inviare la response
-        ActivateComponentResponse resp = new ActivateComponentResponse(component,componentPos,battPos);//tipo e liste)
+        ActivateComponentResponse resp = new ActivateComponentResponse(component,componentPos,battPos);
         try{
             client.sendMessage(resp);
         } catch (Exception e) {
@@ -1116,6 +1119,38 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         }
     }
 
+    public void hardleDiscardCrewMembersRequest(DiscardCrewMembersRequest request)
+    {
+        try {
+            view.chooseDiscardCrew(myModel.getMyInfo().getShip(), request.getNumberOfCrewMembersToDiscard());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void handleDiscardCrewMembersResponse(ArrayList<Position> housingPos){
+        DiscardCrewMembersResponse resp = new DiscardCrewMembersResponse(housingPos);
+        try{
+            client.sendMessage(resp);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //da chiamare nel visitor
+    public void handleTronconiRequest(){
+        //Lista di ship
+        ArrayList<Ship> Tronconi = new ArrayList<>();
+        try {
+            view.chooseTroncone(Tronconi);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void handleTronconiResponse(int choice){
+        //Nuovo NetMessage
+    }
 
     public AdventureCard getCurrentAdventureCard() {
         return currentAdventureCard;
