@@ -252,7 +252,9 @@ public class ClientController implements Observer {
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
-
+                    ArrayList<PlayerInfo> appInfo = new ArrayList<>();
+                    appInfo.add(myModel.getMyInfo());
+                    myModel.setPlayerInfos(appInfo);
                     view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
                 } else {
                     view.showGenericMessage("Room creation failed: " + response.getErrMess());
@@ -320,6 +322,9 @@ public class ClientController implements Observer {
                 myModel.getMyInfo().setColor(response.getColor());
                 myModel.getMyInfo().setShip(response.getMyShip());
                 myModel.getMyInfo().setNickName(getNickname());
+                ArrayList<PlayerInfo> appInfo = new ArrayList<>();
+                appInfo.add(myModel.getMyInfo());
+                myModel.setPlayerInfos(appInfo);
 
             } else {
                 view.showGenericMessage("Failed to join the lobby: " + response.getErrMess());
@@ -340,10 +345,12 @@ public class ClientController implements Observer {
                 PlayerInfo playerInfo = playerJoinedUpdate.getPlayerInfo();
 
                 synchronized (myModel.getPlayerInfos()){
-                    myModel.getPlayerInfos().add(playerJoinedUpdate.getPlayerInfo());
+                    ArrayList<PlayerInfo> appInfo  = myModel.getPlayerInfos();
+                    appInfo.add(playerJoinedUpdate.getPlayerInfo());
+                    myModel.setPlayerInfos(appInfo);
                 }
 
-//                view.showPlayerJoined(playerInfo);
+                view.showPlayerJoined(playerInfo);
 
     }
 
@@ -929,7 +936,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
         }
         if(phase == GameState.FLIGHT){
-            view.showFlightBoard(myModel.getFlightBoard());
+            view.showFlightBoard(myModel.getFlightBoard(), myModel.getPlayerInfos());
         }
 
     }
@@ -1095,7 +1102,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             }
 
             case "b" -> {
-                view.showFlightBoard(myModel.getFlightBoard());
+                view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos());
                 view.askEndTurnMenuChoice(myModel.isLeader());
             }
 
@@ -1136,7 +1143,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             }
 
             case "b" -> {
-                view.showFlightBoard(myModel.getFlightBoard());
+                view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos());
                 view.askEndTurnMenuChoice(myModel.isLeader());
             }
 

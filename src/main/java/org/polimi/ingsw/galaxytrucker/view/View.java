@@ -15,6 +15,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -36,7 +37,7 @@ public interface View {
     void toShowCurrentMenu();
 //    void showPlayerJoined(HashMap<String, Color> playerInfo);
 
-    void showPlayerJoined(PlayerInfo playerInfo);
+    void showPlayerJoined(PlayerInfo playerInfos);
 
     void handleChoiceForPhase(GameState phase);
     void handlePhaseUpdate(PhaseUpdate phaseUpdate);
@@ -73,7 +74,7 @@ public interface View {
     void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
 // Flight
     void askDrawCard();
-    void showFlightBoard(FlightBoard flightBoard);
+    void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers);
     void showCurrentAdventureCard();
 
 

@@ -12,10 +12,7 @@ import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
-import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
-import org.polimi.ingsw.galaxytrucker.model.Planet;
-import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
-import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
@@ -194,7 +191,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void showPlayerJoined(PlayerInfo playerInfo) {
-        showGenericMessage("Player joined: " + playerInfo.getNickName());
+        showGenericMessage("Player joined: " + playerInfo);
     }
 
     @Override
@@ -332,7 +329,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void showFlightBoard(FlightBoard flightBoard) {
+    public void showFlightBoard(FlightBoard flightBoard,ArrayList<PlayerInfo> infoPlayers) {
 
     }
 
