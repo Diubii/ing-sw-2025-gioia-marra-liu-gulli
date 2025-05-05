@@ -15,6 +15,4 @@ public interface ClientInterfaceRMI extends Remote, Client {
     public void sendMessage(NetworkMessage message) throws IOException, RemoteException, ExecutionException, InterruptedException;
 
     public void receiveMessage(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition;
-
-
 }

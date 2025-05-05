@@ -72,6 +72,8 @@ public class FlightBoard implements Serializable{
     }
 
     public void removePlayer(Color token){
+        if(!playerSteps.containsKey(token)) return;
+
         int initialPos = playerSteps.get(token);
         int tempFinalPos = (initialPos) % flightBoardMap.getFlightBoardMapSlots().size();
 

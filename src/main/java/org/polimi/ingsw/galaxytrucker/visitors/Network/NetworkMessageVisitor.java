@@ -315,7 +315,23 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
     @Override
-    public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
+    public Void visit(PlayerLostUpdate playerLostUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(PlayerKickedUpdate playerKickedUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(HeartbeatRequest heartbeatRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(HeartbeatResponse heartbeatResponse){
+        serverController.handleHeartbeatResponse(heartbeatResponse, clientHandler);
         return null;
     }
 

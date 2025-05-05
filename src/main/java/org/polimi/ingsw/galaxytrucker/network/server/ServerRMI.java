@@ -23,11 +23,11 @@ import java.util.concurrent.ExecutionException;
 public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface {
     ServerController controller;
     private final Map<ClientInterfaceRMI, ClientHandler> clientMap = new ConcurrentHashMap<>();
+    NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
 
     public ServerRMI(ServerController serverController) throws RemoteException {
         super();
         this.controller = serverController;
-
     }
 
     public ServerController getController() throws RemoteException {
@@ -39,13 +39,16 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
     @Override
     public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws IOException, ExecutionException, InterruptedException {
         try {
+            NetworkMessageType type = message.accept(nmnv);
 
 //            if (message.accept(new NetworkMessageNameVisitor()).equals(NetworkMessageType.FinishBuildingRequest)){
 //                FinishBuildingRequest mess = (FinishBuildingRequest) message;
 //                System.out.println("FINISH FROM + " + mess.name);
 //            }
 
-            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + message.accept(new NetworkMessageNameVisitor())));
+            if(type != NetworkMessageType.HeartbeatResponse){
+                System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + type));
+            }
         } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition e) {
             throw new RuntimeException(e);
         }
@@ -63,9 +66,7 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
         new Thread(()->{
             try {
                 controller.getMessageManager().handle(message, handler);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
+            } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }).start();
@@ -76,7 +77,7 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
     @Override
     public void handleRMIRegistration(ClientInterfaceRMI clientStub) {
 
-        RMIClientHandler handler = new RMIClientHandler(clientStub);
+        RMIClientHandler handler = new RMIClientHandler(clientStub, controller);
 
         synchronized (controller.getClients()) {
             controller.addClient(handler);

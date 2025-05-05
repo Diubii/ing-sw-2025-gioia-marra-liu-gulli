@@ -173,7 +173,9 @@ public class GameController {
 
         cardDrawn.get();
         DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(cardDeckTest.peek());
-        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(drawnAdventureCardUpdate);}); //Mando match info update
+        myGame.getPlayerHandlers().values().forEach(ch -> {
+            ch.sendMessage(drawnAdventureCardUpdate);
+        }); //Mando match info update
 
 
         //Test
@@ -183,7 +185,6 @@ public class GameController {
         if (!rankedPlayers.isEmpty()) {
 
             adventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame); //Attivo l'effetto della carta
-
 
 
             //Controllo se ci sono giocatori doppiati e nel caso li rimuovo
@@ -199,16 +200,20 @@ public class GameController {
                 }
             }
 
-            myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(new EndTurnUpdate());}); //Mando match info update
+            myGame.getPlayerHandlers().values().forEach(ch -> {
+                ch.sendMessage(new EndTurnUpdate());
+            }); //Mando match info update
 
-        }else {
+        } else {
 
             //caso in cui non ci sono piu giocatori, (quittano tutti prima dell'effetto della carta)
             gameEndedEarly = true;
             return;
 
         }
+    }
 
+    public void removePlayerFromGame(String nickname) throws PlayerNotFoundException {
 
 
 
@@ -217,8 +222,9 @@ public class GameController {
     private void handleEndGame() {
     }
 
+    @NeedsToBeCompleted
     public void completeCardDrawn(){
-        cardDrawn.complete(null);
+        //cardDrawn.complete(null);
     }
 
     public void removePlayerFromGame(String nickname, boolean isLandingEarly) throws PlayerNotFoundException {
@@ -226,15 +232,28 @@ public class GameController {
         myGame.getRealGame().getFlightBoard().removePlayer(myGame.getPlayerColors().get(nickname));
 
         FlightBoardUpdate fbu = new FlightBoardUpdate(myGame.getRealGame().getFlightBoard());
-        PlayerRemovedUpdate pru = new PlayerRemovedUpdate(nickname,(isLandingEarly));
-        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(pru); ch.sendMessage(fbu);}); //Notifichiamo i client che un player ha perso e aggiorniamo la flight board
-
+        PlayerLostUpdate plu = new PlayerLostUpdate(nickname, isLandingEarly);
+        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(plu); ch.sendMessage(fbu);}); //Notifichiamo i client che un player ha perso e aggiorniamo la flight board
 
         if (myGame.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
-            //se non ho piu giocatori completo la cardDrawn e entro nel ramo else in handleTurn
+            //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
             completeCardDrawn();
         }
+    }
 
+    public void kickPlayerFromGame(String nickname) throws PlayerNotFoundException {
+        myGame.getRealGame().getFlightBoard().removePlayer(myGame.getPlayerColors().get(nickname));
+        myGame.getRealGame().removePlayer(nickname);
+
+        FlightBoardUpdate fbu = new FlightBoardUpdate(myGame.getRealGame().getFlightBoard());
+        PlayerKickedUpdate pku = new PlayerKickedUpdate(nickname);
+        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(pku); ch.sendMessage(fbu);}); //Notifichiamo i client che un player è stato kickato e aggiorniamo la flight board
+        myGame.removePlayerHandler(nickname);
+
+        if (myGame.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
+            //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
+            completeCardDrawn();
+        }
     }
 
     /**

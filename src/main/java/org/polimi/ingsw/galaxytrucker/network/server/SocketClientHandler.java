@@ -55,12 +55,13 @@ public class SocketClientHandler implements Runnable, ClientHandler {
             System.out.println("Client " + clientSocket.getInetAddress() + " connected to " + clientSocket.getRemoteSocketAddress());
             ConnectionManager();
         } catch (IOException | ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.out.println("Client " + clientSocket.getInetAddress() + " connection dropped.");
         }
     }
 
     private void ConnectionManager() throws IOException, ExecutionException, InterruptedException {
+        serverController.startNewHeartbeat(this);
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 synchronized (inputLock) {
@@ -68,12 +69,17 @@ public class SocketClientHandler implements Runnable, ClientHandler {
                     NetworkMessage message = (NetworkMessage) input.readObject();
                     //logica per gestire i messaggi
 
-                    if (message.accept(nmnv).equals(NetworkMessageType.NicknameRequest)) {
+                    NetworkMessageType type = message.accept(nmnv);
+
+                    if (type.equals(NetworkMessageType.NicknameRequest)) {
                         NicknameRequest request = (NicknameRequest) message;
                         System.out.println("Nickname received: " + request.getNickname());
                     }
 
-                    System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerSocket, TuiColor.GREEN,"MESSAGE " + message.accept(nmnv) + " RECEIVED FROM " + clientSocket.getInetAddress().toString()));
+                    if(type != NetworkMessageType.HeartbeatResponse) {
+                        System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerSocket, TuiColor.GREEN,"MESSAGE " + type + " RECEIVED FROM " + clientSocket.getInetAddress().toString()));
+                    }
+
                     executor.submit(() -> {
                         try {
                             serverController.getMessageManager().handle(message, this);
@@ -85,7 +91,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
             }
         } catch (ClassCastException | ClassNotFoundException | IOException e) {
             executor.shutdownNow();
-            System.out.println("Invalid stream from client");
+            //System.out.println("Invalid stream from client");
         } catch (PlayerAlreadyExistsException | TooManyPlayersException | InvalidTilePosition e) {
             throw new RuntimeException(e);
         }
@@ -95,15 +101,16 @@ public class SocketClientHandler implements Runnable, ClientHandler {
 
     public synchronized void sendMessage(NetworkMessage message) {
         try {
-            output.reset();  // 🔁 Forza la riscrittura dell'intero oggetto
+            output.reset();  // Forza la riscrittura dell'intero oggetto
             output.writeObject(message);
             output.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ClientSocket, TuiColor.GREEN, "Tried to send a message to a closed socket: " + clientSocket.getInetAddress().toString() ));
         }
     }
 
-    //@Test
-
-
+    @Override
+    public String toString() {
+        return clientSocket.getInetAddress().toString();
+    }
 }

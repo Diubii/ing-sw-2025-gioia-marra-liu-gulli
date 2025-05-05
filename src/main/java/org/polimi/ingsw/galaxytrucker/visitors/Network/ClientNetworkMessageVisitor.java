@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors.Network;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 
@@ -8,7 +8,6 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
-import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -335,8 +334,29 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
-    public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
-        clientController.handlePlayerRemovedUpdate(removedPlayerUpdate);
+    public Void visit(HeartbeatRequest heartbeatRequest) {
+        try {
+            clientController.handleHeartbeatRequest(heartbeatRequest);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visit(HeartbeatResponse heartbeatResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(PlayerLostUpdate playerLostUpdate) {
+        clientController.handlePlayerLostUpdate(playerLostUpdate);
+        return null;
+    }
+
+    @Override
+    public Void visit(PlayerKickedUpdate playerKickedUpdate) {
+        clientController.handlePlayerKickedUpdate(playerKickedUpdate);
         return null;
     }
 

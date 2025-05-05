@@ -67,11 +67,12 @@ public enum NetworkMessageType {
     DrawnAdventureCardUpdate,
     DeclareEnginePowerRequest,
     DeclareEnginePowerResponse, MatchInfoUpdate, DecksUpdate, FlightBoardUpdate,
-    RemovedPlayerUpdate,
+    PlayerLostUpdate, PlayerKickedUpdate,
     SelectPlanetRequest, SelectPlanetResponse, SelectedPlanetUpdate,
     GetFaceUpTilesRequest, GetFaceUpTilesResponse, FaceUpTileUpdate,
     SellGoodsRequest, SellGoodsResponse,
     GameMessage,
+    HeartbeatRequest, HeartbeatResponse,
     EndTurnUpdate,
     EarlyLandingRequest
 

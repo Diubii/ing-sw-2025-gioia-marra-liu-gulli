@@ -52,11 +52,7 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
         new Thread(()-> {
             try {
                 notifyObservers(message);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            } catch (InvalidTilePosition e) {
+            } catch (IOException | ExecutionException | InvalidTilePosition e) {
                 throw new RuntimeException(e);
             }
         }).start();
