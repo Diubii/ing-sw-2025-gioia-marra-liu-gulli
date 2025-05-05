@@ -331,7 +331,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             sendMessageAndGetResponse(lobbyManager, player, activateDoubleEnginesRequest);
             int playerEnginePower = player.getShip().calculateEnginePower();
             if (playerEnginePower == 0) {
-                lobbyManager.getGameController().removePlayerFromGame(player.getNickName());
+                lobbyManager.getGameController().removePlayerFromGame(player.getNickName(), false);
                 continue;
             }
             movePlayer(lobbyManager, player, playerEnginePower);

@@ -401,12 +401,12 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void showEndTurnMenu() {
+    public void showEndTurnMenu(boolean amLeader) {
 
     }
 
     @Override
-    public void askEndTurnMenuChoice() {
+    public void askEndTurnMenuChoice(boolean amLeader) {
 
     }
 }

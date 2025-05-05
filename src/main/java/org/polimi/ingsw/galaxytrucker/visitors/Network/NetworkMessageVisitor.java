@@ -300,6 +300,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(DrawAdventureCardRequest drawAdventureCardRequest) {
+        serverController.handleDrawAdventureCardRequest(drawAdventureCardRequest, clientHandler);
         return null;
     }
 
@@ -320,6 +321,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(EarlyLandingRequest earlyLandingRequest) {
+        serverController.handleEarlyLandingRequest(earlyLandingRequest, clientHandler);
         return null;
     }
 }

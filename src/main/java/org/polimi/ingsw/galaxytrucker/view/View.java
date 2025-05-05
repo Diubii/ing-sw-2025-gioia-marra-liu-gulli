@@ -77,7 +77,7 @@ public interface View {
     void showCurrentAdventureCard();
 
 
-    void showEndTurnMenu();
+    void showEndTurnMenu(boolean amLeader);
     void askActivateAdventureCard();
     void askDiscardCrew(int nCrewToDiscard, Ship myShip);
     void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
@@ -86,7 +86,7 @@ public interface View {
     void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip);
     void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip);
 
-    void askEndTurnMenuChoice();
+    void askEndTurnMenuChoice(boolean amLeader);
 
 
 //    public void askNickname(Thread thread) throws IOException;

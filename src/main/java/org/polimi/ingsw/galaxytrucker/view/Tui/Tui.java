@@ -14,11 +14,8 @@ import javafx.util.Pair;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
-import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.enums.*;
 
-import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -148,55 +145,55 @@ public class Tui implements View, Observable {
 
         MenuManager.clearConsole();
         System.out.println("\r".repeat(100));
-
-        //TEST STAMPA DA TOGLIERE
-        Ship testShip = new Ship(false);
-
-        //Prendo lista tiles e metto in ship per testare
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayList<Tile> tiles = new ArrayList<>();
-        try{
-            FileInputStream fis = new FileInputStream("src/main/resources/tiledata.json");
-            tiles = mapper.readValue(fis, new TypeReference<ArrayList<Tile>>(){});
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        Good exGood = new Good(Color.BLUE);
-        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
-        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
-        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
-        printTile(tiles.get(18));
-
-        System.out.println (((BatterySlot)tiles.get(4).getMyComponent()).getBatteriesLeft());
-
-        try{
-            for(int i =0; i<7; i++){
-                for(int j =0; j<5; j++){
-                    if(j!= 3) {
-                        testShip.putTile(tiles.get(i * 5 * j), new Position(j, i));
-                    }
-                }
-            }
-            tiles.get(152).rotate(180);
-            testShip.putTile(tiles.get(4),new Position(3,0));
-            testShip.putTile(tiles.get(54),new Position(3,1));
-            testShip.putTile(tiles.get(64),new Position(3,2));
-            testShip.putTile(tiles.get(93),new Position(3,3));
-            testShip.putTile(tiles.get(152),new Position(3,4));
-            testShip.putTile(tiles.get(136),new Position(3,5));
-            testShip.putTile(tiles.get(137),new Position(3,6));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        ArrayList<Ship> exTronconi = new ArrayList<>();
-        exTronconi.add(testShip);
-        exTronconi.add(testShip);
-        exTronconi.add(testShip);
-
-        //chooseTroncone(exTronconi);
-        chooseComponent(testShip,ActivatableComponent.DoubleCannon);
-        //chooseDiscardCrew(testShip,2);
+//
+//        //TEST STAMPA DA TOGLIERE
+//        Ship testShip = new Ship(false);
+//
+//        //Prendo lista tiles e metto in ship per testare
+//        ObjectMapper mapper = new ObjectMapper();
+//        ArrayList<Tile> tiles = new ArrayList<>();
+//        try{
+//            FileInputStream fis = new FileInputStream("src/main/resources/tiledata.json");
+//            tiles = mapper.readValue(fis, new TypeReference<ArrayList<Tile>>(){});
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        Good exGood = new Good(Color.BLUE);
+//        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
+//        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
+//        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
+//        printTile(tiles.get(18));
+//
+//        System.out.println (((BatterySlot)tiles.get(4).getMyComponent()).getBatteriesLeft());
+//
+//        try{
+//            for(int i =0; i<7; i++){
+//                for(int j =0; j<5; j++){
+//                    if(j!= 3) {
+//                        testShip.putTile(tiles.get(i * 5 * j), new Position(j, i));
+//                    }
+//                }
+//            }
+//            tiles.get(152).rotate(180);
+//            testShip.putTile(tiles.get(4),new Position(3,0));
+//            testShip.putTile(tiles.get(54),new Position(3,1));
+//            testShip.putTile(tiles.get(64),new Position(3,2));
+//            testShip.putTile(tiles.get(93),new Position(3,3));
+//            testShip.putTile(tiles.get(152),new Position(3,4));
+//            testShip.putTile(tiles.get(136),new Position(3,5));
+//            testShip.putTile(tiles.get(137),new Position(3,6));
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        ArrayList<Ship> exTronconi = new ArrayList<>();
+//        exTronconi.add(testShip);
+//        exTronconi.add(testShip);
+//        exTronconi.add(testShip);
+//
+//        //chooseTroncone(exTronconi);
+//        chooseComponent(testShip,ActivatableComponent.DoubleCannon);
+//        //chooseDiscardCrew(testShip,2);
 
         String banner = "\033[1;34m" + // Colore Blu Chiaro
                 "   __    _   __    _   _  __ _  __  _____ ___  _ __  __  _    ___  ___    ___\n" +
@@ -1012,9 +1009,9 @@ public class Tui implements View, Observable {
                 int nCrewAtPos = 0;
                 //N di crew sia umani che alieni
                 switch (  myShip.getComponentFromPosition(housingPos).accept(componentNameVisitor) ){
-                    case "ModularHousingUnit": nCrewAtPos = ((ModularHousingUnit)myShip.getComponentFromPosition(housingPos)).getHumanCrewNumber();
+                    case "ModularHousingUnit": nCrewAtPos = ((ModularHousingUnit)myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
                     break;
-                    case "CentralHousingUnit":  nCrewAtPos = ((CentralHousingUnit)myShip.getComponentFromPosition(housingPos)).getHumanCrewNumber();
+                    case "CentralHousingUnit":  nCrewAtPos = ((CentralHousingUnit)myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
 
                 }
                 Position finalHousingPos = housingPos;
@@ -1394,29 +1391,54 @@ public class Tui implements View, Observable {
 
 
     @Override
-    public void showEndTurnMenu() {
-       menuManager.showEndTurnMenu();
-    }
-
-    public void askEndTurnMenuChoice()  {
-        String input = null;
-        boolean valid = false;
-        do{
-            try {
-                input = readLine("Inserisci la tua scelta (a/b/c o menu) : ");
-                if(input.toLowerCase().matches("[abc]")){
-                    valid = true;
-                }
-                else{
-                    out.println("Input non valido.");
-                }
-
-
-            } catch (Exception e) {
-
+    public void showEndTurnMenu( boolean amLeader ) {
+        if(clientController.getMyModel().isLeader()) {
+            menuManager.showLeaderEndTurnMenu();
+            return;
+        }
+        else{
+            menuManager.showEndTurnMenu();
         }
 
-        }while(!valid);
+    }
+
+    public void askEndTurnMenuChoice(boolean amLeader )  {
+        String input = null;
+        boolean valid = false;
+        if(!amLeader) {
+            do {
+                try {
+                    input = readLine("Inserisci la tua scelta (a/b/c o menu) : ");
+                    if (input.toLowerCase().matches("[abc]")) {
+                        valid = true;
+                    } else {
+                        out.println("Input non valido.");
+                    }
+
+
+                } catch (Exception e) {
+
+                }
+
+            } while (!valid);
+        }
+        else {
+            do {
+                try {
+                    input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ");
+                    if (input.toLowerCase().matches("[abcd]")) {
+                        valid = true;
+                    } else {
+                        out.println("Input non valido.");
+                    }
+
+
+                } catch (Exception e) {
+
+                }
+
+            } while (!valid);
+        }
         try {
             clientController.handleAskEndTurnMenuChoice(input);
         } catch (RuntimeException e) {
@@ -1440,6 +1462,7 @@ public class Tui implements View, Observable {
     }
     @Override
     public void showCurrentAdventureCard() {
+        out.println("Carta avventura attiva: ");
         CardPrintUtils.printCard(clientController.getCurrentAdventureCard());
     }
 
@@ -1485,8 +1508,13 @@ public class Tui implements View, Observable {
             try {
                 input = readLine(prompt).trim().toLowerCase();
                 if ("y".equals(input)) {
-                    onYesAction.run();
-                    validInput = true;
+                    try {
+                        onYesAction.run();
+                        validInput = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
                     System.out.println("Input non valido. Inserisci solo 'y' per confermare.");
                 }

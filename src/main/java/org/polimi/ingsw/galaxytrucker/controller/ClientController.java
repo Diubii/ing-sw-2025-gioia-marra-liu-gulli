@@ -2,10 +2,7 @@ package org.polimi.ingsw.galaxytrucker.controller;
 
 import javafx.geometry.Pos;
 import javafx.util.Pair;
-import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.enums.GameState;
-import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
+import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -353,7 +350,7 @@ public class ClientController implements Observer {
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate){
         phase = phaseUpdate.getState();
 
-
+        if (phase.equals( GameState.FLIGHT)) myModel.setPlayerState(PlayerState.Playing);
         if (phase.equals(GameState.BUILDING_END)){
             if (clientPhaseController.getPhase().equals(PLAYER_PHASE.FINISH_BUILDING) ){ return;}
             if ( clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING_TIMER ) || clientPhaseController.getPhase().equals(PLAYER_PHASE.BUILDING)){
@@ -1080,13 +1077,12 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
     public void handleEndTurnUpdate(EndTurnUpdate update) {
 
-        view.showGenericMessage(".");
-        view.showEndTurnMenu();
-        view.askEndTurnMenuChoice();
+        view.showGenericMessage("turn ended");
 
     }
     public void handleAskEndTurnMenuChoice(String input) throws RuntimeException {
-        switch (input){
+        if(!myModel.isLeader()){
+        switch (input) {
             case "RESET" -> {
                 return;
 
@@ -1094,16 +1090,16 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             }
             case "a" -> {
                 view.showShip(myModel.getMyInfo().getShip());
-                view.askEndTurnMenuChoice();
+                view.askEndTurnMenuChoice(myModel.isLeader());
                 break;
             }
 
-            case "b" ->{
+            case "b" -> {
                 view.showFlightBoard(myModel.getFlightBoard());
-                view.askEndTurnMenuChoice();
+                view.askEndTurnMenuChoice(myModel.isLeader());
             }
 
-            case"c" ->{
+            case "c" -> {
                 try {
                     handleEarlyLandingRequest();
                 } catch (IOException | ExecutionException | InterruptedException e) {
@@ -1113,17 +1109,63 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             }
 
 
-            case "menu","m","?" ->{
-                view.showEndTurnMenu();
-                view.askEndTurnMenuChoice();
+            case "menu", "m", "?" -> {
+                view.showEndTurnMenu(myModel.isLeader());
+                view.askEndTurnMenuChoice(myModel.isLeader());
 
             }
 
 
             default -> {
                 view.showGenericMessage("Invalid option. Please try again.");
-                view.askEndTurnMenuChoice();
+                view.askEndTurnMenuChoice(myModel.isLeader());
             }
+        }
+
+        } else{
+            switch (input) {
+            case "RESET" -> {
+                return;
+
+
+            }
+            case "a" -> {
+                view.showShip(myModel.getMyInfo().getShip());
+                view.askEndTurnMenuChoice(myModel.isLeader());
+                break;
+            }
+
+            case "b" -> {
+                view.showFlightBoard(myModel.getFlightBoard());
+                view.askEndTurnMenuChoice(myModel.isLeader());
+            }
+
+            case "c" -> {
+                try {
+                    handleEarlyLandingRequest();
+                } catch (IOException | ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+            case"d"->{
+                view.askDrawCard();
+
+            }
+
+
+            case "menu", "m", "?" -> {
+                view.showEndTurnMenu(myModel.isLeader());
+                view.askEndTurnMenuChoice(myModel.isLeader());
+
+            }
+
+
+            default -> {
+                view.showGenericMessage("Invalid option. Please try again.");
+                view.askEndTurnMenuChoice(myModel.isLeader());
+            }
+        }
 
         }
 
@@ -1152,10 +1194,14 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         boolean amLeader = leaderNickname.equals(getNickname());
         myModel.setLeader(amLeader);
         if(amLeader){
-            view.askDrawCard();
+
+            view.showEndTurnMenu(true);
+            view.askEndTurnMenuChoice(true);
         }
         else{
             view.showGenericMessage("No sei il leader del questo turno. Dovresti aspettare il leader pesca la carta.");
+            view.showEndTurnMenu(false);
+            view.askEndTurnMenuChoice(false);
         }
 
         view.showGenericMessage("Il giocatore: " + leaderNickname + " è il leader, rimangono: " + remainCards+ "  carte.");
@@ -1399,7 +1445,11 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     public void handlePlayerRemovedUpdate(PlayerRemovedUpdate update) {
         boolean isLandingEarly = update.isLandingEarly();
 
+
         String nickname = update.getNickname();
+        if (nickname.equals(getNickname())) {
+            myModel.setPlayerState(PlayerState.Spectating);
+        }
         if(isLandingEarly) {
             view.showGenericMessage(" Il giocatore " + nickname + " ha lasciato la partita.");
         }

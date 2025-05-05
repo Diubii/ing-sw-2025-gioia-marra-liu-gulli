@@ -18,6 +18,6 @@ public class EarlyLandingRequest extends NetworkMessage implements Serializable 
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException {
-        return null;
+        return visitor.visit(this);
     }
 }

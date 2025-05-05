@@ -3,12 +3,9 @@ package org.polimi.ingsw.galaxytrucker.controller;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
-import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
-import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.model.Projectile;
-import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCardEffects;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
+import org.polimi.ingsw.galaxytrucker.model.*;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.DoubleCannon;
@@ -18,6 +15,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class GameController {
@@ -26,6 +24,16 @@ public class GameController {
     private final LobbyManager myGame;
     private int nCompletedShips = 0;
     final Object ncsLock = new Object();
+    CompletableFuture cardDrawn;
+    private Boolean gameEndedEarly = false;
+    private CardDeck cardDeckTest = new CardDeck(true);
+
+    public CardDeck getCardDeckTest() {
+        return cardDeckTest;
+    }
+    public void setCardDeckTest(CardDeck cardDeckTest) {
+        this.cardDeckTest = cardDeckTest;
+    }
 
     private final AdventureCardEffects adventureCardEffects = new AdventureCardEffects();
 
@@ -69,50 +77,164 @@ public class GameController {
 
     public void startFlight() throws ExecutionException, InterruptedException {
 
+        Good good1 = new Good(Color.RED);
+        Good good2 = new Good(Color.BLUE);
+        Good good3 = new Good(Color.GREEN);
+        Good good4 = new Good(Color.YELLOW);
+
+
+        ArrayList<Good> goods1 = new ArrayList<>();
+        goods1.add(good1);
+        goods1.add(good2);
+        ArrayList<Good> goods2 = new ArrayList<>();
+        goods2.add(good3);
+        goods2.add(good4);
+        ArrayList<Good> goods3 = new ArrayList<>();
+        goods3.add(good4);
+        Planet p1 = new Planet(false, goods1);
+        Planet p2 = new Planet(false, goods2);
+        Planet p3 = new Planet(false, goods3);
+        ArrayList<Planet> nPlanet = new ArrayList<>();
+        nPlanet.add(p1);
+        nPlanet.add(p2);
+        nPlanet.add(p3);
+
+        AbandonedShip abandonedShip = new AbandonedShip(
+                17,
+                1,
+                 1,
+                "Nave abbandonata",
+                false,
+                2,
+                 3,
+                false);
+        OpenSpace openSpace = new OpenSpace(
+                26,
+                 2,
+                 0,
+                 "Spazio aperto",
+                 false,
+                 true
+        );
+        Planets planets = new Planets(
+                1,
+                2,
+                2,
+                "Planets",
+                true,
+                 nPlanet,
+                false
+
+
+                );
+        cardDeckTest.addCard(abandonedShip);
+        cardDeckTest.addCard(openSpace);
+        cardDeckTest.addCard(planets);
+
         myGame.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
 
-        while (myGame.getRealGame().getFlightDeck().getSize() > 0 && !myGame.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) { //Finché ci sono sia carte che giocatori in gioco
+        while (cardDeckTest.getSize() > 0 && !myGame.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) { //Finché ci sono sia carte che giocatori in gioco
             handleTurn();
+            if (gameEndedEarly){
+                handleEndGame();
+                break;
+            };
+
+
         }
+
+
+    }
+
+    public void handleTurnBeforeDrawnCard(){
+        ArrayList<Player> rankedPlayers = new ArrayList<>(myGame.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
+        MatchInfoUpdate miu;
+        rankedPlayers.sort(Comparator.comparingInt(Player::getPlacement));
+
+        if (!rankedPlayers.isEmpty()) {
+            miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), cardDeckTest.getSize());
+
+        } else {
+            miu = new MatchInfoUpdate("", myGame.getRealGame().getFlightDeck().getSize());
+
+        }
+        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(miu);}); //Mando match info update
+
+
 
     }
 
     private void handleTurn() throws ExecutionException, InterruptedException {
-        //NOTIFICA A TUTTI CHI È IL LEADER (Alessandro: Serve?)
 
+        cardDrawn = new CompletableFuture();
         //Prendo i players ordinati per placement
+
+        handleTurnBeforeDrawnCard();
+
+        cardDrawn.get();
+        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(cardDeckTest.peek());
+        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(drawnAdventureCardUpdate);}); //Mando match info update
+
+
+        //Test
+        AdventureCard adventureCard = cardDeckTest.peek();
         ArrayList<Player> rankedPlayers = new ArrayList<>(myGame.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
-        rankedPlayers.sort(Comparator.comparingInt(Player::getPlacement));
 
-        AdventureCard adventureCard = myGame.getRealGame().getFlightDeck().pop();
-        MatchInfoUpdate miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), myGame.getRealGame().getFlightDeck().getSize());
-        //NOTIFICHIAMO CHE CARTA È STATA PESCATA E LA MANDIAMO
-        DrawnAdventureCardUpdate dacu = new DrawnAdventureCardUpdate(adventureCard);
-        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(miu); ch.sendMessage(dacu);}); //Mando la carta pescata ad ogni player
+        if (!rankedPlayers.isEmpty()) {
 
-        adventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame); //Attivo l'effetto della carta
+            adventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame); //Attivo l'effetto della carta
 
-        //Controllo se ci sono giocatori doppiati e nel caso li rimuovo
-        FlightBoard flightBoard = myGame.getRealGame().getFlightBoard();
-        for(Color color : flightBoard.getRankedPlayers()) {
-            if(flightBoard.isPlayerLapped(color)){ //Se il giocatore è doppiato
-                String lappedPlayerNickname = myGame.getNicknameFromColor(color);
-                try {
-                    removePlayerFromGame(lappedPlayerNickname); //Lo rimuovo
-                }catch (PlayerNotFoundException e) {
-                    throw new RuntimeException(e);
+
+
+            //Controllo se ci sono giocatori doppiati e nel caso li rimuovo
+            FlightBoard flightBoard = myGame.getRealGame().getFlightBoard();
+            for (Color color : flightBoard.getRankedPlayers()) {
+                if (flightBoard.isPlayerLapped(color)) { //Se il giocatore è doppiato
+                    String lappedPlayerNickname = myGame.getNicknameFromColor(color);
+                    try {
+                        removePlayerFromGame(lappedPlayerNickname, false); //Lo rimuovo
+                    } catch (PlayerNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
+
+            myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(new EndTurnUpdate());}); //Mando match info update
+
+        }else {
+
+            //caso in cui non ci sono piu giocatori, (quittano tutti prima dell'effetto della carta)
+            gameEndedEarly = true;
+            return;
+
         }
+
+
+
+
     }
 
-    public void removePlayerFromGame(String nickname) throws PlayerNotFoundException {
+    private void handleEndGame() {
+    }
+
+    public void completeCardDrawn(){
+        cardDrawn.complete(null);
+    }
+
+    public void removePlayerFromGame(String nickname, boolean isLandingEarly) throws PlayerNotFoundException {
         myGame.getRealGame().getPlayer(nickname).setPlayerState(PlayerState.Spectating);
         myGame.getRealGame().getFlightBoard().removePlayer(myGame.getPlayerColors().get(nickname));
 
         FlightBoardUpdate fbu = new FlightBoardUpdate(myGame.getRealGame().getFlightBoard());
-        PlayerRemovedUpdate pru = new PlayerRemovedUpdate(nickname,false);
+        PlayerRemovedUpdate pru = new PlayerRemovedUpdate(nickname,(isLandingEarly));
         myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(pru); ch.sendMessage(fbu);}); //Notifichiamo i client che un player ha perso e aggiorniamo la flight board
+
+
+        if (myGame.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
+            //se non ho piu giocatori completo la cardDrawn e entro nel ramo else in handleTurn
+            completeCardDrawn();
+        }
+
     }
 
     /**

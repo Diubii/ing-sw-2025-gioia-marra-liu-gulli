@@ -40,10 +40,10 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
     public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws IOException, ExecutionException, InterruptedException {
         try {
 
-            if (message.accept(new NetworkMessageNameVisitor()).equals(NetworkMessageType.FinishBuildingRequest)){
-                FinishBuildingRequest mess = (FinishBuildingRequest) message;
-                System.out.println("FINISH FROM + " + mess.name);
-            }
+//            if (message.accept(new NetworkMessageNameVisitor()).equals(NetworkMessageType.FinishBuildingRequest)){
+//                FinishBuildingRequest mess = (FinishBuildingRequest) message;
+//                System.out.println("FINISH FROM + " + mess.name);
+//            }
 
             System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + message.accept(new NetworkMessageNameVisitor())));
         } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition e) {

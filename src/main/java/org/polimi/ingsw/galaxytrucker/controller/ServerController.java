@@ -10,6 +10,7 @@ import org.polimi.ingsw.galaxytrucker.enums.GameAction;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
@@ -564,7 +565,15 @@ public class ServerController {
             //ho la mia posizione scelta, e lo posiziono
 
             Color playerColor = myGame.getPlayerColors().get(nickname);
-            myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, response.getPosition());
+            int realPos = 0;
+
+            switch (response.getPosition()){
+                case 1 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFirstPos();
+                case 2 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getSecondPos();
+                case 3 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getThirdPos();
+                case 4 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFourthPos();
+            }
+            myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos);
             myGame.getRealGame().getPlayer(nickname).setPlacement(response.getPosition());
 
             ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
@@ -731,7 +740,7 @@ public class ServerController {
         Player myPlayer = getPlayerFromClientHandler(clientHandler, myGame);
         Ship myShip = myPlayer.getShip();
 
-        ArrayList<Position> positions = (ArrayList<Position>) crewInitUpdate.getCrewPos().stream().map(Pair::getKey).toList();
+        List<Position> positions = new ArrayList<>(crewInitUpdate.getCrewPos().stream().map(Pair::getKey).toList());
 
         List<Slot> Slots = Arrays.stream(myShip.getShipBoard())
                 .flatMap(Arrays::stream)
@@ -915,6 +924,29 @@ public class ServerController {
 
     private Player getPlayerFromClientHandler(ClientHandler clientHandler, LobbyManager myGame){
         return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
+    }
+
+    public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        //Test
+        myGame.getGameController().getCardDeckTest();
+        myGame.getGameController().completeCardDrawn();
+
+
+
+    }
+
+    public void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        String nickname = getNicknameFromClientHandler(clientHandler);
+
+        try {
+            myGame.getGameController().removePlayerFromGame(nickname, true);
+            new Thread(()-> {myGame.getGameController().handleTurnBeforeDrawnCard();}).start();
+        } catch (PlayerNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
 

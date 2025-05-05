@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.network.client;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.enums.PlayerState;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
@@ -29,6 +30,15 @@ public class ClientModel {
     private Tile[] reservedTiles = new Tile[2];
     private boolean isLeader;
     private Planet selectedPlanet;
+    private PlayerState playerState;
+
+    public PlayerState getPlayerState() {
+        return playerState;
+    }
+
+    public void setPlayerState(PlayerState playerState) {
+        this.playerState = playerState;
+    }
 
     public ArrayList<Integer> getTilesToRemove() {
         return tilesToRemove;

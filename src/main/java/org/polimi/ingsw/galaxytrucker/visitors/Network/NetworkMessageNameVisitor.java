@@ -248,21 +248,22 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
 
     @Override
     public NetworkMessageType visit(DrawAdventureCardRequest drawAdventureCardRequest) {
-        return null;
+        return NetworkMessageType.DrawAdventureCardRequest;
     }
 
     @Override
     public NetworkMessageType visit(EndTurnUpdate endTurnUpdate) {
-        return null;
+
+        return NetworkMessageType.EndTurnUpdate;
     }
 
     @Override
     public NetworkMessageType visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest) {
-        return null;
+        return NetworkMessageType.DrawAdventureCardRequest;
     }
 
     @Override
     public NetworkMessageType visit(EarlyLandingRequest earlyLandingRequest) {
-        return null;
+        return NetworkMessageType.EarlyLandingRequest;
     }
 }

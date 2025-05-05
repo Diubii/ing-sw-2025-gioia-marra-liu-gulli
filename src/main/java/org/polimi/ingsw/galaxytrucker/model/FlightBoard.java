@@ -58,6 +58,9 @@ public class FlightBoard implements Serializable{
                 occupied = false;
             }
 
+            flightBoardMap.getFlightBoardMapSlots().get(initialPos).setPlayerToken(Color.EMPTY);
+
+
         }
     }
 
@@ -69,7 +72,12 @@ public class FlightBoard implements Serializable{
     }
 
     public void removePlayer(Color token){
+        int initialPos = playerSteps.get(token);
+        int tempFinalPos = (initialPos) % flightBoardMap.getFlightBoardMapSlots().size();
+
+
         playerSteps.remove(token);
+        flightBoardMap.getFlightBoardMapSlots().get(tempFinalPos).setPlayerToken(Color.EMPTY);
     }
 
     @NeedsToBeCompleted

@@ -324,6 +324,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(EndTurnUpdate endTurnUpdate) {
+        clientController.handleEndTurnUpdate(endTurnUpdate);
 
         return null;
     }

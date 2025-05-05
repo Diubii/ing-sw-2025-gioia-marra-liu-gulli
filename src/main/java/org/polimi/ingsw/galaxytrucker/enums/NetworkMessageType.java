@@ -71,5 +71,8 @@ public enum NetworkMessageType {
     SelectPlanetRequest, SelectPlanetResponse, SelectedPlanetUpdate,
     GetFaceUpTilesRequest, GetFaceUpTilesResponse, FaceUpTileUpdate,
     SellGoodsRequest, SellGoodsResponse,
-    GameMessage
+    GameMessage,
+    EndTurnUpdate,
+    EarlyLandingRequest
+
 }
