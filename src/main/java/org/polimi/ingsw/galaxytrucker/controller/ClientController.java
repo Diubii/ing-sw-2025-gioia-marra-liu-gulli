@@ -928,9 +928,9 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         } else {
             myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
         }
-        if(phase == GameState.FLIGHT){
-            view.showFlightBoard(myModel.getFlightBoard());
-        }
+//        if(phase == GameState.FLIGHT){
+//            view.showFlightBoard(myModel.getFlightBoard());
+//        }
 
     }
 
@@ -1081,95 +1081,97 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
     }
     public void handleAskEndTurnMenuChoice(String input) throws RuntimeException {
-        if(!myModel.isLeader()){
-        switch (input) {
-            case "RESET" -> {
-                return;
+        new Thread(() -> {
+            if (!myModel.isLeader()) {
+                switch (input) {
+                    case "RESET" -> {
+                        return;
 
 
-            }
-            case "a" -> {
-                view.showShip(myModel.getMyInfo().getShip());
-                view.askEndTurnMenuChoice(myModel.isLeader());
-                break;
-            }
+                    }
+                    case "a" -> {
+                        view.showShip(myModel.getMyInfo().getShip());
+                        view.askEndTurnMenuChoice(myModel.isLeader());
+                        break;
+                    }
 
-            case "b" -> {
-                view.showFlightBoard(myModel.getFlightBoard());
-                view.askEndTurnMenuChoice(myModel.isLeader());
-            }
+                    case "b" -> {
+                        view.showFlightBoard(myModel.getFlightBoard());
+                        view.askEndTurnMenuChoice(myModel.isLeader());
+                    }
 
-            case "c" -> {
-                try {
-                    handleEarlyLandingRequest();
-                } catch (IOException | ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                    case "c" -> {
+                        try {
+                            handleEarlyLandingRequest();
+                        } catch (IOException | ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+
+
+                    case "menu", "m", "?" -> {
+                        view.showEndTurnMenu(myModel.isLeader());
+                        view.askEndTurnMenuChoice(myModel.isLeader());
+
+                    }
+
+
+                    default -> {
+                        view.showGenericMessage("Invalid option. Please try again.");
+                        view.askEndTurnMenuChoice(myModel.isLeader());
+                    }
+                }
+
+            } else {
+                switch (input) {
+                    case "RESET" -> {
+                        return;
+
+
+                    }
+                    case "a" -> {
+                        view.showShip(myModel.getMyInfo().getShip());
+                        view.askEndTurnMenuChoice(myModel.isLeader());
+                        break;
+                    }
+
+                    case "b" -> {
+                        view.showFlightBoard(myModel.getFlightBoard());
+                        view.askEndTurnMenuChoice(myModel.isLeader());
+                    }
+
+                    case "c" -> {
+                        try {
+                            handleEarlyLandingRequest();
+                        } catch (IOException | ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+                    case "d" -> {
+                        view.askDrawCard();
+
+                    }
+
+
+                    case "menu", "m", "?" -> {
+                        view.showEndTurnMenu(myModel.isLeader());
+                        view.askEndTurnMenuChoice(myModel.isLeader());
+
+                    }
+
+
+                    default -> {
+                        view.showGenericMessage("Invalid option. Please try again.");
+                        view.askEndTurnMenuChoice(myModel.isLeader());
+                    }
                 }
 
             }
 
 
-            case "menu", "m", "?" -> {
-                view.showEndTurnMenu(myModel.isLeader());
-                view.askEndTurnMenuChoice(myModel.isLeader());
-
-            }
-
-
-            default -> {
-                view.showGenericMessage("Invalid option. Please try again.");
-                view.askEndTurnMenuChoice(myModel.isLeader());
-            }
-        }
-
-        } else{
-            switch (input) {
-            case "RESET" -> {
-                return;
-
-
-            }
-            case "a" -> {
-                view.showShip(myModel.getMyInfo().getShip());
-                view.askEndTurnMenuChoice(myModel.isLeader());
-                break;
-            }
-
-            case "b" -> {
-                view.showFlightBoard(myModel.getFlightBoard());
-                view.askEndTurnMenuChoice(myModel.isLeader());
-            }
-
-            case "c" -> {
-                try {
-                    handleEarlyLandingRequest();
-                } catch (IOException | ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
-            }
-            case"d"->{
-                view.askDrawCard();
-
-            }
-
-
-            case "menu", "m", "?" -> {
-                view.showEndTurnMenu(myModel.isLeader());
-                view.askEndTurnMenuChoice(myModel.isLeader());
-
-            }
-
-
-            default -> {
-                view.showGenericMessage("Invalid option. Please try again.");
-                view.askEndTurnMenuChoice(myModel.isLeader());
-            }
-        }
-
-        }
-
-
+        }).start();
     }
 
     private void handleEarlyLandingRequest() throws IOException, ExecutionException, InterruptedException {

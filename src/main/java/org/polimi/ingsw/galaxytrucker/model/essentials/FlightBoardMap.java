@@ -79,17 +79,17 @@ public class FlightBoardMap implements Serializable {
 
 
     }
-
+//+24 per caso in cui si va da giro -1, in caso in cui i step nel  flightboard siano < 0
     public int getFirstPos() {
-        return firstPos;
+        return firstPos+24;
     }
     public int getSecondPos() {
-        return secondPos;
+        return secondPos+24;
     }
     public int getThirdPos() {
-        return thirdPos;
+        return thirdPos+24;
     }
     public int getFourthPos() {
-        return fourthPos;
+        return fourthPos+24;
     }
 }

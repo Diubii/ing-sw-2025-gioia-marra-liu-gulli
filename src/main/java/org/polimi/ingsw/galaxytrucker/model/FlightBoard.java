@@ -46,6 +46,7 @@ public class FlightBoard implements Serializable{
 
         while (occupied){
             int tempFinalPos = (initialPos + steps + additionalSteps) % flightBoardMap.getFlightBoardMapSlots().size();
+            
             if (flightBoardMap.getFlightBoardMapSlots().get(tempFinalPos).getPlayerToken() != Color.EMPTY){
                 //occupata
 

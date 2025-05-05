@@ -18,6 +18,6 @@ public class ActivateAdventureCardRequest extends NetworkMessage implements Seri
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException {
-        return null;
+        return visitor.visit(this);
     }
 }
