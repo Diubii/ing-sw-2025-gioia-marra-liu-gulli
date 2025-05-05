@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.network.server;
 
+import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -19,33 +20,41 @@ public class RMIClientHandler implements ClientHandler {
 
     private final ClientInterfaceRMI remoteClient;
 
-    public RMIClientHandler(ClientInterfaceRMI remoteClient) {
+    public RMIClientHandler(ClientInterfaceRMI remoteClient, ServerController serverController) {
         this.remoteClient = remoteClient;
+        serverController.startNewHeartbeat(this);
     }
+
+    NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
 
     @Override
     public void sendMessage(NetworkMessage message) {
         try {
-                remoteClient.receiveMessage(message);
+            remoteClient.receiveMessage(message);
 
-            System.out.println(TuiColor.BG_BLUE + "RESPONSE SENT " +  message.accept(new NetworkMessageNameVisitor()) + TuiColor.RESET);
-            if (message.accept(new NetworkMessageNameVisitor()).equals(NetworkMessageType.PhaseUpdate)){
-                System.out.println("HAS STATE: " + ((PhaseUpdate)message).getState());
+            NetworkMessageType type = message.accept(nmnv);
+            if (type != NetworkMessageType.HeartbeatRequest) {
+                System.out.println(TuiColor.BG_BLUE.toString() + TuiColor.BLACK + "RESPONSE SENT " + type + TuiColor.RESET);
+            }
+            if (type == NetworkMessageType.PhaseUpdate) {
+                System.out.println("HAS STATE: " + ((PhaseUpdate) message).getState());
             }
 
-            if (message.accept(new NetworkMessageNameVisitor()).equals(NetworkMessageType.AskPositionUpdate)){
+            if (type == NetworkMessageType.AskPositionUpdate) {
                 AskPositionUpdate mess = (AskPositionUpdate) message;
                 System.out.println("ASKING TO " + mess.nickname);
             }
         } catch (RemoteException e) {
-            System.err.println("Errore nella comunicazione con il client RMI: " + e.getMessage());
+            //System.err.println("Errore nella comunicazione con il client RMI: " + e.getMessage());
         } catch (IOException | ExecutionException | InvalidTilePosition | InterruptedException e) {
             throw new RuntimeException(e);
-        }
-        catch (PlayerAlreadyExistsException | TooManyPlayersException e){
+        } catch (PlayerAlreadyExistsException | TooManyPlayersException e) {
             System.err.println(e.getMessage());
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "RMI client"; //TODO: Possibile ottenere l'indirizzo?
+    }
 }

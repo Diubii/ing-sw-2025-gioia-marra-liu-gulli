@@ -27,7 +27,7 @@
 //import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 //import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintingUtils;
 //import org.polimi.ingsw.galaxytrucker.view.View;
-//import org.polimi.ingsw.galaxytrucker.visitors.ClientNetworkMessageVisitor;
+//import org.polimi.ingsw.galaxytrucker.visitors.Network.ClientNetworkMessageVisitor;
 //import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageNameVisitor;
 //import org.polimi.ingsw.galaxytrucker.visitors.NetworkMessageVisitorsInterface;
 //

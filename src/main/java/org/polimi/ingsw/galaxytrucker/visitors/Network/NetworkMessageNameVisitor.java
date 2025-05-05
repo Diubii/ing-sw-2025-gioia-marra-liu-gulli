@@ -204,8 +204,13 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     }
 
     @Override
-    public NetworkMessageType visit(PlayerRemovedUpdate removedPlayerUpdate) {
-        return NetworkMessageType.RemovedPlayerUpdate;
+    public NetworkMessageType visit(PlayerLostUpdate playerLostUpdate) {
+        return NetworkMessageType.PlayerLostUpdate;
+    }
+
+    @Override
+    public NetworkMessageType visit(PlayerKickedUpdate playerKickedUpdate) {
+        return NetworkMessageType.PlayerKickedUpdate;
     }
 
     @Override
@@ -246,6 +251,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.GameMessage;
     }
 
+
     @Override
     public NetworkMessageType visit(DrawAdventureCardRequest drawAdventureCardRequest) {
         return NetworkMessageType.DrawAdventureCardRequest;
@@ -253,8 +259,12 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
 
     @Override
     public NetworkMessageType visit(EndTurnUpdate endTurnUpdate) {
-
         return NetworkMessageType.EndTurnUpdate;
+    }
+
+    @Override
+    public NetworkMessageType visit(HeartbeatRequest heartbeatRequest) {
+        return NetworkMessageType.HeartbeatRequest;
     }
 
     @Override
@@ -265,5 +275,9 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     @Override
     public NetworkMessageType visit(EarlyLandingRequest earlyLandingRequest) {
         return NetworkMessageType.EarlyLandingRequest;
+    }
+    @Override
+    public NetworkMessageType visit(HeartbeatResponse heartbeatResponse) {
+        return NetworkMessageType.HeartbeatResponse;
     }
 }

@@ -50,7 +50,9 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(FinishBuildingRequest finishBuildingRequest) throws ExecutionException, InterruptedException;
 
-    T visit(PlayerRemovedUpdate removedPlayerUpdate);
+    T visit(PlayerLostUpdate playerLostUpdate);
+
+    T visit(PlayerKickedUpdate playerKickedUpdate);
 
 
 
@@ -105,6 +107,9 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(SellGoodsResponse sellGoodsResponse);
 
     T visit(GameMessage gameMessage);
+
+    T visit(HeartbeatRequest heartbeatRequest);
+    T visit(HeartbeatResponse heartbeatResponse);
 
     T visit(DrawAdventureCardRequest drawAdventureCardRequest);
     T visit(EndTurnUpdate endTurnUpdate);

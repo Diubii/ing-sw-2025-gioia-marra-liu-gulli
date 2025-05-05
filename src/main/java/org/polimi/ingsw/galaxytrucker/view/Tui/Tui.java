@@ -31,6 +31,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
+import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
@@ -49,6 +50,8 @@ import static org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardPrintUtils
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.InputUtils.parseCoordinate;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils.printShip;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.printTile;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.RESET;
 
 
 public class Tui implements View, Observable {
@@ -350,17 +353,17 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void showPlayerJoined(PlayerInfo playerInfo) {
+    public void showPlayerJoined(PlayerInfo infoPlayer) {
 
-        //da capire ccome usarla
-        out.println(" Players in the room:");
-//
-//        for (Map.Entry<String, Color> entry : playerInfo.en) {
-//            String nickname = entry.getKey();
-//            Color color = entry.getValue();
-//
-//            out.printf("- %s (Color: %s)%n", nickname, color.name());
-//        }
+
+        out.println("Player Joined:");
+        switch (infoPlayer.getColor()) {
+            case RED -> System.out.println(RED + "█" + RESET + " " + infoPlayer.getNickName());
+            case GREEN -> System.out.println(GREEN + "█" + RESET + " " + infoPlayer.getNickName());
+            case BLUE -> System.out.println(BLUE + "█" + RESET + " " + infoPlayer.getNickName());
+            case YELLOW -> System.out.println(BRIGHT_YELLOW + "█" + RESET + " " + infoPlayer.getNickName());
+        }
+        System.out.println();
 
         out.println();
     }
@@ -1447,9 +1450,9 @@ public class Tui implements View, Observable {
 
     }
 
-    public void showFlightBoard(FlightBoard flightBoard) {
+    public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers) {
 
-        FlightBoardPrintUtils.printFlightBoard(flightBoard);
+        FlightBoardPrintUtils.printFlightBoard(flightBoard,infoPlayers);
 
     }
 

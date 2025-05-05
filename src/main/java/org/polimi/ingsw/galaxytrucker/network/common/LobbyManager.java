@@ -107,8 +107,13 @@ public class LobbyManager {
     public void completePendingResponse(Integer id, NetworkMessage response) {
         synchronized (lock2) {
             Pair<Integer, CompletableFuture<NetworkMessage>> pendingResponse = pendingResponses.stream().filter(pair -> pair.getKey().equals(id)).findFirst().orElse(null);
-            pendingResponse.getValue().complete(response);
-            pendingResponses.remove(pendingResponse);
+            if(pendingResponse != null){
+                pendingResponse.getValue().complete(response);
+                pendingResponses.remove(pendingResponse);
+            }
+            else{
+                System.err.println("Couldn't complete future related to " + response.toString() + ".");
+            }
         }
     }
 

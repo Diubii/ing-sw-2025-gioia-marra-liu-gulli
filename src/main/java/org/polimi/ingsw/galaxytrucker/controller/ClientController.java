@@ -1,7 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
-import javafx.geometry.Pos;
 import javafx.util.Pair;
+import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -27,7 +27,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
-import org.polimi.ingsw.galaxytrucker.visitors.ClientNetworkMessageVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.ClientNetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
@@ -252,7 +252,9 @@ public class ClientController implements Observer {
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
-
+                    ArrayList<PlayerInfo> appInfo = new ArrayList<>();
+                    appInfo.add(myModel.getMyInfo());
+                    myModel.setPlayerInfos(appInfo);
                     view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
                 } else {
                     view.showGenericMessage("Room creation failed: " + response.getErrMess());
@@ -320,6 +322,9 @@ public class ClientController implements Observer {
                 myModel.getMyInfo().setColor(response.getColor());
                 myModel.getMyInfo().setShip(response.getMyShip());
                 myModel.getMyInfo().setNickName(getNickname());
+                ArrayList<PlayerInfo> appInfo = new ArrayList<>();
+                appInfo.add(myModel.getMyInfo());
+                myModel.setPlayerInfos(appInfo);
 
             } else {
                 view.showGenericMessage("Failed to join the lobby: " + response.getErrMess());
@@ -340,10 +345,12 @@ public class ClientController implements Observer {
                 PlayerInfo playerInfo = playerJoinedUpdate.getPlayerInfo();
 
                 synchronized (myModel.getPlayerInfos()){
-                    myModel.getPlayerInfos().add(playerJoinedUpdate.getPlayerInfo());
+                    ArrayList<PlayerInfo> appInfo  = myModel.getPlayerInfos();
+                    appInfo.add(playerJoinedUpdate.getPlayerInfo());
+                    myModel.setPlayerInfos(appInfo);
                 }
 
-//                view.showPlayerJoined(playerInfo);
+                view.showPlayerJoined(playerInfo);
 
     }
 
@@ -1095,10 +1102,10 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
                         break;
                     }
 
-                    case "b" -> {
-                        view.showFlightBoard(myModel.getFlightBoard());
-                        view.askEndTurnMenuChoice(myModel.isLeader());
-                    }
+            case "b" -> {
+                view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos());
+                view.askEndTurnMenuChoice(myModel.isLeader());
+            }
 
                     case "c" -> {
                         try {
@@ -1136,10 +1143,11 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
                         break;
                     }
 
-                    case "b" -> {
-                        view.showFlightBoard(myModel.getFlightBoard());
-                        view.askEndTurnMenuChoice(myModel.isLeader());
-                    }
+
+            case "b" -> {
+                view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos());
+                view.askEndTurnMenuChoice(myModel.isLeader());
+            }
 
                     case "c" -> {
                         try {
@@ -1373,6 +1381,21 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         }
     }
 
+    public void handleHeartbeatRequest(HeartbeatRequest heartbeatRequest) throws IOException, ExecutionException, InterruptedException {
+        client.sendMessage(new HeartbeatResponse());
+    }
+
+    @NeedsToBeCompleted
+    public void handlePlayerKickedUpdate(PlayerKickedUpdate playerKickedUpdate) {
+        if(playerKickedUpdate.getNickname().equals(this.getNickname())){
+            //TODO: Torna alla scelta dei menù
+            //Questo perché magari la connessione del client potrebbe cadere per più di 5 secondi, ma nel caso in cui tornasse su potrebbe ricevere tutti i messaggi arretrati.
+            //Quindi dato che il PlayerKickedUpdate viene mandato anche a chi sta per essere kickato, questo è un caso da gestire
+        }
+        else {
+            view.showGenericMessage("Player " + playerKickedUpdate.getNickname() + " got kicked out of the game!");
+        }
+    }
 
     //da chiamare nel visitor
     public void handleTronconiRequest(){
@@ -1444,7 +1467,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     private ArrayList<Position> getCargoHolds(Ship ship) {
         return ship.getComponentPositionsFromName("GenericCargoHolds");
     }
-    public void handlePlayerRemovedUpdate(PlayerRemovedUpdate update) {
+    public void handlePlayerLostUpdate(PlayerLostUpdate update) {
         boolean isLandingEarly = update.isLandingEarly();
 
 

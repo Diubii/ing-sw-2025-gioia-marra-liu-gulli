@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMapSlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
@@ -86,7 +87,7 @@ public class FlightBoardPrintUtils {
         return tileRow;
     }
 
-    public static void printFlightBoard(FlightBoard flightBoard) {
+    public static void printFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayer) {
         int size = flightBoard.getFlightBoardMap().getFlightBoardMapSlots().size();
         int width =0 ,height = 0;
         int c,r,i=0;
@@ -98,6 +99,16 @@ public class FlightBoardPrintUtils {
             width = 10;
             height = 4;
         }
+
+        for(int p=0; p < infoPlayer.size(); p++){
+            switch (infoPlayer.get(p).getColor()){
+                case RED -> System.out.println(RED+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+                case GREEN -> System.out.println(GREEN+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+                case BLUE -> System.out.println(BLUE+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+                case YELLOW -> System.out.println(BRIGHT_YELLOW+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+            }
+        }
+        System.out.println();
 
         for (r = 0; r < height; r++) {
             String[][] StringRow;

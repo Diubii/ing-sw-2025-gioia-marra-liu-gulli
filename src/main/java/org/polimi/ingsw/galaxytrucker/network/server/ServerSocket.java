@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.network.server;
 
+import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 
 import java.io.*;
@@ -20,15 +21,16 @@ public class ServerSocket implements Runnable {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
                 SocketClientHandler socketClientHandler = new SocketClientHandler(socket, controller);
-                System.out.println(controller.getClients().size());
+                //System.out.println(controller.getClients().size());
                 controller.addClient(socketClientHandler);
-                System.out.println(controller.getClients().size());
+                //controller.addClient();
+                //System.out.println(controller.getClients().size());
 
 
                 new Thread(socketClientHandler).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 

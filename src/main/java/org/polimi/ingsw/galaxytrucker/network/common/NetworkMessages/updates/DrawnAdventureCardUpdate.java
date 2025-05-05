@@ -22,8 +22,7 @@ public class DrawnAdventureCardUpdate extends NetworkMessage {
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException {
-
-        return    visitor.visit(this);
+        return visitor.visit(this);
     }
 
     public AdventureCard getCard() {
