@@ -80,11 +80,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.ServerInfo;
     }
 
-    @NeedsToBeCompleted
-    @Override
-    public NetworkMessageType visit(NUM_PLAYERS_REQUEST numPlayersRequest) {
-        return null;
-    }
+
 
     @Override
     public NetworkMessageType visit(CheckShipStatusResponse checkShipStatusResponse) {
@@ -250,5 +246,23 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.GameMessage;
     }
 
+    @Override
+    public NetworkMessageType visit(DrawAdventureCardRequest drawAdventureCardRequest) {
+        return null;
+    }
 
+    @Override
+    public NetworkMessageType visit(EndTurnUpdate endTurnUpdate) {
+        return null;
+    }
+
+    @Override
+    public NetworkMessageType visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest) {
+        return null;
+    }
+
+    @Override
+    public NetworkMessageType visit(EarlyLandingRequest earlyLandingRequest) {
+        return null;
+    }
 }

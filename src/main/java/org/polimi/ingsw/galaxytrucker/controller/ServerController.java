@@ -784,7 +784,7 @@ public class ServerController {
                 } catch (ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-            });
+            }).start();
         }
     }
 

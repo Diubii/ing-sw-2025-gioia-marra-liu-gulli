@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates;
+package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests;
 
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -11,28 +11,18 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
-public class PlayerRemovedUpdate extends NetworkMessage implements Serializable {
+public class DrawAdventureCardRequest extends NetworkMessage implements Serializable {
+
     @Serial
-    private static final long serialVersionUID = 13975924237534L;
+    private static final long serialVersionUID = 43850L;
 
-    private final String nickname;
-    private final boolean isLandingEarly;
+    public DrawAdventureCardRequest(){
 
-    public PlayerRemovedUpdate(String nickname, boolean isLandingEarly) {
-        this.nickname = nickname;
-        this.isLandingEarly = isLandingEarly;
+
     }
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException {
-        return null;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public boolean isLandingEarly() {
-        return isLandingEarly;
+        return visitor.visit(this);
     }
 }

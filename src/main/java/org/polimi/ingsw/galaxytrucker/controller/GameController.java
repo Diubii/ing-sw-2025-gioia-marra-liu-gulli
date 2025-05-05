@@ -111,7 +111,7 @@ public class GameController {
         myGame.getRealGame().getFlightBoard().removePlayer(myGame.getPlayerColors().get(nickname));
 
         FlightBoardUpdate fbu = new FlightBoardUpdate(myGame.getRealGame().getFlightBoard());
-        PlayerRemovedUpdate pru = new PlayerRemovedUpdate(nickname);
+        PlayerRemovedUpdate pru = new PlayerRemovedUpdate(nickname,false);
         myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(pru); ch.sendMessage(fbu);}); //Notifichiamo i client che un player ha perso e aggiorniamo la flight board
     }
 

@@ -40,7 +40,7 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(SERVER_INFO serverInfo);
 
-    T visit(NUM_PLAYERS_REQUEST numPlayersRequest);
+
 
     T visit(CheckShipStatusResponse checkShipStatusResponse);
 
@@ -105,4 +105,9 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(SellGoodsResponse sellGoodsResponse);
 
     T visit(GameMessage gameMessage);
+
+    T visit(DrawAdventureCardRequest drawAdventureCardRequest);
+    T visit(EndTurnUpdate endTurnUpdate);
+    T visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest);
+    T visit(EarlyLandingRequest earlyLandingRequest);
 }

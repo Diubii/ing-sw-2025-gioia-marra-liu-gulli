@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,12 +26,12 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.Planets;
-import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMapSlot;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.*;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
+import org.polimi.ingsw.galaxytrucker.model.essentials.*;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -46,7 +47,11 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.*;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
+
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardPrintUtils.printFlightBoard;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.InputUtils.parseCoordinate;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils.printShip;
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.printTile;
 
 
 public class Tui implements View, Observable {
@@ -65,7 +70,7 @@ public class Tui implements View, Observable {
 
 
     private MenuManager menuManager = new MenuManager();
-    private GameState phase = GameState.LOBBY;
+
 
     private final Object panelLock = new Object();
 
@@ -144,6 +149,54 @@ public class Tui implements View, Observable {
         MenuManager.clearConsole();
         System.out.println("\r".repeat(100));
 
+        //TEST STAMPA DA TOGLIERE
+        Ship testShip = new Ship(false);
+
+        //Prendo lista tiles e metto in ship per testare
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayList<Tile> tiles = new ArrayList<>();
+        try{
+            FileInputStream fis = new FileInputStream("src/main/resources/tiledata.json");
+            tiles = mapper.readValue(fis, new TypeReference<ArrayList<Tile>>(){});
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Good exGood = new Good(Color.BLUE);
+        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
+        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
+        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
+        printTile(tiles.get(18));
+
+        System.out.println (((BatterySlot)tiles.get(4).getMyComponent()).getBatteriesLeft());
+
+        try{
+            for(int i =0; i<7; i++){
+                for(int j =0; j<5; j++){
+                    if(j!= 3) {
+                        testShip.putTile(tiles.get(i * 5 * j), new Position(j, i));
+                    }
+                }
+            }
+            tiles.get(152).rotate(180);
+            testShip.putTile(tiles.get(4),new Position(3,0));
+            testShip.putTile(tiles.get(54),new Position(3,1));
+            testShip.putTile(tiles.get(64),new Position(3,2));
+            testShip.putTile(tiles.get(93),new Position(3,3));
+            testShip.putTile(tiles.get(152),new Position(3,4));
+            testShip.putTile(tiles.get(136),new Position(3,5));
+            testShip.putTile(tiles.get(137),new Position(3,6));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        ArrayList<Ship> exTronconi = new ArrayList<>();
+        exTronconi.add(testShip);
+        exTronconi.add(testShip);
+        exTronconi.add(testShip);
+
+        //chooseTroncone(exTronconi);
+        chooseComponent(testShip,ActivatableComponent.DoubleCannon);
+        //chooseDiscardCrew(testShip,2);
 
         String banner = "\033[1;34m" + // Colore Blu Chiaro
                 "   __    _   __    _   _  __ _  __  _____ ___  _ __  __  _    ___  ___    ___\n" +
@@ -320,6 +373,7 @@ public class Tui implements View, Observable {
 
 
         GameState phase = phaseUpdate.getState();
+        menuManager.showPhaseStart(phase);
 
         if (phase.equals(GameState.BUILDING_TIMER)) {
             new Thread(() -> {
@@ -393,7 +447,7 @@ public class Tui implements View, Observable {
     @Override
     public void askShowFaceUpTiles() {
         showFaceUpTiles();
-        showBuildingMenu();
+
 
     }
 
@@ -468,7 +522,7 @@ public class Tui implements View, Observable {
             try {
                 String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
                 if (checkReset(input)) return;;
-                 pos = InputUtils.parseCoordinate(input);
+                 pos = parseCoordinate(input);
                 clientController.setCurrentPos(pos.getX()-4, pos.getY()-5);
                 valid = true;
             } catch (IllegalArgumentException e) {
@@ -485,7 +539,7 @@ public class Tui implements View, Observable {
 // TileView
     @Override
     public void showTile(Tile tile) {
-        TilePrintUtils.printTile(tile);
+        printTile(tile);
     }
 
     @Override
@@ -703,7 +757,7 @@ public class Tui implements View, Observable {
             }
 
             out.println(" Current tile info:");
-            TilePrintUtils.printTile(clientController.getCurrentTileInHand());
+            printTile(clientController.getCurrentTileInHand());
 
             if (clientController.getCurrentPosition() != null) {
                 out.println("Current position:  X: " + clientController.getCurrentPosition().getX() + ",  Y:" + clientController.getCurrentPosition().getY());
@@ -764,7 +818,7 @@ public class Tui implements View, Observable {
         do {
             try {
                 String input = readLine("Enter position to remove the Tile from(format: (x,y)): ").trim();
-                pos1 = InputUtils.parseCoordinate(input);
+                pos1 = parseCoordinate(input);
 
                 Position pos = new Position(pos1.getY() - 5, pos1.getX() - 4);
 
@@ -821,7 +875,7 @@ public class Tui implements View, Observable {
 
     @Override
     public void showShip(Ship targetShipView) {
-        ShipPrintUtils.printShip(targetShipView);
+        printShip(targetShipView);
     }
 
     @Override
@@ -867,22 +921,145 @@ public class Tui implements View, Observable {
 
     }
 
-    public void chooseComponent(Ship myShip, ActivatableComponent component) {
+    @Override
+    public void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException {
+        printShip(myShip);
+        System.out.println("You can activate your "+component.name());
+        int totalBatteries = myShip.getnBatterieLeft();
+        Boolean stop=false;
+        Position compPos, battPos;
+        ArrayList<Position> activatedComponentPositions = new ArrayList<>();
+        ArrayList<Position> usedBatteryPositions = new ArrayList<>();
 
-//        ArrayList<Position> activatedComponentPositions;
-//        ArrayList<Position> usedBatteryPositions;
-//
-//        //Ciclo while
-//        //Menu attivare altro ( fino a esaurimento batterie ( conto numero) / utente dice no)
-//
-//            Position compPos = askPosition(component.name()); //Verifica anche tipo
-//            Position battPos = askPosition("batteria");
-//            //Verifico che slot batteria indicato ne abbia ancora e
-//            // in lista di posizioni utilizzate non sia già usato
-//
-//        //
-//
-//        clientController.handleActivateComponentResponse(component,activatedComponentPositions,usedBatteryPositions);
+        //Ciclo while
+        //Chiede finchè non dico no o finchè non termino le batterie
+        while(stop==false && totalBatteries>0){
+            System.out.print("Activate "+component.name()+" specify the coordinates or type no to stop");
+            String input = readLine(" input (x,y) or no: ").trim().toLowerCase();
+            if (input.equals("n") || input.equals("no")) {
+                stop=true;
+            }
+            else{
+                compPos = parseCoordinate(input);
+                compPos.setPos(compPos.getX()-4,compPos.getY()-5);
+                if(!Util.inBoundaries(compPos.getY(), compPos.getX()) || myShip.getInvalidPositions().contains(compPos)){
+                    System.out.println("Wrong Coordinates, out of bounds ");
+                }
+                //Verifica anche tipo
+                else if(!myShip.getComponentPositionsFromName(component.name()).contains(compPos)){
+                    System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
+                }
+                else if(activatedComponentPositions.contains(compPos)){
+                    System.out.println("Wrong Coordinates, already activated ");
+                }
+                else{
+                    System.out.print("Specify the coordinates of the battery to use");
+                    input = readLine(" input (x,y): ").trim().toLowerCase();
+                    battPos = parseCoordinate(input);
+                    battPos.setPos(battPos.getX()-4,battPos.getY()-5);
+                    if(!Util.inBoundaries(battPos.getY(), battPos.getX()) || myShip.getInvalidPositions().contains(battPos)){
+                        System.out.println("Wrong Coordinates, out of bounds ");
+                    }
+                    else if(!myShip.getComponentPositionsFromName("batterySlot").contains(compPos)){
+                        System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
+                    }
+                    else {
+                        int batteriesInSlot = ((BatterySlot)myShip.getComponentFromPosition(battPos)).getBatteriesLeft();
+                        Position finalBattPos = battPos;
+                        int timesSlotUsed = (int)usedBatteryPositions.stream().filter(p -> p.equals(finalBattPos)).count();
+                        if(batteriesInSlot <= timesSlotUsed){
+                            System.out.println("Batteries already depleted ad those coordinates ");
+                        }
+                        else{
+                            //Aggiungo a liste
+                            activatedComponentPositions.add(compPos);
+                            usedBatteryPositions.add(battPos);
+                            totalBatteries--;
+                        }
+                    }
+                }
+            }
+        }
+        if(totalBatteries == 0){
+            System.out.println("Batterie terminate");
+        }
+        clientController.handleActivateComponentResponse(component,activatedComponentPositions,usedBatteryPositions);
+    }
+
+    //Non considerato che giocatore non ne abbia abbastanza, controllo lato server
+    //per fare che il giocatore perde direttamente
+    public void chooseDiscardCrew(Ship myShip,int nCrewToDiscard ) throws ExecutionException, InterruptedException {
+        ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+        printShip(myShip);
+        ArrayList<Position>  housingPositions = new ArrayList<>();
+        Position housingPos;
+        System.out.println("You have to discard "+nCrewToDiscard+ " crew:");
+        while(nCrewToDiscard>0){
+            System.out.print("specify the coordinates of a Cabin");
+            String input = readLine(" input (x,y): ").trim().toLowerCase();
+            housingPos = parseCoordinate(input);
+            housingPos.setPos(housingPos.getX()-4,housingPos.getY()-5);
+            System.out.println(housingPos.getY()+" "+housingPos.getX());
+            if(!Util.inBoundaries(housingPos.getY(), housingPos.getX()) || myShip.getInvalidPositions().contains(housingPos)){
+                System.out.println("Wrong Coordinates, out of bounds ");
+            }
+            else if( !myShip.getComponentPositionsFromName("ModularHousingUnit").contains(housingPos) && !myShip.getComponentPositionsFromName("CentralHousingUnit").contains(housingPos)){
+                System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
+            }
+            else{
+                //Controllare che non comparsa già troppe volte in lista
+
+                int nCrewAtPos = 0;
+                //N di crew sia umani che alieni
+                switch (  myShip.getComponentFromPosition(housingPos).accept(componentNameVisitor) ){
+                    case "ModularHousingUnit": nCrewAtPos = ((ModularHousingUnit)myShip.getComponentFromPosition(housingPos)).getHumanCrewNumber();
+                    break;
+                    case "CentralHousingUnit":  nCrewAtPos = ((CentralHousingUnit)myShip.getComponentFromPosition(housingPos)).getHumanCrewNumber();
+
+                }
+                Position finalHousingPos = housingPos;
+                int timesSlotUsed = (int)housingPositions.stream().filter(p -> p.equals(finalHousingPos)).count();
+                if(nCrewAtPos <= timesSlotUsed){
+                    System.out.println("Crew already selected ad those coordinates ");
+                }
+                else{
+                    //Se tutto ok aggiungere
+                    housingPositions.add(housingPos);
+                    nCrewToDiscard -- ;
+                    System.out.println("Accepted, you have "+nCrewToDiscard+" crew members to discard left");
+                }
+            }
+        }
+
+        clientController.handleDiscardCrewMembersResponse(housingPositions);
+    }
+
+    public void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException {
+        //Mostro tutti i tronconi numerandoli
+        System.out.println("The ship divided into pieces choose one to continue ");
+        for(int i=0; i<tronconi.size(); i++){
+            System.out.println(" ");
+            System.out.println("Ship Fragment "+(i+1)+": ");
+            printShip(tronconi.get(i));
+        }
+        int choice = -1;
+        while(choice < 0 || choice >= tronconi.size()){
+            System.out.println("Choose a Fragment as your ship: ");
+            try {
+                choice= Integer.parseInt(readLine(" > ").trim().toLowerCase());
+            }catch (Exception e){
+                System.out.println("Invalid choice entered, please try again");
+            }
+            if(choice < 0 || choice >= tronconi.size()){
+                System.out.println("Invalid choice entered, choose a number equivalent to a ship ");
+            }
+
+        }
+
+        choice--;
+        //handle response indicando numero
+        clientController.handleTronconiResponse(choice);
+
     }
 
     @Override
@@ -982,13 +1159,285 @@ public class Tui implements View, Observable {
 
     }
 
+    @Override
+    public void askActivateAdventureCard() {
+        askYesNoConfirmation(
+                "Congratulazioni, soddisfi i requisiti. Vuoi attivare l'effetto della carta?",
+                () -> clientController.sendActivateAdventureCardResponse(true),
+                () -> {clientController.sendActivateAdventureCardResponse(false);
+                    showGenericMessage("Hai scelto di non attivare l'effetto. In attesa della scelta degli altri giocatori");
+                }
+        );
+    }
 
-    public void showFlightBoard() {
-        FlightBoard myFB = clientController.getMyModel().getFlightBoard();
-        FlightBoardPrintUtils.printFlightBoard(myFB);
+    @Override
+    public void askDrawCard() {
+        askYesConfirmation(
+                "Sei il leader. Inserire un 'y' per pescare la carta avventura: ",
+                clientController::sendDrawAdventureCardRequest
+        );
+    }
+
+    @Override
+    public void askDiscardCrew(int nCrewToDiscard,Ship myShip) {
+
+        out.println("Hai scelto di accettare l'effetto della carta, per favore scarta  "+ nCrewToDiscard+ " membri dell'equipaggio ");
+        ArrayList<Position> housePos = myShip.getComponentPositionsFromName("ModularHousingUnit");
+
+        if(!housePos.isEmpty()){
+            for (Position pos : housePos) {
+                Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
+                if(tempSlot != null){
+                    if(tempSlot.getTile()!=null){
+
+                    }
+                }
+            }
+        }
+
+
+
+    }
+// chiedere di selezionare uno dei pianeti disponibili
+    @Override
+    public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
+        int size = planetChoices.size();
+        boolean validInput = false;
+
+        do {
+            try {
+                String input = readLine("Scegli un pianeta (1-" + size + "), oppure '0' per non scegliere: ").trim();
+
+
+                if (!isValidNumberInRange(input, 0, size)) {
+                    System.out.println("Input non valido. Inserisci un numero tra 0 e " + size + ".");
+                    continue;
+                }
+
+                int choice = Integer.parseInt(input);
+
+                if (choice == 0) {
+                    clientController.sendSelectPlanetResponse(null, -1);
+                } else {
+                    Planet selected = planetChoices.get(choice - 1);
+                    clientController.sendSelectPlanetResponse(selected, choice - 1);
+                }
+
+                validInput = true;
+
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } while (!validInput);
+    }
+
+
+
+    @Override
+    public void askLoadGood(Planet selectedPlanet, Ship myShip) throws ExecutionException, InterruptedException {
+//        ArrayList<Position> availableCargoHolds = clientController.getAvailableCargoHolds(myShip);
+//        ArrayList<Good> goods = selectedPlanet.getGoods();
+//        String input = readLine("Cosa vuoi fare? [L]oad, [D]iscard, [F]inish: ").trim().toLowerCase();
+//        if (availableCargoHolds.isEmpty()) {
+//            out.println("Nessuna cargo holds disponibile per caricare merci!");
+//
+//            return;
+//        }
+//        while (!goods.isEmpty() && !availableCargoHolds.isEmpty()) {
+//            displayGoods(goods);
+//
+//            for (int i = 0; i < availableCargoHolds.size(); i++) {
+//                Position pos = availableCargoHolds.get(i);
+//                out.println("[" + (i + 1) + "] " + pos);
+//            }
+//
+
+//        }
+
+    }
+    @Override
+    public void askLoadGoodChoice() {
+        String input = null;
+        boolean valid = false;
+
+        do {
+            try {
+                input = readLine("Cosa vuoi fare? [L]Load, [D]Discard, [F]Finish: ").trim().toLowerCase();
+                if (input.toLowerCase().matches("[ldf]")) {
+                    valid = true;
+                } else {
+                    out.println("Input non valido. Inserisci L, D o F.");
+                }
+            } catch (Exception e) {
+                out.println("Errore nella lettura dell'input: " + e.getMessage());
+            }
+        } while (!valid);
+
+        clientController.handleLoadGoodChoice(input);
+
+
+    }
+    @Override
+    public void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip)  {
+        ArrayList<Good> goods = selectedPlanet.getGoods();
+
+
+        if (goods.isEmpty()) {
+            out.println(" Nessuna merce disponibile sul pianeta.");
+            askLoadGoodChoice();
+            return;
+        }
+
+        out.println(" Merci disponibili:");
+        displayGoods(goods);
+
+        int goodIndex = -1;
+        while (goodIndex < 0 || goodIndex >= goods.size()) {
+            try {
+                String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + "): ");
+                goodIndex = Integer.parseInt(input) - 1;
+            } catch (Exception e) {
+                out.println("Input non valido.");
+            }
+        }
+//selezionare il good in base di index del merci cioe indece+1 della merce nella list
+        Good selectedGood = goods.get(goodIndex);
+
+        ArrayList<Position> availableCargoHolds = clientController.getAvailableCargoHolds(myShip, selectedGood);
+        //in base a quale goods e e cargo holds type ritorno availableCargoHolds
+        //tipo se good e rosso anche cargo holds deve essere rosso
+        if (availableCargoHolds.isEmpty()) {
+            out.println(" Nessun cargo hold disponibile sulla nave.");
+            askLoadGoodChoice();
+            return;
+        }
+
+//        out.println(" Cargo holds disponibili:");
+//        for (int i = 0; i < availableCargoHolds.size(); i++) {
+//            out.println("[" + (i + 1) + "] Posizione: " + availableCargoHolds.get(i));
+//        }
+//        int posIndex = -1;
+//        while (posIndex < 0 || posIndex >= availableCargoHolds.size()) {
+//            try {
+//                String input = readLine("Seleziona una posizione cargo (1-" + availableCargoHolds.size() + "): ");
+//                posIndex = Integer.parseInt(input) - 1;
+//            } catch (Exception e) {
+//                out.println("Input non valido.");
+//            }
+//        }
+        Position selectedPos = null;
+       Position pos = null;
+        while (selectedPos == null) {
+
+            try {
+                String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7): ");
+                pos = parseCoordinate(input);
+
+                if (availableCargoHolds.contains(pos)) {
+                    selectedPos = new Position(pos.getY() - 5,pos.getX() - 4) ;
+                } else {
+                    out.println("Questa posizione non è disponibile.");
+                }
+            } catch (Exception e) {
+                out.println("Formato non valido. Usa es. 6,7");
+            }
+        }
+        clientController.placeMerci(goodIndex,selectedGood, selectedPos);
+        out.println("Merce caricata.");
+
+        askLoadGoodChoice();
+    }
+
+
+
+
+    @Override
+    public void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip) {
+        ArrayList<Position> occupiedPositions = clientController.getOccupiedCargoHolds(myShip);
+        Position selectedPos = null;
+        Position pos = null;
+        while (selectedPos == null) {
+
+            try {
+                String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7): ");
+                pos = parseCoordinate(input);
+
+                if (occupiedPositions.contains(pos)) {
+                    selectedPos = new Position(pos.getY() - 5,pos.getX() - 4) ;
+                } else {
+                    out.println("Questa posizione non è disponibile.");
+                }
+            } catch (Exception e) {
+                out.println("Formato non valido. Usa es. 6,7");
+            }
+        }
+
+       ArrayList<Good> goods = clientController.getDiscardPositionGoods(selectedPos);
+        out.println(" Merci disponibili:");
+        displayGoods(goods);
+        int goodIndex = -1;
+        while (goodIndex < 0 || goodIndex >= goods.size()) {
+            try {
+                String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + "): ");
+                goodIndex = Integer.parseInt(input) - 1;
+            } catch (Exception e) {
+                out.println("Input non valido.");
+            }
+        }
+        clientController.discardGood(goodIndex,pos);
+        out.println("Merce scartata.");
+        askLoadGoodChoice();
+
+
 
     }
 
+
+    @Override
+    public void showEndTurnMenu() {
+       menuManager.showEndTurnMenu();
+    }
+
+    public void askEndTurnMenuChoice()  {
+        String input = null;
+        boolean valid = false;
+        do{
+            try {
+                input = readLine("Inserisci la tua scelta (a/b/c o menu) : ");
+                if(input.toLowerCase().matches("[abc]")){
+                    valid = true;
+                }
+                else{
+                    out.println("Input non valido.");
+                }
+
+
+            } catch (Exception e) {
+
+        }
+
+        }while(!valid);
+        try {
+            clientController.handleAskEndTurnMenuChoice(input);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void showFlightBoard(FlightBoard flightBoard) {
+
+        FlightBoardPrintUtils.printFlightBoard(flightBoard);
+
+    }
+
+    public void displayGoods(List<Good> goods) {
+        out.println("Merci disponibili:");
+        for (int i = 0; i < goods.size(); i++) {
+            out.println("[" + (i + 1) + "] " + CardPrintUtils.colorBlock(goods.get(i)));
+        }
+        out.println("[0] Salta");
+    }
     @Override
     public void showCurrentAdventureCard() {
         CardPrintUtils.printCard(clientController.getCurrentAdventureCard());
@@ -1026,6 +1475,58 @@ public class Tui implements View, Observable {
 
     private Boolean checkReset(String input){
         return input.equals("reset") || input.equals("RESET");
+    }
+
+
+    private void askYesConfirmation(String prompt, Runnable onYesAction) {
+        boolean validInput = false;
+        String input;
+        do {
+            try {
+                input = readLine(prompt).trim().toLowerCase();
+                if ("y".equals(input)) {
+                    onYesAction.run();
+                    validInput = true;
+                } else {
+                    System.out.println("Input non valido. Inserisci solo 'y' per confermare.");
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } while (!validInput);
+    }
+    private void askYesNoConfirmation(String prompt, Runnable onYes, Runnable onNo) {
+        boolean validInput = false;
+        String input;
+        do {
+            try {
+                input = readLine(prompt).trim().toLowerCase();
+                switch (input) {
+                    case "y", "yes" -> {
+                        onYes.run();
+                        validInput = true;
+                    }
+                    case "n", "no" -> {
+                        onNo.run();
+                        validInput = true;
+                    }
+                    default -> System.out.println("Input non valido. Inserisci 'y' per sì o 'n' per no.");
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } while (!validInput);
+
+    }
+    public static boolean isValidNumberInRange(String input, int min, int max) {
+        if (input == null || input.isBlank()) return false;
+
+        try {
+            int value = Integer.parseInt(input.trim());
+            return value >= min && value <= max;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
 

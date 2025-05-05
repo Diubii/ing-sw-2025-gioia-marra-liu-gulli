@@ -89,6 +89,10 @@ public  class Component implements Serializable {
      * @return A string result from the visitor's interaction with the component.
      */
 
+    public Boolean isCharged() {
+        return false;
+    }
+
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }

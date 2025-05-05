@@ -5,6 +5,7 @@ import org.polimi.ingsw.galaxytrucker.enums.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+//Non usato
 public class FlightBoardTUI {
 
     // ANSI Colors

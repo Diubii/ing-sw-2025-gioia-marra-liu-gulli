@@ -17,9 +17,12 @@ public class SelectPlanetResponse extends NetworkMessage implements Serializable
     private static final long serialVersionUID = 274424698798L;
 
     private final Planet selectedPlanet;
+    private final int planetIndex;
 
-    public SelectPlanetResponse(Planet selectedPlanet) {
+    public SelectPlanetResponse(Planet selectedPlanet, int planetIndex) {
+
         this.selectedPlanet = selectedPlanet;
+        this.planetIndex = planetIndex;
     }
 
     @Override
@@ -29,5 +32,8 @@ public class SelectPlanetResponse extends NetworkMessage implements Serializable
 
     public Planet getSelectedPlanet() {
         return selectedPlanet;
+    }
+    public int getPlanetIndex() {
+        return planetIndex;
     }
 }

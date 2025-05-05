@@ -9,11 +9,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
@@ -300,12 +302,37 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
+    public void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException {
+
+    }
+
+    @Override
+    public void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) throws ExecutionException, InterruptedException {
+
+    }
+
+    @Override
+    public void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException {
+
+    }
+
+    @Override
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
 
     }
 
     @Override
-    public void showFlightBoard() {
+    public void askDrawCard() {
+
+    }
+
+    @Override
+    public void askActivateAdventureCard() {
+
+    }
+
+    @Override
+    public void showFlightBoard(FlightBoard flightBoard) {
 
     }
 
@@ -336,10 +363,50 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
+    public void askDiscardCrew(int nCrewToDiscard,Ship myShip) {
+
+    }
+
+    @Override
+    public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
+
+    }
+
+    @Override
+    public void askLoadGood(Planet selectedPlanet, Ship myShip) {
+
+    }
+
+    @Override
     public void showGenericMessage(String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
             alert.showAndWait();
         });
+    }
+
+    @Override
+    public void askLoadGoodChoice() {
+
+    }
+
+    @Override
+    public void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip) {
+
+    }
+
+    @Override
+    public void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip) {
+
+    }
+
+    @Override
+    public void showEndTurnMenu() {
+
+    }
+
+    @Override
+    public void askEndTurnMenuChoice() {
+
     }
 }

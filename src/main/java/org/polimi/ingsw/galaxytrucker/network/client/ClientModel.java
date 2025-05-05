@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.network.client;
 
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
@@ -26,6 +27,8 @@ public class ClientModel {
     private ArrayList<CardDeck> cardDecks = new ArrayList<>();
     private ArrayList<Tile>  faceUpTiles = new ArrayList<>();
     private Tile[] reservedTiles = new Tile[2];
+    private boolean isLeader;
+    private Planet selectedPlanet;
 
     public ArrayList<Integer> getTilesToRemove() {
         return tilesToRemove;
@@ -102,7 +105,23 @@ public class ClientModel {
         }
     }
 
+
+    public void setLeader(boolean isLeader ) {
+        this.isLeader = isLeader;
+    }
+
+    public boolean isLeader() {
+        return isLeader;
+    }
+
     public boolean hasPlayerWithNickname(String nickname) {
         return getPlayerInfoByNickname(nickname) != null;
+    }
+
+    public Planet getSelectedPlanet() {
+        return selectedPlanet;
+    }
+    public void setSelectedPlanet(Planet selectedPlanet) {
+        this.selectedPlanet = selectedPlanet;
     }
 }

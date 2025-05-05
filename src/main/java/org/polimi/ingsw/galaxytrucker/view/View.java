@@ -1,20 +1,21 @@
 package org.polimi.ingsw.galaxytrucker.view;
 
+import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
-import org.polimi.ingsw.galaxytrucker.observer.Observable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -66,11 +67,26 @@ public interface View {
 
     void askRemoveTile(Ship ship);
 
+    void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException;
+    void chooseDiscardCrew(Ship myShip,int nCrewToDiscard ) throws ExecutionException, InterruptedException;
+    void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException;
     void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
-
-    void showFlightBoard();
+// Flight
+    void askDrawCard();
+    void showFlightBoard(FlightBoard flightBoard);
     void showCurrentAdventureCard();
 
+
+    void showEndTurnMenu();
+    void askActivateAdventureCard();
+    void askDiscardCrew(int nCrewToDiscard, Ship myShip);
+    void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
+    void askLoadGood(Planet selectedPlanet, Ship myShip) throws ExecutionException, InterruptedException;
+    void askLoadGoodChoice();
+    void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip);
+    void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip);
+
+    void askEndTurnMenuChoice();
 
 
 //    public void askNickname(Thread thread) throws IOException;

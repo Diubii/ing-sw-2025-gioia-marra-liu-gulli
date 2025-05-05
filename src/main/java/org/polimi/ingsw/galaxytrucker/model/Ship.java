@@ -143,6 +143,11 @@ public class Ship implements Serializable {
     }
 
     public int getnBatterieLeft() {
+        ArrayList<Position> batteryPos = getComponentPositionsFromName("BatterySlot");
+        int nBatterieLeft = 0;
+        for (Position pos : batteryPos) {
+            nBatterieLeft += ((BatterySlot)getComponentFromPosition(pos)).getBatteriesLeft();
+        }
         return nBatterieLeft;
     }
 
