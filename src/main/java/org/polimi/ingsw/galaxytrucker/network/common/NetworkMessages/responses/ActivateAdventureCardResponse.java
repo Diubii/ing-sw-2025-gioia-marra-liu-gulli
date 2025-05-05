@@ -19,7 +19,7 @@ public class ActivateAdventureCardResponse extends NetworkMessage implements Ser
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException {
-        return null;
+        return visitor.visit(this);
     }
 
     public boolean isActivated() {
