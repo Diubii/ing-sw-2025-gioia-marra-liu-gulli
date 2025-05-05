@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
@@ -72,9 +73,11 @@ public interface View {
     void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
 // Flight
     void askDrawCard();
-    void showFlightBoard();
+    void showFlightBoard(FlightBoard flightBoard);
     void showCurrentAdventureCard();
 
+
+    void showEndTurnMenu();
     void askActivateAdventureCard();
     void askDiscardCrew(int nCrewToDiscard, Ship myShip);
     void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
@@ -83,6 +86,7 @@ public interface View {
     void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip);
     void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip);
 
+    void askEndTurnMenuChoice();
 
 
 //    public void askNickname(Thread thread) throws IOException;

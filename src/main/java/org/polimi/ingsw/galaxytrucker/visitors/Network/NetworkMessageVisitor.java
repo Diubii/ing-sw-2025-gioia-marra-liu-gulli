@@ -317,4 +317,9 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
         return null;
     }
+
+    @Override
+    public Void visit(EarlyLandingRequest earlyLandingRequest) {
+        return null;
+    }
 }

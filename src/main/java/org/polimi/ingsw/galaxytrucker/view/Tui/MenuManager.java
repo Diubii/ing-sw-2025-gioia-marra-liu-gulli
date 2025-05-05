@@ -99,17 +99,27 @@ public class MenuManager {
             }
         }
     }
+    public void showEndTurnMenu() {
+        clearConsole();
+        out.println("\n End Turn Menu:");
+        out.println("a. view my ship");
+        out.println("b. view flight board");
+        out.println("c. land early");
+
+        out.println("menu. show menu");
+    }
+
 
         private void showBuildStart(){
             String banner = "\033[1;34m" +
 
-                    "######                                             #####                            \n" +
-                    "#     # #    # # #      #####  # #    #  ####     #     # #####   ##   #####  ##### \n" +
-                    "#     # #    # # #      #    # # ##   # #    #    #         #    #  #  #    #   #   \n" +
-                    "######  #    # # #      #    # # # #  # #          #####    #   #    # #    #   #   \n" +
-                    "#     # #    # # #      #    # # #  # # #  ###          #   #   ###### #####    #   \n" +
-                    "#     # #    # # #      #    # # #   ## #    #    #     #   #   #    # #   #    #   \n" +
-                    "######   ####  # ###### #####  # #    #  ####      #####    #   #    # #    #   #   \n" +
+                    "######                                                 #####                            \n" +
+                    "#     #  #    #  #  #      #####   #  #    #  ####     #     # #####   ##   #####  ##### \n" +
+                    "#     #  #    #  #  #      #    #  #  ##   # #    #    #         #    #  #  #    #   #   \n" +
+                    "######   #    #  #  #      #    #  #  # #  # #          #####    #   #    # #    #   #   \n" +
+                    "#     #  #    #  #  #      #    #  #  #  # # #  ###          #   #   ###### #####    #   \n" +
+                    "#     #  #    #  #  #      #    #  #  #   ## #    #    #     #   #   #    # #   #    #   \n" +
+                    "######    ####   #  ###### #####   #  #    #  ####      #####    #   #    # #    #   #   \n" +
 
             "\033[0m";
             out.println(banner);

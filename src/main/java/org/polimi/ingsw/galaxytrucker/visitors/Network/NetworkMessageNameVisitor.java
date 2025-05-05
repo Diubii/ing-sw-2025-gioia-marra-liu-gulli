@@ -261,5 +261,8 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return null;
     }
 
-
+    @Override
+    public NetworkMessageType visit(EarlyLandingRequest earlyLandingRequest) {
+        return null;
+    }
 }

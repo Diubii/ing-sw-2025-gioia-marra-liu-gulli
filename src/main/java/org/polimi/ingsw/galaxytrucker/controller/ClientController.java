@@ -418,6 +418,7 @@ public class ClientController implements Observer {
                 case "c" -> {
 
                         view.askShowFaceUpTiles();
+                        view.showBuildingMenu();
                         break;
                 }
                 case "d" -> {
@@ -931,7 +932,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
             myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
         }
         if(phase == GameState.FLIGHT){
-            view.showFlightBoard();
+            view.showFlightBoard(myModel.getFlightBoard());
         }
 
     }
@@ -1077,6 +1078,64 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     }
 
 
+    public void handleEndTurnUpdate(EndTurnUpdate update) {
+
+        view.showGenericMessage(".");
+        view.showEndTurnMenu();
+        view.askEndTurnMenuChoice();
+
+    }
+    public void handleAskEndTurnMenuChoice(String input) throws RuntimeException {
+        switch (input){
+            case "RESET" -> {
+                return;
+
+
+            }
+            case "a" -> {
+                view.showShip(myModel.getMyInfo().getShip());
+                view.askEndTurnMenuChoice();
+                break;
+            }
+
+            case "b" ->{
+                view.showFlightBoard(myModel.getFlightBoard());
+                view.askEndTurnMenuChoice();
+            }
+
+            case"c" ->{
+                try {
+                    handleEarlyLandingRequest();
+                } catch (IOException | ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+
+            case "menu","m","?" ->{
+                view.showEndTurnMenu();
+                view.askEndTurnMenuChoice();
+
+            }
+
+
+            default -> {
+                view.showGenericMessage("Invalid option. Please try again.");
+                view.askEndTurnMenuChoice();
+            }
+
+        }
+
+
+    }
+
+    private void handleEarlyLandingRequest() throws IOException, ExecutionException, InterruptedException {
+         EarlyLandingRequest request = new EarlyLandingRequest();
+        client.sendMessage(request);
+
+
+    }
 
 
     public void handleGameMessage(GameMessage gameMessage) {
@@ -1111,11 +1170,12 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         }
     }
     public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
+        view.forceReset();
         currentAdventureCard = drawnAdventureCardUpdate.getCard();
         String nameCard = currentAdventureCard.getName();
 
 
-    view.showCurrentAdventureCard();
+        view.showCurrentAdventureCard();
     }
 
     public void handleActivateAdventureCardRequest(ActivateAdventureCardRequest activateAdventureCardRequest) {
@@ -1331,12 +1391,21 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
         return available;
     }
 
+
+
     private ArrayList<Position> getCargoHolds(Ship ship) {
         return ship.getComponentPositionsFromName("GenericCargoHolds");
     }
     public void handlePlayerRemovedUpdate(PlayerRemovedUpdate update) {
+        boolean isLandingEarly = update.isLandingEarly();
+
         String nickname = update.getNickname();
-        view.showGenericMessage(" Il giocatore " + nickname + " ha lasciato la partita.");
+        if(isLandingEarly) {
+            view.showGenericMessage(" Il giocatore " + nickname + " ha lasciato la partita.");
+        }
+        else{
+            view.showGenericMessage("il gicatore" + nickname + " è stato rimosso forzatamente dalla partita.");
+        }
     }
     public Ship getMyShip(){
         return myModel.getMyInfo().getShip();

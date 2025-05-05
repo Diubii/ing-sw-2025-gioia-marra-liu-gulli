@@ -12,6 +12,7 @@ import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
@@ -331,7 +332,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void showFlightBoard() {
+    public void showFlightBoard(FlightBoard flightBoard) {
 
     }
 
@@ -396,6 +397,16 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip) {
+
+    }
+
+    @Override
+    public void showEndTurnMenu() {
+
+    }
+
+    @Override
+    public void askEndTurnMenuChoice() {
 
     }
 }

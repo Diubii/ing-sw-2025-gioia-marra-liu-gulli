@@ -324,6 +324,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(EndTurnUpdate endTurnUpdate) {
+
         return null;
     }
 
@@ -335,6 +336,11 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     @Override
     public Void visit(PlayerRemovedUpdate removedPlayerUpdate) {
         clientController.handlePlayerRemovedUpdate(removedPlayerUpdate);
+        return null;
+    }
+
+    @Override
+    public Void visit(EarlyLandingRequest earlyLandingRequest) {
         return null;
     }
 }
