@@ -263,6 +263,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     @NeedsToBeCompleted
     @Override
     public Void visit(SelectPlanetResponse selectPlanetResponse) {
+        serverController.handleSelectPlanetResponse(selectPlanetResponse, clientHandler);
         return null;
     }
 

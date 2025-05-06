@@ -139,6 +139,7 @@ public class Ship implements Serializable {
 
 
     public int getnExposedConnector() {
+        calcExposedConnectors();
         return nExposedConnector;
     }
 

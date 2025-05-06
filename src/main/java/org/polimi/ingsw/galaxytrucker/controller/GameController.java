@@ -14,6 +14,7 @@ import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
@@ -76,61 +77,76 @@ public class GameController {
         }
     }
 
-    public void startFlight() throws ExecutionException, InterruptedException {
+    public void startFlight() throws ExecutionException, InterruptedException, IOException {
 
-        Good good1 = new Good(Color.RED);
-        Good good2 = new Good(Color.BLUE);
-        Good good3 = new Good(Color.GREEN);
-        Good good4 = new Good(Color.YELLOW);
-
-
-        ArrayList<Good> goods1 = new ArrayList<>();
-        goods1.add(good1);
-        goods1.add(good2);
-        ArrayList<Good> goods2 = new ArrayList<>();
-        goods2.add(good3);
-        goods2.add(good4);
-        ArrayList<Good> goods3 = new ArrayList<>();
-        goods3.add(good4);
-        Planet p1 = new Planet(false, goods1);
-        Planet p2 = new Planet(false, goods2);
-        Planet p3 = new Planet(false, goods3);
-        ArrayList<Planet> nPlanet = new ArrayList<>();
-        nPlanet.add(p1);
-        nPlanet.add(p2);
-        nPlanet.add(p3);
-
-        AbandonedShip abandonedShip = new AbandonedShip(
-                17,
-                1,
-                 1,
-                "Nave abbandonata",
-                false,
-                2,
-                 3,
-                false);
-        OpenSpace openSpace = new OpenSpace(
-                26,
-                 2,
-                 0,
-                 "Spazio aperto",
-                 false,
-                 true
-        );
-        Planets planets = new Planets(
-                1,
-                2,
-                2,
-                "Planets",
-                true,
-                 nPlanet,
-                false
-
-
-                );
-        cardDeckTest.addCard(abandonedShip);
-        cardDeckTest.addCard(openSpace);
-        cardDeckTest.addCard(planets);
+//        Good good1 = new Good(Color.RED);
+//        Good good2 = new Good(Color.BLUE);
+//        Good good3 = new Good(Color.GREEN);
+//        Good good4 = new Good(Color.YELLOW);
+//
+//
+//        ArrayList<Good> goods1 = new ArrayList<>();
+//        goods1.add(good1);
+//        goods1.add(good2);
+//        ArrayList<Good> goods2 = new ArrayList<>();
+//        goods2.add(good3);
+//        goods2.add(good4);
+//        ArrayList<Good> goods3 = new ArrayList<>();
+//        goods3.add(good4);
+//        Planet p1 = new Planet(false, goods1);
+//        Planet p2 = new Planet(false, goods2);
+//        Planet p3 = new Planet(false, goods3);
+//        ArrayList<Planet> nPlanet = new ArrayList<>();
+//        nPlanet.add(p1);
+//        nPlanet.add(p2);
+//        nPlanet.add(p3);
+//
+//        AbandonedShip abandonedShip = new AbandonedShip(
+//                17,
+//                1,
+//                 1,
+//                "Nave abbandonata",
+//                false,
+//                2,
+//                 3,
+//                false);
+//        OpenSpace openSpace = new OpenSpace(
+//                26,
+//                 2,
+//                 0,
+//                 "Spazio aperto",
+//                 false,
+//                 true
+//        );
+//        Planets planets = new Planets(
+//                1,
+//                2,
+//                2,
+//                "Planets",
+//                true,
+//                 nPlanet,
+//                false
+//
+//
+//                );
+//        cardDeckTest.addCard(abandonedShip);
+//        cardDeckTest.addCard(openSpace);
+//
+//        cardDeckTest.addCard(planets);
+//        Epidemic epidemic = new Epidemic();
+//        Stardust stardust = new Stardust(
+//                2,
+//                1,
+//                2,
+//                "Startdust",
+//                true,
+//                true
+//
+//
+//        );
+//        cardDeckTest.addCard(epidemic);
+//        cardDeckTest.addCard(stardust);
+         cardDeckTest = Util.createTestDeck();
 
         myGame.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
 
@@ -243,7 +259,7 @@ public class GameController {
 
     @NeedsToBeCompleted
     public void completeCardDrawn(){
-        //cardDrawn.complete(null);
+        cardDrawn.complete(null);
     }
 
     public void removePlayerFromGame(String nickname, boolean isLandingEarly) throws PlayerNotFoundException {

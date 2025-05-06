@@ -58,6 +58,18 @@ public class Util {
         return new CardDeck(list, true);
 
     }
+    public static CardDeck createTestDeck() throws IOException {
+        File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayList<AdventureCard> list =new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().toList());
+        ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
+        cardsToTest.add(list.get(3)); //stardust
+        cardsToTest.add(list.get(4)); // open Space
+        cardsToTest.add(list.get(24)); //epidemic
+
+        return new CardDeck(cardsToTest, true);
+
+    }
 
     /**
      * Generates the tiles of a game and puts them in an {@link ArrayList}

@@ -1228,8 +1228,6 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
         view.forceReset();
         currentAdventureCard = drawnAdventureCardUpdate.getCard();
-        String nameCard = currentAdventureCard.getName();
-
 
         view.showCurrentAdventureCard();
     }

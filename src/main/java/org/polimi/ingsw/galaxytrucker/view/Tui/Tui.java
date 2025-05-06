@@ -137,6 +137,7 @@ public class Tui implements View, Observable {
 
     @Override
     public void forceReset() {
+        System.out.println();
         if (currentInputFuture != null && !currentInputFuture.isDone()) {
             currentInputFuture.complete("RESET");
 

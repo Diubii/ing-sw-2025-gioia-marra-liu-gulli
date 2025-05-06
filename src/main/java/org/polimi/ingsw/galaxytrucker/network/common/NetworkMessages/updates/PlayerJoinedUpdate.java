@@ -31,6 +31,11 @@ public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
         return playerInfo;
     }
 
+    public void setPlayersJoinedBefore(ArrayList<PlayerInfo> playersJoinedBefore) {
+        this.playersJoinedBefore = playersJoinedBefore;
+    }
+
+
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
         return visitor.visit(this);
