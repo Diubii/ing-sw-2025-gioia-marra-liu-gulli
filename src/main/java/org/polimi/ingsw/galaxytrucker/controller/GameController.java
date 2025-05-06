@@ -5,7 +5,6 @@ import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.DoubleCannon;
@@ -29,6 +28,9 @@ public class GameController {
     CompletableFuture cardDrawn;
     private Boolean gameEndedEarly = false;
     private CardDeck cardDeckTest = new CardDeck(true);
+    public CardPhase currentCardPhase;
+    public int currentPlayerIndex;
+    public AdventureCard currentAdventureCard = null;
 
     public CardDeck getCardDeckTest() {
         return cardDeckTest;
@@ -79,86 +81,10 @@ public class GameController {
 
     public void startFlight() throws ExecutionException, InterruptedException, IOException {
 
-//        Good good1 = new Good(Color.RED);
-//        Good good2 = new Good(Color.BLUE);
-//        Good good3 = new Good(Color.GREEN);
-//        Good good4 = new Good(Color.YELLOW);
-//
-//
-//        ArrayList<Good> goods1 = new ArrayList<>();
-//        goods1.add(good1);
-//        goods1.add(good2);
-//        ArrayList<Good> goods2 = new ArrayList<>();
-//        goods2.add(good3);
-//        goods2.add(good4);
-//        ArrayList<Good> goods3 = new ArrayList<>();
-//        goods3.add(good4);
-//        Planet p1 = new Planet(false, goods1);
-//        Planet p2 = new Planet(false, goods2);
-//        Planet p3 = new Planet(false, goods3);
-//        ArrayList<Planet> nPlanet = new ArrayList<>();
-//        nPlanet.add(p1);
-//        nPlanet.add(p2);
-//        nPlanet.add(p3);
-//
-//        AbandonedShip abandonedShip = new AbandonedShip(
-//                17,
-//                1,
-//                 1,
-//                "Nave abbandonata",
-//                false,
-//                2,
-//                 3,
-//                false);
-//        OpenSpace openSpace = new OpenSpace(
-//                26,
-//                 2,
-//                 0,
-//                 "Spazio aperto",
-//                 false,
-//                 true
-//        );
-//        Planets planets = new Planets(
-//                1,
-//                2,
-//                2,
-//                "Planets",
-//                true,
-//                 nPlanet,
-//                false
-//
-//
-//                );
-//        cardDeckTest.addCard(abandonedShip);
-//        cardDeckTest.addCard(openSpace);
-//
-//        cardDeckTest.addCard(planets);
-//        Epidemic epidemic = new Epidemic();
-//        Stardust stardust = new Stardust(
-//                2,
-//                1,
-//                2,
-//                "Startdust",
-//                true,
-//                true
-//
-//
-//        );
-//        cardDeckTest.addCard(epidemic);
-//        cardDeckTest.addCard(stardust);
          cardDeckTest = Util.createTestDeck();
 
         myGame.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
-
-        while (cardDeckTest.getSize() > 0 && !myGame.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) { //Finché ci sono sia carte che giocatori in gioco
-            handleTurn();
-            if (gameEndedEarly){
-                handleEndGame();
-                break;
-            };
-
-
-        }
+            handleTurnBeforeDrawnCard();
 
 
     }
@@ -181,17 +107,13 @@ public class GameController {
 
     }
 
-    private void handleTurn() throws ExecutionException, InterruptedException {
+    public void handleTurn() throws ExecutionException, InterruptedException {
 
-        cardDrawn = new CompletableFuture();
         //Prendo i players ordinati per placement
 
-        handleTurnBeforeDrawnCard();
 
-        cardDrawn.get();
-        AdventureCard adventureCard = cardDeckTest.pop();
 
-        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(adventureCard);
+        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(currentAdventureCard);
         myGame.getPlayerHandlers().values().forEach(ch -> {
             ch.sendMessage(drawnAdventureCardUpdate);
         }); //Mando match info update
@@ -199,54 +121,9 @@ public class GameController {
 
         //Test
         ArrayList<Player> rankedPlayers = new ArrayList<>(myGame.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
+        currentPlayerIndex = 0;
+        currentAdventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame, currentCardPhase); //Attivo l'effetto della carta
 
-        if (!rankedPlayers.isEmpty()) {
-
-            adventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame); //Attivo l'effetto della carta
-
-            //start controlli post carta
-
-            //Controllo se ci sono giocatori doppiati e nel caso li rimuovo
-            FlightBoard flightBoard = myGame.getRealGame().getFlightBoard();
-            for (Color color : flightBoard.getRankedPlayers()) {
-                if (flightBoard.isPlayerLapped(color)) { //Se il giocatore è doppiato
-                    String lappedPlayerNickname = myGame.getNicknameFromColor(color);
-                    try {
-                        removePlayerFromGame(lappedPlayerNickname, false); //Lo rimuovo
-                    } catch (PlayerNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                //controllo zero umani
-                String playerNickname = myGame.getPlayerColors().entrySet().stream().filter(e -> e.getValue() == color).findFirst().get().getKey();
-                Player player = myGame.getRealGame().getPlayerFromName(playerNickname);
-
-                if ( !player.getPlayerState().equals(PlayerState.Spectating) && player.getShip().getHumanCrewNumber() == 0){
-                    try {
-                        removePlayerFromGame(playerNickname, false); //Lo rimuovo
-                    } catch (PlayerNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-            }
-
-
-
-            //end controlli
-
-            myGame.getPlayerHandlers().values().forEach(ch -> {
-                ch.sendMessage(new EndTurnUpdate());
-            }); //Mando match info update
-
-        } else {
-
-            //caso in cui non ci sono piu giocatori, (quittano tutti prima dell'effetto della carta)
-            gameEndedEarly = true;
-            return;
-
-        }
     }
 
     public void removePlayerFromGame(String nickname) throws PlayerNotFoundException {
@@ -401,4 +278,16 @@ public class GameController {
         return false;
     }
 
+    public void resumeCurrentCard() {
+        ArrayList<Player> rankedPlayers = new ArrayList<>(myGame.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
+
+        try {
+            currentAdventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame, currentCardPhase); //Attivo l'effetto della carta
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

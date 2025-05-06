@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.visitors;
 
+import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
@@ -19,7 +20,7 @@ public interface AdventureCardVisitorsInterface {
 
     void visitMeteorSwarm(MeteorSwarm meteorSwarm, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
 
-    void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException, PlayerNotFoundException;
+    void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase) throws ExecutionException, InterruptedException, PlayerNotFoundException;
 
     void visitPlanets(Planets planets, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
 

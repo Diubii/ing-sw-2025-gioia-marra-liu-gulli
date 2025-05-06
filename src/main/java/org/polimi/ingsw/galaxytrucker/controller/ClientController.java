@@ -924,11 +924,9 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
     public void handleFlightBoardUpdate(FlightBoardUpdate flightBoardUpdate) {
 
-        if (myModel.getFlightBoard() != null) {
-            synchronized (myModel.getFlightBoard()){
+
                 myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
-            }
-        }
+
 //        if(phase == GameState.FLIGHT){
 //            view.showFlightBoard(myModel.getFlightBoard());
 //        }

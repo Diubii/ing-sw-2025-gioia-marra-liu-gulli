@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
@@ -63,11 +64,12 @@ public class AbandonedStation extends AdventureCard {
      * Activates the effect of the Abandoned Station card by triggering the effect
      * through the given {@link AdventureCardVisitorsInterface}.
      *
-     * @param aca         The activator responsible for triggering the Abandoned Station's effect.
+     * @param aca           The activator responsible for triggering the Abandoned Station's effect.
      * @param rankedPlayers
      * @param lobbyManager
+     * @param cardPhase
      */
-    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase) throws ExecutionException, InterruptedException {
         aca.visitAbandonedStation(this, rankedPlayers, lobbyManager);
     }
 

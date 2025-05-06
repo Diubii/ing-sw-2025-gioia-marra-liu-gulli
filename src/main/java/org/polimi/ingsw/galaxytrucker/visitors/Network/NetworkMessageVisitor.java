@@ -251,7 +251,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(ActivateComponentResponse activateComponentResponse){
-        serverController.handleActivateDoubleEnginesResponse(activateComponentResponse, clientHandler);
+        serverController.handleActivateComponentResponse(activateComponentResponse, clientHandler);
         return null;
     }
 

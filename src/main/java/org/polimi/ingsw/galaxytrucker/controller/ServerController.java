@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
-import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.enums.GameAction;
-import org.polimi.ingsw.galaxytrucker.enums.GameState;
+import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
@@ -15,6 +12,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
@@ -861,7 +859,7 @@ public class ServerController {
         myGame.getGameController().notify();
     }
 
-    public void handleActivateDoubleEnginesResponse(ActivateComponentResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
+    public void handleActivateComponentResponse(ActivateComponentResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         Player player = getPlayerFromClientHandler(clientHandler);
         Ship ship = player.getShip();
@@ -881,6 +879,10 @@ public class ServerController {
 
         //Sveglio visitOpenSpace
         myGame.completePendingResponse(activateDoubleEnginesResponse.getID(), activateDoubleEnginesResponse);
+        //settare la fase
+        myGame.getGameController().currentCardPhase = CardPhase.ActivateComponent;
+        myGame.getGameController().resumeCurrentCard();
+
     }
 
     public void handleHeartbeatResponse(HeartbeatResponse heartbeatResponse, ClientHandler clientHandler) {
@@ -999,9 +1001,18 @@ public class ServerController {
     public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         //Test
-        myGame.getGameController().getCardDeckTest();
-        myGame.getGameController().completeCardDrawn();
+        CardDeck deck = myGame.getGameController().getCardDeckTest();
+       AdventureCard ac =  deck.pop();
+       myGame.getGameController().currentAdventureCard = ac;
+       myGame.getGameController().currentCardPhase = CardPhase.START;
 
+        try {
+            myGame.getGameController().handleTurn();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
 
     }

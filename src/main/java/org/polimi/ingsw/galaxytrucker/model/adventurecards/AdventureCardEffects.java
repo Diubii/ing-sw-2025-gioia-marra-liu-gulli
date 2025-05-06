@@ -46,9 +46,9 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             }
 
             //Chiedo al player se vuole attivare la carta
-            ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) sendMessageAndGetResponse(lobbyManager, player, activateAdventureCardRequest);
+            ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) sendMessage(lobbyManager, player, activateAdventureCardRequest);
             if (activateAdventureCardResponse.isActivated()) {
-                DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) sendMessageAndGetResponse(lobbyManager, player, discardCrewMembersRequest); //Aspetto la risposta
+                DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) sendMessage(lobbyManager, player, discardCrewMembersRequest); //Aspetto la risposta
 
                 discardCrewMembers(player, discardCrewMembersResponse);
 
@@ -73,7 +73,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                 continue; //Se il player non ha abbastanza equipaggio passo al prossimo
 
             //Chiedo al player se vuole attivare la carta
-            ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) sendMessageAndGetResponse(lobbyManager, player, activateAdventureCardRequest);
+            ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) sendMessage(lobbyManager, player, activateAdventureCardRequest);
 
             if (activateAdventureCardResponse.isActivated()) {
                 ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName()); //TODO: Trovare un metodo per identificare lo ship update
@@ -114,7 +114,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             //Richiedo l'attivazione dei motori doppi, se esistono
             if (!player.getShip().getComponentPositionsFromName("DoubleEngine").isEmpty()) {
                 ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
-                sendMessageAndGetResponse(lobbyManager, player, activateDoubleEnginesRequest);
+                sendMessage(lobbyManager, player, activateDoubleEnginesRequest);
             }
 
             int playerEnginePower = player.getShip().calculateEnginePower();
@@ -133,7 +133,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 
         //Richiedo al player le posizioni delle housing unit da cui rimuovere equipaggio
         DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(combatZone.getCrewMembersLost());
-        DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) sendMessageAndGetResponse(lobbyManager, minEnginePowerPlayer, discardCrewMembersRequest);
+        DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) sendMessage(lobbyManager, minEnginePowerPlayer, discardCrewMembersRequest);
 
         discardCrewMembers(minCrewMembersPlayer, discardCrewMembersResponse);
 
@@ -144,7 +144,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             //Chiedo l'attivazione di cannoni doppi, se esistono
             if (!player.getShip().getComponentPositionsFromName("DoubleCannon").isEmpty()) {
                 ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleCannon);
-                sendMessageAndGetResponse(lobbyManager, player, activateDoubleEnginesRequest);
+                sendMessage(lobbyManager, player, activateDoubleEnginesRequest);
             }
 
             float playerFirePower = player.getShip().calculateFirePower();
@@ -175,7 +175,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                 if (projectile.getSize() == ProjectileSize.LITTLE && playerCanDefendThemselvesWithAShield(targetPlayer, projectile)) { //Se il proiettile è piccolo si possono attivare gli scudi, se ne esistono orientati correttamente
                     message = "Però puoi proteggerti con uno scudo!";
                     sendGameMessage(lobbyManager, minFirePowerPlayer, message);
-                    sendMessageAndGetResponse(lobbyManager, targetPlayer, new ActivateComponentRequest(ActivatableComponent.Shield));
+                    sendMessage(lobbyManager, targetPlayer, new ActivateComponentRequest(ActivatableComponent.Shield));
                 } else if (projectile.getSize() == ProjectileSize.BIG && projectile.getType() == ProjectileType.Meteor) { //Se il proiettile è una meteora grande si possono attivare cannoni doppi
                     //Se nessun cannone punta verso il meteorite chiedo l'attivazione di un CannoneDoppio, se esiste
                     if (playerCanDefendThemselvesWithASingleCannon(targetPlayer, projectile, diceRoll)) {
@@ -184,7 +184,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                     } else if (playerCanDefendThemselvesWithADoubleCannon(targetPlayer, projectile, diceRoll)) {
                         message = "Però puoi proteggerti con un cannone doppio!";
                         sendGameMessage(lobbyManager, minFirePowerPlayer, message);
-                        sendMessageAndGetResponse(lobbyManager, minFirePowerPlayer, new ActivateComponentRequest(ActivatableComponent.DoubleCannon));
+                        sendMessage(lobbyManager, minFirePowerPlayer, new ActivateComponentRequest(ActivatableComponent.DoubleCannon));
                     }
                 }
             }
@@ -327,26 +327,78 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 
     @NeedsToBeCompleted("Disattivare motori doppi")
     @Override
-    public void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException, PlayerNotFoundException {
-        HashMap<String, Integer> playerToPowerMap = new HashMap<>();
+    public void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase) throws ExecutionException, InterruptedException, PlayerNotFoundException {
 
-        for (Player player : rankedPlayers) {
-            ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
-            sendMessageAndGetResponse(lobbyManager, player, activateDoubleEnginesRequest);
-            int playerEnginePower = player.getShip().calculateEnginePower();
-            playerToPowerMap.put(player.getNickName(), playerEnginePower);
-            movePlayer(lobbyManager, player, playerEnginePower);
+        int currentIndex = lobbyManager.getGameController().currentPlayerIndex;
+        Player player = rankedPlayers.get(currentIndex);
+
+
+//        for (Player player : rankedPlayers) {
+//            ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
+//            sendMessageAndGetResponse(lobbyManager, player, activateDoubleEnginesRequest);
+//            int playerEnginePower = player.getShip().calculateEnginePower();
+//            playerToPowerMap.put(player.getNickName(), playerEnginePower);
+//            movePlayer(lobbyManager, player, playerEnginePower);
+//        }
+//
+//        playerToPowerMap.forEach((nickname, power) -> {
+//            if (power == 0) {
+//                try {
+//                    lobbyManager.getGameController().removePlayerFromGame(nickname, false);
+//                } catch (PlayerNotFoundException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        });
+
+        switch (cardPhase){
+            case START -> {
+                ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
+                sendMessage(lobbyManager, player, activateDoubleEnginesRequest);
+            }
+
+            case ActivateComponent -> {
+                int playerEnginePower = player.getShip().calculateEnginePower();
+                movePlayer(lobbyManager, player, playerEnginePower);
+
+                //controllo se e' l'ultimo o no
+
+                //passo al giocatore successivo
+                ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
+                Player nextPlayer = rankedPlayers.get(currentIndex);
+                sendMessage(lobbyManager, player, activateDoubleEnginesRequest);
+
+                if (currentIndex == rankedPlayers.size()-1){
+                    visitOpenSpace(openSpace, rankedPlayers, lobbyManager, CardPhase.END);
+                }
+
+                lobbyManager.getGameController().currentPlayerIndex++;
+
+
+            }
+
+            case END -> {
+
+                HashMap<String, Integer> playerToPowerMap = new HashMap<>();
+                //vedi se vanno eliminati
+                for (Player player2 : rankedPlayers) {int playerEnginePower = player2.getShip().calculateEnginePower();
+                    playerToPowerMap.put(player2.getNickName(), playerEnginePower);
+                }
+
+                playerToPowerMap.forEach((nickname, power) -> {
+                if (power == 0) {
+                 try {
+                     lobbyManager.getGameController().removePlayerFromGame(nickname, false);
+                  } catch (PlayerNotFoundException e) {
+                    throw new RuntimeException(e);
+                 }
+                }
+                });
+            }
+            default -> throw new IllegalStateException();
         }
 
-        playerToPowerMap.forEach((nickname, power) -> {
-            if (power == 0) {
-                try {
-                    lobbyManager.getGameController().removePlayerFromGame(nickname, false);
-                } catch (PlayerNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+
     }
 
     @NeedsToBeChecked("Non è giusto inserire un selectedPlanetUpdate nell'addPendingResponse di shipUpdates")
@@ -359,12 +411,8 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             if (!planets.getPlanets().stream().allMatch(Planet::isOccupied)) { //Se non tutti i pianeti sono occupati
                 ArrayList<Planet> notOccupiedPlanets = new ArrayList<>(planets.getPlanets().stream().filter(planet -> !planet.isOccupied()).toList());
                 SelectPlanetRequest selectPlanetRequest = new SelectPlanetRequest(notOccupiedPlanets);
-                SelectPlanetResponse selectPlanetResponse = (SelectPlanetResponse) sendMessageAndGetResponse(lobbyManager, player, selectPlanetRequest); //Aspetto che il player mandi la risposta
+                SelectPlanetResponse selectPlanetResponse = (SelectPlanetResponse) sendMessage(lobbyManager, player, selectPlanetRequest); //Aspetto che il player mandi la risposta
 
-                //TEST
-                //SelectPlanetResponse selectPlanetResponse = new SelectPlanetResponse(new Planet(false, null));
-                //selectedPlanetResponseFuture.complete(selectPlanetResponse);
-                //END TEST
 
                 Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
                 if (selectedPlanet != null) { //Se il player ha scelto
@@ -397,6 +445,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
     }
 
     @Override
+    //porca troia SI
     public void visitStardust(Stardust stardust, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
         //player.getShip().calcExposedConnectors();
         for (Player player : rankedPlayers.reversed()) { //Si parte dall'ultimo
@@ -455,12 +504,12 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
         }
     }
 
-    private NetworkMessage sendMessageAndGetResponse(LobbyManager lobbyManager, Player player, NetworkMessage message) throws ExecutionException, InterruptedException {
+    private void sendMessage(LobbyManager lobbyManager, Player player, NetworkMessage message) throws ExecutionException, InterruptedException {
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
         lobbyManager.addPendingResponse(future, message.getID()); //Notifico che sono in attesa di una risposta
         clientHandler.sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
-        return future.get(); //Aspetto che il player mandi la risposta
+//        return future.get(); //Aspetto che il player mandi la risposta
     }
 
     private void sendMessageAndDeferGetResponse(LobbyManager lobbyManager, Player player, NetworkMessage message, ArrayList<CompletableFuture<NetworkMessage>> futures) {

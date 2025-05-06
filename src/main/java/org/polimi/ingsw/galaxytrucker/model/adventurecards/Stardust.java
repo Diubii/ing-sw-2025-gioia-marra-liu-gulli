@@ -2,10 +2,10 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
@@ -33,7 +33,7 @@ public class Stardust extends AdventureCard {
         this.affectsAll = true;
     }
 
-    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager){
+    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase){
         aca.visitStardust(this, rankedPlayers, lobbyManager);
     }
 

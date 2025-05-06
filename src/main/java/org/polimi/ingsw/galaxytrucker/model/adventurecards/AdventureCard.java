@@ -1,14 +1,10 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.polimi.ingsw.galaxytrucker.controller.GameController;
-import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
 import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
@@ -62,8 +58,9 @@ public abstract class AdventureCard implements Serializable {
      *
      * @param aca          The activator responsible for triggering the card's effect.
      * @param lobbyManager The game's {@link LobbyManager}
+     * @param cardPhase
      */
-    public abstract void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
+    public abstract void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase) throws ExecutionException, InterruptedException;
     /**
      * Gets the unique identifier of the card.
      *
