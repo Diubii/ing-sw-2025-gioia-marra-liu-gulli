@@ -252,9 +252,7 @@ public class ClientController implements Observer {
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
-                    ArrayList<PlayerInfo> appInfo = new ArrayList<>();
-                    appInfo.add(myModel.getMyInfo());
-                    myModel.setPlayerInfos(appInfo);
+
                     view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
                 } else {
                     view.showGenericMessage("Room creation failed: " + response.getErrMess());
@@ -322,9 +320,8 @@ public class ClientController implements Observer {
                 myModel.getMyInfo().setColor(response.getColor());
                 myModel.getMyInfo().setShip(response.getMyShip());
                 myModel.getMyInfo().setNickName(getNickname());
-                ArrayList<PlayerInfo> appInfo = new ArrayList<>();
-                appInfo.add(myModel.getMyInfo());
-                myModel.setPlayerInfos(appInfo);
+
+                view.showPlayersLobby(myModel.getMyInfo(),myModel.getPlayerInfos());
 
             } else {
                 view.showGenericMessage("Failed to join the lobby: " + response.getErrMess());
@@ -340,17 +337,16 @@ public class ClientController implements Observer {
 
 
 
-
+    //Todo: Mattia mettere lista player mandata da server
     public void handlePlayerJoinedUpdate(PlayerJoinedUpdate playerJoinedUpdate){
-                PlayerInfo playerInfo = playerJoinedUpdate.getPlayerInfo();
 
                 synchronized (myModel.getPlayerInfos()){
-                    ArrayList<PlayerInfo> appInfo  = myModel.getPlayerInfos();
-                    appInfo.add(playerJoinedUpdate.getPlayerInfo());
-//                    myModel.setPlayerInfos(appInfo);
+                    myModel.setPlayerInfos(playerJoinedUpdate.getPlayersJoinedBefore());
                 }
 
-                view.showPlayerJoined(playerInfo);
+                view.showPlayerJoined(playerJoinedUpdate.getPlayerInfo());
+                view.showPlayersLobby(myModel.getMyInfo(),myModel.getPlayerInfos());
+
 
     }
 
@@ -1101,7 +1097,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
                     }
 
             case "b" -> {
-                view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos());
+                view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos(),myModel.getMyInfo());
                 view.askEndTurnMenuChoice(myModel.isLeader());
             }
 
@@ -1143,7 +1139,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
 
 
             case "b" -> {
-                view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos());
+                view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos(),myModel.getMyInfo());
                 view.askEndTurnMenuChoice(myModel.isLeader());
             }
 
@@ -1226,6 +1222,8 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
     public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
         view.forceReset();
         currentAdventureCard = drawnAdventureCardUpdate.getCard();
+        String nameCard = currentAdventureCard.getName();
+
 
         view.showCurrentAdventureCard();
     }

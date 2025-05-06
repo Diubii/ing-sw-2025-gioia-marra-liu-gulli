@@ -189,9 +189,15 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
 
+
     @Override
     public void showPlayerJoined(PlayerInfo playerInfo) {
         showGenericMessage("Player joined: " + playerInfo);
+    }
+
+    @Override
+    public void showPlayersLobby( PlayerInfo myinfo , ArrayList<PlayerInfo> playerInfo) {
+        //showGenericMessage("Player joined: " + playerInfo);
     }
 
     @Override
@@ -329,7 +335,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void showFlightBoard(FlightBoard flightBoard,ArrayList<PlayerInfo> infoPlayers) {
+    public void showFlightBoard(FlightBoard flightBoard,ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
 
     }
 

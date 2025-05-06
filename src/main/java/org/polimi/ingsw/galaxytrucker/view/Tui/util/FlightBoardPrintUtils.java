@@ -87,7 +87,7 @@ public class FlightBoardPrintUtils {
         return tileRow;
     }
 
-    public static void printFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayer) {
+    public static void printFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayer,PlayerInfo myinfo) {
         int size = flightBoard.getFlightBoardMap().getFlightBoardMapSlots().size();
         int width =0 ,height = 0;
         int c,r,i=0;
@@ -100,6 +100,12 @@ public class FlightBoardPrintUtils {
             height = 4;
         }
 
+        switch (myinfo.getColor()){
+            case RED -> System.out.println(RED+"█"+RESET + " "+myinfo.getNickName() );
+            case GREEN -> System.out.println(GREEN+"█"+RESET + " "+myinfo.getNickName() );
+            case BLUE -> System.out.println(BLUE+"█"+RESET + " "+myinfo.getNickName() );
+            case YELLOW -> System.out.println(BRIGHT_YELLOW+"█"+RESET + " "+myinfo.getNickName() );
+        }
         for(int p=0; p < infoPlayer.size(); p++){
             switch (infoPlayer.get(p).getColor()){
                 case RED -> System.out.println(RED+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
