@@ -1057,12 +1057,12 @@ public class Ship implements Serializable {
 
         for (Position pos: positions){
             Tile tempTile = getTileFromPosition(pos);
-            if (lastTile.getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")){
+            if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")){
                 ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tempTile.getMyComponent();
                 if (!modularHousingUnit.getAlienColor().equals(AlienColor.EMPTY))  number += modularHousingUnit.getNCrewMembers();
 
             }
-            else if (lastTile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
+            else if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
                 CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tempTile.getMyComponent();
                 number += centralHousingUnit.getNCrewMembers();
             }
