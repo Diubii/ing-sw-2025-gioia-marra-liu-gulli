@@ -15,6 +15,8 @@ public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 12217367L;
 
+
+
     private  ArrayList<PlayerInfo> playersJoinedBefore;
     private final PlayerInfo playerInfo;
 
@@ -33,6 +35,10 @@ public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
 
     public void setPlayersJoinedBefore(ArrayList<PlayerInfo> playersJoinedBefore) {
         this.playersJoinedBefore = playersJoinedBefore;
+    }
+
+    public ArrayList<PlayerInfo> getPlayersJoinedBefore() {
+        return playersJoinedBefore;
     }
 
 

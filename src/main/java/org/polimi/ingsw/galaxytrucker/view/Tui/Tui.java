@@ -353,11 +353,13 @@ public class Tui implements View, Observable {
 
     }
 
+
+
     @Override
     public void showPlayerJoined(PlayerInfo infoPlayer) {
 
 
-        out.println("Player Joined:");
+        out.println("Giocatore entrato nella lobby:");
         switch (infoPlayer.getColor()) {
             case RED -> System.out.println(RED + "█" + RESET + " " + infoPlayer.getNickName());
             case GREEN -> System.out.println(GREEN + "█" + RESET + " " + infoPlayer.getNickName());
@@ -367,6 +369,28 @@ public class Tui implements View, Observable {
         System.out.println();
 
         out.println();
+    }
+
+    @Override
+    public void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> infoPlayer) {
+        System.out.println("Giocatori nella lobby: ");
+        System.out.print("IO: ");
+        switch (myinfo.getColor()){
+            case RED -> System.out.println(RED+"█"+RESET + " "+myinfo.getNickName() );
+            case GREEN -> System.out.println(GREEN+"█"+RESET + " "+myinfo.getNickName() );
+            case BLUE -> System.out.println(BLUE+"█"+RESET + " "+myinfo.getNickName() );
+            case YELLOW -> System.out.println(BRIGHT_YELLOW+"█"+RESET + " "+myinfo.getNickName() );
+            case null, default -> System.out.println();
+        }
+        for(int p=0; p < infoPlayer.size(); p++){
+            switch (infoPlayer.get(p).getColor()){
+                case RED -> System.out.println(RED+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+                case GREEN -> System.out.println(GREEN+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+                case BLUE -> System.out.println(BLUE+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+                case YELLOW -> System.out.println(BRIGHT_YELLOW+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+            }
+        }
+        System.out.println();
     }
 
     @Override
@@ -1453,9 +1477,9 @@ public class Tui implements View, Observable {
 
     }
 
-    public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers) {
+    public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers,PlayerInfo myinfo) {
 
-        FlightBoardPrintUtils.printFlightBoard(flightBoard,infoPlayers);
+        FlightBoardPrintUtils.printFlightBoard(flightBoard,infoPlayers,myinfo);
 
     }
 

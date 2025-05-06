@@ -38,6 +38,7 @@ public interface View {
 //    void showPlayerJoined(HashMap<String, Color> playerInfo);
 
     void showPlayerJoined(PlayerInfo playerInfos);
+    void showPlayersLobby(PlayerInfo myInfo,ArrayList<PlayerInfo> playerInfos);
 
     void handleChoiceForPhase(GameState phase);
     void handlePhaseUpdate(PhaseUpdate phaseUpdate);
@@ -74,7 +75,7 @@ public interface View {
     void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
 // Flight
     void askDrawCard();
-    void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers);
+    void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo);
     void showCurrentAdventureCard();
 
 

@@ -381,7 +381,7 @@ public class ServerController {
                 playerHandlers.remove(clientHandler);
 
                 playerJoinedUpdate.setPlayersJoinedBefore(myGame.getPlayerInfos());
-                broadCast(playerHandlers, playerJoinedUpdate);
+                broadCast(original, playerJoinedUpdate);
 
                 //dopo aver mandato la notifica di connessione vedo se ho raggiunto il numero massimo di player per la lobby
                 //e starto il gioco automaticamente lato server
