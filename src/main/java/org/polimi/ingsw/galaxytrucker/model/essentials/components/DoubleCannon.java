@@ -24,14 +24,17 @@ public class DoubleCannon extends Cannon {
         if(getRotation()!=0){
             if(charged){
                FirePower = FirePower*2;
+               charged = false;
             }
-            //altrimenti rimane uguale
+            //Altrimenti rimane uguale
         }
         else{
             if(!charged){
                 FirePower = FirePower/2;
             }
-            //altrimenti rimane uguale
+            else{ //Altrimenti rimane uguale
+                charged = false;
+            }
         }
     }
 

@@ -28,6 +28,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -239,26 +240,27 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 //                }
 //            }
 
-            for(Position housingUnitPosition : housings) {
+            for (Position housingUnitPosition : housings) {
                 //Dynamic binding, anche se faccio il cast a CentralHousingUnit il tipo dinamico potrebbe essere ModularHousingUnit
                 CentralHousingUnit housingUnit = (CentralHousingUnit) ship.getComponentFromPosition(housingUnitPosition);
 
                 ArrayList<Pair<Position, Tile>> connectedHousingUnitTilesWithPositions = ship.getConnectedHousingUnitTiles(housingUnitPosition);
-                for(Pair<Position, Tile> connectedHousingUnitTileWithPosition : connectedHousingUnitTilesWithPositions) {
+                for (Pair<Position, Tile> connectedHousingUnitTileWithPosition : connectedHousingUnitTilesWithPositions) {
                     //Dynamic binding, anche se faccio il cast a CentralHousingUnit il tipo dinamico potrebbe essere ModularHousingUnit
                     CentralHousingUnit connectedHousingUnit = (CentralHousingUnit) connectedHousingUnitTileWithPosition.getValue().getMyComponent();
 
                     //Se entrambe le housingUnits hanno equipaggio, lo rimuovo da entrambe
-                    if(housingUnit.getNCrewMembers() != 0 && connectedHousingUnit.getNCrewMembers() != 0) {
+                    if (housingUnit.getNCrewMembers() != 0 && connectedHousingUnit.getNCrewMembers() != 0) {
                         housingUnit.removeCrewMember();
                         connectedHousingUnit.removeCrewMember();
                     }
 
                     //Se nella housing unit connessa non ci sono più membri la rimuovo dalle housing units da controllare
-                    if(connectedHousingUnit.getNCrewMembers() == 0) housings.remove(connectedHousingUnitTileWithPosition.getKey());
+                    if (connectedHousingUnit.getNCrewMembers() == 0)
+                        housings.remove(connectedHousingUnitTileWithPosition.getKey());
 
                     //Se nella housing unit che stiamo guardando non ci sono più membri, esco dal foreach
-                    if(housingUnit.getNCrewMembers() == 0)
+                    if (housingUnit.getNCrewMembers() == 0)
                         break;
                 }
             }
@@ -326,16 +328,25 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
     @NeedsToBeCompleted("Disattivare motori doppi")
     @Override
     public void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException, PlayerNotFoundException {
+        HashMap<String, Integer> playerToPowerMap = new HashMap<>();
+
         for (Player player : rankedPlayers) {
             ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
             sendMessageAndGetResponse(lobbyManager, player, activateDoubleEnginesRequest);
             int playerEnginePower = player.getShip().calculateEnginePower();
-            if (playerEnginePower == 0) {
-                lobbyManager.getGameController().removePlayerFromGame(player.getNickName(), false);
-                continue;
-            }
+            playerToPowerMap.put(player.getNickName(), playerEnginePower);
             movePlayer(lobbyManager, player, playerEnginePower);
         }
+
+        playerToPowerMap.forEach((nickname, power) -> {
+            if (power == 0) {
+                try {
+                    lobbyManager.getGameController().removePlayerFromGame(nickname, false);
+                } catch (PlayerNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @NeedsToBeChecked("Non è giusto inserire un selectedPlanetUpdate nell'addPendingResponse di shipUpdates")
@@ -358,7 +369,7 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                 Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
                 if (selectedPlanet != null) { //Se il player ha scelto
                     selectedPlanet.setOccupied(true);
-                    SelectedPlanetUpdate selectedPlanetUpdate = new SelectedPlanetUpdate(player.getNickName(), selectedPlanet,selectPlanetResponse.getPlanetIndex());
+                    SelectedPlanetUpdate selectedPlanetUpdate = new SelectedPlanetUpdate(player.getNickName(), selectedPlanet, selectPlanetResponse.getPlanetIndex());
                     broadcast(lobbyManager, selectedPlanetUpdate); //Broadcasto un SelectedPlanetUpdate
                     CompletableFuture<NetworkMessage> shipUpdateFuture = new CompletableFuture<>();
                     lobbyManager.addPendingResponse(shipUpdateFuture, selectedPlanetUpdate.getID()); //Mi deve arrivare uno ShipUpdate
