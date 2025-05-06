@@ -189,14 +189,15 @@ public class GameController {
         handleTurnBeforeDrawnCard();
 
         cardDrawn.get();
-        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(cardDeckTest.peek());
+        AdventureCard adventureCard = cardDeckTest.pop();
+
+        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(adventureCard);
         myGame.getPlayerHandlers().values().forEach(ch -> {
             ch.sendMessage(drawnAdventureCardUpdate);
         }); //Mando match info update
 
 
         //Test
-        AdventureCard adventureCard = cardDeckTest.peek();
         ArrayList<Player> rankedPlayers = new ArrayList<>(myGame.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
 
         if (!rankedPlayers.isEmpty()) {
@@ -259,7 +260,10 @@ public class GameController {
 
     @NeedsToBeCompleted
     public void completeCardDrawn(){
-        cardDrawn.complete(null);
+        if( cardDrawn != null) {
+            cardDrawn.complete(null);
+        }
+
     }
 
     public void removePlayerFromGame(String nickname, boolean isLandingEarly) throws PlayerNotFoundException {

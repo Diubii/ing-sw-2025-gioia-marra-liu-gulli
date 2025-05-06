@@ -44,22 +44,31 @@ public class FlightBoard implements Serializable {
         int initialPos = ((playerSteps.get(token) % size) + size) % size;
         boolean occupied = true;
         int additionalSteps = 0;
+        int realSteps = 0;
+        int tempFinalPos = ((initialPos + additionalSteps) % size + size) % size;
 
-        while (occupied) {
-            int tempFinalPos = ((initialPos + steps + additionalSteps) % size + size) % size;
+//        System.out.println("tempFinalPos: start" + tempFinalPos);
+//        System.out.println("playerSteps: start" + playerSteps);
+
+        while (realSteps != steps) {
+            tempFinalPos = ((initialPos + additionalSteps + realSteps) % size + size) % size;
 
             if (flightBoardMap.getFlightBoardMapSlots().get(tempFinalPos).getPlayerToken() != Color.EMPTY) {
                 // Occupata
                 if (steps > 0) additionalSteps++;
                 else additionalSteps--;
             } else {
-                positionPlayer(token, tempFinalPos);
-                playerSteps.put(token, playerSteps.get(token) + steps + additionalSteps);
-                occupied = false;
+                if (steps > 0) realSteps++;
+                else realSteps--;
             }
+
+//            System.out.println("tempFinalPos: " + tempFinalPos);
+//            System.out.println("realSteps: " + realSteps);
+//            System.out.println("additionalSteps: " + additionalSteps);
 
         }
 
+        positionPlayer(token, tempFinalPos);
         flightBoardMap.getFlightBoardMapSlots().get(initialPos).setPlayerToken(Color.EMPTY);
 
     }
