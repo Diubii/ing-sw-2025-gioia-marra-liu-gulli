@@ -220,9 +220,17 @@ public class ServerController {
         joinRoomResponse.setColor(myColor);
         joinRoomResponse.setMyShip(myPlayer.getShip());
 
+        PlayerInfo playerInfo1 = new PlayerInfo();
+        playerInfo1.setShip(myPlayer.getShip());
+        playerInfo1.setNickName(myPlayer.getNickName());
+        playerInfo1.setColor(myColor);
+        newGame.addPlayerInfo(playerInfo1);
+
 
         clientHandler.sendMessage(joinRoomResponse);
         clientHandler.sendMessage(new FlightBoardUpdate(newGame.getRealGame().getFlightBoard()));
+
+
     }
 
     public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler) {
@@ -316,10 +324,6 @@ public class ServerController {
 
                 playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
 
-
-
-//                    ArrayList<Player> players = (ArrayList<Player>) myGame.getRealGame().getPlayers();
-                HashMap<String, Color> playerInfo = myGame.getPlayerColors();
 
                 PlayerInfo playerInfo1 = new PlayerInfo();
                 playerInfo1.setShip(myPlayer.getShip());

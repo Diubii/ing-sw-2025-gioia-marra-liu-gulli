@@ -59,6 +59,9 @@ public class FlightBoard implements Serializable {
             }
 
         }
+
+        flightBoardMap.getFlightBoardMapSlots().get(initialPos).setPlayerToken(Color.EMPTY);
+
     }
 
     public ArrayList<Color> getRankedPlayers() {

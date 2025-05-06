@@ -105,7 +105,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
             output.writeObject(message);
             output.flush();
         } catch (IOException e) {
-            //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ClientSocket, TuiColor.GREEN, "Tried to send a message to a closed socket: " + clientSocket.getInetAddress().toString() ));
+            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ClientSocket, TuiColor.GREEN, "Tried to send a message to a closed socket: " + clientSocket.getInetAddress().toString() ));
         }
     }
 

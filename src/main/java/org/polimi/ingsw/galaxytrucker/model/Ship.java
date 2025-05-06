@@ -369,6 +369,7 @@ public class Ship implements Serializable {
      * Calcola il numero di connettori esposti nella nave.
      */
     public void calcExposedConnectors() {
+        nExposedConnector = 0;
         int tempSum;
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 7; j++) {
