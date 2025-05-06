@@ -347,7 +347,7 @@ public class ClientController implements Observer {
                 synchronized (myModel.getPlayerInfos()){
                     ArrayList<PlayerInfo> appInfo  = myModel.getPlayerInfos();
                     appInfo.add(playerJoinedUpdate.getPlayerInfo());
-                    myModel.setPlayerInfos(appInfo);
+//                    myModel.setPlayerInfos(appInfo);
                 }
 
                 view.showPlayerJoined(playerInfo);

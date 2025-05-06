@@ -1046,4 +1046,28 @@ public class Ship implements Serializable {
     public Float calculateFirePower() {
         return (float) getCannonPos().stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();
     }
+
+    public int getHumanCrewNumber(){
+
+        int number = 0;
+
+        ArrayList<Position> positions = new ArrayList<>(getComponentPositionsFromName("ModularHousingUnit"));
+        positions.addAll(getComponentPositionsFromName("CentralHousingUnit"));
+
+        for (Position pos: positions){
+            Tile tempTile = getTileFromPosition(pos);
+            if (lastTile.getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")){
+                ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tempTile.getMyComponent();
+                if (!modularHousingUnit.getAlienColor().equals(AlienColor.EMPTY))  number += modularHousingUnit.getNCrewMembers();
+
+            }
+            else if (lastTile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
+                CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tempTile.getMyComponent();
+                number += centralHousingUnit.getNCrewMembers();
+            }
+        }
+
+        return number;
+
+    }
 }

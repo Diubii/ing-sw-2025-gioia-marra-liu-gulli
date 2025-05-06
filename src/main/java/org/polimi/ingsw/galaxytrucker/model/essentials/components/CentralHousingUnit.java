@@ -10,13 +10,14 @@ public class CentralHousingUnit extends Component {
 
     private final Color color;
     private int humanCrewNumber = 0;
-    private final Boolean isColored = Boolean.TRUE;
+    private  Boolean isColored = Boolean.TRUE;
 
     @JsonCreator
     public CentralHousingUnit( @JsonProperty("color") Color color ,@JsonProperty("humanCrewNumber") int humanCrewNumber) {
         super(false);
         this.color = color;
         if (!color.equals(Color.EMPTY)) setHumanCrewNumber(2);
+        if (color.equals(Color.EMPTY)) isColored = false;
 
     }
 
@@ -24,6 +25,8 @@ public class CentralHousingUnit extends Component {
         super(false);
         this.color = color;
         if (!color.equals(Color.EMPTY)) setHumanCrewNumber(2);
+        if (color.equals(Color.EMPTY)) isColored = false;
+
     }
 
     public Color getColor() {

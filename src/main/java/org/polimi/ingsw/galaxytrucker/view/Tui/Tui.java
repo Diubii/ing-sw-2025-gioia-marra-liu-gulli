@@ -1414,8 +1414,9 @@ public class Tui implements View, Observable {
                     input = readLine("Inserisci la tua scelta (a/b/c o menu) : ");
                     if (input.toLowerCase().matches("[abc]")) {
                         valid = true;
-                    } else {
-                        out.println("Input non valido.");
+                    } else  {
+                        if (input.toLowerCase().matches("reset")) System.out.println();
+                        else System.out.println("input non valido");
                     }
 
 
@@ -1431,8 +1432,9 @@ public class Tui implements View, Observable {
                     input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ");
                     if (input.toLowerCase().matches("[abcd]")) {
                         valid = true;
-                    } else {
-                        out.println("Input non valido.");
+                    } else  {
+                        if (input.toLowerCase().matches("reset")) System.out.println();
+                        else System.out.println("input non valido");
                     }
 
 

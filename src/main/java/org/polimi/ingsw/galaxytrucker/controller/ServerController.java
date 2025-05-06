@@ -324,6 +324,8 @@ public class ServerController {
                 playerInfo1.setShip(myPlayer.getShip());
                 playerInfo1.setNickName(myPlayer.getNickName());
                 playerInfo1.setColor(myColor);
+                //qua
+//                ArrayList<ClientHandler> PlayerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
 
                 playerJoinedUpdate = new PlayerJoinedUpdate(playerInfo1);
 
@@ -337,6 +339,7 @@ public class ServerController {
                 joinRoomResponse.setOperationSuccess(true);
                 joinRoomResponse.setColor(myColor);
                 joinRoomResponse.setMyShip(myPlayer.getShip());
+                myGame.addPlayerInfo(playerInfo1);
 
                 if (myLobbyInfo != null) {
 
@@ -361,7 +364,7 @@ public class ServerController {
             hostPlayerInfo.setColor(myGame.getPlayerColors().get(myLobbyInfo.getHost()));
 
 
-            clientHandler.sendMessage(new PlayerJoinedUpdate(hostPlayerInfo));
+//            clientHandler.sendMessage(new PlayerJoinedUpdate(hostPlayerInfo));
             clientHandler.sendMessage(new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
             clientHandler.sendMessage(joinRoomResponse);
             System.out.println("ID RESP: " + joinRoomResponse.getID());
@@ -371,6 +374,7 @@ public class ServerController {
                 ArrayList<ClientHandler> original = new ArrayList<>(playerHandlers);
                 playerHandlers.remove(clientHandler);
 
+                playerJoinedUpdate.setPlayersJoinedBefore(myGame.getPlayerInfos());
                 broadCast(playerHandlers, playerJoinedUpdate);
 
                 //dopo aver mandato la notifica di connessione vedo se ho raggiunto il numero massimo di player per la lobby
@@ -392,6 +396,8 @@ public class ServerController {
                     decksUpdate.setDecks(decks);
                     decksUpdate.setFlightDeck(null);
 
+
+                    //broadcst tutte le player info
 
                     myGame.getGameController().nextState();
                     broadCast(original, decksUpdate);
@@ -566,12 +572,27 @@ public class ServerController {
             int minPos = 1;
             ArrayList<Integer> takenPos = myGame.getRealGame().getFlightBoard().getOccupiedPositions();
 
+
             for (int i = 1; i <= maxPos; i++) {
 
-                if (!takenPos.contains(i)) {
+                int realPos = 0;
+
+                switch (i){
+                    case 1 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFirstPos();
+                    case 2 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getSecondPos();
+                    case 3 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getThirdPos();
+                    case 4 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFourthPos();
+                }
+
+                if (!takenPos.contains(realPos)) {
                     validPos.add(i);
                 }
             }
+
+            //in occupied positions ho i valori interi che vanno tradotti nelle posizioni
+//            for (int pos: takenPos){
+//
+//            }
 
             askPositionUpdate = new AskPositionUpdate(validPos);
             askPositionUpdate.nickname = nickname;

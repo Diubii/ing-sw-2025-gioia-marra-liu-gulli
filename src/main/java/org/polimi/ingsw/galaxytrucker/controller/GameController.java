@@ -187,6 +187,7 @@ public class GameController {
 
             adventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame); //Attivo l'effetto della carta
 
+            //start controlli post carta
 
             //Controllo se ci sono giocatori doppiati e nel caso li rimuovo
             FlightBoard flightBoard = myGame.getRealGame().getFlightBoard();
@@ -199,7 +200,24 @@ public class GameController {
                         throw new RuntimeException(e);
                     }
                 }
+
+                //controllo zero umani
+                String playerNickname = myGame.getPlayerColors().entrySet().stream().filter(e -> e.getValue() == color).findFirst().get().getKey();
+                Player player = myGame.getRealGame().getPlayerFromName(playerNickname);
+
+                if ( !player.getPlayerState().equals(PlayerState.Spectating) && player.getShip().getHumanCrewNumber() == 0){
+                    try {
+                        removePlayerFromGame(playerNickname, false); //Lo rimuovo
+                    } catch (PlayerNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
             }
+
+
+
+            //end controlli
 
             myGame.getPlayerHandlers().values().forEach(ch -> {
                 ch.sendMessage(new EndTurnUpdate());
@@ -229,6 +247,7 @@ public class GameController {
     }
 
     public void removePlayerFromGame(String nickname, boolean isLandingEarly) throws PlayerNotFoundException {
+
         myGame.getRealGame().getPlayer(nickname).setPlayerState(PlayerState.Spectating);
         myGame.getRealGame().getFlightBoard().removePlayer(myGame.getPlayerColors().get(nickname));
 

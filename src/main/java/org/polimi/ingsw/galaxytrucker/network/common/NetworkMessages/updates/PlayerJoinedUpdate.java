@@ -8,13 +8,14 @@ import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInt
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 12217367L;
 
-    //    private  final ArrayList<Player> players;
+    private  ArrayList<PlayerInfo> playersJoinedBefore;
     private final PlayerInfo playerInfo;
 
     public PlayerJoinedUpdate(PlayerInfo playerInfo) {

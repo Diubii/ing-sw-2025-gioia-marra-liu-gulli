@@ -4,6 +4,7 @@ import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
@@ -23,6 +24,7 @@ public class LobbyManager {
     private final GameController gameController;
     private final ArrayList<String> playerShipFinished = new ArrayList<>();
     private final ArrayList<String> playerCrewFinished = new ArrayList<>();
+    private ArrayList<PlayerInfo> playerInfos = new ArrayList<>();
 
 
 
@@ -43,6 +45,22 @@ public class LobbyManager {
     final Object lock2 = new Object();
     final Object lock3 = new Object();
     final Object lock4 = new Object();
+    final Object lock6 = new Object();
+
+
+    public ArrayList<PlayerInfo> getPlayerInfos() {
+        synchronized (lock6) {
+            return playerInfos;
+        }
+    }
+
+    public void addPlayerInfo(PlayerInfo playerInfo){
+        synchronized (lock6) {
+            this.playerInfos.add(playerInfo);
+        }
+    }
+
+
 
     public ArrayList<String> getPlayerShipFinished() {
         synchronized (lock1) {
