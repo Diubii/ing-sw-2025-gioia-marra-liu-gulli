@@ -2,16 +2,10 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
-import org.polimi.ingsw.galaxytrucker.model.Player;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Represents an abstract adventure card with common properties and behavior.
@@ -56,11 +50,9 @@ public abstract class AdventureCard implements Serializable {
     /**
      * Activates the effect of the adventure card.
      *
-     * @param aca          The activator responsible for triggering the card's effect.
-     * @param lobbyManager The game's {@link LobbyManager}
-     * @param cardPhase
+     * @param visitor The activator responsible for triggering the card's effect.
      */
-    public abstract void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase) throws ExecutionException, InterruptedException;
+    public abstract <T> T accept(AdventureCardVisitorsInterface<T> visitor);
     /**
      * Gets the unique identifier of the card.
      *
@@ -116,7 +108,4 @@ public abstract class AdventureCard implements Serializable {
     public boolean isFacultative() {
         return facultative;
     }
-
-
-    public abstract String[] accept(AdventureCardPrintVisitorInterface visitor);
 }

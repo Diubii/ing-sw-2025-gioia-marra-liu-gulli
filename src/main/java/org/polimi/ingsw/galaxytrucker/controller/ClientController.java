@@ -93,7 +93,7 @@ public class ClientController implements Observer {
         this.isSocket = flag;
         this.view = view;
 
-//        clientPhaseController.nextPhase();
+//        clientPhaseController.next();
         taskQueue = Executors.newSingleThreadExecutor();
         InputStream in = System.in;
 
@@ -962,7 +962,7 @@ public void setCurrentPos(int x, int y) throws ExecutionException {
                     view.showcheckShipMenu();
                 }
             case "b" -> {
-                    if (myModel.getMyInfo().getShip().remaningTiles() > 0)
+                    if (myModel.getMyInfo().getShip().remainingTiles() > 0)
                     {
                         view.askRemoveTile(myModel.getMyInfo().getShip());
                     } else {

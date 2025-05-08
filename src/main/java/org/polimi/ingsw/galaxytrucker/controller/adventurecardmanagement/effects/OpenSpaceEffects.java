@@ -1,0 +1,42 @@
+package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
+
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
+import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
+import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateComponentRequest;
+
+import java.util.HashMap;
+
+import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.movePlayer;
+import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.sendMessage;
+
+public class OpenSpaceEffects {
+    private final static HashMap<LobbyManager, HashMap<String, Integer>> playerToPowerMapPerGame = new HashMap<>();
+
+    public static void doubleEnginesActivationRequest(CardContext context) {
+        sendMessage(context, new ActivateComponentRequest(ActivatableComponent.DoubleEngine));
+    }
+
+    public static void doubleEnginesActivated(CardContext context) {
+        LobbyManager game = context.getCurrentGame();
+        Player player = context.getCurrentPlayer();
+
+        int playerEnginePower = player.getShip().calculateEnginePower();
+        HashMap<String, Integer> playerToPowerMap;
+
+        //Populating HashMap
+        if(playerToPowerMapPerGame.get(game) != null){
+            playerToPowerMap = playerToPowerMapPerGame.get(game);
+        }
+        else{
+            playerToPowerMap = new HashMap<>();
+            playerToPowerMapPerGame.put(game, playerToPowerMap);
+        }
+        playerToPowerMap.put(player.getNickName(), playerEnginePower);
+
+        movePlayer(context, playerEnginePower);
+    }
+
+    public static void 
+}

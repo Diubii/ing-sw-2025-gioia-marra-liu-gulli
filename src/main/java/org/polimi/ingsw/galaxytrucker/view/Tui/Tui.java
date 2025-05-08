@@ -1,15 +1,11 @@
 package org.polimi.ingsw.galaxytrucker.view.Tui;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
@@ -26,12 +22,8 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
-import org.polimi.ingsw.galaxytrucker.model.essentials.*;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
-import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
@@ -46,7 +38,6 @@ import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 
 
-import static org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardPrintUtils.printFlightBoard;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.InputUtils.parseCoordinate;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils.printShip;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.printTile;
@@ -861,7 +852,7 @@ public class Tui implements View, Observable {
                 clientController.getMyModel().addTileToRemove(tile.getId());
                 ship.removeTile(pos, true);
 
-                if (ship.remaningTiles() == 0){
+                if (ship.remainingTiles() == 0){
                     System.out.println("Your ship is a ghost, go back to the menuuuuuu");
                     showcheckShipMenu();
                     return;

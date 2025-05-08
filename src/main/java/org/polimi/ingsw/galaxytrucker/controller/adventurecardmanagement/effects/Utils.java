@@ -1,0 +1,124 @@
+package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
+
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
+import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
+import org.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
+import org.polimi.ingsw.galaxytrucker.enums.ProjectileType;
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.Projectile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DiscardCrewMembersResponse;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.FlightBoardUpdate;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
+import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
+
+/**
+ * This class includes common shared methods among the cards' effects methods.
+ */
+public class Utils {
+    /**
+     * Moves a player in the game's flight board and sends an update to all clients.
+     *
+     * @param context
+     * @param steps
+     */
+    protected static void movePlayer(CardContext context, int steps) {
+        LobbyManager game = context.getCurrentGame();
+        Player player = context.getCurrentPlayer();
+
+        FlightBoard flightBoard = game.getRealGame().getFlightBoard();
+        flightBoard.movePlayer(game.getPlayerColors().get(player.getNickName()), steps);
+        FlightBoardUpdate fbu = new FlightBoardUpdate(flightBoard);
+        String message = "Player " + player.getNickName() + "moved " + steps + " steps!";
+        broadcast(game, new GameMessage(message));
+        broadcast(game, fbu);
+    }
+
+    protected static void discardCrewMembers(Player player, DiscardCrewMembersResponse discardCrewMembersResponse) {
+        ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+        for (Position position : discardCrewMembersResponse.getHousingPositions()) { //Per ogni posizione (assumo posizioni duplicate per scartare più volte dalla stessa housing unit)
+            Component housingUnit = player.getShip().getComponentFromPosition(position); //Prendo la housingUnit dalla position data
+            String componentName = componentNameVisitor.visit(housingUnit); //Visitor
+
+            if (componentName.equals("CentralHousingUnit")) {
+                ((CentralHousingUnit) housingUnit).removeCrewMember();
+            } else { //Altrimenti è una ModularHousingUnit
+                ModularHousingUnit modularHousingUnit = (ModularHousingUnit) housingUnit;
+
+                if (modularHousingUnit.getNCrewMembers() > 0) { //Ci sono solo umani
+                    modularHousingUnit.removeCrewMember();
+                } else { //Ci sono solo alieni
+                    modularHousingUnit.removeAlienCrew();
+                }
+            }
+        }
+    }
+
+    protected static void sendMessage(CardContext cardContext, NetworkMessage message) {
+        cardContext.getCurrentPlayerHandler().sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
+        cardContext.setExpectedNetworkMessageType(message.accept(new NetworkMessageCouplingVisitor()));
+    }
+
+//    protected static void sendMessageAndDeferGetResponse(LobbyManager lobbyManager, Player player, NetworkMessage message, ArrayList<CompletableFuture<NetworkMessage>> futures) {
+//        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+//        ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
+//        lobbyManager.addPendingResponse(future, message.getID()); //Notifico che sono in attesa di una risposta
+//        clientHandler.sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
+//        futures.add(future);
+//    }
+
+    protected static void sendGameMessage(LobbyManager lobbyManager, Player player, String message) {
+        GameMessage gameMessage = new GameMessage(message);
+        gameMessage.setMessage(message);
+        lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
+    }
+
+    protected static void broadcastGameMessage(LobbyManager lobbyManager, String message) {
+        broadcast(lobbyManager, new GameMessage(message));
+    }
+
+    protected static void broadcast(LobbyManager lobbyManager, NetworkMessage message) {
+        lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(message));
+    }
+
+    /**
+     * Checks if a player has a shield orientated the same way of the incoming projectile. Does not check for same row/column.
+     *
+     * @param player
+     * @param projectile
+     * @author Alessandro Giuseppe Gioia
+     */
+    protected static boolean playerCanDefendThemselvesWithAShield(Player player, Projectile projectile) {
+        if (projectile.getSize() == ProjectileSize.Big) return false;
+        else
+            return player.getShip().getComponentPositionsFromName("Shield").stream().anyMatch(p -> ((Shield) player.getShip().getComponentFromPosition(p)).getProtectedSides().contains(projectile.getDirection()));
+    }
+
+    protected static boolean playerCanDefendThemselvesWithASingleCannon(Player player, Projectile projectile, int diceRoll) {
+        if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.Big) return false;
+        else return player.getShip().getComponentPositionsFromName("Cannon").stream().anyMatch(p -> {
+            Cannon c = (Cannon) player.getShip().getComponentFromPosition(p);
+            if (c.getRotation() == projectile.getDirection().ordinal()) {
+                return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
+            } else return false;
+        });
+    }
+
+    protected static boolean playerCanDefendThemselvesWithADoubleCannon(Player player, Projectile projectile, int diceRoll) {
+        if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.Big) return false;
+        else
+            return player.getShip().getComponentPositionsFromName("DoubleCannon").stream().anyMatch(p -> {
+                DoubleCannon c = (DoubleCannon) player.getShip().getComponentFromPosition(p);
+                if (c.getRotation() == projectile.getDirection().ordinal()) {
+                    return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
+                } else return false;
+            });
+    }
+}

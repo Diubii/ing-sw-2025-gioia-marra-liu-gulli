@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -877,10 +878,10 @@ public class ServerController {
 
         broadCast(playerHandlers, shipUpdate);
 
-        //Sveglio visitOpenSpace
+        //Sveglio visit
         myGame.completePendingResponse(activateDoubleEnginesResponse.getID(), activateDoubleEnginesResponse);
-        //settare la fase
-        myGame.getGameController().currentCardPhase = CardPhase.ActivateComponent;
+        //Next phase
+        myGame.getGameController().getCurrentCardContext().nextPhase();
         myGame.getGameController().resumeCurrentCard();
 
     }
@@ -973,6 +974,9 @@ public class ServerController {
 
             broadCast(playerHandlers , shipUpdate);
 
+            if(myGame.getGameController().getCurrentCardContext().getExpectedNetworkMessageType() == NetworkMessageType.ShipUpdate){
+                //Vai avanti
+            }
         }
 
         return null;
@@ -994,27 +998,15 @@ public class ServerController {
         new Thread(heartbeat).start();
     }
 
-    private ArrayList<Heartbeat> getHeartbeats() {
-        return heartbeats;
-    }
-
     public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        GameController gameController = myGame.getGameController();
         //Test
-        CardDeck deck = myGame.getGameController().getCardDeckTest();
-       AdventureCard ac =  deck.pop();
-       myGame.getGameController().currentAdventureCard = ac;
-       myGame.getGameController().currentCardPhase = CardPhase.START;
+        CardDeck deck = gameController.getCardDeckTest();
+        AdventureCard ac =  deck.pop();
 
-        try {
-            myGame.getGameController().handleTurn();
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-
+        gameController.setCurrentCardContext(new CardContext(myGame, ac, gameController.getRankedPlayers()));
+        gameController.handleTurn();
     }
 
     public void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) {

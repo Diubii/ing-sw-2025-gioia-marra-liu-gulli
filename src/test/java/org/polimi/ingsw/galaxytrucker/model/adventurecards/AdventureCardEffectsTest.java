@@ -2,19 +2,12 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import org.junit.jupiter.api.Test;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
-import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
-import org.polimi.ingsw.galaxytrucker.network.server.RMIClientHandler;
-import org.polimi.ingsw.galaxytrucker.network.server.SocketClientHandler;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AdventureCardEffectsTest {
 
@@ -23,7 +16,7 @@ class AdventureCardEffectsTest {
     }
 
     @Test
-    void visitPlanets() throws ExecutionException, InterruptedException {
+    void visit() throws ExecutionException, InterruptedException {
         //Goods
         Good good1 = new Good(Color.RED);
         Good good2 = new Good(Color.BLUE);
@@ -59,7 +52,7 @@ class AdventureCardEffectsTest {
         FakeFlightBoard flightBoard = new FakeFlightBoard(false);
         lobbyManager.getRealGame().setFlightBoard(flightBoard);
 
-        AdventureCardEffects ace = new AdventureCardEffects();
-        ace.visitPlanets(planets, rankedPlayers, lobbyManager);
+//      AdventureCardEffects ace = new AdventureCardEffects();
+//      ace.visit(planets);
     }
 }

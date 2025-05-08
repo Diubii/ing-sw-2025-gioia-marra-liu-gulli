@@ -2,17 +2,12 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
-import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class CombatZone extends AdventureCard {
 
@@ -52,8 +47,9 @@ public class CombatZone extends AdventureCard {
 
     }
 
-    public void activateEffect(AdventureCardVisitorsInterface aca, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase) throws ExecutionException, InterruptedException {
-        aca.visitCombatZone(this, rankedPlayers, lobbyManager);
+    @Override
+    public <T> T accept(AdventureCardVisitorsInterface<T> visitor) {
+        return visitor.visit(this);
     }
 
     public int getCrewMembersLost() {
@@ -66,8 +62,5 @@ public class CombatZone extends AdventureCard {
 
     public ArrayList<Projectile> getProjectiles() {
         return projectiles;
-    }
-    public String[] accept(AdventureCardPrintVisitorInterface visitor){
-        return visitor.visit(this);
     }
 }

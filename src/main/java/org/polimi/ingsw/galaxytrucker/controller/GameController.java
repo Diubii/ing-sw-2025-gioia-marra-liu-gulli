@@ -1,6 +1,8 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.AdventureCardEffects;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.*;
@@ -12,34 +14,42 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class GameController {
 
     private GameState gameState;
-    private final LobbyManager myGame;
+    private final LobbyManager game;
     private int nCompletedShips = 0;
     final Object ncsLock = new Object();
     CompletableFuture cardDrawn;
     private Boolean gameEndedEarly = false;
     private CardDeck cardDeckTest = new CardDeck(true);
-    public CardPhase currentCardPhase;
-    public int currentPlayerIndex;
-    public AdventureCard currentAdventureCard = null;
+    //private CardContext currentCardContext;
+    private Iterator<Player> rankedPlayersIterator;
+
+    /*public CardContext getCurrentCardContext() {
+        return currentCardContext;
+    }*/
+
+    /*public void setCurrentCardContext(CardContext currentCardContext) {
+        this.currentCardContext = currentCardContext;
+    }*/
 
     public CardDeck getCardDeckTest() {
         return cardDeckTest;
     }
+
     public void setCardDeckTest(CardDeck cardDeckTest) {
         this.cardDeckTest = cardDeckTest;
     }
-
-    private final AdventureCardEffects adventureCardEffects = new AdventureCardEffects();
 
     public int getnCompletedShips() {
         synchronized (ncsLock) {
@@ -53,8 +63,8 @@ public class GameController {
         }
     }
 
-    public GameController(LobbyManager myGame) {
-        this.myGame = myGame;
+    public GameController(LobbyManager game) {
+        this.game = game;
         gameState = GameState.LOBBY;
     }
 
@@ -80,64 +90,44 @@ public class GameController {
     }
 
     public void startFlight() throws ExecutionException, InterruptedException, IOException {
+        cardDeckTest = Util.createTestDeck();
+        game.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
 
-         cardDeckTest = Util.createTestDeck();
-
-        myGame.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
-            handleTurnBeforeDrawnCard();
-
-
+        handleTurnBeforeDrawnCard();
     }
 
-    public void handleTurnBeforeDrawnCard(){
-        ArrayList<Player> rankedPlayers = new ArrayList<>(myGame.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
-        MatchInfoUpdate miu;
-        rankedPlayers.sort(Comparator.comparingInt(Player::getPlacement));
+    public void handleTurnBeforeDrawnCard() {
+        ArrayList<Player> rankedPlayers = currentCardContext.getCurrentRankedPlayers();
 
+        MatchInfoUpdate miu;
         if (!rankedPlayers.isEmpty()) {
             miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), cardDeckTest.getSize());
-
+            rankedPlayersIterator = rankedPlayers.iterator();
+            currentCardContext.setCurrentPlayer(rankedPlayersIterator.next()); //Setto come currentPlayer il primo dei rankedPlayers
         } else {
-            miu = new MatchInfoUpdate("", myGame.getRealGame().getFlightDeck().getSize());
-
+            miu = new MatchInfoUpdate("", game.getRealGame().getFlightDeck().getSize());
         }
-        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(miu);}); //Mando match info update
 
-
-
+        game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(miu)); //Mando match info update
     }
 
-    public void handleTurn() throws ExecutionException, InterruptedException {
-
-        //Prendo i players ordinati per placement
-
-
-
-        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(currentAdventureCard);
-        myGame.getPlayerHandlers().values().forEach(ch -> {
-            ch.sendMessage(drawnAdventureCardUpdate);
-        }); //Mando match info update
+    public void handleTurn() {
+        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(currentCardContext.getAdventureCard());
+        game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(drawnAdventureCardUpdate)); //Mando match info update
 
 
         //Test
-        ArrayList<Player> rankedPlayers = new ArrayList<>(myGame.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
-        currentPlayerIndex = 0;
-        currentAdventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame, currentCardPhase); //Attivo l'effetto della carta
-
-    }
-
-    public void removePlayerFromGame(String nickname) throws PlayerNotFoundException {
-
-
-
+        //Prendo i players ordinati per placement
+        AdventureCardVisitorsInterface<Void> adventureCardEffects = new AdventureCardEffects(game, currentCardContext.getCurrentRankedPlayers(), currentCardContext.getCurrentPhase());
+        currentCardContext.getAdventureCard().accept(adventureCardEffects); //Attivo l'effetto della carta
     }
 
     private void handleEndGame() {
     }
 
     @NeedsToBeCompleted
-    public void completeCardDrawn(){
-        if( cardDrawn != null) {
+    public void completeCardDrawn() {
+        if (cardDrawn != null) {
             cardDrawn.complete(null);
         }
 
@@ -145,29 +135,35 @@ public class GameController {
 
     public void removePlayerFromGame(String nickname, boolean isLandingEarly) throws PlayerNotFoundException {
 
-        myGame.getRealGame().getPlayer(nickname).setPlayerState(PlayerState.Spectating);
-        myGame.getRealGame().getFlightBoard().removePlayer(myGame.getPlayerColors().get(nickname));
+        game.getRealGame().getPlayer(nickname).setPlayerState(PlayerState.Spectating);
+        game.getRealGame().getFlightBoard().removePlayer(game.getPlayerColors().get(nickname));
 
-        FlightBoardUpdate fbu = new FlightBoardUpdate(myGame.getRealGame().getFlightBoard());
+        FlightBoardUpdate fbu = new FlightBoardUpdate(game.getRealGame().getFlightBoard());
         PlayerLostUpdate plu = new PlayerLostUpdate(nickname, isLandingEarly);
-        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(plu); ch.sendMessage(fbu);}); //Notifichiamo i client che un player ha perso e aggiorniamo la flight board
+        game.getPlayerHandlers().values().forEach(ch -> {
+            ch.sendMessage(plu);
+            ch.sendMessage(fbu);
+        }); //Notifichiamo i client che un player ha perso e aggiorniamo la flight board
 
-        if (myGame.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
+        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
             completeCardDrawn();
         }
     }
 
     public void kickPlayerFromGame(String nickname) throws PlayerNotFoundException {
-        myGame.getRealGame().getFlightBoard().removePlayer(myGame.getPlayerColors().get(nickname));
-        myGame.getRealGame().removePlayer(nickname);
+        game.getRealGame().getFlightBoard().removePlayer(game.getPlayerColors().get(nickname));
+        game.getRealGame().removePlayer(nickname);
 
-        FlightBoardUpdate fbu = new FlightBoardUpdate(myGame.getRealGame().getFlightBoard());
+        FlightBoardUpdate fbu = new FlightBoardUpdate(game.getRealGame().getFlightBoard());
         PlayerKickedUpdate pku = new PlayerKickedUpdate(nickname);
-        myGame.getPlayerHandlers().values().forEach(ch -> {ch.sendMessage(pku); ch.sendMessage(fbu);}); //Notifichiamo i client che un player è stato kickato e aggiorniamo la flight board
-        myGame.removePlayerHandler(nickname);
+        game.getPlayerHandlers().values().forEach(ch -> {
+            ch.sendMessage(pku);
+            ch.sendMessage(fbu);
+        }); //Notifichiamo i client che un player è stato kickato e aggiorniamo la flight board
+        game.removePlayerHandler(nickname);
 
-        if (myGame.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
+        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
             completeCardDrawn();
         }
@@ -184,42 +180,40 @@ public class GameController {
     public void reactToProjectile(Player targetPlayer, Projectile projectile, int diceRoll) {
         Ship ship = targetPlayer.getShip();
         Position pos = ship.getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll);
-        if(pos == null) return;
+        if (pos == null) return;
 
         boolean aTileHasBeenDestroyed = false;
         String message = "Tile distrutta in posizione [" + pos.getX() + "," + pos.getY() + "]";
 
         if (projectile.getType() == ProjectileType.CannonFire) {
-            if (projectile.getSize() == ProjectileSize.BIG) {
+            if (projectile.getSize() == ProjectileSize.Big) {
                 ship.removeTile(pos, false);
                 aTileHasBeenDestroyed = true;
-            }
-            else if (projectile.getSize() == ProjectileSize.LITTLE){
-                if(!protectWithFirstAvailableCorrectlyOrientedChargedShield(ship, projectile.getDirection())){
+            } else if (projectile.getSize() == ProjectileSize.Little) {
+                if (!protectWithFirstAvailableCorrectlyOrientedChargedShield(ship, projectile.getDirection())) {
                     ship.removeTile(pos, false);
                     aTileHasBeenDestroyed = true;
                 }
             }
         } else if (projectile.getType() == ProjectileType.Meteor) {
-            if (projectile.getSize() == ProjectileSize.BIG) {
-                if(!protectWithFirstAvailableCannon(ship, projectile.getDirection())){
+            if (projectile.getSize() == ProjectileSize.Big) {
+                if (!protectWithFirstAvailableCannon(ship, projectile.getDirection())) {
                     ship.removeTile(pos, false);
                     aTileHasBeenDestroyed = true;
                 }
-            }
-            else if (projectile.getSize() == ProjectileSize.LITTLE) {
+            } else if (projectile.getSize() == ProjectileSize.Little) {
                 ArrayList<Connector> tileConnectors = ship.getShipBoard()[pos.getY()][pos.getX()].getTile().getSides();
                 int index = -1;
 
                 switch (projectile.getDirection()) {
-                    case UP    -> index = 0;
+                    case UP -> index = 0;
                     case RIGHT -> index = 1;
-                    case DOWN  -> index = 2;
-                    case LEFT  -> index = 3;
+                    case DOWN -> index = 2;
+                    case LEFT -> index = 3;
                 }
 
-                if(tileConnectors.get(index) != Connector.EMPTY){ //Se non è un lato liscio
-                    if(!protectWithFirstAvailableCorrectlyOrientedChargedShield(ship, projectile.getDirection())){ //Se non c'è uno shield disponibile a proteggere
+                if (tileConnectors.get(index) != Connector.EMPTY) { //Se non è un lato liscio
+                    if (!protectWithFirstAvailableCorrectlyOrientedChargedShield(ship, projectile.getDirection())) { //Se non c'è uno shield disponibile a proteggere
                         ship.removeTile(pos, false);
                         aTileHasBeenDestroyed = true;
                     }
@@ -227,11 +221,10 @@ public class GameController {
             }
         }
 
-        if(aTileHasBeenDestroyed){
-            myGame.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
+        if (aTileHasBeenDestroyed) {
+            game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
         }
     }
-
 
     /**
      * Finds the first available charged shield oriented according to the direction from which the projectile will come from and protects
@@ -244,14 +237,14 @@ public class GameController {
     private boolean protectWithFirstAvailableCannon(Ship ship, ProjectileDirection direction) {
         for (Position cannonPos : ship.getComponentPositionsFromName("Cannon")) {
             Cannon cannon = (Cannon) ship.getComponentFromPosition(cannonPos);
-            if(cannon.getRotation() == direction.ordinal()){
+            if (cannon.getRotation() == direction.ordinal()) {
                 return true;
             }
         }
 
         for (Position cannonPos : ship.getComponentPositionsFromName("DoubleCannon")) {
             DoubleCannon doubleCannon = (DoubleCannon) ship.getComponentFromPosition(cannonPos);
-            if(doubleCannon.getRotation() == direction.ordinal() && doubleCannon.isCharged()){
+            if (doubleCannon.getRotation() == direction.ordinal() && doubleCannon.isCharged()) {
                 doubleCannon.setCharged(false);
                 return true;
             }
@@ -279,15 +272,23 @@ public class GameController {
     }
 
     public void resumeCurrentCard() {
-        ArrayList<Player> rankedPlayers = new ArrayList<>(myGame.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
+        ArrayList<Player> rankedPlayers = getRankedPlayers();
+        AdventureCardVisitorsInterface<Void> visitor = new AdventureCardEffects(game, rankedPlayers, currentCardContext.getCurrentPhase());
+        currentCardContext.getAdventureCard().accept(visitor); //Attivo l'effetto della carta
+    }
 
-        try {
-            currentAdventureCard.activateEffect(adventureCardEffects, rankedPlayers, myGame, currentCardPhase); //Attivo l'effetto della carta
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public void affectNextPlayer(){
+        currentCardContext.resetFSM();
+        currentCardContext.setCurrentPlayer(nextPlayer());
+        AdventureCardVisitorsInterface<Void> visitor = new AdventureCardEffects(game, currentCardContext.getCurrentRankedPlayers(), currentCardContext.getCurrentPhase());
+        currentCardContext.getAdventureCard().accept(visitor);
+    }
 
+    public ArrayList<Player> getRankedPlayers() {
+        return new ArrayList<>(game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).sorted(Comparator.comparingInt(Player::getPlacement)).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
+    }
+
+    public Player nextPlayer(){
+       return rankedPlayersIterator.next();
     }
 }

@@ -9,26 +9,26 @@ import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public interface AdventureCardVisitorsInterface {
-    void visitAbandonedShip(AbandonedShip abandonedShip, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
+public interface AdventureCardVisitorsInterface<T> {
+    T visit(AbandonedShip abandonedShip);
 
-    void visitAbandonedStation(AbandonedStation abandonedStation, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
+    T visit(AbandonedStation abandonedStation);
 
-    void visitCombatZone(CombatZone combatZone, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
+    T visit(CombatZone combatZone);
 
-    void visitEpidemic(Epidemic epidemic, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
+    T visit(Epidemic epidemic);
 
-    void visitMeteorSwarm(MeteorSwarm meteorSwarm, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
+    T visit(MeteorSwarm meteorSwarm);
 
-    void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase) throws ExecutionException, InterruptedException, PlayerNotFoundException;
+    T visit(OpenSpace openSpace);
 
-    void visitPlanets(Planets planets, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException;
+    T visit(Planets planets);
 
-    void visitStardust(Stardust stardust, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
+    T visit(Stardust stardust);
 
-    void visitPirates(Pirates pirates, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
+    T visit(Pirates pirates);
 
-    void visitSlavers(Slavers slavers, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
+    T visit(Slavers slavers);
 
-    void visitSmugglers(Smugglers smugglers, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager);
+    T visit(Smugglers smugglers);
 }

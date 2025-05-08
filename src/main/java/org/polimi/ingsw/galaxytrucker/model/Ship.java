@@ -93,7 +93,7 @@ public class Ship implements Serializable {
     }
 
 
-    // GETTERS START ----------------------
+    // GETTERS Start ----------------------
 
     /**
      * Restituisce la board della nave.
@@ -185,13 +185,13 @@ public class Ship implements Serializable {
         this.synch = synch;
     }
 
-    // GETTERS END ----------------------
+    // GETTERS End ----------------------
 
 
     public ArrayList<Position> getInvalidPositions() {
         return invalidPositions;
     }
-    // GETTERS END ----------------------
+    // GETTERS End ----------------------
 
 
     /**
@@ -891,8 +891,8 @@ public class Ship implements Serializable {
 
         return false;
     }
-    public int remaningTiles(){
-        int remaingTiles = 0;
+    public int remainingTiles(){
+        int remainingTiles = 0;
         List<Tile> tiles =Arrays.stream(this.getShipBoard())
                 .flatMap(Arrays::stream).map(Slot::getTile)
                 .filter(Objects::nonNull)
@@ -901,9 +901,9 @@ public class Ship implements Serializable {
 
         for (Tile tile : tiles){
             if(tile!=null){
-                remaingTiles++;
+                remainingTiles++;
             }
-            return remaingTiles;
+            return remainingTiles;
         }
 
 

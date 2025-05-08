@@ -318,7 +318,7 @@ public class TileCardsJsonUtility extends Application {
     public void handleJsonCiascuna(ActionEvent actionEvent) {
 
         //Esempio Proiettili
-        Projectile EsProiettile = new Projectile(ProjectileType.Meteor, ProjectileDirection.UP, ProjectileSize.BIG);
+        Projectile EsProiettile = new Projectile(ProjectileType.Meteor, ProjectileDirection.UP, ProjectileSize.Big);
         ArrayList<Projectile> EsempioProj = new ArrayList<>();
         EsempioProj.add(EsProiettile);
         EsempioProj.add(EsProiettile);

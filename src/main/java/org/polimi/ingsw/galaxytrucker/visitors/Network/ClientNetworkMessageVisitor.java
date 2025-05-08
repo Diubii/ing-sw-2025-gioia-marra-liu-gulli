@@ -2,8 +2,6 @@ package org.polimi.ingsw.galaxytrucker.visitors.Network;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
-import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
@@ -32,7 +30,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
 
     @Override
-    public Void visit(NicknameRequest nicknameRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public Void visit(NicknameRequest nicknameRequest) {
 
         return null;
     }
@@ -43,13 +41,13 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
-    public Void visit(CreateRoomRequest createRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public Void visit(CreateRoomRequest createRoomRequest) {
 
         return null;
     }
 
     @Override
-    public Void visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public Void visit(JoinRoomRequest joinRoomRequest) {
 
         return null;
     }

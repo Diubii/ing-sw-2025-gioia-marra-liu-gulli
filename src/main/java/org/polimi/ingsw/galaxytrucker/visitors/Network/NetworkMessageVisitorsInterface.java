@@ -1,24 +1,18 @@
 package org.polimi.ingsw.galaxytrucker.visitors.Network;
 
-import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
-import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
 public interface NetworkMessageVisitorsInterface<T> {
-    T visit(CreateRoomRequest createRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition;
+    T visit(CreateRoomRequest createRoomRequest);
 
-    T visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, IOException, InvalidTilePosition;
+    T visit(JoinRoomRequest joinRoomRequest);
 
-    T visit(JoiniRoomOptionsRequest joiniRoomOptionsRequest) throws ExecutionException, InterruptedException;
+    T visit(JoiniRoomOptionsRequest joiniRoomOptionsRequest);
 
-    T visit(NicknameRequest nicknameRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, ExecutionException, InterruptedException;
+    T visit(NicknameRequest nicknameRequest);
 
     T visit(AdventureCardExampleResponse adventureCardExampleResponse);
 
@@ -32,9 +26,9 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(PlaceTileResponse placeTileResponse);
 
-    T visit(DrawTileRequest drawTileRequest) throws ExecutionException, InterruptedException;
+    T visit(DrawTileRequest drawTileRequest);
 
-    T visit(FetchShipRequest fetchShipRequest) throws ExecutionException, InterruptedException;
+    T visit(FetchShipRequest fetchShipRequest);
 
     T visit(ShipUpdate shipUpdate);
 
@@ -44,11 +38,11 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(CheckShipStatusResponse checkShipStatusResponse);
 
-    T visit(CheckShipStatusRequest checkShipStatusRequest) throws ExecutionException, InterruptedException;
+    T visit(CheckShipStatusRequest checkShipStatusRequest);
 
-    T visit(DiscardTileRequest discardTileRequest) throws ExecutionException, InterruptedException;
+    T visit(DiscardTileRequest discardTileRequest);
 
-    T visit(FinishBuildingRequest finishBuildingRequest) throws ExecutionException, InterruptedException;
+    T visit(FinishBuildingRequest finishBuildingRequest);
 
     T visit(PlayerLostUpdate playerLostUpdate);
 
@@ -60,7 +54,7 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(TileDiscardedUpdate tileDiscardedUpdate);
 
-    T visit(PlaceTileRequest placeTileRequest) throws InvalidTilePosition, ExecutionException, InterruptedException;
+    T visit(PlaceTileRequest placeTileRequest);
 
     T visit(FetchShipResponse fetchShipResponse);
 

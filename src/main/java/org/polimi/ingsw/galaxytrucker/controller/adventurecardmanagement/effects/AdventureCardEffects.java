@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.model.adventurecards;
+package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.*;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
@@ -33,89 +34,114 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class AdventureCardEffects implements AdventureCardVisitorsInterface {
+public class AdventureCardEffects implements AdventureCardVisitorsInterface<Void> {
+    private final LobbyManager lobbyManager;
+    private final ArrayList<Player> rankedPlayers;
+    private final CardPhase cardPhase;
+
+    //STATIC HELPER ATTRIBUTES
+    //CombatZone
+
+    //OpenSpace
+    private final static HashMap<LobbyManager, HashMap<String, Integer>> playerToPowerMapPerGame = new HashMap<>();
+
+    public AdventureCardEffects(LobbyManager lobbyManager, ArrayList<Player> rankedPlayers, CardPhase cardPhase) {
+        this.lobbyManager = lobbyManager;
+        this.rankedPlayers = rankedPlayers;
+        this.cardPhase = cardPhase;
+    }
+
     @Override
-    public void visitAbandonedShip(AbandonedShip abandonedShip, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
-        ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
-        DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(abandonedShip.getRequiredCrewMembers()); //Il client deve scartare un tot di equipaggio
-        for (Player player : rankedPlayers) {
-            if (player.getShip().getnCrew() < abandonedShip.getRequiredCrewMembers()) {
-                GameMessage gameMessage = new GameMessage("Non hai abbastanza membri dell'equipaggio per attivare questa carta.");
-                lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
-                continue; //Se il player non ha abbastanza equipaggio passo al prossimo
+    public Void visit(AbandonedShip abandonedShip) {
+//        ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
+//        DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(abandonedShip.getRequiredCrewMembers()); //Il client deve scartare un tot di equipaggio
+//        for (Player player : rankedPlayers) {
+//            if (player.getShip().getnCrew() < abandonedShip.getRequiredCrewMembers()) {
+//                GameMessage gameMessage = new GameMessage("Non hai abbastanza membri dell'equipaggio per attivare questa carta.");
+//                lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
+//                continue; //Se il player non ha abbastanza equipaggio passo al prossimo
+//            }
+//
+//            //Chiedo al player se vuole attivare la carta
+//            ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) sendMessage(lobbyManager, player, activateAdventureCardRequest);
+//            if (activateAdventureCardResponse.isActivated()) {
+//                DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) sendMessage(lobbyManager, player, discardCrewMembersRequest); //Aspetto la risposta
+//
+//                discardCrewMembers(player, discardCrewMembersResponse);
+//
+//                //Broadcasto nuova nave
+//                ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
+//                lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(shipUpdate));
+//
+//                player.addCredits(abandonedShip.getCredits()); //Accredito crediti
+//
+//                movePlayer(lobbyManager, player, -abandonedShip.getDaysLost()); //Sposto il player
+//                break; //Solo un player può attivare la carta
+//            }
+//        }
+
+        Player player = lobbyManager.getGameController().getCurrentCardContext().getCurrentPlayer();
+
+        switch (cardPhase){
+            case Start -> {
+                if (player.getShip().getnCrew() >= abandonedShip.getRequiredCrewMembers()) {
+                    ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
+                    sendMessage(lobbyManager, player, activateAdventureCardRequest);
+                }
+                else{
+                    GameMessage gameMessage = new GameMessage("Non hai abbastanza membri dell'equipaggio per attivare questa carta.");
+                    lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
+
+                    //Passiamo al prossimo giocatore
+                    //lobbyManager.getGameController().incrementCurrentPlayerIndex();
+                    visit(abandonedShip);
+                }
             }
+            case CardActivated -> {
+                DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(abandonedShip.getRequiredCrewMembers());
+                sendMessage(lobbyManager, player, discardCrewMembersRequest);
+            }
+            case CrewDiscarded -> {
 
-            //Chiedo al player se vuole attivare la carta
-            ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) sendMessage(lobbyManager, player, activateAdventureCardRequest);
-            if (activateAdventureCardResponse.isActivated()) {
-                DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) sendMessage(lobbyManager, player, discardCrewMembersRequest); //Aspetto la risposta
-
-                discardCrewMembers(player, discardCrewMembersResponse);
-
-                //Broadcasto nuova nave
-                ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
-                lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(shipUpdate));
-
-                player.addCredits(abandonedShip.getCredits()); //Accredito crediti
-
-                movePlayer(lobbyManager, player, -abandonedShip.getDaysLost()); //Sposto il player
-                break; //Solo un player può attivare la carta
             }
         }
+
+        return null;
     }
 
     @NeedsToBeChecked("Sempre il problema di riuscire ad identificare lo ship update")
     @Override
-    public void visitAbandonedStation(AbandonedStation abandonedStation, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
+    public Void visit(AbandonedStation abandonedStation) {
         ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
         for (Player player : rankedPlayers) {
             if (player.getShip().getnCrew() < abandonedStation.getRequiredCrewMembers())
                 continue; //Se il player non ha abbastanza equipaggio passo al prossimo
 
             //Chiedo al player se vuole attivare la carta
-            ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) sendMessage(lobbyManager, player, activateAdventureCardRequest);
+            ActivateAdventureCardResponse activateAdventureCardResponse = new ActivateAdventureCardResponse(true);
+            //(ActivateAdventureCardResponse) sendMessage(lobbyManager, player, activateAdventureCardRequest);
 
             if (activateAdventureCardResponse.isActivated()) {
                 ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName()); //TODO: Trovare un metodo per identificare lo ship update
                 CompletableFuture<NetworkMessage> shipUpdateFuture = new CompletableFuture<>();
                 lobbyManager.addPendingResponse(shipUpdateFuture, shipUpdate.getID()); //Mi deve arrivare uno ShipUpdate
-                shipUpdateFuture.get(); //Aspetto che arrivi lo ship update
+                //shipUpdateFuture.get(); //Aspetto che arrivi lo ship update
                 movePlayer(lobbyManager, player, -abandonedStation.getDaysLost());
             }
         }
+
+        return null;
     }
 
     @Override
-    public void visitCombatZone(CombatZone combatZone, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
-        //Parte 1: minor equipaggio = demozione
-        int minCrewMembers = 0;
-        Player minCrewMembersPlayer = null;
-        for (Player player : rankedPlayers) {
-            int playerCrewMembersNumber = player.getShip().getnCrew();
-            if (playerCrewMembersNumber < minCrewMembers || minCrewMembers == 0) {
-                minCrewMembers = player.getShip().getnCrew();
-                minCrewMembersPlayer = player;
-            } else if (playerCrewMembersNumber == minCrewMembers) { //Se c'è parità
-                if (player.getPlacement() > minCrewMembersPlayer.getPlacement()) { //Il giocatore in vantaggio diventa il nuovo target
-                    minCrewMembersPlayer = player;
-                }
-            }
-        }
-
-        assert minCrewMembersPlayer != null;
-        broadcastGameMessage(lobbyManager, minCrewMembersPlayer.getNickName() + " ha il minor numero di membri dell'equipaggio!");
-
-        movePlayer(lobbyManager, minCrewMembersPlayer, -combatZone.getDaysLost());
-
+    public Void visit(CombatZone combatZone) {
         //Parte 2: minor potenza motrice = rimozione equipaggio
         int minEnginePower = 0;
         Player minEnginePowerPlayer = null;
         for (Player player : rankedPlayers) {
             //Richiedo l'attivazione dei motori doppi, se esistono
-            if (!player.getShip().getComponentPositionsFromName("DoubleEngine").isEmpty()) {
-                ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
-                sendMessage(lobbyManager, player, activateDoubleEnginesRequest);
-            }
+            ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
+            sendMessage(lobbyManager, player, activateDoubleEnginesRequest);
 
             int playerEnginePower = player.getShip().calculateEnginePower();
             if (playerEnginePower < minEnginePower || minEnginePower == 0) {
@@ -133,9 +159,10 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
 
         //Richiedo al player le posizioni delle housing unit da cui rimuovere equipaggio
         DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(combatZone.getCrewMembersLost());
-        DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) sendMessage(lobbyManager, minEnginePowerPlayer, discardCrewMembersRequest);
+        DiscardCrewMembersResponse discardCrewMembersResponse = new DiscardCrewMembersResponse(null);
+                //(DiscardCrewMembersResponse) sendMessage(lobbyManager, minEnginePowerPlayer, discardCrewMembersRequest);
 
-        discardCrewMembers(minCrewMembersPlayer, discardCrewMembersResponse);
+        discardCrewMembers(minEnginePowerPlayer, discardCrewMembersResponse);
 
         //Parte 3: minor potenza di fuoco = cannonate
         float minFirePower = 0;
@@ -172,11 +199,11 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             sendGameMessage(lobbyManager, minFirePowerPlayer, message);
 
             if (targetPlayer.getShip().getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll) != null) { //Se il proiettile va a colpire un componente, vediamo se il player può proteggersi
-                if (projectile.getSize() == ProjectileSize.LITTLE && playerCanDefendThemselvesWithAShield(targetPlayer, projectile)) { //Se il proiettile è piccolo si possono attivare gli scudi, se ne esistono orientati correttamente
+                if (projectile.getSize() == ProjectileSize.Little && playerCanDefendThemselvesWithAShield(targetPlayer, projectile)) { //Se il proiettile è piccolo si possono attivare gli scudi, se ne esistono orientati correttamente
                     message = "Però puoi proteggerti con uno scudo!";
                     sendGameMessage(lobbyManager, minFirePowerPlayer, message);
                     sendMessage(lobbyManager, targetPlayer, new ActivateComponentRequest(ActivatableComponent.Shield));
-                } else if (projectile.getSize() == ProjectileSize.BIG && projectile.getType() == ProjectileType.Meteor) { //Se il proiettile è una meteora grande si possono attivare cannoni doppi
+                } else if (projectile.getSize() == ProjectileSize.Big && projectile.getType() == ProjectileType.Meteor) { //Se il proiettile è una meteora grande si possono attivare cannoni doppi
                     //Se nessun cannone punta verso il meteorite chiedo l'attivazione di un CannoneDoppio, se esiste
                     if (playerCanDefendThemselvesWithASingleCannon(targetPlayer, projectile, diceRoll)) {
                         message = "Ti proteggerà un cannone singolo!";
@@ -193,11 +220,42 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             ShipUpdate shipUpdate = new ShipUpdate(minFirePowerPlayer.getShip(), minFirePowerPlayer.getNickName());
             broadcast(lobbyManager, shipUpdate);
         }
+
+        Player currentPlayer = lobbyManager.getGameController().getCurrentCardContext().getCurrentPlayer();
+
+        switch (lobbyManager.getGameController().getCurrentCardContext().getCurrentPhaseIndex()){
+            case 0 -> {
+                //Parte 1: minor equipaggio = demozione
+                int minCrewMembers = 0;
+                Player minCrewMembersPlayer = null;
+                for (Player player : rankedPlayers) {
+                    int playerCrewMembersNumber = player.getShip().getnCrew();
+                    if (playerCrewMembersNumber < minCrewMembers || minCrewMembers == 0) {
+                        minCrewMembers = player.getShip().getnCrew();
+                        minCrewMembersPlayer = player;
+                    } else if (playerCrewMembersNumber == minCrewMembers) { //Se c'è parità
+                        if (player.getPlacement() > minCrewMembersPlayer.getPlacement()) { //Il giocatore in vantaggio diventa il nuovo target
+                            minCrewMembersPlayer = player;
+                        }
+                    }
+                }
+
+                assert minCrewMembersPlayer != null;
+                broadcastGameMessage(lobbyManager, minCrewMembersPlayer.getNickName() + " ha il minor numero di membri dell'equipaggio!");
+
+                movePlayer(lobbyManager, minCrewMembersPlayer, -combatZone.getDaysLost());
+            }
+            case 1 -> {}
+            case 2 -> {}
+            case 3 -> {}
+            case 4 -> {}
+        }
+
+        return null;
     }
 
     @NeedsToBeCompleted
-    @Override
-    public void visitEpidemic(Epidemic epidemic, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+    public Void visit(Epidemic epidemic) {
         ArrayList<Position> housings = new ArrayList<>();
         Ship ship;
         ModularHousingUnit modularHousingUnit;
@@ -266,11 +324,11 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             }
         }
 
-
+        return null;
     }
 
     @Override
-    public void visitMeteorSwarm(MeteorSwarm meteorSwarm, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+    public Void visit(MeteorSwarm meteorSwarm) {
         Random rand = new Random();
         int diceRoll;
         ActivateComponentRequest activateShieldRequest = new ActivateComponentRequest(ActivatableComponent.Shield);
@@ -282,14 +340,14 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             ArrayList<CompletableFuture<NetworkMessage>> futures = new ArrayList<>();
 
             //Per ogni giocatore vedo se deve difendersi e se ne ha la possibilità
-            if (projectile.getSize() == ProjectileSize.LITTLE) {
+            if (projectile.getSize() == ProjectileSize.Little) {
                 for (Player player : rankedPlayers) {
                     if (player.getShip().getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll) != null && playerCanDefendThemselvesWithAShield(player, projectile)) {
                         sendGameMessage(lobbyManager, player, "Puoi difenderti con uno scudo!");
                         sendMessageAndDeferGetResponse(lobbyManager, player, activateShieldRequest, futures);
                     }
                 }
-            } else if (projectile.getSize() == ProjectileSize.BIG) {
+            } else if (projectile.getSize() == ProjectileSize.Big) {
                 for (Player player : rankedPlayers) {
                     if (player.getShip().getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll) != null) {
                         if (playerCanDefendThemselvesWithASingleCannon(player, projectile, diceRoll)) { //Prima controllo se si può difendere con un cannone singolo
@@ -323,67 +381,29 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                 broadcast(lobbyManager, shipUpdate);
             }
         }
+
+        return null;
     }
 
-    @NeedsToBeCompleted("Disattivare motori doppi")
     @Override
-    public void visitOpenSpace(OpenSpace openSpace, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager, CardPhase cardPhase) throws ExecutionException, InterruptedException, PlayerNotFoundException {
+    public Void visit(OpenSpace openSpace) {
 
-        int currentIndex = lobbyManager.getGameController().currentPlayerIndex;
-        Player player = rankedPlayers.get(currentIndex);
-
-
-//        for (Player player : rankedPlayers) {
-//            ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
-//            sendMessageAndGetResponse(lobbyManager, player, activateDoubleEnginesRequest);
-//            int playerEnginePower = player.getShip().calculateEnginePower();
-//            playerToPowerMap.put(player.getNickName(), playerEnginePower);
-//            movePlayer(lobbyManager, player, playerEnginePower);
-//        }
-//
-//        playerToPowerMap.forEach((nickname, power) -> {
-//            if (power == 0) {
-//                try {
-//                    lobbyManager.getGameController().removePlayerFromGame(nickname, false);
-//                } catch (PlayerNotFoundException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        });
+        Player player = lobbyManager.getGameController().getCurrentCardContext().getCurrentPlayer();
 
         switch (cardPhase){
-            case START -> {
+            case Start -> {
                 ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
-                sendMessage(lobbyManager, player, activateDoubleEnginesRequest);
+
+
+                lobbyManager.getGameController().getCurrentCardContext().setExpectedNetworkMessageType(NetworkMessageType.ActivateComponentResponse);
             }
 
-            case ActivateComponent -> {
-                int playerEnginePower = player.getShip().calculateEnginePower();
-                movePlayer(lobbyManager, player, playerEnginePower);
-
-                //controllo se e' l'ultimo o no
-
-                //passo al giocatore successivo
-                ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
-                Player nextPlayer = rankedPlayers.get(currentIndex);
-                sendMessage(lobbyManager, player, activateDoubleEnginesRequest);
-
-                if (currentIndex == rankedPlayers.size()-1){
-                    visitOpenSpace(openSpace, rankedPlayers, lobbyManager, CardPhase.END);
-                }
-
-                lobbyManager.getGameController().currentPlayerIndex++;
-
+            case ComponentActivated -> {
 
             }
 
-            case END -> {
-
-                HashMap<String, Integer> playerToPowerMap = new HashMap<>();
-                //vedi se vanno eliminati
-                for (Player player2 : rankedPlayers) {int playerEnginePower = player2.getShip().calculateEnginePower();
-                    playerToPowerMap.put(player2.getNickName(), playerEnginePower);
-                }
+            case End -> {
+                HashMap<String, Integer> playerToPowerMap = playerToPowerMapPerGame.get(lobbyManager);
 
                 playerToPowerMap.forEach((nickname, power) -> {
                 if (power == 0) {
@@ -394,16 +414,20 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                  }
                 }
                 });
+
+                //Cleanup
+                playerToPowerMapPerGame.get(lobbyManager).forEach((nickname, ignoredPower) -> playerToPowerMap.remove(nickname));
+                playerToPowerMapPerGame.remove(lobbyManager);
             }
             default -> throw new IllegalStateException();
         }
 
-
+        return null;
     }
 
     @NeedsToBeChecked("Non è giusto inserire un selectedPlanetUpdate nell'addPendingResponse di shipUpdates")
     @Override
-    public void visitPlanets(Planets planets, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) throws ExecutionException, InterruptedException {
+    public Void visit(Planets planets) {
         ArrayList<CompletableFuture<NetworkMessage>> shipUpdates = new ArrayList<>();
         ArrayList<Player> landedPlayers = new ArrayList<>();
 
@@ -411,7 +435,8 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
             if (!planets.getPlanets().stream().allMatch(Planet::isOccupied)) { //Se non tutti i pianeti sono occupati
                 ArrayList<Planet> notOccupiedPlanets = new ArrayList<>(planets.getPlanets().stream().filter(planet -> !planet.isOccupied()).toList());
                 SelectPlanetRequest selectPlanetRequest = new SelectPlanetRequest(notOccupiedPlanets);
-                SelectPlanetResponse selectPlanetResponse = (SelectPlanetResponse) sendMessage(lobbyManager, player, selectPlanetRequest); //Aspetto che il player mandi la risposta
+                SelectPlanetResponse selectPlanetResponse = new SelectPlanetResponse(null, 0);
+                        //(SelectPlanetResponse) sendMessage(lobbyManager, player, selectPlanetRequest); //Aspetto che il player mandi la risposta
 
 
                 Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
@@ -428,143 +453,47 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface {
                     //System.out.println("Simulando delay scelta player");
                     //Thread.sleep(2000);
                     //shipUpdateFuture.complete(new ShipUpdate(null, null));
-                    //END TEST
+                    //End TEST
                 }
             } else break; //Se tutti i pianeti sono occupati usciamo dal ciclo
         }
 
         //Aspetto che arrivino tutti gli ShipUpdate del caso
         for (CompletableFuture<NetworkMessage> future : shipUpdates) {
-            future.get();
+            //future.get();
             //System.out.println("Ottenuto ship update");
         }
 
         for (Player player : landedPlayers.reversed()) { //I landed players sono in ordine di rotta
             movePlayer(lobbyManager, player, -planets.getDaysLost());
         }
+
+        return null;
     }
 
     @Override
     //porca troia SI
-    public void visitStardust(Stardust stardust, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
+    public Void visit(Stardust stardust) {
         //player.getShip().calcExposedConnectors();
         for (Player player : rankedPlayers.reversed()) { //Si parte dall'ultimo
             movePlayer(lobbyManager, player, -player.getShip().getnExposedConnector());
         }
+
+        return null;
     }
 
     @Override
-    public void visitPirates(Pirates pirates, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
-
+    public Void visit(Pirates pirates) {
+        return null;
     }
 
     @Override
-    public void visitSlavers(Slavers slavers, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
-
+    public Void visit(Slavers slavers) {
+        return null;
     }
 
     @Override
-    public void visitSmugglers(Smugglers smugglers, ArrayList<Player> rankedPlayers, LobbyManager lobbyManager) {
-
-    }
-
-    /**
-     * Moves a player in the game's flight board and sends an update to all clients.
-     *
-     * @param lobbyManager
-     * @param player
-     * @param steps
-     */
-    private void movePlayer(LobbyManager lobbyManager, Player player, int steps) {
-        FlightBoard flightBoard = lobbyManager.getRealGame().getFlightBoard();
-        flightBoard.movePlayer(lobbyManager.getPlayerColors().get(player.getNickName()), steps);
-        FlightBoardUpdate fbu = new FlightBoardUpdate(flightBoard);
-        String message = "Player " + player.getNickName() + "moved " + steps + " steps!";
-        broadcast(lobbyManager, new GameMessage(message));
-        broadcast(lobbyManager, fbu);
-    }
-
-    private void discardCrewMembers(Player player, DiscardCrewMembersResponse discardCrewMembersResponse) {
-        ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
-        for (Position position : discardCrewMembersResponse.getHousingPositions()) { //Per ogni posizione (assumo posizioni duplicate per scartare più volte dalla stessa housing unit)
-            Component housingUnit = player.getShip().getComponentFromPosition(position); //Prendo la housingUnit dalla position data
-            String componentName = componentNameVisitor.visit(housingUnit); //Visitor
-
-            if (componentName.equals("CentralHousingUnit")) {
-                ((CentralHousingUnit) housingUnit).removeCrewMember();
-            } else { //Altrimenti è una ModularHousingUnit
-                ModularHousingUnit modularHousingUnit = (ModularHousingUnit) housingUnit;
-
-                if (modularHousingUnit.getNCrewMembers() > 0) { //Ci sono solo umani
-                    modularHousingUnit.removeCrewMember();
-                } else { //Ci sono solo alieni
-                    modularHousingUnit.removeAlienCrew();
-                }
-            }
-        }
-    }
-
-    private void sendMessage(LobbyManager lobbyManager, Player player, NetworkMessage message) throws ExecutionException, InterruptedException {
-        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
-        lobbyManager.addPendingResponse(future, message.getID()); //Notifico che sono in attesa di una risposta
-        clientHandler.sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
-//        return future.get(); //Aspetto che il player mandi la risposta
-    }
-
-    private void sendMessageAndDeferGetResponse(LobbyManager lobbyManager, Player player, NetworkMessage message, ArrayList<CompletableFuture<NetworkMessage>> futures) {
-        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-        ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
-        lobbyManager.addPendingResponse(future, message.getID()); //Notifico che sono in attesa di una risposta
-        clientHandler.sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
-        futures.add(future);
-    }
-
-    private void sendGameMessage(LobbyManager lobbyManager, Player player, String message) {
-        GameMessage gameMessage = new GameMessage(message);
-        gameMessage.setMessage(message);
-        lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
-    }
-
-    private void broadcastGameMessage(LobbyManager lobbyManager, String message) {
-        broadcast(lobbyManager, new GameMessage(message));
-    }
-
-    private void broadcast(LobbyManager lobbyManager, NetworkMessage message) {
-        lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(message));
-    }
-
-    /**
-     * Checks if a player has a shield orientated the same way of the incoming projectile. Does not check for same row/column.
-     *
-     * @param player
-     * @param projectile
-     * @author Alessandro Giuseppe Gioia
-     */
-    private boolean playerCanDefendThemselvesWithAShield(Player player, Projectile projectile) {
-        if (projectile.getSize() == ProjectileSize.BIG) return false;
-        else
-            return player.getShip().getComponentPositionsFromName("Shield").stream().anyMatch(p -> ((Shield) player.getShip().getComponentFromPosition(p)).getProtectedSides().contains(projectile.getDirection()));
-    }
-
-    private boolean playerCanDefendThemselvesWithASingleCannon(Player player, Projectile projectile, int diceRoll) {
-        if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.BIG) return false;
-        else return player.getShip().getComponentPositionsFromName("Cannon").stream().anyMatch(p -> {
-            Cannon c = (Cannon) player.getShip().getComponentFromPosition(p);
-            if (c.getRotation() == projectile.getDirection().ordinal()) {
-                return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
-            } else return false;
-        });
-    }
-
-    private boolean playerCanDefendThemselvesWithADoubleCannon(Player player, Projectile projectile, int diceRoll) {
-        if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.BIG) return false;
-        else
-            return player.getShip().getComponentPositionsFromName("DoubleCannon").stream().anyMatch(p -> {
-                DoubleCannon c = (DoubleCannon) player.getShip().getComponentFromPosition(p);
-                if (c.getRotation() == projectile.getDirection().ordinal()) {
-                    return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
-                } else return false;
-            });
+    public Void visit(Smugglers smugglers) {
+        return null;
     }
 }

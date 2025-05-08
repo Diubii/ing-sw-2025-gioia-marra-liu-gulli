@@ -4,9 +4,8 @@ import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitor;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.util.ArrayList;
 
@@ -46,7 +45,7 @@ public class CardPrintUtils {
        }
    }
 
-    private static AdventureCardPrintVisitor adventureCardPrintVisitor= new AdventureCardPrintVisitor();
+    private static final AdventureCardVisitorsInterface<String[]> adventureCardPrintVisitor = new AdventureCardPrintVisitor();
 
     public static String[][] composeRow(ArrayList<AdventureCard> CardList, int row, int columns,int lastRow) {
         String[][] tileRow = new String[columns][5];

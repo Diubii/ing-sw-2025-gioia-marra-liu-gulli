@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
 public abstract class NetworkMessage implements Serializable {
-    public abstract <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException;
+    public abstract <T> T accept(NetworkMessageVisitorsInterface<T> visitor);
 
     private static int id = 0;
     private int myId;

@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
 
 
-public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInterface{
+public class AdventureCardPrintVisitor implements AdventureCardVisitorsInterface<String[]>{
 
     //18 *
+    @Override
     public String[] visit(AbandonedShip card){
         String[] result = new String[]{
                 "┌----------------┐",
@@ -28,6 +29,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         return AddLvLearningDaysLost(result,card.getLevel(), card.isLearningFlight(), card.getDaysLost());
     }
 
+    @Override
     public String[] visit(AbandonedStation card){
         StringBuilder sb;
         String[] result = new String[]{
@@ -65,6 +67,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
     }
 
     //↑ ↓ → ←
+    @Override
     public String[] visit(CombatZone card) {
         //HardCodate perchè complesse distinguo con livello:
         String[] result;
@@ -97,6 +100,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         return result;
     }
 
+    @Override
     public String[] visit(Epidemic card){
         String[] result = new String[]{
                 "┌----------------┐",
@@ -112,6 +116,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         return AddLvLearningDaysLost(result,card.getLevel(), card.isLearningFlight(), card.getDaysLost());
     }
 
+    @Override
     public String[] visit(MeteorSwarm card){
         StringBuilder sb;
         StringBuilder sb2;
@@ -179,7 +184,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
 
                 if(card.getMeteors().get(i).getDirection() == ProjectileDirection.UP){
                     sb.append("↓ ");
-                    if( card.getMeteors().get(i).getSize() == ProjectileSize.BIG){
+                    if( card.getMeteors().get(i).getSize() == ProjectileSize.Big){
                         sb2.append("● ");
                     }
                     else{
@@ -189,7 +194,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
                 }
                 else{
                     sb2.append("↑ ");
-                    if( card.getMeteors().get(i).getSize() == ProjectileSize.BIG){
+                    if( card.getMeteors().get(i).getSize() == ProjectileSize.Big){
                         sb.append("● ");
                     }
                     else{
@@ -252,7 +257,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
 
                 if(card.getMeteors().get(i).getDirection() == ProjectileDirection.LEFT){
                     sb.append("→ ");
-                    if( card.getMeteors().get(i).getSize() == ProjectileSize.BIG){
+                    if( card.getMeteors().get(i).getSize() == ProjectileSize.Big){
                         sb.append("●");
                     }
                     else{
@@ -260,7 +265,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
                     }
                 }
                 else{
-                    if( card.getMeteors().get(i).getSize() == ProjectileSize.BIG){
+                    if( card.getMeteors().get(i).getSize() == ProjectileSize.Big){
                         sb.append("●");
                     }
                     else{
@@ -291,7 +296,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         return AddLvLearningDaysLost(result,card.getLevel(), card.isLearningFlight(), card.getDaysLost());
     }
 
-
+    @Override
     public String[] visit(OpenSpace card){
         String[] result = new String[]{
                 "┌----------------┐",
@@ -307,6 +312,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         return AddLvLearningDaysLost(result,card.getLevel(), card.isLearningFlight(), card.getDaysLost());
     }
 
+    @Override
     public String[] visit(Pirates card){
         //HardCodate perchè complesse distinguo con livello:
         String[] result;
@@ -340,6 +346,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
     }
 
     //Faccio planet e vedo quanto grossa serve
+    @Override
     public String[] visit(Planets card){
         StringBuilder sb;
         String[] result = new String[]{
@@ -380,6 +387,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         return AddLvLearningDaysLost(result,card.getLevel(), card.isLearningFlight(), card.getDaysLost());
     }
 
+    @Override
     public String[] visit(Slavers card){
 
         String[] result = new String[]{
@@ -397,6 +405,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         return AddLvLearningDaysLost(result,card.getLevel(), card.isLearningFlight(), card.getDaysLost());
     }
 
+    @Override
     public String[] visit(Smugglers card){
         StringBuilder sb;
         String[] result = new String[]{
@@ -433,6 +442,7 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         return AddLvLearningDaysLost(result,card.getLevel(), card.isLearningFlight(), card.getDaysLost());
     }
 
+    @Override
     public String[] visit(Stardust card){
         String[] result = new String[]{
                 "┌----------------┐",
@@ -465,5 +475,4 @@ public class AdventureCardPrintVisitor implements AdventureCardPrintVisitorInter
         res[1] = sb.toString();
         return res;
     }
-
 }

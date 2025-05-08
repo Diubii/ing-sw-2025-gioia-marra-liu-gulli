@@ -2,17 +2,11 @@ package org.polimi.ingsw.galaxytrucker.visitors.Network;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
-import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
-import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Void> {
     private final ServerController serverController;
@@ -34,7 +28,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
 
     @Override
-    public Void visit(NicknameRequest nicknameRequest) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public Void visit(NicknameRequest nicknameRequest) {
         serverController.handleNicknameRequest(nicknameRequest, clientHandler);
         return null;
     }
@@ -45,7 +39,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @NeedsToBeCompleted
     @Override
-    public Void visit(CreateRoomRequest createRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition {
+    public Void visit(CreateRoomRequest createRoomRequest) {
         serverController.handleCreateRoomRequest(createRoomRequest, clientHandler);
         return null;
     }
@@ -57,7 +51,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
     @Override
-    public Void visit(JoinRoomRequest joinRoomRequest) throws TooManyPlayersException, PlayerAlreadyExistsException, IOException, InvalidTilePosition {
+    public Void visit(JoinRoomRequest joinRoomRequest) {
         serverController.handleJoinRoomRequest(joinRoomRequest, clientHandler);
         return null;
     }
@@ -101,7 +95,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     //PlaceTile
 
     @Override
-    public Void visit(PlaceTileRequest placeTileRequest) throws InvalidTilePosition {
+    public Void visit(PlaceTileRequest placeTileRequest) {
         serverController.handlePlaceTileRequest(placeTileRequest, clientHandler);
         return null;
     }
@@ -158,7 +152,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
 
     @Override
-    public Void visit(FinishBuildingRequest finishBuildingRequest) throws ExecutionException, InterruptedException {
+    public Void visit(FinishBuildingRequest finishBuildingRequest) {
         serverController.handleFinishBuildingRequest(finishBuildingRequest, clientHandler);
         return null;
     }
