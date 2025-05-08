@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsm;
 
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.AdventureCardEffects;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.OpenSpace;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
@@ -14,7 +15,7 @@ public class CombatZoneFSM extends CardFSM{
     }
 
     @Override
-    public ArrayList<Consumer<LobbyManager>> initPhases() {
+    public ArrayList<Consumer<CardContext>> initPhases() {
         return new ArrayList<>(
                 Arrays.asList(
 

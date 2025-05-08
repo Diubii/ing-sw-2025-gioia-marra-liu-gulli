@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effect
 
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateComponentRequest;
@@ -26,10 +27,9 @@ public class OpenSpaceEffects {
         HashMap<String, Integer> playerToPowerMap;
 
         //Populating HashMap
-        if(playerToPowerMapPerGame.get(game) != null){
+        if (playerToPowerMapPerGame.get(game) != null) {
             playerToPowerMap = playerToPowerMapPerGame.get(game);
-        }
-        else{
+        } else {
             playerToPowerMap = new HashMap<>();
             playerToPowerMapPerGame.put(game, playerToPowerMap);
         }
@@ -38,5 +38,23 @@ public class OpenSpaceEffects {
         movePlayer(context, playerEnginePower);
     }
 
-    public static void 
+    public static void finalCheck(CardContext context){
+        LobbyManager game = context.getCurrentGame();
+
+        HashMap<String, Integer> playerToPowerMap = playerToPowerMapPerGame.get(game);
+
+        playerToPowerMap.forEach((nickname, power) -> {
+            if (power == 0) {
+                try {
+                    game.getGameController().removePlayerFromGame(nickname, false);
+                } catch (PlayerNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        //Cleanup
+        playerToPowerMapPerGame.get(game).forEach((nickname, ignoredPower) -> playerToPowerMap.remove(nickname));
+        playerToPowerMapPerGame.remove(game);
+    }
 }

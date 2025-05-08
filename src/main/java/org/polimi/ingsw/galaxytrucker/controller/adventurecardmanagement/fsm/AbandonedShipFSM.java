@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsm;
 
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 
@@ -13,7 +14,7 @@ public class AbandonedShipFSM extends CardFSM {
     }
 
     @Override
-    public ArrayList<Consumer<LobbyManager>> initPhases() {
+    public ArrayList<Consumer<CardContext>> initPhases() {
         return new ArrayList<>(Arrays.asList(
                 CardPhase.Start,
                 CardPhase.CardActivated,

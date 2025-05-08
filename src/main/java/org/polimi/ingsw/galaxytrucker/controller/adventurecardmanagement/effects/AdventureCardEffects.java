@@ -387,41 +387,6 @@ public class AdventureCardEffects implements AdventureCardVisitorsInterface<Void
 
     @Override
     public Void visit(OpenSpace openSpace) {
-
-        Player player = lobbyManager.getGameController().getCurrentCardContext().getCurrentPlayer();
-
-        switch (cardPhase){
-            case Start -> {
-                ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
-
-
-                lobbyManager.getGameController().getCurrentCardContext().setExpectedNetworkMessageType(NetworkMessageType.ActivateComponentResponse);
-            }
-
-            case ComponentActivated -> {
-
-            }
-
-            case End -> {
-                HashMap<String, Integer> playerToPowerMap = playerToPowerMapPerGame.get(lobbyManager);
-
-                playerToPowerMap.forEach((nickname, power) -> {
-                if (power == 0) {
-                 try {
-                     lobbyManager.getGameController().removePlayerFromGame(nickname, false);
-                  } catch (PlayerNotFoundException e) {
-                    throw new RuntimeException(e);
-                 }
-                }
-                });
-
-                //Cleanup
-                playerToPowerMapPerGame.get(lobbyManager).forEach((nickname, ignoredPower) -> playerToPowerMap.remove(nickname));
-                playerToPowerMapPerGame.remove(lobbyManager);
-            }
-            default -> throw new IllegalStateException();
-        }
-
         return null;
     }
 
