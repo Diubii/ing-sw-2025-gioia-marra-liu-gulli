@@ -13,14 +13,14 @@ public class Shield extends Component {
     private ArrayList<ProjectileDirection> protectedSides;
     private Boolean charged;
 
-    public Shield(Boolean charged){
+    public Shield(Boolean charged) {
         super(false);
         this.charged = charged;
         protectedSides = new ArrayList<>();
     }
 
     @JsonCreator
-    public Shield(@JsonProperty("protectedSides") ArrayList<ProjectileDirection> protectedSides,@JsonProperty("charged") Boolean charged) {
+    public Shield(@JsonProperty("protectedSides") ArrayList<ProjectileDirection> protectedSides, @JsonProperty("charged") Boolean charged) {
         super(false);
         this.protectedSides = new ArrayList<>(protectedSides);
         this.charged = charged;
@@ -38,7 +38,6 @@ public class Shield extends Component {
     public void setCharged(Boolean charged) {
         this.charged = charged;
     }
-
 
 
     @Override

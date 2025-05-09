@@ -8,7 +8,7 @@ class TuiTest {
 
     @Test
 
-    public  void testTui() {
+    public void testTui() {
 //        Tui tui = new Tui(System.out);
 //        Tui.start();
     }

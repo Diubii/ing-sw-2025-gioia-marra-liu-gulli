@@ -1,7 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
-import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.AdventureCardEffects;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
@@ -14,7 +13,6 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,16 +30,12 @@ public class GameController {
     CompletableFuture cardDrawn;
     private Boolean gameEndedEarly = false;
     private CardDeck cardDeckTest = new CardDeck(true);
-    //private CardContext currentCardContext;
     private Iterator<Player> rankedPlayersIterator;
+    private CardContext currentCardContext;
 
-    /*public CardContext getCurrentCardContext() {
+    public CardContext getCurrentCardContext() {
         return currentCardContext;
-    }*/
-
-    /*public void setCurrentCardContext(CardContext currentCardContext) {
-        this.currentCardContext = currentCardContext;
-    }*/
+    }
 
     public CardDeck getCardDeckTest() {
         return cardDeckTest;
@@ -97,13 +91,12 @@ public class GameController {
     }
 
     public void handleTurnBeforeDrawnCard() {
-        ArrayList<Player> rankedPlayers = currentCardContext.getCurrentRankedPlayers();
+        ArrayList<Player> rankedPlayers = getRankedPlayers();
 
         MatchInfoUpdate miu;
         if (!rankedPlayers.isEmpty()) {
             miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), cardDeckTest.getSize());
             rankedPlayersIterator = rankedPlayers.iterator();
-            currentCardContext.setCurrentPlayer(rankedPlayersIterator.next()); //Setto come currentPlayer il primo dei rankedPlayers
         } else {
             miu = new MatchInfoUpdate("", game.getRealGame().getFlightDeck().getSize());
         }
@@ -112,14 +105,15 @@ public class GameController {
     }
 
     public void handleTurn() {
-        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(currentCardContext.getAdventureCard());
+        AdventureCard drawnAdventureCard = getCardDeckTest().pop();
+
+        DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(drawnAdventureCard);
         game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(drawnAdventureCardUpdate)); //Mando match info update
 
-
-        //Test
-        //Prendo i players ordinati per placement
-        AdventureCardVisitorsInterface<Void> adventureCardEffects = new AdventureCardEffects(game, currentCardContext.getCurrentRankedPlayers(), currentCardContext.getCurrentPhase());
-        currentCardContext.getAdventureCard().accept(adventureCardEffects); //Attivo l'effetto della carta
+        CardContext context = new CardContext(game, drawnAdventureCard);
+        currentCardContext = context;
+        context.executePhase();
+        //completeCardDrawn();
     }
 
     private void handleEndGame() {
@@ -271,24 +265,11 @@ public class GameController {
         return false;
     }
 
-    public void resumeCurrentCard() {
-        ArrayList<Player> rankedPlayers = getRankedPlayers();
-        AdventureCardVisitorsInterface<Void> visitor = new AdventureCardEffects(game, rankedPlayers, currentCardContext.getCurrentPhase());
-        currentCardContext.getAdventureCard().accept(visitor); //Attivo l'effetto della carta
-    }
-
-    public void affectNextPlayer(){
-        currentCardContext.resetFSM();
-        currentCardContext.setCurrentPlayer(nextPlayer());
-        AdventureCardVisitorsInterface<Void> visitor = new AdventureCardEffects(game, currentCardContext.getCurrentRankedPlayers(), currentCardContext.getCurrentPhase());
-        currentCardContext.getAdventureCard().accept(visitor);
-    }
-
     public ArrayList<Player> getRankedPlayers() {
         return new ArrayList<>(game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).sorted(Comparator.comparingInt(Player::getPlacement)).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
     }
 
-    public Player nextPlayer(){
-       return rankedPlayersIterator.next();
+    public Player nextPlayer() {
+        return rankedPlayersIterator.next();
     }
 }

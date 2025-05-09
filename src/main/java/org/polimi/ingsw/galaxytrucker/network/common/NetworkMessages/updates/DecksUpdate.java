@@ -27,6 +27,7 @@ public class DecksUpdate extends NetworkMessage implements Serializable {
     public void setDecks(ArrayList<CardDeck> decks) {
         this.decks = decks;
     }
+
     public CardDeck getFlightDeck() {
         return flightDeck;
     }
@@ -36,7 +37,7 @@ public class DecksUpdate extends NetworkMessage implements Serializable {
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

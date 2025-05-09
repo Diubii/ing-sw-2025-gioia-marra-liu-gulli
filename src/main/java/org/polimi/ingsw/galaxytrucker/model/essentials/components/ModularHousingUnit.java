@@ -6,15 +6,15 @@ import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
-public class ModularHousingUnit extends CentralHousingUnit{
+public class ModularHousingUnit extends CentralHousingUnit {
 
     private int nBrownAlien = 0;
     private int nPurpleAlien = 0;
-    private  AlienColor alienColor;
+    private AlienColor alienColor;
 
     @JsonCreator
-    public ModularHousingUnit(@JsonProperty("color") Color color,@JsonProperty("nbrownAlien") int nBrownAlien, @JsonProperty("npurpleAlien") int nPurpleAlien,@JsonProperty("alienColor")  AlienColor alienColor, @JsonProperty("humanCrewNumber") int humanCrew) {
-        super(color,humanCrew);
+    public ModularHousingUnit(@JsonProperty("color") Color color, @JsonProperty("nbrownAlien") int nBrownAlien, @JsonProperty("npurpleAlien") int nPurpleAlien, @JsonProperty("alienColor") AlienColor alienColor, @JsonProperty("humanCrewNumber") int humanCrew) {
+        super(color, humanCrew);
         this.nBrownAlien = nBrownAlien;
         this.nPurpleAlien = nPurpleAlien;
         this.alienColor = alienColor != null ? alienColor : AlienColor.EMPTY;
@@ -26,7 +26,7 @@ public class ModularHousingUnit extends CentralHousingUnit{
     }
 
 
-    public void addBrownAlien(){
+    public void addBrownAlien() {
 
         if (alienColor == AlienColor.BROWN) {
             nBrownAlien += 1;
@@ -35,7 +35,7 @@ public class ModularHousingUnit extends CentralHousingUnit{
 
     }
 
-    public void addPurpleAlien(){
+    public void addPurpleAlien() {
         if (alienColor == AlienColor.PURPLE) {
             nPurpleAlien += 1;
         }
@@ -74,7 +74,7 @@ public class ModularHousingUnit extends CentralHousingUnit{
     }
 
     @Override
-    public void removeCrewMember(){
+    public void removeCrewMember() {
         switch (alienColor) {
             case EMPTY -> removeCrewMember();
             case BROWN -> removeBrownAlien();
@@ -87,14 +87,14 @@ public class ModularHousingUnit extends CentralHousingUnit{
         return visitor.visit(this);
     }
 
-    public void addHumanCrew(){
+    public void addHumanCrew() {
         super.setHumanCrewNumber(2);
     }
 
     @Override
-    public int getNCrewMembers(){
+    public int getNCrewMembers() {
         int result = 0;
-        switch (alienColor){
+        switch (alienColor) {
             case PURPLE -> result = getNPurpleAlien();
             case BROWN -> result = getNBrownAlien();
             case EMPTY -> result = super.getNCrewMembers();
@@ -103,7 +103,7 @@ public class ModularHousingUnit extends CentralHousingUnit{
         return result;
     }
 
-    public AlienColor getAlienColor(){
+    public AlienColor getAlienColor() {
         return this.alienColor;
     }
 

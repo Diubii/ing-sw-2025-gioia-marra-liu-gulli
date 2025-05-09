@@ -15,20 +15,19 @@ public class Planets extends AdventureCard {
     private static final long serialVersionUID = 9994343L;
 
     private final ArrayList<Planet> planets;
+
     public ArrayList<Planet> getPlanets() {
         return planets;
     }
 
     @JsonCreator
     public Planets(@JsonProperty("id") int id,
-                         @JsonProperty("level") int level,
-                         @JsonProperty("daysLost") int daysLost,
-                         @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("planets") ArrayList<Planet> planets,
-                          @JsonProperty("affectsAll") boolean affectsAll)
-
-    {
+                   @JsonProperty("level") int level,
+                   @JsonProperty("daysLost") int daysLost,
+                   @JsonProperty("name") String name,
+                   @JsonProperty("learningFlight") boolean learningFlight,
+                   @JsonProperty("planets") ArrayList<Planet> planets,
+                   @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;

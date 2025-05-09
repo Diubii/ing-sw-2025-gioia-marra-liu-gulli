@@ -3,7 +3,7 @@ package org.polimi.ingsw.galaxytrucker.network.common;
 import java.io.Serial;
 import java.io.Serializable;
 
-public class  LobbyInfo implements Serializable {
+public class LobbyInfo implements Serializable {
     @Serial
     private static final long serialVersionUID = 111L;
 

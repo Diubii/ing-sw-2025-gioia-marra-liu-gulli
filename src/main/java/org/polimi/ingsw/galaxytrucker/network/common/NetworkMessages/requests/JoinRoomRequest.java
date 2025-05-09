@@ -25,7 +25,7 @@ public class JoinRoomRequest extends NetworkMessage implements Serializable {
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, IOException, InvalidTilePosition {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 

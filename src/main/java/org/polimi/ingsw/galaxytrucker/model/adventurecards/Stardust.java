@@ -14,12 +14,11 @@ public class Stardust extends AdventureCard {
 
     @JsonCreator
     public Stardust(@JsonProperty("id") int id,
-                         @JsonProperty("level") int level,
-                         @JsonProperty("daysLost") int daysLost,
-                         @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight,
-                        @JsonProperty("affectsAll") boolean affectsAll)
-    {
+                    @JsonProperty("level") int level,
+                    @JsonProperty("daysLost") int daysLost,
+                    @JsonProperty("name") String name,
+                    @JsonProperty("learningFlight") boolean learningFlight,
+                    @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;

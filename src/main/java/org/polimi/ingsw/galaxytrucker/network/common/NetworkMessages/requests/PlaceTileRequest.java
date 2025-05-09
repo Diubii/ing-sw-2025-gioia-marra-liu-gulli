@@ -33,7 +33,7 @@ public class PlaceTileRequest extends NetworkMessage implements Serializable {
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 

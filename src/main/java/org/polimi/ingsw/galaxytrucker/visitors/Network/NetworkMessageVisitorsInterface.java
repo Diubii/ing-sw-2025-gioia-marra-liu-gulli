@@ -35,7 +35,6 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(SERVER_INFO serverInfo);
 
 
-
     T visit(CheckShipStatusResponse checkShipStatusResponse);
 
     T visit(CheckShipStatusRequest checkShipStatusRequest);
@@ -47,7 +46,6 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(PlayerLostUpdate playerLostUpdate);
 
     T visit(PlayerKickedUpdate playerKickedUpdate);
-
 
 
     T visit(TileDrawnUpdate tileDrawnUpdate);
@@ -79,34 +77,43 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(FlightBoardUpdate flightBoardUpdate);
 
 
-
     T visit(FaceUpTileUpdate faceUpTileUpdate);
 
     T visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate);
 
     T visit(ActivateAdventureCardRequest activateAdventureCardRequest);
+
     T visit(ActivateAdventureCardResponse activateAdventureCardResponse);
 
     T visit(ActivateComponentRequest activateComponentRequest);
+
     T visit(ActivateComponentResponse activateComponentResponse);
 
     T visit(SelectPlanetRequest selectPlanetRequest);
+
     T visit(SelectPlanetResponse selectPlanetResponse);
+
     T visit(SelectedPlanetUpdate selectedPlanetUpdate);
 
     T visit(DiscardCrewMembersRequest discardCrewMembersRequest);
+
     T visit(DiscardCrewMembersResponse discardCrewMembersResponse);
 
     T visit(SellGoodsRequest sellGoodsRequest);
+
     T visit(SellGoodsResponse sellGoodsResponse);
 
     T visit(GameMessage gameMessage);
 
     T visit(HeartbeatRequest heartbeatRequest);
+
     T visit(HeartbeatResponse heartbeatResponse);
 
     T visit(DrawAdventureCardRequest drawAdventureCardRequest);
+
     T visit(EndTurnUpdate endTurnUpdate);
+
     T visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest);
+
     T visit(EarlyLandingRequest earlyLandingRequest);
 }

@@ -16,10 +16,14 @@ import java.util.Random;
  * It initializes all tiles and provides functionality for players to draw and return tiles.
  */
 public class TileBunch {
-    /** The list of tiles available for drawing. */
+    /**
+     * The list of tiles available for drawing.
+     */
     private ArrayList<Tile> tiles;
-    /** The list of face-up tiles available for selection. */
-    private ArrayList<Tile>  faceUpTiles;
+    /**
+     * The list of face-up tiles available for selection.
+     */
+    private ArrayList<Tile> faceUpTiles;
 
     Random rand = new Random();
 
@@ -27,7 +31,7 @@ public class TileBunch {
         this.faceUpTiles = new ArrayList<>();
         try {
             tiles = Util.generateTiles();
-        }catch (IOException e){
+        } catch (IOException e) {
             System.err.println(e.getMessage());
         }
 //        getFaceUpTiles();
@@ -41,7 +45,7 @@ public class TileBunch {
     public synchronized Tile drawFaceUpTile(int id) {
         if (!faceUpTiles.isEmpty()) {
             for (Tile tile : faceUpTiles) {
-                if (tile.getId()== id) {
+                if (tile.getId() == id) {
 
                     Tile myTile = tile;
                     faceUpTiles.remove(tile);
@@ -62,12 +66,12 @@ public class TileBunch {
             tiles.remove(randomIndex);
             return tile;
         }
-            return null;
+        return null;
 
     }
 
 
-    public synchronized void removeTile(Tile tile){
+    public synchronized void removeTile(Tile tile) {
         faceUpTiles.remove(tile);
         tiles.remove(tile);
     }
@@ -77,7 +81,7 @@ public class TileBunch {
     }
 
 
-    public synchronized int  getRemainingTiles(){
+    public synchronized int getRemainingTiles() {
         return tiles.size();
     }
 }

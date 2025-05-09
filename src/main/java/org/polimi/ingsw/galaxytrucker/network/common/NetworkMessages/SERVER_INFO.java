@@ -27,7 +27,7 @@ public class SERVER_INFO extends NetworkMessage {
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

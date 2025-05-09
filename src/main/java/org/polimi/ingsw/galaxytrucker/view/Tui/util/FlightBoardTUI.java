@@ -19,6 +19,7 @@ public class FlightBoardTUI {
 
     /**
      * Stampa la pista rettangolare chiusa, riempiendola con i colori dati.
+     *
      * @param colori Lista di 18 colori (tipo RED, GREEN, ecc.)
      */
     public static void printPistaRettangolare(ArrayList<Color> colori) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
@@ -45,9 +46,6 @@ public class FlightBoardTUI {
         for (int i = 0; i < 18; i++) {
             int r = posizioni[i][0];
             int c = posizioni[i][1];
-
-
-
 
 
             griglia[r][c] = (String) FlightBoardTUI.class.getField(colori.get(i).toString()).get(null);
@@ -81,10 +79,24 @@ public class FlightBoardTUI {
     // Esempio di uso
     public static void main(String[] args) throws NoSuchFieldException, ClassNotFoundException, IllegalAccessException {
         ArrayList<Color> colori = new ArrayList<>();
-                colori.add(Color.RED); colori.add(Color.EMPTY);colori.add(Color.EMPTY);colori.add(Color.EMPTY); colori.add(Color.EMPTY);
-        colori.add(Color.EMPTY);colori.add(Color.EMPTY);colori.add(Color.YELLOW);
-        colori.add(Color.RED);colori.add(Color.RED); colori.add(Color.EMPTY); colori.add(Color.EMPTY); colori.add(Color.EMPTY);colori.add(Color.EMPTY);
-        colori.add(Color.BLUE); colori.add(Color.EMPTY);colori.add(Color.GREEN);colori.add(Color.GREEN);
+        colori.add(Color.RED);
+        colori.add(Color.EMPTY);
+        colori.add(Color.EMPTY);
+        colori.add(Color.EMPTY);
+        colori.add(Color.EMPTY);
+        colori.add(Color.EMPTY);
+        colori.add(Color.EMPTY);
+        colori.add(Color.YELLOW);
+        colori.add(Color.RED);
+        colori.add(Color.RED);
+        colori.add(Color.EMPTY);
+        colori.add(Color.EMPTY);
+        colori.add(Color.EMPTY);
+        colori.add(Color.EMPTY);
+        colori.add(Color.BLUE);
+        colori.add(Color.EMPTY);
+        colori.add(Color.GREEN);
+        colori.add(Color.GREEN);
 
 
         printPistaRettangolare(colori);

@@ -1,8 +1,7 @@
-package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsm;
+package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms;
 
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
-import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.AbandonedShipEffect;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,12 +15,9 @@ public class AbandonedShipFSM extends CardFSM {
     @Override
     public ArrayList<Consumer<CardContext>> initPhases() {
         return new ArrayList<>(Arrays.asList(
-                CardPhase.Start,
-                CardPhase.CardActivated,
-                CardPhase.CrewDiscarded,
-                CardPhase.End
+                AbandonedShipEffect::start,
+                AbandonedShipEffect::receivedCardActivationResponse,
+                AbandonedShipEffect::crewDiscarded
         ));
     }
-
-
 }

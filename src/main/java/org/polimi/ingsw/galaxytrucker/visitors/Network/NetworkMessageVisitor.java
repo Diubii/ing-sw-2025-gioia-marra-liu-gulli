@@ -2,11 +2,16 @@ package org.polimi.ingsw.galaxytrucker.visitors.Network;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
+import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
+
+import java.io.IOException;
 
 public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Void> {
     private final ServerController serverController;
@@ -26,10 +31,13 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
 
-
     @Override
     public Void visit(NicknameRequest nicknameRequest) {
-        serverController.handleNicknameRequest(nicknameRequest, clientHandler);
+        try {
+            serverController.handleNicknameRequest(nicknameRequest, clientHandler);
+        } catch (TooManyPlayersException | PlayerAlreadyExistsException e) {
+            System.err.println(e.getMessage());
+        }
         return null;
     }
 
@@ -40,7 +48,11 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     @NeedsToBeCompleted
     @Override
     public Void visit(CreateRoomRequest createRoomRequest) {
-        serverController.handleCreateRoomRequest(createRoomRequest, clientHandler);
+        try {
+            serverController.handleCreateRoomRequest(createRoomRequest, clientHandler);
+        } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition e) {
+            System.err.println(e.getMessage());
+        }
         return null;
     }
 
@@ -52,7 +64,11 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(JoinRoomRequest joinRoomRequest) {
-        serverController.handleJoinRoomRequest(joinRoomRequest, clientHandler);
+        try {
+            serverController.handleJoinRoomRequest(joinRoomRequest, clientHandler);
+        } catch (TooManyPlayersException | PlayerAlreadyExistsException | IOException | InvalidTilePosition e) {
+            System.err.println(e.getMessage());
+        }
         return null;
     }
 
@@ -65,8 +81,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     public Void visit(JoinRoomOptionsResponse joinRoomOptionsResponse) {
         return null;
     }
-
-
 
 
     //BUILDING
@@ -96,7 +110,11 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(PlaceTileRequest placeTileRequest) {
-        serverController.handlePlaceTileRequest(placeTileRequest, clientHandler);
+        try {
+            serverController.handlePlaceTileRequest(placeTileRequest, clientHandler);
+        } catch (InvalidTilePosition e) {
+            System.err.println(e.getMessage());
+        }
         return null;
     }
 
@@ -150,7 +168,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
 
-
     @Override
     public Void visit(FinishBuildingRequest finishBuildingRequest) {
         serverController.handleFinishBuildingRequest(finishBuildingRequest, clientHandler);
@@ -158,12 +175,11 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
 
-
     @Override
     public Void visit(ShipUpdate shipUpdate) {
-        return serverController.handleShipUpdate(shipUpdate, clientHandler);
+        serverController.handleShipUpdate(shipUpdate, clientHandler);
+        return null;
     }
-
 
 
     @Override
@@ -185,7 +201,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
     @Override
-    public Void visit(CrewInitUpdate crewInitUpdate){
+    public Void visit(CrewInitUpdate crewInitUpdate) {
         serverController.handleCrewInitUpdate(crewInitUpdate, clientHandler);
         return null;
     }
@@ -228,13 +244,14 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
     @Override
-    public Void visit(ActivateAdventureCardRequest activateAdventureCardRequest){
+    public Void visit(ActivateAdventureCardRequest activateAdventureCardRequest) {
         return null;
     }
 
     @NeedsToBeCompleted
     @Override
-    public Void visit(ActivateAdventureCardResponse activateAdventureCardResponse){
+    public Void visit(ActivateAdventureCardResponse activateAdventureCardResponse) {
+        serverController.handleActivateAdventureCardResponse(activateAdventureCardResponse, clientHandler);
         return null;
     }
 
@@ -244,7 +261,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
     @Override
-    public Void visit(ActivateComponentResponse activateComponentResponse){
+    public Void visit(ActivateComponentResponse activateComponentResponse) {
         serverController.handleActivateComponentResponse(activateComponentResponse, clientHandler);
         return null;
     }
@@ -274,6 +291,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     @NeedsToBeCompleted
     @Override
     public Void visit(DiscardCrewMembersResponse discardCrewMembersResponse) {
+        serverController.handleDiscardCrewMembersResponse(discardCrewMembersResponse, clientHandler);
         return null;
     }
 
@@ -325,7 +343,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
     @Override
-    public Void visit(HeartbeatResponse heartbeatResponse){
+    public Void visit(HeartbeatResponse heartbeatResponse) {
         serverController.handleHeartbeatResponse(heartbeatResponse, clientHandler);
         return null;
     }

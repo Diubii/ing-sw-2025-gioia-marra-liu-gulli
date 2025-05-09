@@ -17,28 +17,31 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Fli
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
-import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 
 /**
  * This class includes common shared methods among the cards' effects methods.
  */
-public class Utils {
+public abstract class Utils {
+    private static NetworkMessageCouplingVisitor networkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
+
     /**
-     * Moves a player in the game's flight board and sends an update to all clients.
+     * Moves a specific player in the game's flight board and sends an update to all clients.
      *
      * @param context
+     * @param player
      * @param steps
      */
-    protected static void movePlayer(CardContext context, int steps) {
+    protected static void movePlayer(CardContext context, Player player, int steps) {
         LobbyManager game = context.getCurrentGame();
-        Player player = context.getCurrentPlayer();
 
         FlightBoard flightBoard = game.getRealGame().getFlightBoard();
         flightBoard.movePlayer(game.getPlayerColors().get(player.getNickName()), steps);
         FlightBoardUpdate fbu = new FlightBoardUpdate(flightBoard);
-        String message = "Player " + player.getNickName() + "moved " + steps + " steps!";
-        broadcast(game, new GameMessage(message));
-        broadcast(game, fbu);
+        String direction = steps < 0 ? "backwards" : "forwards";
+        String message = "Player " + player.getNickName() + " moved " + Math.abs(steps) + " steps " + direction + "!";
+        broadcast(context, new GameMessage(message));
+        broadcast(context, fbu);
+        context.setCurrentRankedPlayers(context.getCurrentGame().getGameController().getRankedPlayers()); //Aggiorno i currentRankedPlayers del context
     }
 
     protected static void discardCrewMembers(Player player, DiscardCrewMembersResponse discardCrewMembersResponse) {
@@ -61,10 +64,18 @@ public class Utils {
         }
     }
 
-    protected static void sendMessage(CardContext cardContext, NetworkMessage message) {
-        cardContext.getCurrentPlayerHandler().sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
-        cardContext.setExpectedNetworkMessageType(message.accept(new NetworkMessageCouplingVisitor()));
+    /**
+     * Sends a NetworkMessage to a specific player.
+     *
+     * @param context
+     * @param player
+     * @param message
+     */
+    protected static void sendMessage(CardContext context, Player player, NetworkMessage message) {
+        context.getCurrentGame().getPlayerHandlers().get(player.getNickName()).sendMessage(message);
+        context.incrementExpectedNumberOfNetworkMessages(message.accept(networkMessageCouplingVisitor));
     }
+
 
 //    protected static void sendMessageAndDeferGetResponse(LobbyManager lobbyManager, Player player, NetworkMessage message, ArrayList<CompletableFuture<NetworkMessage>> futures) {
 //        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -74,17 +85,18 @@ public class Utils {
 //        futures.add(future);
 //    }
 
-    protected static void sendGameMessage(LobbyManager lobbyManager, Player player, String message) {
+    protected static void sendGameMessage(CardContext context, Player player, String message) {
         GameMessage gameMessage = new GameMessage(message);
         gameMessage.setMessage(message);
-        lobbyManager.getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
+        context.getCurrentGame().getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
     }
 
-    protected static void broadcastGameMessage(LobbyManager lobbyManager, String message) {
-        broadcast(lobbyManager, new GameMessage(message));
+    protected static void broadcastGameMessage(CardContext context, String message) {
+        broadcast(context, new GameMessage(message));
     }
 
-    protected static void broadcast(LobbyManager lobbyManager, NetworkMessage message) {
+    protected static void broadcast(CardContext context, NetworkMessage message) {
+        LobbyManager lobbyManager = context.getCurrentGame();
         lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(message));
     }
 

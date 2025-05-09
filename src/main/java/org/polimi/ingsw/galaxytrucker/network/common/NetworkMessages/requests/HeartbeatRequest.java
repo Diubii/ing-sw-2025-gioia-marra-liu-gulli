@@ -15,10 +15,11 @@ public class HeartbeatRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 918273645L;
 
-    public HeartbeatRequest() {}
+    public HeartbeatRequest() {
+    }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

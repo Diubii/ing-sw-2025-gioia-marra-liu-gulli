@@ -24,7 +24,7 @@ public class GetFaceUpTilesResponse extends NetworkMessage implements Serializab
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return null;
     }
 

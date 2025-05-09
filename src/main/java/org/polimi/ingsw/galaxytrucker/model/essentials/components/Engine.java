@@ -11,7 +11,7 @@ public class Engine extends Component {
     protected int enginePower;
 
     @JsonCreator
-    public Engine( @JsonProperty("enginePower") int enginePower) {
+    public Engine(@JsonProperty("enginePower") int enginePower) {
 
         super(false);
         this.enginePower = enginePower;

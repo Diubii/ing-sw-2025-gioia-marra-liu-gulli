@@ -18,15 +18,15 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     public ClientNetworkMessageVisitor(ClientController clientController) {
         this.clientController = clientController;
     }
+
     @Override
     public Void visit(SERVER_INFO serverInfo) {
 
-            clientController.handleServerInfo(serverInfo);
+        clientController.handleServerInfo(serverInfo);
 
 
         return null;
     }
-
 
 
     @Override
@@ -59,12 +59,12 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
 
-
     @Override
     public Void visit(FetchShipRequest fetchShipRequest) {
 
         return null;
     }
+
     @Override
     public Void visit(CheckShipStatusRequest checkShipStatusRequest) {
 
@@ -143,15 +143,11 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
 
-
     @Override
     public Void visit(ShipUpdate shipUpdate) {
         clientController.handleShipUpdate(shipUpdate);
         return null;
     }
-
-
-
 
 
     @Override
@@ -234,8 +230,6 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
 
-
-
     @Override
     public Void visit(FaceUpTileUpdate faceUpTileUpdate) {
         clientController.handleFaceUpTileUpdate(faceUpTileUpdate);
@@ -243,7 +237,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
-    public Void visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate){
+    public Void visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
         clientController.handleDrawnAdventureCardUpdate(drawnAdventureCardUpdate);
         return null;
     }
@@ -260,7 +254,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
-    public Void visit(ActivateComponentRequest activateComponentRequest){
+    public Void visit(ActivateComponentRequest activateComponentRequest) {
         clientController.handleActivateComponentRequest(activateComponentRequest);
         return null;
     }

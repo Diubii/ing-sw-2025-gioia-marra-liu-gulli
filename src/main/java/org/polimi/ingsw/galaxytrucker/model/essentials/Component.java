@@ -31,7 +31,7 @@ import java.io.Serializable;
  * Represents a component in the game, which could be part of a ship .
  * Each component has a name, a structural property, and a rotation value.
  */
-public  class Component implements Serializable {
+public class Component implements Serializable {
 
 
 //    private final String Name;

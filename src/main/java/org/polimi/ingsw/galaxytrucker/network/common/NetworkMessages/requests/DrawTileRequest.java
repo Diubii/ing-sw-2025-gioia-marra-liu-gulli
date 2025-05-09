@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 public class DrawTileRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 533L;
-    private  Tile tile;
+    private Tile tile;
 
 
     public DrawTileRequest() {
@@ -28,7 +28,7 @@ public class DrawTileRequest extends NetworkMessage implements Serializable {
 
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, ExecutionException, InterruptedException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 

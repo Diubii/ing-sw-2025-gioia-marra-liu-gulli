@@ -30,7 +30,8 @@ public class Util {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().filter(card -> card.getLevel() == 1).toList()) ;
+        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+        }).stream().filter(card -> card.getLevel() == 1).toList());
 
 
         return new CardDeck(list, true);
@@ -41,7 +42,8 @@ public class Util {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().filter(card -> card.getLevel() == 2).toList()) ;
+        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+        }).stream().filter(card -> card.getLevel() == 2).toList());
 
         System.out.println("LVL2: ");
 
@@ -53,19 +55,23 @@ public class Util {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().filter(AdventureCard::isLearningFlight).toList());
+        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+        }).stream().filter(AdventureCard::isLearningFlight).toList());
 
         return new CardDeck(list, true);
 
     }
+
     public static CardDeck createTestDeck() throws IOException {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
-        ArrayList<AdventureCard> list =new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {}).stream().toList());
+        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+        }).stream().toList());
         ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
-        cardsToTest.add(list.get(3)); //stardust
-        cardsToTest.add(list.get(4)); // open Space
-        cardsToTest.add(list.get(24)); //epidemic
+        cardsToTest.add(list.get(31)); //Planets
+        cardsToTest.add(list.get(3)); //Stardust
+        cardsToTest.add(list.get(4)); //Open Space
+        cardsToTest.add(list.get(24)); //Epidemic
 
         return new CardDeck(cardsToTest, true);
 
@@ -73,6 +79,7 @@ public class Util {
 
     /**
      * Generates the tiles of a game and puts them in an {@link ArrayList}
+     *
      * @return The {@link ArrayList} of tiles
      * @throws IOException
      */
@@ -80,7 +87,8 @@ public class Util {
         File file = new File("src/main/resources/tiledata.json");
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<Tile> list = new ArrayList<>(mapper.readValue(file, new TypeReference<ArrayList<Tile>>(){}));
+        ArrayList<Tile> list = new ArrayList<>(mapper.readValue(file, new TypeReference<ArrayList<Tile>>() {
+        }));
 
         return list;
     }
@@ -259,7 +267,7 @@ public class Util {
         } else c4 = null;
 
 
-        if ((compatible(c1,T.getSides().get(0)) || c1 == null) && (compatible(c2,T.getSides().get(1) )|| c2 == null) && (compatible(c2,T.getSides().get(2)) || c3 == null) && (compatible(c3,T.getSides().get(3)) || c4 == null)) {
+        if ((compatible(c1, T.getSides().get(0)) || c1 == null) && (compatible(c2, T.getSides().get(1)) || c2 == null) && (compatible(c2, T.getSides().get(2)) || c3 == null) && (compatible(c3, T.getSides().get(3)) || c4 == null)) {
             return new Pair<>(true, sum);
         }
 
@@ -268,27 +276,25 @@ public class Util {
     }
 
 
-    public static Boolean checkNearLFS(Position position, AlienColor color, Ship myShip){
+    public static Boolean checkNearLFS(Position position, AlienColor color, Ship myShip) {
 
         ArrayList<Position> adjacentPos = getAdjacentPositions(position);
 
-        for (Position pos: adjacentPos){
+        for (Position pos : adjacentPos) {
 
             Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
 
-            if ( tempSlot != null && tempSlot.getTile() != null){
+            if (tempSlot != null && tempSlot.getTile() != null) {
                 if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && color.equals(AlienColor.PURPLE)) {
                     return true;
-                }
-
-                else if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && color.equals(AlienColor.BROWN)) {
+                } else if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && color.equals(AlienColor.BROWN)) {
                     return true;
                 }
             }
 
         }
 
-        return  false;
+        return false;
 
     }
 

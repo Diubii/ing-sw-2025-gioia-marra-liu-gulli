@@ -24,16 +24,15 @@ public class CombatZone extends AdventureCard {
     }
 
     @JsonCreator
-    public CombatZone(   @JsonProperty("id") int id,
-                         @JsonProperty("level") int level,
-                         @JsonProperty("daysLost") int daysLost,
-                         @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("crewMembersLost") int crewMembersLost,
-                         @JsonProperty("goodsLost") int goodsLost,
-                         @JsonProperty("projectiles") ArrayList<Projectile> projectiles,
-                         @JsonProperty("affectsAll") boolean affectsAll)
-    {
+    public CombatZone(@JsonProperty("id") int id,
+                      @JsonProperty("level") int level,
+                      @JsonProperty("daysLost") int daysLost,
+                      @JsonProperty("name") String name,
+                      @JsonProperty("learningFlight") boolean learningFlight,
+                      @JsonProperty("crewMembersLost") int crewMembersLost,
+                      @JsonProperty("goodsLost") int goodsLost,
+                      @JsonProperty("projectiles") ArrayList<Projectile> projectiles,
+                      @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;

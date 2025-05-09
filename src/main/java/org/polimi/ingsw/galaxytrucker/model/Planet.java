@@ -13,11 +13,13 @@ import java.util.ArrayList;
  * A planet has a state of occupation (whether it is occupied or not)
  * and a collection of goods that can be associated with it.
  */
-public class Planet  implements Serializable {
+public class Planet implements Serializable {
     @Serial
     private static final long serialVersionUID = 7823187187L;
 
-    /** Indicates whether the planet is occupied. */
+    /**
+     * Indicates whether the planet is occupied.
+     */
     private boolean occupied;
     private final ArrayList<Good> goods;
 
@@ -29,6 +31,7 @@ public class Planet  implements Serializable {
     public boolean isOccupied() {
         return occupied;
     }
+
     public ArrayList<Good> getGoods() {
         return goods;
     }

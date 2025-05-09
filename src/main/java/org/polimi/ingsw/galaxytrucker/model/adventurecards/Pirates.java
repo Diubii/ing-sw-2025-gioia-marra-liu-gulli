@@ -17,7 +17,9 @@ public class Pirates extends AdventureCard {
 
     private final ArrayList<Projectile> cannonFires;
     private final int firePower;
-    /** The amount of credits lost or gained. */
+    /**
+     * The amount of credits lost or gained.
+     */
     private final int credits;
 
     public ArrayList<Projectile> getCannonFires() {
@@ -30,7 +32,7 @@ public class Pirates extends AdventureCard {
                    @JsonProperty("daysLost") int daysLost,
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
-                   @JsonProperty("firePower") int firePower ,
+                   @JsonProperty("firePower") int firePower,
                    @JsonProperty("cannonFires") ArrayList<Projectile> cannonFires,
                    @JsonProperty("credits") int credits,
                    @JsonProperty("affectsAll") boolean affectsAll) {
@@ -50,6 +52,7 @@ public class Pirates extends AdventureCard {
         this.firePower = firePower;
         this.credits = credits;
     }
+
     /**
      * Gets the firepower of the enemy.
      *

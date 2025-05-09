@@ -13,8 +13,8 @@ public class CheckShipStatusResponse extends NetworkMessage implements Serializa
     private final Ship ship;
     private final Boolean isValid;
 
-    public CheckShipStatusResponse(Ship ship, Boolean isValid,int id)
-    {   super(id);
+    public CheckShipStatusResponse(Ship ship, Boolean isValid, int id) {
+        super(id);
         this.ship = ship;
         this.isValid = isValid;
     }
@@ -28,7 +28,7 @@ public class CheckShipStatusResponse extends NetworkMessage implements Serializa
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

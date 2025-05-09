@@ -29,7 +29,7 @@ public abstract class NetworkMessage implements Serializable {
         return myId;
     }
 
-    public static int getCounter(){
+    public static int getCounter() {
         return id;
     }
 

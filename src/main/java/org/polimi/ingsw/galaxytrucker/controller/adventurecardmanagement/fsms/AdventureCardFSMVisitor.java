@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsm;
+package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms;
 
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
@@ -11,22 +11,22 @@ public class AdventureCardFSMVisitor implements AdventureCardVisitorsInterface<C
 
     @Override
     public CardFSM visit(AbandonedStation abandonedStation) {
-        return null;
+        return new AbandonedStationFSM();
     }
 
     @Override
     public CardFSM visit(CombatZone combatZone) {
-        return null;
+        return new CombatZoneFSM();
     }
 
     @Override
     public CardFSM visit(Epidemic epidemic) {
-        return null;
+        return new EpidemicFSM();
     }
 
     @Override
     public CardFSM visit(MeteorSwarm meteorSwarm) {
-        return null;
+        return new MeteorSwarmFSM();
     }
 
     @Override
@@ -36,12 +36,12 @@ public class AdventureCardFSMVisitor implements AdventureCardVisitorsInterface<C
 
     @Override
     public CardFSM visit(Planets planets) {
-        return null;
+        return new PlanetsFSM();
     }
 
     @Override
     public CardFSM visit(Stardust stardust) {
-        return null;
+        return new StardustFSM();
     }
 
     @Override

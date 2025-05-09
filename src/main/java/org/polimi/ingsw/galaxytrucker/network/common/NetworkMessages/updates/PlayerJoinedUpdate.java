@@ -16,8 +16,7 @@ public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
     private static final long serialVersionUID = 12217367L;
 
 
-
-    private  ArrayList<PlayerInfo> playersJoinedBefore;
+    private ArrayList<PlayerInfo> playersJoinedBefore;
     private final PlayerInfo playerInfo;
 
     public PlayerJoinedUpdate(PlayerInfo playerInfo) {
@@ -43,7 +42,7 @@ public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
 
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

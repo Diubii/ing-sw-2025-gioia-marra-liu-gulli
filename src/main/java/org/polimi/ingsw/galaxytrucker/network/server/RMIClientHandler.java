@@ -46,7 +46,7 @@ public class RMIClientHandler implements ClientHandler {
             }
         } catch (RemoteException e) {
             //System.err.println("Errore nella comunicazione con il client RMI: " + e.getMessage());
-        } catch (IOException | ExecutionException | InvalidTilePosition | InterruptedException e) {
+        } catch (IOException | ExecutionException | InvalidTilePosition e) {
             throw new RuntimeException(e);
         } catch (PlayerAlreadyExistsException | TooManyPlayersException e) {
             System.err.println(e.getMessage());

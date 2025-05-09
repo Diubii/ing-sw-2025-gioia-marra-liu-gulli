@@ -28,7 +28,7 @@ public class Good implements Serializable {
      * @param color The color of the good.
      */
     @JsonCreator
-    public Good( @JsonProperty("color") Color color) {
+    public Good(@JsonProperty("color") Color color) {
         this.color = color;
     }
 
@@ -61,8 +61,8 @@ public class Good implements Serializable {
      * @return The value of the good.
      */
     @JsonIgnore
-    public int getValue(){
-        switch (color){
+    public int getValue() {
+        switch (color) {
             case RED -> {
                 return 4;
             }

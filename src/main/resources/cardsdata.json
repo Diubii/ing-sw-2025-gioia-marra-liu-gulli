@@ -12,16 +12,16 @@
     "affectsAll": false
   },
   {
-  "type": "Smugglers",
-  "id": 2,
-  "level": 1,
-  "daysLost": 1,
-  "name": "Contrabbandieri",
-  "learningFlight": true,
-  "firePower": 4,
-  "penalty": 2,
-  "affectsAll": false,
-  "goods": [
+    "type": "Smugglers",
+    "id": 2,
+    "level": 1,
+    "daysLost": 1,
+    "name": "Contrabbandieri",
+    "learningFlight": true,
+    "firePower": 4,
+    "penalty": 2,
+    "affectsAll": false,
+    "goods": [
       {
         "color": "YELLOW"
       },
@@ -45,17 +45,17 @@
       {
         "type": "CannonFire",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "CannonFire",
         "direction": "UP",
-        "size": "BIG"
+        "size": "Big"
       },
       {
         "type": "CannonFire",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       }
     ],
     "credits": 4,
@@ -117,17 +117,17 @@
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "BIG"
+        "size": "Big"
       },
       {
         "type": "Meteor",
         "direction": "LEFT",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "RIGHT",
-        "size": "LITTLE"
+        "size": "Little"
       }
     ],
     "affectsAll": true
@@ -143,27 +143,27 @@
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "LEFT",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "RIGHT",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "DOWN",
-        "size": "LITTLE"
+        "size": "Little"
       }
     ],
     "affectsAll": true
@@ -179,17 +179,17 @@
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "BIG"
+        "size": "Big"
       },
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "BIG"
+        "size": "Big"
       }
     ],
     "affectsAll": true
@@ -407,12 +407,12 @@
       {
         "type": "CannonFire",
         "direction": "DOWN",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "CannonFire",
         "direction": "DOWN",
-        "size": "BIG"
+        "size": "Big"
       }
     ],
     "affectsAll": true
@@ -521,17 +521,17 @@
       {
         "type": "CannonFire",
         "direction": "UP",
-        "size": "BIG"
+        "size": "Big"
       },
       {
         "type": "CannonFire",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "CannonFire",
         "direction": "UP",
-        "size": "BIG"
+        "size": "Big"
       }
     ],
     "credits": 7,
@@ -593,27 +593,27 @@
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "LEFT",
-        "size": "BIG"
+        "size": "Big"
       },
       {
         "type": "Meteor",
         "direction": "LEFT",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "LEFT",
-        "size": "LITTLE"
+        "size": "Little"
       }
     ],
     "affectsAll": true
@@ -629,22 +629,22 @@
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "BIG"
+        "size": "Big"
       },
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "BIG"
+        "size": "Big"
       },
       {
         "type": "Meteor",
         "direction": "DOWN",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "DOWN",
-        "size": "LITTLE"
+        "size": "Little"
       }
     ],
     "affectsAll": true
@@ -660,27 +660,27 @@
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "RIGHT",
-        "size": "BIG"
+        "size": "Big"
       },
       {
         "type": "Meteor",
         "direction": "RIGHT",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "Meteor",
         "direction": "RIGHT",
-        "size": "LITTLE"
+        "size": "Little"
       }
     ],
     "affectsAll": true
@@ -913,22 +913,22 @@
       {
         "type": "CannonFire",
         "direction": "UP",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "CannonFire",
         "direction": "RIGHT",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "CannonFire",
         "direction": "LEFT",
-        "size": "LITTLE"
+        "size": "Little"
       },
       {
         "type": "CannonFire",
         "direction": "DOWN",
-        "size": "BIG"
+        "size": "Big"
       }
     ],
     "affectsAll": true

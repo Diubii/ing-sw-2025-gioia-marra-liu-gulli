@@ -15,22 +15,21 @@ public class Smugglers extends AdventureCard {
     private final int firePower;
     private int penalty;
     private ArrayList<Good> goods;
+
     public int getPenalty() {
         return penalty;
     }
 
     @JsonCreator
     public Smugglers(@JsonProperty("id") int id,
-                         @JsonProperty("level") int level,
-                         @JsonProperty("daysLost") int daysLost,
-                         @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("firePower") int firePower,
-                         @JsonProperty("penalty")int penalty,
-                         @JsonProperty("good") ArrayList<Good> goods,
-                         @JsonProperty("affectsAll") boolean affectsAll                  )
-
-    {
+                     @JsonProperty("level") int level,
+                     @JsonProperty("daysLost") int daysLost,
+                     @JsonProperty("name") String name,
+                     @JsonProperty("learningFlight") boolean learningFlight,
+                     @JsonProperty("firePower") int firePower,
+                     @JsonProperty("penalty") int penalty,
+                     @JsonProperty("good") ArrayList<Good> goods,
+                     @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;
@@ -44,13 +43,14 @@ public class Smugglers extends AdventureCard {
 
     }
 
-    public Smugglers(int firePower){
+    public Smugglers(int firePower) {
         this.firePower = firePower;
     }
 
     public ArrayList<Good> getGoods() {
         return new ArrayList<Good>(goods);
     }
+
     /**
      * Gets the firepower of the enemy.
      *

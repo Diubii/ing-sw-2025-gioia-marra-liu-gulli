@@ -150,44 +150,43 @@ public class GuiJavaFx implements View {
     }
 
 
-@Override
-public void showLobbies(List<LobbyInfo> lobbies) {
-    Platform.runLater(() -> {
-        VBox layout = new VBox(10);
+    @Override
+    public void showLobbies(List<LobbyInfo> lobbies) {
+        Platform.runLater(() -> {
+            VBox layout = new VBox(10);
 
-        Label instruction = new Label("Click on a lobby to join it, or enter an ID manually:");
-        layout.getChildren().add(instruction);
+            Label instruction = new Label("Click on a lobby to join it, or enter an ID manually:");
+            layout.getChildren().add(instruction);
 
-        for (LobbyInfo info : lobbies) {
-            Button b = new Button("Lobby " + info.getLobbyID() + ": " + info.getHost());
-            b.setOnAction(e -> controller.handleJoinChoice(info.getLobbyID()));
-            layout.getChildren().add(b);
-        }
-
-        HBox manualJoin = new HBox(10);
-        TextField roomIdField = new TextField();
-        roomIdField.setPromptText("Enter Room ID");
-        Button joinBtn = new Button("Join");
-        joinBtn.setOnAction(e -> {
-            try {
-                int id = Integer.parseInt(roomIdField.getText().trim());
-                controller.handleJoinChoice(id);
-            } catch (NumberFormatException ex) {
-                showGenericMessage("Invalid room ID format.");
+            for (LobbyInfo info : lobbies) {
+                Button b = new Button("Lobby " + info.getLobbyID() + ": " + info.getHost());
+                b.setOnAction(e -> controller.handleJoinChoice(info.getLobbyID()));
+                layout.getChildren().add(b);
             }
-        });
-        manualJoin.getChildren().addAll(roomIdField, joinBtn);
-        layout.getChildren().add(manualJoin);
 
-        primaryStage.setScene(new Scene(layout, 400, 400));
-    });
-}
+            HBox manualJoin = new HBox(10);
+            TextField roomIdField = new TextField();
+            roomIdField.setPromptText("Enter Room ID");
+            Button joinBtn = new Button("Join");
+            joinBtn.setOnAction(e -> {
+                try {
+                    int id = Integer.parseInt(roomIdField.getText().trim());
+                    controller.handleJoinChoice(id);
+                } catch (NumberFormatException ex) {
+                    showGenericMessage("Invalid room ID format.");
+                }
+            });
+            manualJoin.getChildren().addAll(roomIdField, joinBtn);
+            layout.getChildren().add(manualJoin);
+
+            primaryStage.setScene(new Scene(layout, 400, 400));
+        });
+    }
 
     @Override
     public void toShowCurrentMenu() {
 
     }
-
 
 
     @Override
@@ -196,7 +195,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void showPlayersLobby( PlayerInfo myinfo , ArrayList<PlayerInfo> playerInfo) {
+    public void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> playerInfo) {
         //showGenericMessage("Player joined: " + playerInfo);
     }
 
@@ -235,7 +234,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void askShowFaceUpTiles()  {
+    public void askShowFaceUpTiles() {
 
     }
 
@@ -335,7 +334,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void showFlightBoard(FlightBoard flightBoard,ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
+    public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
 
     }
 
@@ -366,7 +365,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void askDiscardCrew(int nCrewToDiscard,Ship myShip) {
+    public void askDiscardCrew(int nCrewToDiscard, Ship myShip) {
 
     }
 

@@ -20,14 +20,8 @@ public class MessageManager {
     }
     //logica
 
-    public void handle(NetworkMessage message, ClientHandler clientHandler) throws ExecutionException, InterruptedException {
+    public void handle(NetworkMessage message, ClientHandler clientHandler) {
         NetworkMessageVisitor nmv = new NetworkMessageVisitor(serverController, clientHandler);
-        try {
-            message.accept(nmv);
-        } catch (TooManyPlayersException | PlayerAlreadyExistsException | IOException e) {
-            System.out.println(e.getMessage());
-        } catch (InvalidTilePosition e) {
-            throw new RuntimeException(e);
-        }
+        message.accept(nmv);
     }
 }

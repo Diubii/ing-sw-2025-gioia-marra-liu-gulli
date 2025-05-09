@@ -35,25 +35,19 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
-
     @Override
     public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws IOException, ExecutionException, InterruptedException {
-        try {
-            NetworkMessageType type = message.accept(nmnv);
+        NetworkMessageType type = message.accept(nmnv);
 
 //            if (message.accept(new NetworkMessageNameVisitor()).equals(NetworkMessageType.FinishBuildingRequest)){
 //                FinishBuildingRequest mess = (FinishBuildingRequest) message;
 //                System.out.println("FINISH FROM + " + mess.name);
 //            }
 
-            if(type != NetworkMessageType.HeartbeatResponse){
-                System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + type));
-            }
-        } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition e) {
-            throw new RuntimeException(e);
+        if (type != NetworkMessageType.HeartbeatResponse) {
+            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + type));
         }
         RMIClientHandler handler = (RMIClientHandler) clientMap.get(clientRMI);
-
 
 
 //        String nickname = controller.getLobbyFromHandler(handler).getPlayerHandlers().entrySet().stream().filter(pair -> pair.getValue().equals(handler)).map(Map.Entry::getKey).findFirst().get();
@@ -62,13 +56,8 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
 //        System.out.println("FROM: " + nickname);
 
 
-
-        new Thread(()->{
-            try {
-                controller.getMessageManager().handle(message, handler);
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        new Thread(() -> {
+            controller.getMessageManager().handle(message, handler);
         }).start();
 
     }

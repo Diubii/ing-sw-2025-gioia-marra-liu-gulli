@@ -12,11 +12,12 @@ import java.util.HashMap;
 import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.movePlayer;
 import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.sendMessage;
 
-public class OpenSpaceEffects {
+public abstract class OpenSpaceEffect {
     private final static HashMap<LobbyManager, HashMap<String, Integer>> playerToPowerMapPerGame = new HashMap<>();
 
     public static void doubleEnginesActivationRequest(CardContext context) {
-        sendMessage(context, new ActivateComponentRequest(ActivatableComponent.DoubleEngine));
+        sendMessage(context, context.getCurrentPlayer(), new ActivateComponentRequest(ActivatableComponent.DoubleEngine));
+        context.nextPhase();
     }
 
     public static void doubleEnginesActivated(CardContext context) {
@@ -35,10 +36,15 @@ public class OpenSpaceEffects {
         }
         playerToPowerMap.put(player.getNickName(), playerEnginePower);
 
-        movePlayer(context, playerEnginePower);
+        movePlayer(context, player, playerEnginePower);
+
+        if (player == context.getCurrentRankedPlayers().getLast()) context.nextPhase();
+        else context.previousPhase();
+
+        context.executePhase();
     }
 
-    public static void finalCheck(CardContext context){
+    public static void finalCheck(CardContext context) {
         LobbyManager game = context.getCurrentGame();
 
         HashMap<String, Integer> playerToPowerMap = playerToPowerMapPerGame.get(game);
@@ -56,5 +62,7 @@ public class OpenSpaceEffects {
         //Cleanup
         playerToPowerMapPerGame.get(game).forEach((nickname, ignoredPower) -> playerToPowerMap.remove(nickname));
         playerToPowerMapPerGame.remove(game);
+
+        context.nextPhase();
     }
 }

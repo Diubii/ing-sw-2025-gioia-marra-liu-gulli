@@ -30,7 +30,6 @@ import java.io.Serializable;
         @JsonSubTypes.Type(value = Stardust.class, name = "Stardust"),
 
 
-
 })
 public abstract class AdventureCard implements Serializable {
 
@@ -40,11 +39,17 @@ public abstract class AdventureCard implements Serializable {
     int level;
     int daysLost;
     String name;
-    /** Indicates whether the card has to be used in learning flights */
+    /**
+     * Indicates whether the card has to be used in learning flights
+     */
     boolean learningFlight;
-    /** Indicates whether the effect of the card applies to all players. */
+    /**
+     * Indicates whether the effect of the card applies to all players.
+     */
     boolean affectsAll; //OpenSpace, Stardust, Epidemic, MeteorSwarm
-    /** Indicates whether a player can choose to not activate the card. Used for {@link Planets}, {@link AbandonedShip} and {@link AbandonedStation}.*/
+    /**
+     * Indicates whether a player can choose to not activate the card. Used for {@link Planets}, {@link AbandonedShip} and {@link AbandonedStation}.
+     */
     boolean facultative = false;
 
     /**
@@ -53,6 +58,7 @@ public abstract class AdventureCard implements Serializable {
      * @param visitor The activator responsible for triggering the card's effect.
      */
     public abstract <T> T accept(AdventureCardVisitorsInterface<T> visitor);
+
     /**
      * Gets the unique identifier of the card.
      *
@@ -61,6 +67,7 @@ public abstract class AdventureCard implements Serializable {
     public int getID() {
         return id;
     }
+
     /**
      * Gets the level of the card.
      *
@@ -69,6 +76,7 @@ public abstract class AdventureCard implements Serializable {
     public int getLevel() {
         return level;
     }
+
     /**
      * Gets the number of days lost due to the card's effect.
      *
@@ -77,6 +85,7 @@ public abstract class AdventureCard implements Serializable {
     public int getDaysLost() {
         return daysLost;
     }
+
     /**
      * Gets the name of the card.
      *
@@ -85,6 +94,7 @@ public abstract class AdventureCard implements Serializable {
     public String getName() {
         return name;
     }
+
     /**
      * Checks if the card has to be used in learning flights.
      *
@@ -93,6 +103,7 @@ public abstract class AdventureCard implements Serializable {
     public boolean isLearningFlight() {
         return learningFlight;
     }
+
     /**
      * Checks if the effect of the card applies to all players.
      *

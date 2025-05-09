@@ -1,8 +1,6 @@
-package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsm;
+package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms;
 
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
-import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -15,6 +13,7 @@ public abstract class CardFSM {
     private final ArrayList<Consumer<CardContext>> phases;
     private Consumer<CardContext> currentPhase;
     private ListIterator<Consumer<CardContext>> phaseIterator;
+    private boolean done = false;
 
     protected CardFSM() {
         phases = initPhases();
@@ -25,15 +24,32 @@ public abstract class CardFSM {
     public abstract ArrayList<Consumer<CardContext>> initPhases();
 
     public void execute(CardContext cardContext) {
-        currentPhase.accept(cardContext);
+        if (currentPhase != null) {
+            currentPhase.accept(cardContext);
+        } else {
+            System.err.println("[CardFSM] No phase to execute.");
+        }
     }
 
-    public void next(){
-        currentPhase = phaseIterator.next();
+    public void previous() {
+        if (phaseIterator.hasPrevious()) currentPhase = phaseIterator.previous();
     }
 
-    public void reset(){
+    public void next() {
+        if (phaseIterator.hasNext()) {
+            currentPhase = phaseIterator.next();
+        } else {
+            done = true;
+        }
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void reset() {
         phaseIterator = phases.listIterator();
         currentPhase = phaseIterator.next();
+        done = false;
     }
 }

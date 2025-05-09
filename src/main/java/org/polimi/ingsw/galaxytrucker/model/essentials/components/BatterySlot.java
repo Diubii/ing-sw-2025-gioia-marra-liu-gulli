@@ -10,8 +10,9 @@ import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 public class BatterySlot extends Component {
 
     private int batteriesLeft;
+
     @JsonCreator
-    public BatterySlot( @JsonProperty("batteriesLeft") int batteriesLeft) {
+    public BatterySlot(@JsonProperty("batteriesLeft") int batteriesLeft) {
         super(false);
         this.batteriesLeft = batteriesLeft;
 
@@ -21,7 +22,7 @@ public class BatterySlot extends Component {
         return batteriesLeft;
     }
 
-    public void removeBattery(){
+    public void removeBattery() {
         batteriesLeft--;
     }
 

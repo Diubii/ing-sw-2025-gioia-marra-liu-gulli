@@ -16,9 +16,10 @@ public class AbandonedStation extends AdventureCard {
     @Serial
     private static final long serialVersionUID = 99199L;
 
-    /** A list of goods associated with the abandoned station. */
+    /**
+     * A list of goods associated with the abandoned station.
+     */
     private final ArrayList<Good> goods;
-
 
 
     private final int requiredCrewMembers;
@@ -32,18 +33,19 @@ public class AbandonedStation extends AdventureCard {
      *
      * @return A list of {@link Good} objects associated with the abandoned station.
      */
-    public ArrayList<Good> getGoods() { return goods; }
+    public ArrayList<Good> getGoods() {
+        return goods;
+    }
 
     @JsonCreator
     public AbandonedStation(@JsonProperty("id") int id,
-                         @JsonProperty("level") int level,
-                         @JsonProperty("daysLost") int daysLost,
-                         @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight,
-                         @JsonProperty("goods")   ArrayList<Good> goods,
-                         @JsonProperty("requiredCrewMembers")   int requiredCrewMembers,
-                         @JsonProperty("affectsAll") boolean affectsAll   )
-    {
+                            @JsonProperty("level") int level,
+                            @JsonProperty("daysLost") int daysLost,
+                            @JsonProperty("name") String name,
+                            @JsonProperty("learningFlight") boolean learningFlight,
+                            @JsonProperty("goods") ArrayList<Good> goods,
+                            @JsonProperty("requiredCrewMembers") int requiredCrewMembers,
+                            @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;

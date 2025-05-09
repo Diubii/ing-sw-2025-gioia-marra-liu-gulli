@@ -135,9 +135,9 @@
 //
 //        myShip.putTile(myTile4, new Position(2,4));
 //        myShip.putTile(myTile5, new Position(1,4));
-////
-////        myShip.removeTile(myTile2,new Position(4,5));
-////        myShip.brokenPositions.add(new Position(4,5));
+/// /
+/// /        myShip.removeTile(myTile2,new Position(4,5));
+/// /        myShip.brokenPositions.add(new Position(4,5));
 //
 //        myShip.checkShip();
 //        System.out.println(myShip.toString());

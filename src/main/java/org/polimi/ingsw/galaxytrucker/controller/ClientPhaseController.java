@@ -23,14 +23,16 @@ public class ClientPhaseController {
     }
 
     public synchronized void handlePhaseUpdate(PhaseUpdate update) {
-        switch (update.getState()){
+        switch (update.getState()) {
 
             case BUILDING_START -> phase = PLAYER_PHASE.BUILDING;
 
 
             case BUILDING_TIMER -> {
 
-                if (phase == PLAYER_PHASE.FINISH_BUILDING) {return;}
+                if (phase == PLAYER_PHASE.FINISH_BUILDING) {
+                    return;
+                }
                 phase = PLAYER_PHASE.BUILDING_TIMER;
             }
             case BUILDING_END -> phase = PLAYER_PHASE.FINISH_BUILDING;
@@ -40,10 +42,6 @@ public class ClientPhaseController {
             case SHIP_CHECK -> phase = PLAYER_PHASE.CHECK_SHIP;
 
             case FLIGHT -> phase = PLAYER_PHASE.FLIGHT;
-
-
-
-
 
 
         }

@@ -31,6 +31,7 @@ public class InputUtils {
             throw new IllegalArgumentException("Coordinates must be valid integers.");
         }
     }
+
     private static final List<Integer> VALID_ROTATIONS = Arrays.asList(90, 180, 270, 360);
 
     public static int parseRotation(String input) throws IllegalArgumentException {
@@ -47,6 +48,7 @@ public class InputUtils {
             throw new IllegalArgumentException("Please enter a valid number.");
         }
     }
+
     public static boolean parseYesNo(String input) throws IllegalArgumentException {
         input = input.trim().toLowerCase();
         if (input.equals("y") || input.equals("yes")) {

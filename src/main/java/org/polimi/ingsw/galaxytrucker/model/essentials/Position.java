@@ -56,6 +56,7 @@ public class Position implements Serializable {
         Position position = (Position) obj;
         return x == position.x && y == position.y;
     }
+
     @Override
 
     public String toString() {

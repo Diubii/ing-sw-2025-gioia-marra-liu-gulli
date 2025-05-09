@@ -18,67 +18,65 @@ import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.RESET;
  */
 public class CardPrintUtils {
 
-   public static void printPlanetList(ArrayList<Planet> planets){
-       StringBuilder sb;
-       for(int i=0; i< planets.size(); i++){
-           sb = new StringBuilder();
-           if(planets.get(i).isOccupied()){
-               sb.append("Occ");
-           }
-           else{
-               sb.append("   ");
-           }
-           sb.append(" P").append(i+1).append(": ");
+    public static void printPlanetList(ArrayList<Planet> planets) {
+        StringBuilder sb;
+        for (int i = 0; i < planets.size(); i++) {
+            sb = new StringBuilder();
+            if (planets.get(i).isOccupied()) {
+                sb.append("Occ");
+            } else {
+                sb.append("   ");
+            }
+            sb.append(" P").append(i + 1).append(": ");
 
-           int j=0;
-           for( j=0; j < planets.get(i).getGoods().size(); j++){
-               switch (planets.get(i).getGoods().get(j).getColor()){
-                   case RED -> sb.append(RED).append("█").append(RESET);
-                   case BLUE -> sb.append(BLUE).append("█").append(RESET);
-                   case GREEN -> sb.append(GREEN).append("█").append(RESET);
-                   case YELLOW -> sb.append(BRIGHT_YELLOW).append("█").append(RESET);
-                   case EMPTY -> sb.append(" ");
-               }
+            int j = 0;
+            for (j = 0; j < planets.get(i).getGoods().size(); j++) {
+                switch (planets.get(i).getGoods().get(j).getColor()) {
+                    case RED -> sb.append(RED).append("█").append(RESET);
+                    case BLUE -> sb.append(BLUE).append("█").append(RESET);
+                    case GREEN -> sb.append(GREEN).append("█").append(RESET);
+                    case YELLOW -> sb.append(BRIGHT_YELLOW).append("█").append(RESET);
+                    case EMPTY -> sb.append(" ");
+                }
 
-           }
-           System.out.println(sb.toString());
-       }
-   }
+            }
+            System.out.println(sb.toString());
+        }
+    }
 
     private static final AdventureCardVisitorsInterface<String[]> adventureCardPrintVisitor = new AdventureCardPrintVisitor();
 
-    public static String[][] composeRow(ArrayList<AdventureCard> CardList, int row, int columns,int lastRow) {
+    public static String[][] composeRow(ArrayList<AdventureCard> CardList, int row, int columns, int lastRow) {
         String[][] tileRow = new String[columns][5];
 
-        int Offset= row*columns;
+        int Offset = row * columns;
 
         //Se è l'ultima dopo aver calcolato l'offset deve fare solo le colonne dell'ultima fila
-        if(lastRow!=0) columns=lastRow;
+        if (lastRow != 0) columns = lastRow;
 
         //Ciclo da 0 a 6 per colonne
-        for(int i =0; i<columns; i++){
-            tileRow[i]=getCardStrings(CardList.get(i+Offset));
+        for (int i = 0; i < columns; i++) {
+            tileRow[i] = getCardStrings(CardList.get(i + Offset));
         }
 
         return tileRow;
     }
 
-    public static void printDeck(CardDeck deck,int columns) {
-        int rows = deck.getCards().size()/columns, rowsEachCard = 9;
+    public static void printDeck(CardDeck deck, int columns) {
+        int rows = deck.getCards().size() / columns, rowsEachCard = 9;
         int r, c;
 
-        int lastRow = deck.getCards().size()%columns;
-        if(lastRow!=0) rows++;
+        int lastRow = deck.getCards().size() % columns;
+        if (lastRow != 0) rows++;
         //Compone la riga come per la nave per stamparle affiancate
-        for ( r = 0; r < rows; r++) {
+        for (r = 0; r < rows; r++) {
             String[][] TilesStringRow;
-            if(r == rows-1 && lastRow!= 0){
+            if (r == rows - 1 && lastRow != 0) {
                 //Ottengo tutta la Riga di Tiles e per ciascuna le righe di cui è fatta
-                TilesStringRow = composeRow(deck.getCards(), r, columns,lastRow);
-                columns=lastRow; //Per l'ultima
-            }
-            else{
-                TilesStringRow = composeRow(deck.getCards(), r, columns,0);
+                TilesStringRow = composeRow(deck.getCards(), r, columns, lastRow);
+                columns = lastRow; //Per l'ultima
+            } else {
+                TilesStringRow = composeRow(deck.getCards(), r, columns, 0);
             }
 
 
@@ -92,10 +90,10 @@ public class CardPrintUtils {
         }
     }
 
-    public static void printCard(AdventureCard card){
+    public static void printCard(AdventureCard card) {
         String[] tileString = getCardStrings(card);
 
-        for(int i=0;i<tileString.length;i++){
+        for (int i = 0; i < tileString.length; i++) {
             System.out.println(tileString[i]);
         }
     }
@@ -109,7 +107,8 @@ public class CardPrintUtils {
             default -> " ";
         };
     }
-    public static String[] getCardStrings(AdventureCard card){
+
+    public static String[] getCardStrings(AdventureCard card) {
         return card.accept(adventureCardPrintVisitor);
     }
 }

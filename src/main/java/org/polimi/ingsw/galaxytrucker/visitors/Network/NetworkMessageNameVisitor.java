@@ -80,7 +80,6 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     }
 
 
-
     @Override
     public NetworkMessageType visit(CheckShipStatusResponse checkShipStatusResponse) {
         return NetworkMessageType.CheckShipStatusResponse;
@@ -118,7 +117,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
 
     @Override
     public NetworkMessageType visit(CrewInitUpdate crewInitUpdate) {
-        return  NetworkMessageType.CrewInitUpdate;
+        return NetworkMessageType.CrewInitUpdate;
     }
 
     @Override
@@ -216,10 +215,12 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(SelectPlanetRequest selectPlanetRequest) {
         return NetworkMessageType.SelectPlanetRequest;
     }
+
     @Override
     public NetworkMessageType visit(SelectPlanetResponse selectPlanetResponse) {
         return NetworkMessageType.SelectPlanetResponse;
     }
+
     @Override
     public NetworkMessageType visit(SelectedPlanetUpdate selectedPlanetUpdate) {
         return NetworkMessageType.SelectedPlanetUpdate;
@@ -275,6 +276,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(EarlyLandingRequest earlyLandingRequest) {
         return NetworkMessageType.EarlyLandingRequest;
     }
+
     @Override
     public NetworkMessageType visit(HeartbeatResponse heartbeatResponse) {
         return NetworkMessageType.HeartbeatResponse;

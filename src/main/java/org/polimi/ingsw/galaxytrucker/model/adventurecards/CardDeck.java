@@ -17,9 +17,13 @@ public class CardDeck implements Serializable {
     @Serial
     private static final long serialVersionUID = 19819109L;
 
-    /** The list of cards in the deck. */
+    /**
+     * The list of cards in the deck.
+     */
     private final ArrayList<AdventureCard> cards;
-    /** Indicates whether the card deck is spyable (can be observed by players). */
+    /**
+     * Indicates whether the card deck is spyable (can be observed by players).
+     */
     public final boolean spyable;
 
     /**
@@ -34,7 +38,7 @@ public class CardDeck implements Serializable {
     /**
      * Constructs a {@link CardDeck} with the specified list of cards and spyable status.
      *
-     * @param cards A list of {@link AdventureCard} objects in the deck.
+     * @param cards   A list of {@link AdventureCard} objects in the deck.
      * @param spyable A boolean value indicating if the stack is spyable.
      */
     public CardDeck(ArrayList<AdventureCard> cards, boolean spyable) {
@@ -52,14 +56,14 @@ public class CardDeck implements Serializable {
         this.cards = new ArrayList<>();
     }
 
-    public int getSize(){
+    public int getSize() {
         return cards.size();
     }
 
 
-
     /**
      * Adds a card to che current {@link CardDeck}
+     *
      * @param card The card to add
      */
     public void addCard(AdventureCard card) {
@@ -68,6 +72,7 @@ public class CardDeck implements Serializable {
 
     /**
      * Pops the first {@link AdventureCard} from the stack.
+     *
      * @return The popped {@link AdventureCard}
      */
     public AdventureCard pop() {
@@ -79,10 +84,11 @@ public class CardDeck implements Serializable {
     /**
      * Merges a {@link CardDeck} to the current one while clearing it.
      * Returns itself to allow chaining.
-     * @author Alessandro Giuseppe Gioia
+     *
      * @param cd The {@link CardDeck}
      * @return {@link CardDeck}
-    */
+     * @author Alessandro Giuseppe Gioia
+     */
     public CardDeck merge(CardDeck cd) {
         for (AdventureCard c : cd.getCards()) {
             cards.addFirst(c);
@@ -92,25 +98,28 @@ public class CardDeck implements Serializable {
 
     /**
      * Shuffles the CardDeck.
+     *
      * @author Alessandro Giuseppe Gioia
      */
-    public void shuffle(){
+    public void shuffle() {
 //        Collections.shuffle(cards);
     }
 
     /**
      * Clears the CardDeck.
+     *
      * @author Alessandro Giuseppe Gioia
      */
-    public void clear(){
+    public void clear() {
         cards.clear();
     }
 
     /**
      * Returns the first AdventureCard without popping it.
+     *
      * @return {@link AdventureCard}
      */
-    public AdventureCard peek(){
+    public AdventureCard peek() {
         return cards.getFirst();
     }
 
@@ -119,9 +128,9 @@ public class CardDeck implements Serializable {
      * <br>
      * This method, if the first card is not level two, searches for the first level two card in the deck and puts it on top.
      */
-    public void putFirstLvl2CardOnTop(){
-        if(this.peek().getLevel()!=2){
-            AdventureCard toBeFirst = cards.stream().filter(card -> card.getLevel()==2).findFirst().get();
+    public void putFirstLvl2CardOnTop() {
+        if (this.peek().getLevel() != 2) {
+            AdventureCard toBeFirst = cards.stream().filter(card -> card.getLevel() == 2).findFirst().get();
             cards.remove(toBeFirst);
             cards.addFirst(toBeFirst);
         }

@@ -13,21 +13,24 @@ public class AbandonedShip extends AdventureCard {
 
     @Serial
     private static final long serialVersionUID = 999991L;
-    /** The number of humans lost. */
+    /**
+     * The number of humans lost.
+     */
     private final int requiredCrewMembers;
-    /** The amount of credits lost or gained. */
+    /**
+     * The amount of credits lost or gained.
+     */
     private final int credits;
 
     @JsonCreator
     public AbandonedShip(@JsonProperty("id") int id,
-                   @JsonProperty("level") int level,
-                   @JsonProperty("daysLost") int daysLost,
-                   @JsonProperty("name") String name,
-                   @JsonProperty("learningFlight") boolean learningFlight,
-                   @JsonProperty("requiredCrewMembers") int requiredCrewMembers,
-                   @JsonProperty("credits")  int credits ,
-                         @JsonProperty("affectsAll") boolean affectsAll)
-            {
+                         @JsonProperty("level") int level,
+                         @JsonProperty("daysLost") int daysLost,
+                         @JsonProperty("name") String name,
+                         @JsonProperty("learningFlight") boolean learningFlight,
+                         @JsonProperty("requiredCrewMembers") int requiredCrewMembers,
+                         @JsonProperty("credits") int credits,
+                         @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;

@@ -7,11 +7,11 @@
 
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<VBox spacing="10" alignment="TOP_CENTER"  xmlns:fx="http://javafx.com/fxml/1"
+<VBox spacing="10" alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.polimi.ingsw.galaxytrucker.TileCardsJsonUtility">
 
     <Label text="Manipolare direttamente il Json, troppo diverse le varie carte, decommentare il bottone per creare un Json con una carta per tipo"/>
-   <!-- <Button text="Json una per tipo" onAction="#handleJsonCiascuna"/>-->
+    <!-- <Button text="Json una per tipo" onAction="#handleJsonCiascuna"/>-->
     <Button text="Carica la lista" onAction="#handleLoadCardList"/>
     <!--
     <HBox spacing="20">

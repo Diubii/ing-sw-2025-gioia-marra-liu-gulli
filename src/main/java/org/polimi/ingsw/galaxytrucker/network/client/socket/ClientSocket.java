@@ -93,8 +93,8 @@ public class ClientSocket implements Client, Observable {
         for (Observer observer : observers) {
             try {
                 observer.update(message);
-            }
-            catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition | InterruptedException e) {
+            } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition |
+                     InterruptedException e) {
                 System.err.println(e.getMessage());
             }
         }

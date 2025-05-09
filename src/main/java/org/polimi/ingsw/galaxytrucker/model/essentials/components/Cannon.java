@@ -11,18 +11,19 @@ public class Cannon extends Component {
     protected Float FirePower;
 
     @JsonCreator
-    public Cannon( @JsonProperty("firePower") Float firePower) {
+    public Cannon(@JsonProperty("firePower") Float firePower) {
         super(false);
         this.FirePower = firePower;
     }
+
     public Float getFirePower() {
         calculateFP();
         return FirePower;
     }
 
-    private void calculateFP(){
+    private void calculateFP() {
         if (getRotation() != 0) {
-            FirePower = FirePower/2;
+            FirePower = FirePower / 2;
         }
     }
 

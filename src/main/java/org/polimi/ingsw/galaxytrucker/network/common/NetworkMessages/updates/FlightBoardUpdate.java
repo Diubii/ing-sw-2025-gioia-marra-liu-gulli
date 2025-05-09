@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
-public class FlightBoardUpdate extends NetworkMessage  implements Serializable {
+public class FlightBoardUpdate extends NetworkMessage implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 568549530L;
@@ -32,12 +32,13 @@ public class FlightBoardUpdate extends NetworkMessage  implements Serializable {
     public FlightBoardUpdate(FlightBoard flightBoard) {
         this.flightBoard = flightBoard;
     }
+
     public FlightBoard getFlightBoard() {
         return flightBoard;
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

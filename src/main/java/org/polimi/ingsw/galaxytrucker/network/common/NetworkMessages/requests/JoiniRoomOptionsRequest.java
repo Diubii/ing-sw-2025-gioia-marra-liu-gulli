@@ -13,12 +13,12 @@ public class JoiniRoomOptionsRequest extends NetworkMessage implements Serializa
     @Serial
     private static final long serialVersionUID = 69L;
 
-    public JoiniRoomOptionsRequest(){
+    public JoiniRoomOptionsRequest() {
         super();
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, ExecutionException, InterruptedException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

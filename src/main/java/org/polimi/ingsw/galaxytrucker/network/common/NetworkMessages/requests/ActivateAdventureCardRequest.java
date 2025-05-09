@@ -14,10 +14,11 @@ public class ActivateAdventureCardRequest extends NetworkMessage implements Seri
     @Serial
     private static final long serialVersionUID = 328742390732L;
 
-    public ActivateAdventureCardRequest() {}
+    public ActivateAdventureCardRequest() {
+    }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

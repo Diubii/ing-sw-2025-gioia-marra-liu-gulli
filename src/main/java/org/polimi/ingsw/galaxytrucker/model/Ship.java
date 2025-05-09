@@ -36,7 +36,7 @@ public class Ship implements Serializable {
     private ArrayList<Pair<Good, Pair<Position, Slot>>> listOfGoods;
     private ArrayList<Good> listNotLoadedGoods;
     private Tile lastTile;
-    private  Boolean synch;
+    private Boolean synch;
 
 
     private Boolean learningMatch;
@@ -147,7 +147,7 @@ public class Ship implements Serializable {
         ArrayList<Position> batteryPos = getComponentPositionsFromName("BatterySlot");
         int nBatterieLeft = 0;
         for (Position pos : batteryPos) {
-            nBatterieLeft += ((BatterySlot)getComponentFromPosition(pos)).getBatteriesLeft();
+            nBatterieLeft += ((BatterySlot) getComponentFromPosition(pos)).getBatteriesLeft();
         }
         return nBatterieLeft;
     }
@@ -177,7 +177,7 @@ public class Ship implements Serializable {
                 + getComponentPositionsFromName("CentralHousingUnit").stream().map(p -> ((CentralHousingUnit) shipBoard[p.getY()][p.getX()].getTile().getMyComponent()).getNCrewMembers()).reduce(0, Integer::sum);
     }
 
-    public Boolean getSynch(){
+    public Boolean getSynch() {
         return synch;
     }
 
@@ -495,14 +495,14 @@ public class Ship implements Serializable {
 
                         }
 
-                        if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Cannon") || shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("DoubleCannon") ) {
+                        if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Cannon") || shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("DoubleCannon")) {
 
-                                Boolean temp = Util.CannonWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
-                                shipBoard[i][j].getTile().setWellConnected(temp);
-                                return temp;
-                            }
+                            Boolean temp = Util.CannonWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+                            shipBoard[i][j].getTile().setWellConnected(temp);
+                            return temp;
+                        }
 
-                            if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
+                        if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
 
                             AlienColor al = null;
                             ModularHousingUnit temp = (ModularHousingUnit) shipBoard[i][j].getTile().getMyComponent();
@@ -579,14 +579,13 @@ public class Ship implements Serializable {
                         .toList();
 
 
+                for (Slot slot : Slots) {
 
-                    for (Slot slot : Slots) {
+                    if (slot.getPosition().equals(temp) && slot.getLastAction()) {
+                        System.out.println("TILE DA RIM " + slot.getPosition().getY() + " " + slot.getPosition().getX());
 
-                        if (slot.getPosition().equals(temp) && slot.getLastAction()) {
-                            System.out.println("TILE DA RIM " + slot.getPosition().getY() + " " + slot.getPosition().getX());
-
-                            toRemove.add(board); // Segna la board per la rimozione
-                            toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
+                        toRemove.add(board); // Segna la board per la rimozione
+                        toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
 
 //                            Ship t2 = toAdd.getLast();
 //                            Ship tSh = new Ship(getLearningMatch());
@@ -594,12 +593,12 @@ public class Ship implements Serializable {
 //                            System.out.println("GETTRONC + ADD : SIZE" + toAdd.size());
 //                            System.out.println(tSh.toString());
 
-                            break;
-                        } else {
-                            if (slot.getPosition().equals(temp)) System.out.println("EXTRA");
+                        break;
+                    } else {
+                        if (slot.getPosition().equals(temp)) System.out.println("EXTRA");
 
-                        }
                     }
+                }
 
 
                 // Rimuove gli elementi segnati
@@ -891,21 +890,21 @@ public class Ship implements Serializable {
 
         return false;
     }
-    public int remainingTiles(){
+
+    public int remainingTiles() {
         int remainingTiles = 0;
-        List<Tile> tiles =Arrays.stream(this.getShipBoard())
+        List<Tile> tiles = Arrays.stream(this.getShipBoard())
                 .flatMap(Arrays::stream).map(Slot::getTile)
                 .filter(Objects::nonNull)
                 .toList();
 
 
-        for (Tile tile : tiles){
-            if(tile!=null){
+        for (Tile tile : tiles) {
+            if (tile != null) {
                 remainingTiles++;
             }
             return remainingTiles;
         }
-
 
 
         return 0;
@@ -915,16 +914,16 @@ public class Ship implements Serializable {
         return setAsideTiles;
     }
 
-    public int calculateEnginePower(){
+    public int calculateEnginePower() {
         int enginePower = getEnginePos().stream().mapToInt(p -> ((Engine) getComponentFromPosition(p)).getEnginePower()).sum();
-        if(enginePower != 0){
+        if (enginePower != 0) {
             enginePower += getNBrownAlien() * 2;
         }
 
         return enginePower;
     }
 
-    public Component getComponentFromPosition(Position position){
+    public Component getComponentFromPosition(Position position) {
         return shipBoard[position.getY()][position.getX()].getTile().getMyComponent();
     }
 
@@ -994,6 +993,7 @@ public class Ship implements Serializable {
 
     /**
      * Finds all connected {@link Tile}s and their position to the one in the given position.
+     *
      * @param position
      * @return An {@link ArrayList} of {@link Pair}s containing the {@link Position} of the tile and the tile itself.
      * @author Alessandro Giuseppe Gioia
@@ -1016,16 +1016,16 @@ public class Ship implements Serializable {
         Tile tileDown = shipBoard[positionDown][positionX].getTile();
         Tile tileLeft = shipBoard[positionY][positionLeft].getTile();
 
-        if(tileUp != null && tile.getSides().get(0).equals(tileUp.getSides().get(2))){
+        if (tileUp != null && tile.getSides().get(0).equals(tileUp.getSides().get(2))) {
             connectedTilesWithPosition.add(new Pair<>(new Position(positionUp, positionX), tile));
         }
-        if(tileRight != null && tile.getSides().get(1).equals(tileRight.getSides().get(3))){
+        if (tileRight != null && tile.getSides().get(1).equals(tileRight.getSides().get(3))) {
             connectedTilesWithPosition.add(new Pair<>(new Position(positionY, positionRight), tile));
         }
-        if(tileDown != null && tile.getSides().get(2).equals(tileDown.getSides().get(0))){
+        if (tileDown != null && tile.getSides().get(2).equals(tileDown.getSides().get(0))) {
             connectedTilesWithPosition.add(new Pair<>(new Position(positionDown, positionX), tile));
         }
-        if(tileLeft != null && tile.getSides().get(3).equals(tileLeft.getSides().get(1))){
+        if (tileLeft != null && tile.getSides().get(3).equals(tileLeft.getSides().get(1))) {
             connectedTilesWithPosition.add(new Pair<>(new Position(positionY, positionLeft), tile));
         }
 
@@ -1034,6 +1034,7 @@ public class Ship implements Serializable {
 
     /**
      * Finds all connected housing unit components to the one in the given position.
+     *
      * @param position
      * @return An {@link ArrayList} of {@link Pair}s containing the {@link Position} of the housing unit and the tile of it.
      * @author Alessandro Giuseppe Gioia
@@ -1049,21 +1050,21 @@ public class Ship implements Serializable {
         return (float) getCannonPos().stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();
     }
 
-    public int getHumanCrewNumber(){
+    public int getHumanCrewNumber() {
 
         int number = 0;
 
         ArrayList<Position> positions = new ArrayList<>(getComponentPositionsFromName("ModularHousingUnit"));
         positions.addAll(getComponentPositionsFromName("CentralHousingUnit"));
 
-        for (Position pos: positions){
+        for (Position pos : positions) {
             Tile tempTile = getTileFromPosition(pos);
-            if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")){
+            if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
                 ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tempTile.getMyComponent();
-                if (!modularHousingUnit.getAlienColor().equals(AlienColor.EMPTY))  number += modularHousingUnit.getNCrewMembers();
+                if (!modularHousingUnit.getAlienColor().equals(AlienColor.EMPTY))
+                    number += modularHousingUnit.getNCrewMembers();
 
-            }
-            else if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
+            } else if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
                 CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tempTile.getMyComponent();
                 number += centralHousingUnit.getNCrewMembers();
             }

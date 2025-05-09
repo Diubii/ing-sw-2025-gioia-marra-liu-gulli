@@ -49,7 +49,7 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
     @Override
     public void receiveMessage(NetworkMessage message) throws IOException, ExecutionException, InvalidTilePosition {
-        new Thread(()-> {
+        new Thread(() -> {
             try {
                 notifyObservers(message);
             } catch (IOException | ExecutionException | InvalidTilePosition e) {
@@ -77,10 +77,9 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
         for (Observer observer : observers) {
 //            System.out.println("i\n");
-            try{
+            try {
                 observer.update(message);
-            }
-            catch (TooManyPlayersException | PlayerAlreadyExistsException | InterruptedException e) {
+            } catch (TooManyPlayersException | PlayerAlreadyExistsException | InterruptedException e) {
                 System.err.println(e.getMessage());
             }
         }

@@ -13,16 +13,17 @@ public class AskPositionResponse extends NetworkMessage implements Serializable 
 
     private final int position;
 
-    public  AskPositionResponse(int id, int position) {
+    public AskPositionResponse(int id, int position) {
         super(id);
         this.position = position;
     }
+
     public int getPosition() {
         return position;
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

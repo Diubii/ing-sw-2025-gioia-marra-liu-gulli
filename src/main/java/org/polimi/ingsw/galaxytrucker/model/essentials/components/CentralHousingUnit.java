@@ -10,10 +10,10 @@ public class CentralHousingUnit extends Component {
 
     private final Color color;
     private int humanCrewNumber = 0;
-    private  Boolean isColored = Boolean.TRUE;
+    private Boolean isColored = Boolean.TRUE;
 
     @JsonCreator
-    public CentralHousingUnit( @JsonProperty("color") Color color ,@JsonProperty("humanCrewNumber") int humanCrewNumber) {
+    public CentralHousingUnit(@JsonProperty("color") Color color, @JsonProperty("humanCrewNumber") int humanCrewNumber) {
         super(false);
         this.color = color;
         if (!color.equals(Color.EMPTY)) setHumanCrewNumber(2);
@@ -21,7 +21,7 @@ public class CentralHousingUnit extends Component {
 
     }
 
-    public CentralHousingUnit( Color color) {
+    public CentralHousingUnit(Color color) {
         super(false);
         this.color = color;
         if (!color.equals(Color.EMPTY)) setHumanCrewNumber(2);
@@ -32,18 +32,22 @@ public class CentralHousingUnit extends Component {
     public Color getColor() {
         return color;
     }
+
     public int getNCrewMembers() {
         return humanCrewNumber;
     }
-    public void setHumanCrewNumber(int humanCrewNumber) {
-         if (humanCrewNumber > 0 && humanCrewNumber <= 2) {
-           this.humanCrewNumber = humanCrewNumber;
 
-         } else throw new IllegalArgumentException("humanCrewNumber must be between 0 and 2");
+    public void setHumanCrewNumber(int humanCrewNumber) {
+        if (humanCrewNumber > 0 && humanCrewNumber <= 2) {
+            this.humanCrewNumber = humanCrewNumber;
+
+        } else throw new IllegalArgumentException("humanCrewNumber must be between 0 and 2");
     }
+
     public Boolean getIsColored() {
         return isColored;
     }
+
     public void removeCrewMember() {
 
         if (humanCrewNumber > 0) humanCrewNumber--;

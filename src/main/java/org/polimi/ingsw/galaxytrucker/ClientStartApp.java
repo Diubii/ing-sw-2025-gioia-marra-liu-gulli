@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker;
 
 //import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
@@ -37,7 +38,7 @@ public class ClientStartApp {
             GUIStart.main(args); //JavaFx
         } else {
             Boolean flag = scelta2.equals("2");
-            controller = new ClientController( myT, flag);
+            controller = new ClientController(myT, flag);
 
             myT = new Tui(System.out, flag, controller);
             controller.setView(myT);

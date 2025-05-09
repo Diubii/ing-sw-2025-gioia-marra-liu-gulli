@@ -7,7 +7,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
-public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInterface<NetworkMessageType>{
+public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInterface<NetworkMessageType> {
     @Override
     public NetworkMessageType visit(CreateRoomRequest createRoomRequest) {
         return NetworkMessageType.CreateRoomResponse;

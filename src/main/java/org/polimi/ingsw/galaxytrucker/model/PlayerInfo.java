@@ -14,13 +14,15 @@ public class PlayerInfo implements Serializable {
     private String NickName;
     private Ship ship;
 
-     private final Object shipLock = "";
+    private final Object shipLock = "";
 
     public Color getColor() {
         return color;
     }
+
     public void setColor(Color color) {
-        this.color = color;}
+        this.color = color;
+    }
 
     public String getNickName() {
         return NickName;
@@ -30,11 +32,13 @@ public class PlayerInfo implements Serializable {
     public void setNickName(String NickName) {
         this.NickName = NickName;
     }
+
     public Ship getShip() {
         synchronized (shipLock) {
             return ship;
         }
     }
+
     public void setShip(Ship ship) {
         synchronized (shipLock) {
             this.ship = ship;

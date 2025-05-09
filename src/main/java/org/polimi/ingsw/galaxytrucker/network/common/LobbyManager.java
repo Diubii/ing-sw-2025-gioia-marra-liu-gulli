@@ -27,14 +27,13 @@ public class LobbyManager {
     private ArrayList<PlayerInfo> playerInfos = new ArrayList<>();
 
 
-
     private ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> pendingResponses;
     public final Object positionLock = new Object();
     public final Object checkShipLock = new Object();
 
     //locks
 
-    final public Object  lock5 = new Object();
+    final public Object lock5 = new Object();
 
     public Object getLock5() {
         return lock5;
@@ -54,12 +53,11 @@ public class LobbyManager {
         }
     }
 
-    public void addPlayerInfo(PlayerInfo playerInfo){
+    public void addPlayerInfo(PlayerInfo playerInfo) {
         synchronized (lock6) {
             this.playerInfos.add(playerInfo);
         }
     }
-
 
 
     public ArrayList<String> getPlayerShipFinished() {
@@ -74,33 +72,30 @@ public class LobbyManager {
         }
     }
 
-    public int getPlayerShipFinishedSize(){
-        synchronized (lock1){
+    public int getPlayerShipFinishedSize() {
+        synchronized (lock1) {
             return this.playerShipFinished.size();
         }
     }
 
 
-    public int getPlayerCrewFinishedSize(){
-        synchronized (lock4){
+    public int getPlayerCrewFinishedSize() {
+        synchronized (lock4) {
             return this.playerCrewFinished.size();
         }
     }
 
-    public void addPlayerCrewFinished(String playerNickname){
-        synchronized (lock4){
+    public void addPlayerCrewFinished(String playerNickname) {
+        synchronized (lock4) {
             playerCrewFinished.add(playerNickname);
         }
     }
 
-    public int getPlayerCrewSize(){
-        synchronized (lock4){
+    public int getPlayerCrewSize() {
+        synchronized (lock4) {
             return this.playerCrewFinished.size();
         }
     }
-
-
-
 
 
     public void addPendingResponse(CompletableFuture<NetworkMessage> response, Integer id) {
@@ -116,7 +111,6 @@ public class LobbyManager {
             Pair<Integer, CompletableFuture<NetworkMessage>> pendingResponse = pendingResponses.stream().filter(pair -> pair.getKey().equals(id)).findFirst().orElse(null);
 
 
-
             pendingResponses.remove(pendingResponse);
         }
 
@@ -125,11 +119,10 @@ public class LobbyManager {
     public void completePendingResponse(Integer id, NetworkMessage response) {
         synchronized (lock2) {
             Pair<Integer, CompletableFuture<NetworkMessage>> pendingResponse = pendingResponses.stream().filter(pair -> pair.getKey().equals(id)).findFirst().orElse(null);
-            if(pendingResponse != null){
+            if (pendingResponse != null) {
                 pendingResponse.getValue().complete(response);
                 pendingResponses.remove(pendingResponse);
-            }
-            else{
+            } else {
                 System.err.println("Couldn't complete future related to " + response.toString() + ".");
             }
         }
@@ -161,7 +154,7 @@ public class LobbyManager {
         RealGame = new Game();
         nextAvailableColor = Color.RED;
         tileBunch = new TileBunch();
-        gameController = new GameController(this );
+        gameController = new GameController(this);
         pendingResponses = new ArrayList<>();
     }
 
@@ -206,7 +199,7 @@ public class LobbyManager {
         return gameController;
     }
 
-    public String getNicknameFromColor(Color color){
+    public String getNicknameFromColor(Color color) {
         return (PlayerColors.entrySet().stream().filter(pair -> pair.getValue().equals(color))).map(Map.Entry::getKey).findFirst().orElse(null);
     }
 }

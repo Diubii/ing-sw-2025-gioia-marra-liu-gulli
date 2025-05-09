@@ -13,7 +13,7 @@ public class CheckShipStatusRequest extends NetworkMessage implements Serializab
     @Serial
     private static final long serialVersionUID = 3091283L;
 
-    private  ArrayList<Integer> removedTilesId = new ArrayList<>();
+    private ArrayList<Integer> removedTilesId = new ArrayList<>();
 
     public void addRemovedTileId(int id) {
         removedTilesId.add(id);
@@ -31,13 +31,13 @@ public class CheckShipStatusRequest extends NetworkMessage implements Serializab
         return removedTilesId;
     }
 
-    public CheckShipStatusRequest(){
+    public CheckShipStatusRequest() {
         super();
     }
 
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws ExecutionException, InterruptedException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

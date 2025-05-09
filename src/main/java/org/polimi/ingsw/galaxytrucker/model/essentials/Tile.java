@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 public class Tile implements Serializable {
 
-   @Serial
-   private static final long serialVersionUID = 535L;
+    @Serial
+    private static final long serialVersionUID = 535L;
 
     private int id;
     private int Rotation;
@@ -22,11 +22,11 @@ public class Tile implements Serializable {
     private int exposedConnectors;
     private Boolean used;
     private Boolean fixed;
-//    private Slot mySlot;
+    //    private Slot mySlot;
     private Component myComponent;
     private Boolean wellConnected;
 
-    public Tile(int id,int rotation, ArrayList<Connector> s, Component c) {
+    public Tile(int id, int rotation, ArrayList<Connector> s, Component c) {
         this.id = id;
         Rotation = rotation;
         this.flipped = false;
@@ -39,7 +39,7 @@ public class Tile implements Serializable {
         this.myComponent = c;
     }
 
-        @JsonCreator
+    @JsonCreator
     public Tile(
             @JsonProperty("id") int id,
             @JsonProperty("rotation") int rotation,
@@ -98,19 +98,19 @@ public class Tile implements Serializable {
         return used;
     }
 
-    public Boolean getFixed(){
+    public Boolean getFixed() {
         return fixed;
     }
 
-    public int getExposedConnectors(){
+    public int getExposedConnectors() {
         return exposedConnectors;
     }
 
-    public ArrayList<Connector> getSides(){
+    public ArrayList<Connector> getSides() {
         return new ArrayList<Connector>(sides);
     }
 
-    public void modifyExposedConnector(int i){
+    public void modifyExposedConnector(int i) {
         exposedConnectors += i;
     }
 
@@ -118,6 +118,7 @@ public class Tile implements Serializable {
     public int getId() {
         return id;
     }
+
     public int getRotation() {
         return Rotation;
     }
@@ -126,7 +127,7 @@ public class Tile implements Serializable {
 
         Rotation = (Rotation + addRotation) % 360;
         myComponent.setRotation(Rotation);
-        int numRotation = ((addRotation %360 ) +360)%360/90;
+        int numRotation = ((addRotation % 360) + 360) % 360 / 90;
         for (int i = 0; i < numRotation; i++) {
             rotateSides90();
         }
@@ -142,11 +143,11 @@ public class Tile implements Serializable {
         sides.set(0, temp);
     }
 
-    public boolean isFlipped(){
+    public boolean isFlipped() {
         return flipped;
     }
 
-    public void flip(){
+    public void flip() {
         this.flipped = !this.flipped;
     }
 
@@ -158,7 +159,7 @@ public class Tile implements Serializable {
         this.wellConnected = wellConnected;
     }
 
-    public void testPrint(){
+    public void testPrint() {
         System.out.print(this.id);
         //System.out.print(this.myComponent.getName());
         System.out.print(this.Rotation);

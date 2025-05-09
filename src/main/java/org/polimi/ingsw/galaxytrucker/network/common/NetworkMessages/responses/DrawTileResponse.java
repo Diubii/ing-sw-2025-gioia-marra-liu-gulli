@@ -16,7 +16,7 @@ public class DrawTileResponse extends NetworkMessage implements Serializable {
     private final Tile tile;
     private String errorMessage;
 
-    public DrawTileResponse(Tile tile,int id) {
+    public DrawTileResponse(Tile tile, int id) {
         super(id);
         this.tile = tile;
     }
@@ -34,7 +34,7 @@ public class DrawTileResponse extends NetworkMessage implements Serializable {
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }

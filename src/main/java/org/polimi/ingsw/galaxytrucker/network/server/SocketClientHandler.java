@@ -76,8 +76,8 @@ public class SocketClientHandler implements Runnable, ClientHandler {
                         System.out.println("Nickname received: " + request.getNickname());
                     }
 
-                    if(type != NetworkMessageType.HeartbeatResponse) {
-                        System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerSocket, TuiColor.GREEN,"MESSAGE " + type + " RECEIVED FROM " + clientSocket.getInetAddress().toString()));
+                    if (type != NetworkMessageType.HeartbeatResponse) {
+                        System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerSocket, TuiColor.GREEN, "MESSAGE " + type + " RECEIVED FROM " + clientSocket.getInetAddress().toString()));
                     }
 
                     executor.submit(() -> {
@@ -92,8 +92,6 @@ public class SocketClientHandler implements Runnable, ClientHandler {
         } catch (ClassCastException | ClassNotFoundException | IOException e) {
             executor.shutdownNow();
             //System.out.println("Invalid stream from client");
-        } catch (PlayerAlreadyExistsException | TooManyPlayersException | InvalidTilePosition e) {
-            throw new RuntimeException(e);
         }
         clientSocket.close();
     }
@@ -105,7 +103,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
             output.writeObject(message);
             output.flush();
         } catch (IOException e) {
-            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ClientSocket, TuiColor.GREEN, "Tried to send a message to a closed socket: " + clientSocket.getInetAddress().toString() ));
+            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ClientSocket, TuiColor.GREEN, "Tried to send a message to a closed socket: " + clientSocket.getInetAddress().toString()));
         }
     }
 

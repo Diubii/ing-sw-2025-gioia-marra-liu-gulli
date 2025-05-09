@@ -36,7 +36,6 @@ public class Game {
     private CardDeck flightDeck;
 
 
-
     public FlightBoard flightBoard;
     private final TileBunch tileBunch;
 
@@ -81,12 +80,11 @@ public class Game {
         this.flightBoard = new FlightBoard(learningMatch);
     }
 
-    public void setFlightBoard(FlightBoard flightBoard)
-    {
+    public void setFlightBoard(FlightBoard flightBoard) {
         this.flightBoard = flightBoard;
     }
 
-    public FlightBoard getFlightBoard(){
+    public FlightBoard getFlightBoard() {
         return flightBoard;
     }
 
@@ -123,7 +121,6 @@ public class Game {
             }
 
 
-
         }
 
 //        playerShip.put(player,player.getShip());
@@ -155,8 +152,6 @@ public class Game {
     public void reorderPlayer() {
 
     }
-
-
 
 
     public ArrayList<Player> getPlayers() {
@@ -196,7 +191,6 @@ public class Game {
     }
 
 
-
     public HashMap<Player, Integer> getPlayerOrder() {
         return playerOrder;
     }
@@ -212,8 +206,8 @@ public class Game {
         lvl2cards.shuffle();
 
         ArrayList<CardDeck> decks = new ArrayList<>();
-        for(int i=0; i<4; i++){
-            CardDeck deck = new CardDeck(i<3); //L'ultima non è spiabile
+        for (int i = 0; i < 4; i++) {
+            CardDeck deck = new CardDeck(i < 3); //L'ultima non è spiabile
             deck.addCard(lvl2cards.pop());
             deck.addCard(lvl2cards.pop());
             deck.addCard(lvl1cards.pop());
@@ -226,7 +220,7 @@ public class Game {
     public CardDeck createFlightDeck(ArrayList<CardDeck> decks) {
         CardDeck flightDeck = new CardDeck(true);
 
-        for(CardDeck deck : decks){
+        for (CardDeck deck : decks) {
             flightDeck = flightDeck.merge(new CardDeck(deck.getCards(), deck.isSpyable()));
         }
 
@@ -243,7 +237,7 @@ public class Game {
         ArrayList<CardDeck> decks = new ArrayList<>();
 
 
-        if (learningMatch){
+        if (learningMatch) {
             Decks.add(Util.createLearningDeck());
 //            decks.addAll(Decks);
         } else {

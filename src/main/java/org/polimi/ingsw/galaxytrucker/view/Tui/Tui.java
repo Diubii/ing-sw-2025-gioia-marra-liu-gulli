@@ -84,7 +84,7 @@ public class Tui implements View, Observable {
     private volatile CompletableFuture<String> currentInputFuture = null;
     private static final AtomicBoolean stopInput = new AtomicBoolean(false);
 
-    private Boolean flag  = false;
+    private Boolean flag = false;
 
     // Metodo per bloccare l'input manualmente
     public static void blockInput() {
@@ -104,15 +104,15 @@ public class Tui implements View, Observable {
         new Thread(() -> {
             Scanner scanner = new Scanner(System.in);
 
-                System.out.print(prompt);
-                if (scanner.hasNextLine() ) {
-                    String line = scanner.nextLine();
-                    if (flag){
-                        Thread.currentThread().interrupt();
+            System.out.print(prompt);
+            if (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (flag) {
+                    Thread.currentThread().interrupt();
 
-                    }
-                    currentInputFuture.complete(line);
                 }
+                currentInputFuture.complete(line);
+            }
 
         }).start();
 
@@ -345,7 +345,6 @@ public class Tui implements View, Observable {
     }
 
 
-
     @Override
     public void showPlayerJoined(PlayerInfo infoPlayer) {
 
@@ -366,19 +365,19 @@ public class Tui implements View, Observable {
     public void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> infoPlayer) {
         System.out.println("Giocatori nella lobby: ");
         System.out.print("IO: ");
-        switch (myinfo.getColor()){
-            case RED -> System.out.println(RED+"█"+RESET + " "+myinfo.getNickName() );
-            case GREEN -> System.out.println(GREEN+"█"+RESET + " "+myinfo.getNickName() );
-            case BLUE -> System.out.println(BLUE+"█"+RESET + " "+myinfo.getNickName() );
-            case YELLOW -> System.out.println(BRIGHT_YELLOW+"█"+RESET + " "+myinfo.getNickName() );
+        switch (myinfo.getColor()) {
+            case RED -> System.out.println(RED + "█" + RESET + " " + myinfo.getNickName());
+            case GREEN -> System.out.println(GREEN + "█" + RESET + " " + myinfo.getNickName());
+            case BLUE -> System.out.println(BLUE + "█" + RESET + " " + myinfo.getNickName());
+            case YELLOW -> System.out.println(BRIGHT_YELLOW + "█" + RESET + " " + myinfo.getNickName());
             case null, default -> System.out.println();
         }
-        for(int p=0; p < infoPlayer.size(); p++){
-            switch (infoPlayer.get(p).getColor()){
-                case RED -> System.out.println(RED+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
-                case GREEN -> System.out.println(GREEN+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
-                case BLUE -> System.out.println(BLUE+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
-                case YELLOW -> System.out.println(BRIGHT_YELLOW+"█"+RESET + " "+infoPlayer.get(p).getNickName() );
+        for (int p = 0; p < infoPlayer.size(); p++) {
+            switch (infoPlayer.get(p).getColor()) {
+                case RED -> System.out.println(RED + "█" + RESET + " " + infoPlayer.get(p).getNickName());
+                case GREEN -> System.out.println(GREEN + "█" + RESET + " " + infoPlayer.get(p).getNickName());
+                case BLUE -> System.out.println(BLUE + "█" + RESET + " " + infoPlayer.get(p).getNickName());
+                case YELLOW -> System.out.println(BRIGHT_YELLOW + "█" + RESET + " " + infoPlayer.get(p).getNickName());
             }
         }
         System.out.println();
@@ -429,7 +428,8 @@ public class Tui implements View, Observable {
     public void showBuildingMenu() {
         try {
             String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
-            if (checkReset(input)) return;;
+            if (checkReset(input)) return;
+            ;
             while (input.equals("m") || input.equals("menu") || input.equals("?")) {
                 menuManager.showCurrentMenu();
                 input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
@@ -475,14 +475,13 @@ public class Tui implements View, Observable {
                 String DeckIDStr = readLine("Enter which Deck you want to view (1~4)> ").trim();
                 int DeckID = Integer.parseInt(DeckIDStr);
 
-                if (checkReset(DeckIDStr)) return;;
+                if (checkReset(DeckIDStr)) return;
+                ;
 
 
                 if (DeckID < 1 || DeckID > 4) {
                     out.println("Deck ID not valid. Please enter a number between 1 and 4.");
-                }
-
-                else {
+                } else {
                     clientController.viewAdventureCardDeck(DeckID - 1);
                     valid = true;
                 }
@@ -517,7 +516,8 @@ public class Tui implements View, Observable {
             try {
                 out.println("Enter rotation degree (90, 180, 270, or 360): ");
                 String input = readLine("> ").trim();
-                if (checkReset(input)) return;;
+                if (checkReset(input)) return;
+                ;
 
                 int rotation = InputUtils.parseRotation(input);
                 clientController.rotateCurrentTile(rotation);
@@ -537,12 +537,13 @@ public class Tui implements View, Observable {
         do {
             try {
                 String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
-                if (checkReset(input)) return;;
-                 pos = parseCoordinate(input);
-                clientController.setCurrentPos(pos.getX()-4, pos.getY()-5);
+                if (checkReset(input)) return;
+                ;
+                pos = parseCoordinate(input);
+                clientController.setCurrentPos(pos.getX() - 4, pos.getY() - 5);
                 valid = true;
             } catch (IllegalArgumentException e) {
-                out.println(e.getMessage() );
+                out.println(e.getMessage());
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (Exception e) {
@@ -564,7 +565,7 @@ public class Tui implements View, Observable {
 
         int size = faceUpTiles.size();
 
-        if (size == 0){
+        if (size == 0) {
             out.println("Face up Tiles is empty");
             showBuildingMenu();
             return;
@@ -587,7 +588,8 @@ public class Tui implements View, Observable {
                 out.println("3) choose from your reserved tiles");
                 String choice = readLine("Choose(1/2/3) > ");
 
-                if (checkReset(choice)) return;;
+                if (checkReset(choice)) return;
+                ;
 
                 switch (choice) {
                     case "1": {
@@ -632,7 +634,8 @@ public class Tui implements View, Observable {
                 }
 
                 String input = readLine("Enter the Tile ID to draw, or use R to refresh: ").trim().toLowerCase();
-                if (checkReset(input)) return;;
+                if (checkReset(input)) return;
+                ;
 
                 if (input.equalsIgnoreCase("R")) {
                     out.println("Refreshing tile list");
@@ -666,28 +669,29 @@ public class Tui implements View, Observable {
 
     }
 
-    private void showTileSlots(){
+    private void showTileSlots() {
         Tile[] reservedTiles = clientController.getReservedTiles();
 
 
-                out.println("Reserved Slot 1:");
-            if (reservedTiles[0] != null) {
-                showTile(reservedTiles[0]);
-            } else {
-                out.println("Empty");
-            }
+        out.println("Reserved Slot 1:");
+        if (reservedTiles[0] != null) {
+            showTile(reservedTiles[0]);
+        } else {
+            out.println("Empty");
+        }
 
-               out.println("Reserved Slot 2:");
-            if (reservedTiles[1] != null) {
-                showTile(reservedTiles[1]);
-            } else {
-                out.println("Empty");
-            }
+        out.println("Reserved Slot 2:");
+        if (reservedTiles[1] != null) {
+            showTile(reservedTiles[1]);
+        } else {
+            out.println("Empty");
+        }
     }
+
     public void askPickOrPlaceReservedTile(boolean isPicking) {
 
         Tile[] reservedTiles = clientController.getReservedTiles();
-        if(isPicking) {
+        if (isPicking) {
             if (!clientController.hasTileInHand()) {
                 if ((reservedTiles[0] != null || reservedTiles[1] != null)) {
                     showTileSlots();
@@ -719,7 +723,7 @@ public class Tui implements View, Observable {
                 showBuildingMenu();
             }
         }
-        if(!isPicking) {
+        if (!isPicking) {
             if (clientController.hasTileInHand() && !isPicking) {
                 if ((reservedTiles[0] == null || reservedTiles[1] == null)) {
                     showTileSlots();
@@ -752,11 +756,6 @@ public class Tui implements View, Observable {
             }
 
         }
-
-
-
-
-
 
 
     }
@@ -795,7 +794,9 @@ public class Tui implements View, Observable {
             }
 
         } catch (Exception e) {
-            out.println(" Error during tile placement "); e.printStackTrace();;
+            out.println(" Error during tile placement ");
+            e.printStackTrace();
+            ;
         }
 
     }
@@ -820,7 +821,7 @@ public class Tui implements View, Observable {
 
         try {
             String input = readLine("\nChoose an option (a–b) or menu: ").trim().toLowerCase();
-            clientController.handleEmbarkCrewMenu(Character.toString(input.charAt(input.length()-1)));
+            clientController.handleEmbarkCrewMenu(Character.toString(input.charAt(input.length() - 1)));
         } catch (Exception e) {
             out.println(" Error: " + e.getMessage());
         }
@@ -845,14 +846,13 @@ public class Tui implements View, Observable {
                 }
 
 
-
                 Tile tile = ship.getShipBoard()[pos.getY()][pos.getX()].getTile();
 
 
                 clientController.getMyModel().addTileToRemove(tile.getId());
                 ship.removeTile(pos, true);
 
-                if (ship.remainingTiles() == 0){
+                if (ship.remainingTiles() == 0) {
                     System.out.println("Your ship is a ghost, go back to the menuuuuuu");
                     showcheckShipMenu();
                     return;
@@ -907,7 +907,7 @@ public class Tui implements View, Observable {
 
         input1 = readLine(" Choose one > ").trim().toLowerCase();
         int size = input1.length();
-        char input = input1.charAt(size-1);
+        char input = input1.charAt(size - 1);
 
 
         while (Integer.parseInt(Character.toString(input)) < validPositions.getFirst() || Integer.parseInt(Character.toString(input)) > validPositions.getLast()) {
@@ -940,53 +940,47 @@ public class Tui implements View, Observable {
     @Override
     public void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException {
         printShip(myShip);
-        System.out.println("You can activate your "+component.name());
+        System.out.println("You can activate your " + component.name());
         int totalBatteries = myShip.getnBatterieLeft();
-        Boolean stop=false;
+        Boolean stop = false;
         Position compPos, battPos;
         ArrayList<Position> activatedComponentPositions = new ArrayList<>();
         ArrayList<Position> usedBatteryPositions = new ArrayList<>();
 
         //Ciclo while
         //Chiede finchè non dico no o finchè non termino le batterie
-        while(stop==false && totalBatteries>0){
-            System.out.print("Activate "+component.name()+" specify the coordinates or type no to stop");
+        while (stop == false && totalBatteries > 0) {
+            System.out.print("Activate " + component.name() + " specify the coordinates or type no to stop");
             String input = readLine(" input (x,y) or no: ").trim().toLowerCase();
             if (input.equals("n") || input.equals("no")) {
-                stop=true;
-            }
-            else{
+                stop = true;
+            } else {
                 compPos = parseCoordinate(input);
-                compPos.setPos(compPos.getX()-4,compPos.getY()-5);
-                if(!Util.inBoundaries(compPos.getY(), compPos.getX()) || myShip.getInvalidPositions().contains(compPos)){
+                compPos.setPos(compPos.getX() - 4, compPos.getY() - 5);
+                if (!Util.inBoundaries(compPos.getY(), compPos.getX()) || myShip.getInvalidPositions().contains(compPos)) {
                     System.out.println("Wrong Coordinates, out of bounds ");
                 }
                 //Verifica anche tipo
-                else if(!myShip.getComponentPositionsFromName(component.name()).contains(compPos)){
+                else if (!myShip.getComponentPositionsFromName(component.name()).contains(compPos)) {
                     System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
-                }
-                else if(activatedComponentPositions.contains(compPos)){
+                } else if (activatedComponentPositions.contains(compPos)) {
                     System.out.println("Wrong Coordinates, already activated ");
-                }
-                else{
+                } else {
                     System.out.print("Specify the coordinates of the battery to use");
                     input = readLine(" input (x,y): ").trim().toLowerCase();
                     battPos = parseCoordinate(input);
-                    battPos.setPos(battPos.getX()-4,battPos.getY()-5);
-                    if(!Util.inBoundaries(battPos.getY(), battPos.getX()) || myShip.getInvalidPositions().contains(battPos)){
+                    battPos.setPos(battPos.getX() - 4, battPos.getY() - 5);
+                    if (!Util.inBoundaries(battPos.getY(), battPos.getX()) || myShip.getInvalidPositions().contains(battPos)) {
                         System.out.println("Wrong Coordinates, out of bounds ");
-                    }
-                    else if(!myShip.getComponentPositionsFromName("batterySlot").contains(compPos)){
+                    } else if (!myShip.getComponentPositionsFromName("batterySlot").contains(compPos)) {
                         System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
-                    }
-                    else {
-                        int batteriesInSlot = ((BatterySlot)myShip.getComponentFromPosition(battPos)).getBatteriesLeft();
+                    } else {
+                        int batteriesInSlot = ((BatterySlot) myShip.getComponentFromPosition(battPos)).getBatteriesLeft();
                         Position finalBattPos = battPos;
-                        int timesSlotUsed = (int)usedBatteryPositions.stream().filter(p -> p.equals(finalBattPos)).count();
-                        if(batteriesInSlot <= timesSlotUsed){
+                        int timesSlotUsed = (int) usedBatteryPositions.stream().filter(p -> p.equals(finalBattPos)).count();
+                        if (batteriesInSlot <= timesSlotUsed) {
                             System.out.println("Batteries already depleted ad those coordinates ");
-                        }
-                        else{
+                        } else {
                             //Aggiungo a liste
                             activatedComponentPositions.add(compPos);
                             usedBatteryPositions.add(battPos);
@@ -996,53 +990,52 @@ public class Tui implements View, Observable {
                 }
             }
         }
-        if(totalBatteries == 0){
+        if (totalBatteries == 0) {
             System.out.println("Batterie terminate");
         }
-        clientController.handleActivateComponentResponse(component,activatedComponentPositions,usedBatteryPositions);
+        clientController.handleActivateComponentResponse(component, activatedComponentPositions, usedBatteryPositions);
     }
 
     //Non considerato che giocatore non ne abbia abbastanza, controllo lato server
     //per fare che il giocatore perde direttamente
-    public void chooseDiscardCrew(Ship myShip,int nCrewToDiscard ) throws ExecutionException, InterruptedException {
+    public void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) throws ExecutionException, InterruptedException {
         ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
         printShip(myShip);
-        ArrayList<Position>  housingPositions = new ArrayList<>();
+        ArrayList<Position> housingPositions = new ArrayList<>();
         Position housingPos;
-        System.out.println("You have to discard "+nCrewToDiscard+ " crew:");
-        while(nCrewToDiscard>0){
+        System.out.println("You have to discard " + nCrewToDiscard + " crew:");
+        while (nCrewToDiscard > 0) {
             System.out.print("specify the coordinates of a Cabin");
             String input = readLine(" input (x,y): ").trim().toLowerCase();
             housingPos = parseCoordinate(input);
-            housingPos.setPos(housingPos.getX()-4,housingPos.getY()-5);
-            System.out.println(housingPos.getY()+" "+housingPos.getX());
-            if(!Util.inBoundaries(housingPos.getY(), housingPos.getX()) || myShip.getInvalidPositions().contains(housingPos)){
+            housingPos.setPos(housingPos.getX() - 4, housingPos.getY() - 5);
+            System.out.println(housingPos.getY() + " " + housingPos.getX());
+            if (!Util.inBoundaries(housingPos.getY(), housingPos.getX()) || myShip.getInvalidPositions().contains(housingPos)) {
                 System.out.println("Wrong Coordinates, out of bounds ");
-            }
-            else if( !myShip.getComponentPositionsFromName("ModularHousingUnit").contains(housingPos) && !myShip.getComponentPositionsFromName("CentralHousingUnit").contains(housingPos)){
+            } else if (!myShip.getComponentPositionsFromName("ModularHousingUnit").contains(housingPos) && !myShip.getComponentPositionsFromName("CentralHousingUnit").contains(housingPos)) {
                 System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
-            }
-            else{
+            } else {
                 //Controllare che non comparsa già troppe volte in lista
 
                 int nCrewAtPos = 0;
                 //N di crew sia umani che alieni
-                switch (  myShip.getComponentFromPosition(housingPos).accept(componentNameVisitor) ){
-                    case "ModularHousingUnit": nCrewAtPos = ((ModularHousingUnit)myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
-                    break;
-                    case "CentralHousingUnit":  nCrewAtPos = ((CentralHousingUnit)myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
+                switch (myShip.getComponentFromPosition(housingPos).accept(componentNameVisitor)) {
+                    case "ModularHousingUnit":
+                        nCrewAtPos = ((ModularHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
+                        break;
+                    case "CentralHousingUnit":
+                        nCrewAtPos = ((CentralHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
 
                 }
                 Position finalHousingPos = housingPos;
-                int timesSlotUsed = (int)housingPositions.stream().filter(p -> p.equals(finalHousingPos)).count();
-                if(nCrewAtPos <= timesSlotUsed){
+                int timesSlotUsed = (int) housingPositions.stream().filter(p -> p.equals(finalHousingPos)).count();
+                if (nCrewAtPos <= timesSlotUsed) {
                     System.out.println("Crew already selected ad those coordinates ");
-                }
-                else{
+                } else {
                     //Se tutto ok aggiungere
                     housingPositions.add(housingPos);
-                    nCrewToDiscard -- ;
-                    System.out.println("Accepted, you have "+nCrewToDiscard+" crew members to discard left");
+                    nCrewToDiscard--;
+                    System.out.println("Accepted, you have " + nCrewToDiscard + " crew members to discard left");
                 }
             }
         }
@@ -1053,20 +1046,20 @@ public class Tui implements View, Observable {
     public void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException {
         //Mostro tutti i tronconi numerandoli
         System.out.println("The ship divided into pieces choose one to continue ");
-        for(int i=0; i<tronconi.size(); i++){
+        for (int i = 0; i < tronconi.size(); i++) {
             System.out.println(" ");
-            System.out.println("Ship Fragment "+(i+1)+": ");
+            System.out.println("Ship Fragment " + (i + 1) + ": ");
             printShip(tronconi.get(i));
         }
         int choice = -1;
-        while(choice < 0 || choice >= tronconi.size()){
+        while (choice < 0 || choice >= tronconi.size()) {
             System.out.println("Choose a Fragment as your ship: ");
             try {
-                choice= Integer.parseInt(readLine(" > ").trim().toLowerCase());
-            }catch (Exception e){
+                choice = Integer.parseInt(readLine(" > ").trim().toLowerCase());
+            } catch (Exception e) {
                 System.out.println("Invalid choice entered, please try again");
             }
-            if(choice < 0 || choice >= tronconi.size()){
+            if (choice < 0 || choice >= tronconi.size()) {
                 System.out.println("Invalid choice entered, choose a number equivalent to a ship ");
             }
 
@@ -1079,7 +1072,7 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException{
+    public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
 
         //salvo tutte le posizioni delle housing
 
@@ -1123,13 +1116,11 @@ public class Tui implements View, Observable {
                         choiches.add("human");
 
 
-
-
                         boolean correct = false;
 
                         while (!correct) {
                             StringBuilder prompt = new StringBuilder("Type ");
-                            for (String choice : choiches){
+                            for (String choice : choiches) {
                                 prompt.append("(").append(choice).append(") ");
                             }
                             String choice = readLine(prompt.toString());
@@ -1180,7 +1171,8 @@ public class Tui implements View, Observable {
         askYesNoConfirmation(
                 "Congratulazioni, soddisfi i requisiti. Vuoi attivare l'effetto della carta?",
                 () -> clientController.sendActivateAdventureCardResponse(true),
-                () -> {clientController.sendActivateAdventureCardResponse(false);
+                () -> {
+                    clientController.sendActivateAdventureCardResponse(false);
                     showGenericMessage("Hai scelto di non attivare l'effetto. In attesa della scelta degli altri giocatori");
                 }
         );
@@ -1195,16 +1187,16 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void askDiscardCrew(int nCrewToDiscard,Ship myShip) {
+    public void askDiscardCrew(int nCrewToDiscard, Ship myShip) {
 
-        out.println("Hai scelto di accettare l'effetto della carta, per favore scarta  "+ nCrewToDiscard+ " membri dell'equipaggio ");
+        out.println("Hai scelto di accettare l'effetto della carta, per favore scarta  " + nCrewToDiscard + " membri dell'equipaggio ");
         ArrayList<Position> housePos = myShip.getComponentPositionsFromName("ModularHousingUnit");
 
-        if(!housePos.isEmpty()){
+        if (!housePos.isEmpty()) {
             for (Position pos : housePos) {
                 Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
-                if(tempSlot != null){
-                    if(tempSlot.getTile()!=null){
+                if (tempSlot != null) {
+                    if (tempSlot.getTile() != null) {
 
                     }
                 }
@@ -1212,9 +1204,9 @@ public class Tui implements View, Observable {
         }
 
 
-
     }
-// chiedere di selezionare uno dei pianeti disponibili
+
+    // chiedere di selezionare uno dei pianeti disponibili
     @Override
     public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
         int size = planetChoices.size();
@@ -1248,7 +1240,6 @@ public class Tui implements View, Observable {
     }
 
 
-
     @Override
     public void askLoadGood(Planet selectedPlanet, Ship myShip) throws ExecutionException, InterruptedException {
 //        ArrayList<Position> availableCargoHolds = clientController.getAvailableCargoHolds(myShip);
@@ -1271,6 +1262,7 @@ public class Tui implements View, Observable {
 //        }
 
     }
+
     @Override
     public void askLoadGoodChoice() {
         String input = null;
@@ -1293,8 +1285,9 @@ public class Tui implements View, Observable {
 
 
     }
+
     @Override
-    public void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip)  {
+    public void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip) {
         ArrayList<Good> goods = selectedPlanet.getGoods();
 
 
@@ -1342,7 +1335,7 @@ public class Tui implements View, Observable {
 //            }
 //        }
         Position selectedPos = null;
-       Position pos = null;
+        Position pos = null;
         while (selectedPos == null) {
 
             try {
@@ -1350,7 +1343,7 @@ public class Tui implements View, Observable {
                 pos = parseCoordinate(input);
 
                 if (availableCargoHolds.contains(pos)) {
-                    selectedPos = new Position(pos.getY() - 5,pos.getX() - 4) ;
+                    selectedPos = new Position(pos.getY() - 5, pos.getX() - 4);
                 } else {
                     out.println("Questa posizione non è disponibile.");
                 }
@@ -1358,13 +1351,11 @@ public class Tui implements View, Observable {
                 out.println("Formato non valido. Usa es. 6,7");
             }
         }
-        clientController.placeMerci(goodIndex,selectedGood, selectedPos);
+        clientController.placeMerci(goodIndex, selectedGood, selectedPos);
         out.println("Merce caricata.");
 
         askLoadGoodChoice();
     }
-
-
 
 
     @Override
@@ -1379,7 +1370,7 @@ public class Tui implements View, Observable {
                 pos = parseCoordinate(input);
 
                 if (occupiedPositions.contains(pos)) {
-                    selectedPos = new Position(pos.getY() - 5,pos.getX() - 4) ;
+                    selectedPos = new Position(pos.getY() - 5, pos.getX() - 4);
                 } else {
                     out.println("Questa posizione non è disponibile.");
                 }
@@ -1388,7 +1379,7 @@ public class Tui implements View, Observable {
             }
         }
 
-       ArrayList<Good> goods = clientController.getDiscardPositionGoods(selectedPos);
+        ArrayList<Good> goods = clientController.getDiscardPositionGoods(selectedPos);
         out.println(" Merci disponibili:");
         displayGoods(goods);
         int goodIndex = -1;
@@ -1400,37 +1391,35 @@ public class Tui implements View, Observable {
                 out.println("Input non valido.");
             }
         }
-        clientController.discardGood(goodIndex,pos);
+        clientController.discardGood(goodIndex, pos);
         out.println("Merce scartata.");
         askLoadGoodChoice();
-
 
 
     }
 
 
     @Override
-    public void showEndTurnMenu( boolean amLeader ) {
-        if(clientController.getMyModel().isLeader()) {
+    public void showEndTurnMenu(boolean amLeader) {
+        if (clientController.getMyModel().isLeader()) {
             menuManager.showLeaderEndTurnMenu();
             return;
-        }
-        else{
+        } else {
             menuManager.showEndTurnMenu();
         }
 
     }
 
-    public void askEndTurnMenuChoice(boolean amLeader )  {
+    public void askEndTurnMenuChoice(boolean amLeader) {
         String input = null;
         boolean valid = false;
-        if(!amLeader) {
+        if (!amLeader) {
             do {
                 try {
                     input = readLine("Inserisci la tua scelta (a/b/c o menu) : ");
                     if (input.toLowerCase().matches("[abc]")) {
                         valid = true;
-                    } else  {
+                    } else {
                         if (input.toLowerCase().matches("reset")) System.out.println();
                         else System.out.println("input non valido");
                     }
@@ -1441,14 +1430,13 @@ public class Tui implements View, Observable {
                 }
 
             } while (!valid);
-        }
-        else {
+        } else {
             do {
                 try {
                     input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ");
                     if (input.toLowerCase().matches("[abcd]")) {
                         valid = true;
-                    } else  {
+                    } else {
                         if (input.toLowerCase().matches("reset")) System.out.println();
                         else System.out.println("input non valido");
                     }
@@ -1468,9 +1456,9 @@ public class Tui implements View, Observable {
 
     }
 
-    public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers,PlayerInfo myinfo) {
+    public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
 
-        FlightBoardPrintUtils.printFlightBoard(flightBoard,infoPlayers,myinfo);
+        FlightBoardPrintUtils.printFlightBoard(flightBoard, infoPlayers, myinfo);
 
     }
 
@@ -1481,6 +1469,7 @@ public class Tui implements View, Observable {
         }
         out.println("[0] Salta");
     }
+
     @Override
     public void showCurrentAdventureCard() {
         out.println("Carta avventura attiva: ");
@@ -1517,7 +1506,7 @@ public class Tui implements View, Observable {
     }
 
 
-    private Boolean checkReset(String input){
+    private Boolean checkReset(String input) {
         return input.equals("reset") || input.equals("RESET");
     }
 
@@ -1544,6 +1533,7 @@ public class Tui implements View, Observable {
             }
         } while (!validInput);
     }
+
     private void askYesNoConfirmation(String prompt, Runnable onYes, Runnable onNo) {
         boolean validInput = false;
         String input;
@@ -1567,6 +1557,7 @@ public class Tui implements View, Observable {
         } while (!validInput);
 
     }
+
     public static boolean isValidNumberInRange(String input, int min, int max) {
         if (input == null || input.isBlank()) return false;
 

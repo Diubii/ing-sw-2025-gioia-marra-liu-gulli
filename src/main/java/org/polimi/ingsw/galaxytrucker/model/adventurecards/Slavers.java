@@ -17,12 +17,15 @@ public class Slavers extends AdventureCard {
     private final int firePower;
 
 
-
-    /** The amount of credits lost or gained. */
+    /**
+     * The amount of credits lost or gained.
+     */
     private final int credits;
+
     public int getPenalty() {
         return penalty;
     }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonCreator
     public Slavers(@JsonProperty("id") int id,
@@ -30,7 +33,7 @@ public class Slavers extends AdventureCard {
                    @JsonProperty("daysLost") int daysLost,
                    @JsonProperty("name") String name,
                    @JsonProperty("learningFlight") boolean learningFlight,
-                   @JsonProperty("firePower") int firePower ,
+                   @JsonProperty("firePower") int firePower,
                    @JsonProperty("penalty") int penalty,
                    @JsonProperty("credits") int credits,
                    @JsonProperty("affectsAll") boolean affectsAll) {
@@ -46,7 +49,7 @@ public class Slavers extends AdventureCard {
 
     }
 
-    public Slavers(int penalty, int firePower,int credits) {
+    public Slavers(int penalty, int firePower, int credits) {
         this.penalty = penalty;
         this.firePower = firePower;
         this.credits = credits;

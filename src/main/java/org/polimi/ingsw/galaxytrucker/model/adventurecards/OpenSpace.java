@@ -12,17 +12,16 @@ public class OpenSpace extends AdventureCard {
     @Serial
     private static final long serialVersionUID = 99679L;
 
-    public OpenSpace() {}
+    public OpenSpace() {
+    }
 
     @JsonCreator
     public OpenSpace(@JsonProperty("id") int id,
-                         @JsonProperty("level") int level,
-                         @JsonProperty("daysLost") int daysLost,
-                         @JsonProperty("name") String name,
-                         @JsonProperty("learningFlight") boolean learningFlight,
-                        @JsonProperty("affectsAll") boolean affectsAll)
-
-    {
+                     @JsonProperty("level") int level,
+                     @JsonProperty("daysLost") int daysLost,
+                     @JsonProperty("name") String name,
+                     @JsonProperty("learningFlight") boolean learningFlight,
+                     @JsonProperty("affectsAll") boolean affectsAll) {
         this.id = id;
         this.level = level;
         this.daysLost = daysLost;

@@ -6,7 +6,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
 
-public class DoubleEngine extends Engine{
+public class DoubleEngine extends Engine {
 
     private Boolean charged;
 
@@ -24,14 +24,12 @@ public class DoubleEngine extends Engine{
     }
 
     private void calculatePower() {
-        if(getRotation()!=0){
-            if(charged) {
+        if (getRotation() != 0) {
+            if (charged) {
                 enginePower = 2;
                 charged = false;
-            }
-            else enginePower = 1;
-        }
-        else{
+            } else enginePower = 1;
+        } else {
             enginePower = 0;
         }
     }
@@ -45,6 +43,7 @@ public class DoubleEngine extends Engine{
     public void setCharged(Boolean charged) {
         this.charged = charged;
     }
+
     @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);

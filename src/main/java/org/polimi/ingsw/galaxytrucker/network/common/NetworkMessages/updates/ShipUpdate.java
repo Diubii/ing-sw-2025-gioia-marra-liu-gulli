@@ -18,7 +18,7 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
     private final Ship shipView;
 
     private final String nickName;
-    private Boolean  onlyFix = false;
+    private Boolean onlyFix = false;
     private Boolean shouldDisplay = false;
 
     public ShipUpdate(Ship shipView, String nickName) {
@@ -27,9 +27,10 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
+
     public Ship getShipView() {
         return shipView;
     }
@@ -49,6 +50,7 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
     public Boolean getShouldDisplay() {
         return shouldDisplay;
     }
+
     public void setShouldDisplay(Boolean shouldDisplay) {
         this.shouldDisplay = shouldDisplay;
     }

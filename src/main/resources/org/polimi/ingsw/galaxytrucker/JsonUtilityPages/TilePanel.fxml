@@ -15,7 +15,7 @@
         <TextField fx:id="tileId" text="1"/>
         <Button text="Vedi per Id" onAction="#handleShowTileId"/>
         <Button text="Prec" onAction="#handlePrevTile"/>
-        <Label text="TILES" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        <Label text="TILES" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
         <Button text="Next" onAction="#handleNextTile"/>
         <Button text="Salva la lista" onAction="#handleSaveTileList"/>
         <Button text="Carica la lista" onAction="#handleLoadTileList"/>

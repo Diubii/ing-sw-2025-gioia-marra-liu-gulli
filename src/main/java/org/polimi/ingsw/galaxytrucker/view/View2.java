@@ -15,16 +15,20 @@ import java.util.concurrent.ExecutionException;
 
 public interface View2 {
     void askServerInfo() throws IOException, ExecutionException, InterruptedException;
+
     void askNickname() throws IOException, ExecutionException, InterruptedException;
 
 
-
     void askJoinOrCreateRoom();
+
     void askRoomCode();
 
     void askFetchShip();
+
     void askDrawTile();
+
     void askTilePlacement();
+
     void askFinishBuilding();
 
 
@@ -32,18 +36,25 @@ public interface View2 {
 
 
     void handlePhaseUpdate(PhaseUpdate phaseUpdate);
+
     void showBuildingMenu();
+
     void showcheckShipMenu();
+
     void showembarkCrewMenu();
 
     void showGenericMessage(String message);
 
     void showLobbies(List<LobbyInfo> lobbies);
+
     void showPlayerJoined(Map<String, Color> playerInfo);
+
     void showError(String error);
+
     void showShipStatus(Object ship);
 
     void showShip(String targetname);
+
     void showTileTaken(int tileID);
 
 

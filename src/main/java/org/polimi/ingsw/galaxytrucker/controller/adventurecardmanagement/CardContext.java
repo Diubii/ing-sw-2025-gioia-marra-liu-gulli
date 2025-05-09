@@ -1,14 +1,17 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement;
 
-import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsm.AdventureCardFSMVisitor;
-import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsm.CardFSM;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms.AdventureCardFSMVisitor;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms.CardFSM;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Gets context for a single card. Needs to be re-instantiated to change card. Has an internal {@link CardFSM}.
@@ -20,14 +23,25 @@ public class CardContext {
     private ArrayList<Player> currentRankedPlayers;
     private final CardFSM cardFSM;
     private final LobbyManager currentGame;
-    private NetworkMessageType expectedNetworkMessageType;
+    private NetworkMessage incomingNetworkMessage;
 
-    public CardContext(LobbyManager currentGame, AdventureCard firstAdventureCard, ArrayList<Player> currentRankedPlayers) {
+    private final HashMap<NetworkMessageType, Integer> expectedNumberOfNetworkMessagesPerType;
+
+    public CardContext(LobbyManager currentGame, AdventureCard firstAdventureCard) {
         this.currentGame = currentGame;
         adventureCard = firstAdventureCard;
+        currentRankedPlayers = currentGame.getGameController().getRankedPlayers();
         currentPlayer = currentRankedPlayers.getFirst();
         currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
         cardFSM = adventureCard.accept(new AdventureCardFSMVisitor());
+
+        expectedNumberOfNetworkMessagesPerType = new HashMap<>(Map.of(
+                NetworkMessageType.ShipUpdate, 0,
+                NetworkMessageType.ActivateAdventureCardResponse, 0,
+                NetworkMessageType.ActivateComponentResponse, 0,
+                NetworkMessageType.DiscardCrewMembersResponse, 0,
+                NetworkMessageType.SelectPlanetResponse, 0
+        ));
     }
 
     public LobbyManager getCurrentGame() {
@@ -60,33 +74,64 @@ public class CardContext {
     }
 
     /**
-     * Assigns the next player to the current one and returns it. If the current one before the assignment is the last one, it goes back to the first one.
-     * @return The player
+     * Assigns the previous player to the current one. If the current one before the assignment is the first one, it goes back to the last one.
      */
-    public Player getNextPlayer() {
+    public void previousPlayer() {
         int i = currentRankedPlayers.indexOf(currentPlayer);
-        if(i == currentRankedPlayers.size() - 1) {
-            this.currentPlayer = currentRankedPlayers.getFirst();
+        if (i == 0) {
+            this.currentPlayer = currentRankedPlayers.getLast();
+        } else {
+            this.currentPlayer = currentRankedPlayers.get(i - 1);
         }
-        else {
+    }
+
+    /**
+     * Assigns the next player to the current one. If the current one before the assignment is the last one, it goes back to the first one.
+     */
+    public void nextPlayer() {
+        int i = currentRankedPlayers.indexOf(currentPlayer);
+        if (i == currentRankedPlayers.size() - 1) {
+            this.currentPlayer = currentRankedPlayers.getFirst();
+        } else {
             this.currentPlayer = currentRankedPlayers.get(i + 1);
         }
-        return currentPlayer;
     }
 
-    public NetworkMessageType getExpectedNetworkMessageType() {
-        return expectedNetworkMessageType;
-    }
-    public void setExpectedNetworkMessageType(NetworkMessageType expectedNetworkMessageType) {
-        this.expectedNetworkMessageType = expectedNetworkMessageType;
+    public HashMap<NetworkMessageType, Integer> getExpectedNumberOfNetworkMessagesPerType() {
+        return expectedNumberOfNetworkMessagesPerType;
     }
 
-    public int getCurrentPhaseIndex() {
-        return cardFSM.currentPhaseIndex();
+    public void incrementExpectedNumberOfNetworkMessages(NetworkMessageType type) {
+        int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
+        expectedNumberOfNetworkMessagesPerType.replace(type, currentValue + 1);
     }
 
-    public void resetFSM(){
+    public void decrementExpectedNumberOfNetworkMessages(NetworkMessageType type) {
+        int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
+        expectedNumberOfNetworkMessagesPerType.replace(type, currentValue - 1);
+    }
+
+    /**
+     * Gets the NetworkMessage passed by the ServerController.
+     */
+    public NetworkMessage getIncomingNetworkMessage() {
+        return incomingNetworkMessage;
+    }
+
+    public void setIncomingNetworkMessage(NetworkMessage incomingNetworkMessage) {
+        this.incomingNetworkMessage = incomingNetworkMessage;
+    }
+
+    public void resetFSM() {
         cardFSM.reset();
+    }
+
+    public void executePhase() {
+        cardFSM.execute(this);
+    }
+
+    public void previousPhase() {
+        cardFSM.previous();
     }
 
     public void nextPhase() {

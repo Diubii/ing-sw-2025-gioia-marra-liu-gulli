@@ -26,7 +26,7 @@ public class ClientModel {
     private ArrayList<PlayerInfo> playerInfos;
     private FlightBoard flightBoard;
     private ArrayList<CardDeck> cardDecks = new ArrayList<>();
-    private ArrayList<Tile>  faceUpTiles = new ArrayList<>();
+    private ArrayList<Tile> faceUpTiles = new ArrayList<>();
     private Tile[] reservedTiles = new Tile[2];
     private boolean isLeader;
     private Planet selectedPlanet;
@@ -72,6 +72,7 @@ public class ClientModel {
     public void setMyInfo(PlayerInfo myInfo) {
         this.myInfo = myInfo;
     }
+
     public PlayerInfo getMyInfo() {
         return myInfo;
     }
@@ -79,6 +80,7 @@ public class ClientModel {
     public void setPlayerInfos(ArrayList<PlayerInfo> playerInfos) {
         this.playerInfos = playerInfos;
     }
+
     public ArrayList<PlayerInfo> getPlayerInfos() {
         return playerInfos;
     }
@@ -86,10 +88,12 @@ public class ClientModel {
     public ArrayList<Tile> getFaceUpTiles() {
         return faceUpTiles;
     }
+
     public void setFaceUpTiles(ArrayList<Tile> faceUpTiles) {
 
-        this.faceUpTiles =  faceUpTiles;
+        this.faceUpTiles = faceUpTiles;
     }
+
     public Tile[] getReservedTiles() {
         return reservedTiles;
     }
@@ -116,7 +120,7 @@ public class ClientModel {
     }
 
 
-    public void setLeader(boolean isLeader ) {
+    public void setLeader(boolean isLeader) {
         this.isLeader = isLeader;
     }
 
@@ -131,6 +135,7 @@ public class ClientModel {
     public Planet getSelectedPlanet() {
         return selectedPlanet;
     }
+
     public void setSelectedPlanet(Planet selectedPlanet) {
         this.selectedPlanet = selectedPlanet;
     }

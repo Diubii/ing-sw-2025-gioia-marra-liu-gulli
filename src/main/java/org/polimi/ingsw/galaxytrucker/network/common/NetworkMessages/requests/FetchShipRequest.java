@@ -23,12 +23,8 @@ public class FetchShipRequest extends NetworkMessage implements Serializable {
 
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
-        try {
-            return visitor.visit(this);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
+        return visitor.visit(this);
     }
 
     public String getTargetNickname() {

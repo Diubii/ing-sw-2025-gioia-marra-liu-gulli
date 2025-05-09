@@ -36,6 +36,7 @@ public class MenuManager {
 
         }
     }
+
     public void showBuildingMenu() {
 
         clearConsole();
@@ -64,6 +65,7 @@ public class MenuManager {
 
 
     }
+
     public void showEmbarkCrewMenu() {
         clearConsole();
         out.println("\n Embark Crew Phase Menu:");
@@ -99,6 +101,7 @@ public class MenuManager {
             }
         }
     }
+
     public void showEndTurnMenu() {
         clearConsole();
         out.println("\n End Turn Menu:");
@@ -121,27 +124,25 @@ public class MenuManager {
     }
 
 
-    private void showBuildStart(){
-            String banner = "\033[1;34m" +
+    private void showBuildStart() {
+        String banner = "\033[1;34m" +
 
-                    "######                                                 #####                            \n" +
-                    "#     #  #    #  #  #      #####   #  #    #  ####     #     # #####   ##   #####  ##### \n" +
-                    "#     #  #    #  #  #      #    #  #  ##   # #    #    #         #    #  #  #    #   #   \n" +
-                    "######   #    #  #  #      #    #  #  # #  # #          #####    #   #    # #    #   #   \n" +
-                    "#     #  #    #  #  #      #    #  #  #  # # #  ###          #   #   ###### #####    #   \n" +
-                    "#     #  #    #  #  #      #    #  #  #   ## #    #    #     #   #   #    # #   #    #   \n" +
-                    "######    ####   #  ###### #####   #  #    #  ####      #####    #   #    # #    #   #   \n" +
+                "######                                                 #####                            \n" +
+                "#     #  #    #  #  #      #####   #  #    #  ####     #     # #####   ##   #####  ##### \n" +
+                "#     #  #    #  #  #      #    #  #  ##   # #    #    #         #    #  #  #    #   #   \n" +
+                "######   #    #  #  #      #    #  #  # #  # #          #####    #   #    # #    #   #   \n" +
+                "#     #  #    #  #  #      #    #  #  #  # # #  ###          #   #   ###### #####    #   \n" +
+                "#     #  #    #  #  #      #    #  #  #   ## #    #    #     #   #   #    # #   #    #   \n" +
+                "######    ####   #  ###### #####   #  #    #  ####      #####    #   #    # #    #   #   \n" +
 
-            "\033[0m";
-            out.println(banner);
-
-
+                "\033[0m";
+        out.println(banner);
 
 
-        }
+    }
 
 
-    private void showFlightStart(){
+    private void showFlightStart() {
         String banner = "\033[1;34m" +
                 " _______  __       __    _______  __    __  .___________.        _______..___________.    ___      .______     .___________.\n" +
                 "|   ____||  |     |  |  /  _____||  |  |  | |           |       /       ||           |   /   \\     |   _  \\    |           |\n" +
@@ -154,12 +155,10 @@ public class MenuManager {
         out.println(banner);
 
 
-
-
     }
 
 
-    }
+}
 
 
 

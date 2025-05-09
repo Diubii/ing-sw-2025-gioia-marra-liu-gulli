@@ -14,7 +14,7 @@ public class AskDrawAdventureCardRequest extends NetworkMessage implements Seria
 
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws ExecutionException, InterruptedException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 

@@ -30,62 +30,92 @@ public interface View {
     void showGenericMessage(String s);
 
     void askJoinOrCreateRoom();
+
     void askRoomCode();
+
     void askCreateRoom() throws ExecutionException;
+
     void showLobbies(List<LobbyInfo> lobbies);
 
     void toShowCurrentMenu();
 //    void showPlayerJoined(HashMap<String, Color> playerInfo);
 
     void showPlayerJoined(PlayerInfo playerInfos);
-    void showPlayersLobby(PlayerInfo myInfo,ArrayList<PlayerInfo> playerInfos);
+
+    void showPlayersLobby(PlayerInfo myInfo, ArrayList<PlayerInfo> playerInfos);
 
     void handleChoiceForPhase(GameState phase);
+
     void handlePhaseUpdate(PhaseUpdate phaseUpdate);
 
     //building
     void showBuildingMenu();
+
     void showFaceUpTiles();
+
     void showShip(Ship ship);
 
     void FetchMyShip();
 
     //asks_building
     void askShowFaceUpTiles();
+
     void askRotation();
+
     void askPosition() throws ExecutionException;
+
     void askViewAdventureDecks();
+
     void showTile(Tile tile);
+
     void askChooseTile();
+
     void askPickOrPlaceReservedTile(boolean isPicking);
 
     void askFetchShip();
+
     void askDrawTile();
+
     void askTilePlacement();
+
     void askFinishBuilding();
 
     void showcheckShipMenu();
+
     void showembarkCrewMenu();
 
     void askRemoveTile(Ship ship);
 
     void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException;
-    void chooseDiscardCrew(Ship myShip,int nCrewToDiscard ) throws ExecutionException, InterruptedException;
+
+    void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) throws ExecutionException, InterruptedException;
+
     void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException;
+
     void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException, InvalidTilePosition, TooManyPlayersException, PlayerAlreadyExistsException;
-// Flight
+
+    // Flight
     void askDrawCard();
+
     void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo);
+
     void showCurrentAdventureCard();
 
 
     void showEndTurnMenu(boolean amLeader);
+
     void askActivateAdventureCard();
+
     void askDiscardCrew(int nCrewToDiscard, Ship myShip);
+
     void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
+
     void askLoadGood(Planet selectedPlanet, Ship myShip) throws ExecutionException, InterruptedException;
+
     void askLoadGoodChoice();
+
     void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip);
+
     void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip);
 
     void askEndTurnMenuChoice(boolean amLeader);

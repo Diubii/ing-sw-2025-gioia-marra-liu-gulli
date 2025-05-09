@@ -17,14 +17,15 @@ public class GameMessage extends NetworkMessage implements Serializable {
 
     private String message;
 
-    public GameMessage() {}
+    public GameMessage() {
+    }
 
     public GameMessage(String message) {
         this.message = message;
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, ExecutionException, InterruptedException, IOException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 

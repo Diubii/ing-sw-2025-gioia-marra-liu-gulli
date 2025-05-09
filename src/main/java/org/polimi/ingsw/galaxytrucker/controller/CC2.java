@@ -305,7 +305,7 @@
 //            myModel.getPlayerInfos().add(playerJoinedUpdate.getPlayerInfo());
 //        }
 //
-////                view.showPlayerJoined(playerInfo);
+/// /                view.showPlayerJoined(playerInfo);
 //
 //    }
 //

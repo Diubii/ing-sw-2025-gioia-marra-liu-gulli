@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.essentials;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;

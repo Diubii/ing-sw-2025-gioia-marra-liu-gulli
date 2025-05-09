@@ -17,7 +17,7 @@ public class GenericCargoHolds extends Component {
     private ArrayList<Good> Goods;
 
     @JsonCreator
-    public GenericCargoHolds(@JsonProperty("special") Boolean special, @JsonProperty("nMaxContainers") int nMaxContainers,@JsonProperty("goods") ArrayList<Good> Goods) {
+    public GenericCargoHolds(@JsonProperty("special") Boolean special, @JsonProperty("nMaxContainers") int nMaxContainers, @JsonProperty("goods") ArrayList<Good> Goods) {
         super(false);
         this.special = special;
         this.nMaxContainers = nMaxContainers;
@@ -55,6 +55,7 @@ public class GenericCargoHolds extends Component {
             }
         }
     }
+
     public void playerLoadGood(Good g) {
         if (Goods == null) {
             Goods = new ArrayList<>();
@@ -91,7 +92,8 @@ public class GenericCargoHolds extends Component {
     public boolean isFull() {
         return Goods.size() >= nMaxContainers;
     }
-    public boolean isEmpty(){
+
+    public boolean isEmpty() {
         return Goods.isEmpty();
     }
 }

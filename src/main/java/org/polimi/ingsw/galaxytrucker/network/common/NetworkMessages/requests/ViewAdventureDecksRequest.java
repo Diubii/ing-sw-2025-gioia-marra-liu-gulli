@@ -12,12 +12,12 @@ public class ViewAdventureDecksRequest extends NetworkMessage implements Seriali
     @Serial
     private static final long serialVersionUID = 43850L;
 
-    public ViewAdventureDecksRequest(){
+    public ViewAdventureDecksRequest() {
         super();
     }
 
     @Override
-    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) throws TooManyPlayersException, PlayerAlreadyExistsException {
+    public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
     }
 }
