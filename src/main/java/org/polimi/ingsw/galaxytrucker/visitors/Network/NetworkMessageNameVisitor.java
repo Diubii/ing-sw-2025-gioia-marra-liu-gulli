@@ -281,4 +281,9 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(HeartbeatResponse heartbeatResponse) {
         return NetworkMessageType.HeartbeatResponse;
     }
+
+    @Override
+    public NetworkMessageType visit(ReadyTurnRequest readyTurnRequest) {
+        return NetworkMessageType.ReadyTurnRequest;
+    }
 }

@@ -68,6 +68,7 @@ public class ClientController implements Observer {
     private GameState phase = GameState.LOBBY;
 
     private AdventureCard currentAdventureCard;
+    private boolean isPlaced = false;
 
     public ClientModel getMyModel() {
         return myModel;
@@ -387,7 +388,8 @@ public class ClientController implements Observer {
 
         switch (input) {
             case "menu", "?", "m" -> {
-                view.handleChoiceForPhase(phase);
+               view.toShowCurrentMenu();
+               view.handleChoiceForPhase(phase);
                 break;
             }
             case "a" -> {
@@ -397,12 +399,19 @@ public class ClientController implements Observer {
             case "b" -> {
                 if (myModel.getCardDecks().size() != 1) {
 
-                    try {
-                        sendShipUpdate();
-                    } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                    if(isPlaced) {
+                        try {
+                            view.askViewAdventureDecks();
+                            sendShipUpdate();
+                        } catch (IOException | ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
-                    view.askViewAdventureDecks();
+                    else{
+                        view.showGenericMessage("Hai un tile  in mano, per favore posizionala prima.");
+                        view.showBuildingMenu();
+                    }
+
                 } else {
                     view.showGenericMessage("You are not allowed to spy on the learningMatch!");
                     view.showBuildingMenu();
@@ -422,6 +431,7 @@ public class ClientController implements Observer {
                     view.showBuildingMenu();
 
                 } else {
+                    isPlaced = false;
                     view.askDrawTile();
                     try {
                         sendShipUpdate();
@@ -500,13 +510,15 @@ public class ClientController implements Observer {
         boolean exists;
         exists = myModel.hasPlayerWithNickname(targetNickname);
         if (exists) {
-            FetchShipRequest request = new FetchShipRequest(targetNickname);
-
-            try {
-                client.sendMessage(request);
-            } catch (Exception e) {
-                view.showGenericMessage("Failed to send fetch ship request: " + e.getMessage());
+            if(myModel.getMyInfo().getNickName().equals(targetNickname)){
+                view.showShip(myModel.getMyInfo().getShip());
+                view.handleChoiceForPhase(phase);
                 return;
+            }
+            else {
+                Ship targetShip = myModel.getPlayerInfoByNickname(targetNickname).getShip();
+                view.showShip(targetShip);
+                view.handleChoiceForPhase(phase);
             }
 
         } else {
@@ -758,6 +770,7 @@ public class ClientController implements Observer {
                 if (response.getMessage().equals("VALID")) {
                     resetCurrentPos();
                     currentTileInHand = null;
+                    isPlaced = true;
                 }
 
             } catch (Exception e) {
@@ -1063,107 +1076,70 @@ public class ClientController implements Observer {
 
     }
 
-    public void handleAskEndTurnMenuChoice(String input) throws RuntimeException {
+    public void handleFlightMenuChoice(String input) throws RuntimeException {
         new Thread(() -> {
-            if (!myModel.isLeader()) {
                 switch (input) {
                     case "RESET" -> {
                         return;
 
-
                     }
                     case "a" -> {
-                        view.showShip(myModel.getMyInfo().getShip());
-                        view.askEndTurnMenuChoice(myModel.isLeader());
+                        view.askFetchShip();
+
                         break;
                     }
 
                     case "b" -> {
                         view.showFlightBoard(myModel.getFlightBoard(), myModel.getPlayerInfos(), myModel.getMyInfo());
-                        view.askEndTurnMenuChoice(myModel.isLeader());
+                        view.handleChoiceForPhase(phase);
+                        break;
                     }
 
-                    case "c" -> {
-                        try {
+                    case "c" ->
                             handleEarlyLandingRequest();
-                        } catch (IOException | ExecutionException | InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
 
-                    }
-
+                    case "d" ->
+                            handleReadyTurnRequest();
 
                     case "menu", "m", "?" -> {
-                        view.showEndTurnMenu(myModel.isLeader());
-                        view.askEndTurnMenuChoice(myModel.isLeader());
+
+                        view.handleChoiceForPhase(phase);
+
+
 
                     }
 
 
                     default -> {
                         view.showGenericMessage("Invalid option. Please try again.");
-                        view.askEndTurnMenuChoice(myModel.isLeader());
+                        view.handleChoiceForPhase(phase);
                     }
                 }
-
-            } else {
-                switch (input) {
-                    case "RESET" -> {
-                        return;
-
-
-                    }
-                    case "a" -> {
-                        view.showShip(myModel.getMyInfo().getShip());
-                        view.askEndTurnMenuChoice(myModel.isLeader());
-                        break;
-                    }
-
-
-                    case "b" -> {
-                        view.showFlightBoard(myModel.getFlightBoard(), myModel.getPlayerInfos(), myModel.getMyInfo());
-                        view.askEndTurnMenuChoice(myModel.isLeader());
-                    }
-
-                    case "c" -> {
-                        try {
-                            handleEarlyLandingRequest();
-                        } catch (IOException | ExecutionException | InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }
-                    case "d" -> {
-                        view.askDrawCard();
-
-                    }
-
-
-                    case "menu", "m", "?" -> {
-                        view.showEndTurnMenu(myModel.isLeader());
-                        view.askEndTurnMenuChoice(myModel.isLeader());
-
-                    }
-
-
-                    default -> {
-                        view.showGenericMessage("Invalid option. Please try again.");
-                        view.askEndTurnMenuChoice(myModel.isLeader());
-                    }
-                }
-
-            }
-
 
         }).start();
     }
 
-    private void handleEarlyLandingRequest() throws IOException, ExecutionException, InterruptedException {
+    public void handleEarlyLandingRequest() {
         EarlyLandingRequest request = new EarlyLandingRequest();
-        client.sendMessage(request);
-
+        try {
+            client.sendMessage(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        view.showGenericMessage("Hai scelto l’atterraggio anticipato, ora guarda gli altri giocatori.");
 
     }
+    public void handleReadyTurnRequest()  {
+        ReadyTurnRequest request = new ReadyTurnRequest();
+        try {
+            client.sendMessage(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        view.showGenericMessage(" Devi aspettare che gli altri giocatori siano pronti.");
+
+    }
+
 
 
     public void handleGameMessage(GameMessage gameMessage) {
@@ -1179,17 +1155,14 @@ public class ClientController implements Observer {
 
         boolean amLeader = leaderNickname.equals(getNickname());
         myModel.setLeader(amLeader);
+        view.showGenericMessage("Il giocatore: " + leaderNickname + " è il leader, rimangono: " + remainCards + "  carte.");
         if (amLeader) {
-
-            view.showEndTurnMenu(true);
-            view.askEndTurnMenuChoice(true);
+            view.askDrawCard();
         } else {
-            view.showGenericMessage("No sei il leader del questo turno. Dovresti aspettare il leader pesca la carta.");
-            view.showEndTurnMenu(false);
-            view.askEndTurnMenuChoice(false);
+            view.showGenericMessage("No sei il leader a questo turno. Dovresti aspettare il leader pesca la carta.");
+
         }
 
-        view.showGenericMessage("Il giocatore: " + leaderNickname + " è il leader, rimangono: " + remainCards + "  carte.");
     }
 
     public void sendDrawAdventureCardRequest() {

@@ -403,12 +403,9 @@ public class GuiJavaFx implements View {
     }
 
     @Override
-    public void showEndTurnMenu(boolean amLeader) {
+    public void showFlightMenu() {
 
     }
 
-    @Override
-    public void askEndTurnMenuChoice(boolean amLeader) {
 
-    }
 }

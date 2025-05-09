@@ -277,4 +277,8 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(EarlyLandingRequest earlyLandingRequest) {
         return null;
     }
+    @Override
+    public NetworkMessageType visit(ReadyTurnRequest readyTurnRequest) {
+        return NetworkMessageType.ReadyTurnRequest;
+    }
 }

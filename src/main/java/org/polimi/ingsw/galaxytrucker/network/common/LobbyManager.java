@@ -9,9 +9,7 @@ import org.polimi.ingsw.galaxytrucker.model.TileBunch;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class LobbyManager {
@@ -25,6 +23,8 @@ public class LobbyManager {
     private final ArrayList<String> playerShipFinished = new ArrayList<>();
     private final ArrayList<String> playerCrewFinished = new ArrayList<>();
     private ArrayList<PlayerInfo> playerInfos = new ArrayList<>();
+    private final Set<String> readyPlayers = new HashSet<>();
+    private final Set<String> earlyLandingPlayers = new HashSet<>();
 
 
     private ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> pendingResponses;
@@ -185,6 +185,22 @@ public class LobbyManager {
         }
     }
 
+    public synchronized void addReadyPlayer(String playerNickname) {
+        readyPlayers.add(playerNickname);
+    }
+    public synchronized void addEarlyLandingPlayer(String playerNickname) {
+        earlyLandingPlayers.add(playerNickname);
+    }
+    public synchronized boolean allActivePlayerReady() {
+        int onlinePlayers = this.PlayerHandlers.size();
+        int readyPlayers = this.readyPlayers.size();
+        int earlyLandingPlayers = this.earlyLandingPlayers.size();
+        return readyPlayers == onlinePlayers - earlyLandingPlayers;
+    }
+
+    public synchronized  void resetReadyPlayers() {
+        readyPlayers.clear();
+    }
     public HashMap<String, ClientHandler> getPlayerHandlers() {
         synchronized (lock3) {
             return new HashMap<>(PlayerHandlers);
@@ -202,4 +218,5 @@ public class LobbyManager {
     public String getNicknameFromColor(Color color) {
         return (PlayerColors.entrySet().stream().filter(pair -> pair.getValue().equals(color))).map(Map.Entry::getKey).findFirst().orElse(null);
     }
+
 }

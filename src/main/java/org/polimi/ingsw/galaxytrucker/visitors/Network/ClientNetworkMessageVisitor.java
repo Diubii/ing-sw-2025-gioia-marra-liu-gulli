@@ -354,6 +354,13 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(EarlyLandingRequest earlyLandingRequest) {
+        clientController.handleEarlyLandingRequest();
+        return null;
+    }
+
+    @Override
+    public Void visit(ReadyTurnRequest readyTurnRequest) {
+        clientController.handleReadyTurnRequest();
         return null;
     }
 }

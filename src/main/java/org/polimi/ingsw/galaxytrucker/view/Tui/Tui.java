@@ -386,10 +386,8 @@ public class Tui implements View, Observable {
     @Override
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
 
-
         GameState phase = phaseUpdate.getState();
         menuManager.showPhaseStart(phase);
-
         if (phase.equals(GameState.BUILDING_TIMER)) {
             new Thread(() -> {
 
@@ -398,7 +396,7 @@ public class Tui implements View, Observable {
             return;
         } else {
             menuManager.setMenuText(phase);
-            if (phaseUpdate.getState().equals(GameState.BUILDING_START) || phaseUpdate.getState().equals(GameState.SHIP_CHECK) || phaseUpdate.getState().equals(GameState.CREW_INIT)) {
+            if (phase.equals(GameState.BUILDING_START) || phase.equals(GameState.SHIP_CHECK) || phase.equals(GameState.CREW_INIT)|| phase.equals(GameState.FLIGHT)) {
                 toShowCurrentMenu();
                 handleChoiceForPhase(phase);
             }
@@ -417,7 +415,7 @@ public class Tui implements View, Observable {
             case BUILDING_START -> showBuildingMenu();
             case SHIP_CHECK -> showcheckShipMenu();
             case CREW_INIT -> showembarkCrewMenu();
-
+            case FLIGHT -> showFlightMenu();
             default -> {
 //                out.println("Please wait. No input is required at this stage.");
             }
@@ -429,7 +427,7 @@ public class Tui implements View, Observable {
         try {
             String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
             if (checkReset(input)) return;
-            ;
+
             while (input.equals("m") || input.equals("menu") || input.equals("?")) {
                 menuManager.showCurrentMenu();
                 input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
@@ -1210,12 +1208,12 @@ public class Tui implements View, Observable {
     @Override
     public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
         int size = planetChoices.size();
+        out.println(size);
         boolean validInput = false;
 
         do {
             try {
                 String input = readLine("Scegli un pianeta (1-" + size + "), oppure '0' per non scegliere: ").trim();
-
 
                 if (!isValidNumberInRange(input, 0, size)) {
                     System.out.println("Input non valido. Inserisci un numero tra 0 e " + size + ".");
@@ -1399,62 +1397,82 @@ public class Tui implements View, Observable {
     }
 
 
+//    @Override
+//    public void showEndTurnMenu(boolean amLeader) {
+//        if (clientController.getMyModel().isLeader()) {
+//            menuManager.showLeaderEndTurnMenu();
+//            return;
+//        } else {
+//            menuManager.showEndTurnMenu();
+//        }
+//
+//    }
+
+
     @Override
-    public void showEndTurnMenu(boolean amLeader) {
-        if (clientController.getMyModel().isLeader()) {
-            menuManager.showLeaderEndTurnMenu();
-            return;
-        } else {
-            menuManager.showEndTurnMenu();
-        }
-
-    }
-
-    public void askEndTurnMenuChoice(boolean amLeader) {
-        String input = null;
+    public void showFlightMenu() {
+        String input;
         boolean valid = false;
-        if (!amLeader) {
-            do {
+
+        do {
+            try {
+                input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ").trim().toLowerCase();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+
+            while (input.equals("m") || input.equals("menu") || input.equals("?")) {
+                menuManager.showCurrentMenu();
                 try {
-                    input = readLine("Inserisci la tua scelta (a/b/c o menu) : ");
-                    if (input.toLowerCase().matches("[abc]")) {
-                        valid = true;
-                    } else {
-                        if (input.toLowerCase().matches("reset")) System.out.println();
-                        else System.out.println("input non valido");
-                    }
-
-
-                } catch (Exception e) {
-
+                    input = readLine("\nInserisci la tua scelta (a/b/c/d o menu) : ").trim().toLowerCase();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
                 }
+            }
 
-            } while (!valid);
-        } else {
-            do {
+            if (input.matches("[abcd]")) {
                 try {
-                    input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ");
-                    if (input.toLowerCase().matches("[abcd]")) {
-                        valid = true;
-                    } else {
-                        if (input.toLowerCase().matches("reset")) System.out.println();
-                        else System.out.println("input non valido");
-                    }
-
-
+                    clientController.handleFlightMenuChoice(input);
+                    valid = true;
                 } catch (Exception e) {
-
+                    System.err.println("Errore durante la gestione della scelta: " + e.getMessage());
                 }
+            } else if (input.equals("reset")) {
+                System.out.println(); // No-op for now
+            } else {
+                System.out.println("Input non valido");
+            }
 
-            } while (!valid);
-        }
-        try {
-            clientController.handleAskEndTurnMenuChoice(input);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
-
+        } while (!valid);
     }
+
+
+//    @Override
+//    public void askFlightMenuChoice() {
+//        String input = null;
+//        boolean valid = false;
+//            do {
+//                try {
+//                    input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ");
+//                    if (input.toLowerCase().matches("[abcd]")) {
+//                        valid = true;
+//                    } else {
+//                        if (input.toLowerCase().matches("reset")) System.out.println();
+//                        else System.out.println("input non valido");
+//                    }
+//
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//            } while (!valid);
+//        try {
+//            clientController.handleFlightMenuChoice(input);
+//        } catch (RuntimeException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 
     public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
 

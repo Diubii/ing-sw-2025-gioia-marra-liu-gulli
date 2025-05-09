@@ -102,7 +102,7 @@ public interface View {
     void showCurrentAdventureCard();
 
 
-    void showEndTurnMenu(boolean amLeader);
+    void showFlightMenu();
 
     void askActivateAdventureCard();
 
@@ -118,7 +118,7 @@ public interface View {
 
     void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip);
 
-    void askEndTurnMenuChoice(boolean amLeader);
+//    void askFlightMenuChoice();
 
 
 //    public void askNickname(Thread thread) throws IOException;

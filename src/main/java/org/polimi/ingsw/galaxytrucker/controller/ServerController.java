@@ -924,7 +924,9 @@ public class ServerController {
 
             broadCast(playerHandlers, shipUpdate);
 
-            tryExecutePhaseAfterMessage(game, NetworkMessageType.ShipUpdate);
+            if (game.getGameController().getGameState() == GameState.FLIGHT) {
+                tryExecutePhaseAfterMessage(game, NetworkMessageType.ShipUpdate);
+            }
         }
     }
 
@@ -999,17 +1001,49 @@ public class ServerController {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         GameController gameController = myGame.getGameController();
 
-        gameController.handleTurn();
+        if (gameController.getCurrentCardContext() != null) {
+            clientHandler.sendMessage(new GameMessage("È già in corso una carta avventura."));
+            return;
+        }
+
+        try {
+            gameController.handleTurn();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
+    public void handleReadyTurnRequest(ReadyTurnRequest readyTurnRequest, ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        String nickname = getNicknameFromClientHandler(clientHandler);
+        GameController gameController = myGame.getGameController();
+        try {
+
+            new Thread(() -> {
+                myGame.addReadyPlayer(nickname);
+                if(myGame.allActivePlayerReady()){
+                    gameController.sendMatchInfoUpdate();
+                }
+            }).start();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     public void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         String nickname = getNicknameFromClientHandler(clientHandler);
+        GameController gameController = myGame.getGameController();
 
         try {
             myGame.getGameController().removePlayerFromGame(nickname, true);
             new Thread(() -> {
-                myGame.getGameController().handleTurnBeforeDrawnCard();
+//                myGame.getGameController().handleTurnBeforeDrawnCard();
+                     myGame.addEarlyLandingPlayer(nickname);
+                if(myGame.allActivePlayerReady()){
+                    gameController.sendMatchInfoUpdate();
+                }
             }).start();
         } catch (PlayerNotFoundException e) {
             throw new RuntimeException(e);
