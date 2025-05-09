@@ -475,7 +475,7 @@ public class ClientController implements Observer {
             }
             default -> {
                 new Thread(() -> {
-                    view.showGenericMessage("Invalid option." + input + " Please try again.");
+                    view.showGenericMessage("Invalid option \"" + input + "\". Please try again.");
                     view.showBuildingMenu();
                 }).start();
                 break;
@@ -1184,7 +1184,7 @@ public class ClientController implements Observer {
             view.showEndTurnMenu(true);
             view.askEndTurnMenuChoice(true);
         } else {
-            view.showGenericMessage("No sei il leader del questo turno. Dovresti aspettare il leader pesca la carta.");
+            view.showGenericMessage("Non sei il leader del questo turno. Dovresti aspettare che il leader peschi la carta.");
             view.showEndTurnMenu(false);
             view.askEndTurnMenuChoice(false);
         }
@@ -1442,9 +1442,9 @@ public class ClientController implements Observer {
             myModel.setPlayerState(PlayerState.Spectating);
         }
         if (isLandingEarly) {
-            view.showGenericMessage(" Il giocatore " + nickname + " ha lasciato la partita.");
+            view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.");
         } else {
-            view.showGenericMessage("il gicatore" + nickname + " è stato rimosso forzatamente dalla partita.");
+            view.showGenericMessage("il giocatore " + nickname + " è stato rimosso forzatamente dalla partita.");
         }
     }
 

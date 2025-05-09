@@ -116,7 +116,7 @@ public class GameController {
         //completeCardDrawn();
     }
 
-    private void handleEndGame() {
+    public void handleEndGame() {
     }
 
     @NeedsToBeCompleted

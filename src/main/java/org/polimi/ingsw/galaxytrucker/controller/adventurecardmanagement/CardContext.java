@@ -83,6 +83,7 @@ public class CardContext {
         } else {
             this.currentPlayer = currentRankedPlayers.get(i - 1);
         }
+        currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
     }
 
     /**
@@ -95,6 +96,7 @@ public class CardContext {
         } else {
             this.currentPlayer = currentRankedPlayers.get(i + 1);
         }
+        currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
     }
 
     public HashMap<NetworkMessageType, Integer> getExpectedNumberOfNetworkMessagesPerType() {

@@ -19,30 +19,21 @@ public abstract class PlanetsEffect {
 
     private final static HashMap<LobbyManager, ArrayList<Player>> landedPlayers = new HashMap<>();
 
-    public static void sendSelectPlanetResponse(CardContext context) {
+    public static void sendSelectPlanetRequest(CardContext context) {
         Planets planets = (Planets) context.getAdventureCard();
-        if (!planets.getPlanets().stream().allMatch(Planet::isOccupied)) {
             ArrayList<Planet> notOccupiedPlanets = new ArrayList<>(planets.getPlanets().stream().filter(planet -> !planet.isOccupied()).toList());
             SelectPlanetRequest selectPlanetRequest = new SelectPlanetRequest(notOccupiedPlanets);
             sendMessage(context, context.getCurrentPlayer(), selectPlanetRequest);
             context.nextPhase();
-        } else if (planets.getPlanets().stream().allMatch(Planet::isOccupied) || context.getCurrentPlayer() == context.getCurrentRankedPlayers().getLast()) {
-            //Andiamo avanti di due fasi
-            context.nextPhase();
-            context.nextPhase();
 
-            //Controllo se non siamo in attesa di ShipUpdates
-            if (context.getExpectedNumberOfNetworkMessagesPerType().get(NetworkMessageType.ShipUpdate) == 0) {
-                context.executePhase();
-            }
-        }
     }
 
     public static void receivedSelectPlanetResponse(CardContext context) {
+        Planets planets = (Planets) context.getAdventureCard();
         SelectPlanetResponse selectPlanetResponse = (SelectPlanetResponse) context.getIncomingNetworkMessage();
         Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
         if (selectedPlanet != null) {
-            selectedPlanet.setOccupied(true);
+            planets.getPlanets().get(selectPlanetResponse.getPlanetIndex()).setOccupied(true);
             SelectedPlanetUpdate selectedPlanetUpdate = new SelectedPlanetUpdate(context.getCurrentPlayer().getNickName(), selectedPlanet, selectPlanetResponse.getPlanetIndex());
             broadcast(context, selectedPlanetUpdate);
 
@@ -52,9 +43,20 @@ public abstract class PlanetsEffect {
             landedPlayers.get(context.getCurrentGame()).add(context.getCurrentPlayer());
         }
 
-        context.nextPlayer();
-        context.previousPhase();
-        context.executePhase();
+        if (!planets.getPlanets().stream().allMatch(Planet::isOccupied) && context.getCurrentPlayer() != context.getCurrentRankedPlayers().getLast()) {
+            //Mando il selectPlanetRequest al prossimo player
+            context.nextPlayer();
+            context.previousPhase();
+            context.executePhase();
+        }
+        else{ //Se tutti hanno scelto o i pianeti sono tutti occupati
+            context.nextPhase();
+
+            //Controllo se non siamo in attesa di ShipUpdates
+            if (context.getExpectedNumberOfNetworkMessagesPerType().get(NetworkMessageType.ShipUpdate) == 0) {
+                context.executePhase();
+            }
+        }
     }
 
     public static void movePlayers(CardContext context) {
@@ -65,6 +67,8 @@ public abstract class PlanetsEffect {
 
         landedPlayers.remove(context.getCurrentGame());
 
+        //Execute CommonEffects::end
         context.nextPhase();
+        context.executePhase();
     }
 }

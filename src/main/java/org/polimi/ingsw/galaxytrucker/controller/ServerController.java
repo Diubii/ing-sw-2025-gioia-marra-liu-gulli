@@ -889,8 +889,8 @@ public class ServerController {
     }
 
     public void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) {
+        LobbyManager game = getLobbyFromHandler(clientHandler);
         if (shipUpdate.getOnlyFix()) {
-            LobbyManager game = getLobbyFromHandler(clientHandler);
             String nickname = game.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
             Player myPlayer = game.getRealGame().getPlayer(nickname);
             Ship myShip = myPlayer.getShip();
@@ -923,9 +923,9 @@ public class ServerController {
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(game.getPlayerHandlers().values());
 
             broadCast(playerHandlers, shipUpdate);
-
-            tryExecutePhaseAfterMessage(game, NetworkMessageType.ShipUpdate);
         }
+
+        tryExecutePhaseAfterMessage(game, NetworkMessageType.ShipUpdate);
     }
 
     public void handleDiscardCrewMembersResponse(DiscardCrewMembersResponse discardCrewMembersResponse, ClientHandler clientHandler) {

@@ -185,7 +185,9 @@ public abstract class CombatZoneEffect {
         //Cleanup
         minFirePowerCheckPairs.remove(context.getCurrentGame());
 
+        //Execute CommonEffects::end
         context.nextPhase();
+        context.executePhase();
     }
 
     //Shared methods

@@ -10,5 +10,9 @@ public class StardustEffect {
         for (Player player : context.getCurrentGame().getGameController().getRankedPlayers().reversed()) { //Si parte dall'ultimo, stavolta uso la lista del game controller perché quella del context viene aggiornata durante il foreach
             movePlayer(context, player, -player.getShip().getnExposedConnector());
         }
+
+        //Execute CommonEffects::end
+        context.nextPhase();
+        context.executePhase();
     }
 }

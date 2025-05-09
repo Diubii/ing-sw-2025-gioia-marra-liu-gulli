@@ -17,7 +17,7 @@ public class AbandonedStationFSM extends CardFSM {
         return new ArrayList<>(Arrays.asList(
                 AbandonedStationEffect::start,
                 AbandonedStationEffect::receivedCardActivationResponse,
-                AbandonedStationEffect::end
+                AbandonedStationEffect::moveCurrentPlayer
         ));
     }
 }
