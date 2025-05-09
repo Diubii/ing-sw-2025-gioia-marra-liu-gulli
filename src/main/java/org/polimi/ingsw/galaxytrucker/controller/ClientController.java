@@ -1224,7 +1224,8 @@ public class ClientController implements Observer {
     // vuole mettere i goods nella sua ship
     public void handleSelectPlanetUpdate(SelectedPlanetUpdate update) {
         String selectingPlayerNickname = update.getSelectingPlayerNickname();
-        view.showGenericMessage("Player " + selectingPlayerNickname + " ha selezionato il pianeta " + update.getPlanetIndex());
+        int fakeplanetIndex = update.getPlanetIndex()+1;
+        view.showGenericMessage("Player " + selectingPlayerNickname + " ha selezionato il pianeta " + fakeplanetIndex);
         if (selectingPlayerNickname.equals(getNickname())) {
             Planet selectedPlanet = update.getSelectedPlanet();
             myModel.setSelectedPlanet(selectedPlanet);

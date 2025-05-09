@@ -206,36 +206,36 @@ public class Tui implements View, Observable {
     public void askServerInfo() throws ExecutionException, IOException, InterruptedException {
         Map<String, String> serverInfo = new HashMap<>();
         String defaultAddress = "localhost";
-        String defaultPort = "5000";
-        if (!isSocket) defaultPort = "1099";
+
+        int defaultPort = isSocket ? 5000 : 1099;
+        int portNumber = -1;
         synchronized (outputLock) {
             out.println("Please specify the following settings. The default value is shown between brackets.");
-            String prop = "Enter the server address [" + defaultAddress + "]: ";
-            String address = readLine(prop);
-            if (address.isEmpty()) {
-                serverInfo.put("address", defaultAddress);
-            } else {
-                serverInfo.put("address", address);
-            }
 
-            String prompt = "Enter the server port [" + defaultPort + "]: ";
-            String port = readLine(prompt);
 
-            if (port.equals("")) {
-                serverInfo.put("port", defaultPort);
+            String address = readLine("Enter the server address [" + defaultAddress + "]: ").trim();
+            serverInfo.put("address", address.isEmpty() ? defaultAddress : address);
 
-            } else {
-                serverInfo.put("port", port);
-            }
+            String port;
+
+            do {
+                port = readLine("Enter the server port [" + defaultPort + "]: ").trim();
+                if (port.isEmpty()) {
+                   portNumber = defaultPort;
+                   break;
+                }
+                try {
+                    portNumber = Integer.parseInt(port);
+                } catch (NumberFormatException e) {
+                    out.println("Errore: la porta deve essere un numero intero.");
+                }
+            } while (portNumber == -1);
         }
-
-        int numero = Integer.parseInt(serverInfo.get("port"));
-        SERVER_INFO message = new SERVER_INFO(serverInfo.get("address"), numero);
+        SERVER_INFO message = new SERVER_INFO(serverInfo.get("address"),portNumber );
         notifyObservers(message);
     }
 
-
-    public void askNickname() {
+        public void askNickname() {
         try {
             String nickname = readLine("Enter your nickname: ");
             clientController.handleNicknameInput(nickname);
@@ -894,8 +894,8 @@ public class Tui implements View, Observable {
 
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
-
-        String input1;
+        String inputStr;
+        int chosenPos = -1;
 
         MenuManager.clearConsole();
         System.out.println("Free FlightBoard starting positions: ");
@@ -903,23 +903,31 @@ public class Tui implements View, Observable {
             System.out.println(" --> " + i);
         }
 
-        input1 = readLine(" Choose one > ").trim().toLowerCase();
-        int size = input1.length();
-        char input = input1.charAt(size - 1);
+        boolean valid = false;
 
+        do {
+            inputStr = readLine("Choose one > ").trim();
+            if (inputStr.isEmpty()) {
+                System.out.println("Input vuoto, riprova.");
+                continue;
+            }
 
-        while (Integer.parseInt(Character.toString(input)) < validPositions.getFirst() || Integer.parseInt(Character.toString(input)) > validPositions.getLast()) {
-            askFlightBoardPosition(validPositions, id);
-        }
+            try {
+                chosenPos = Integer.parseInt(inputStr);
+                if (validPositions.contains(chosenPos)) {
+                    valid = true;
+                } else {
+                    System.out.println("Posizione non valida. Riprova.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Inserisci un numero valido.");
+            }
 
+        } while (!valid);
 
-        AskPositionResponse askPositionResponse = new AskPositionResponse(id, Integer.parseInt(Character.toString(input)));
-
+        AskPositionResponse askPositionResponse = new AskPositionResponse(id, chosenPos);
         clientController.getClient().sendMessage(askPositionResponse);
-
-
     }
-
 
     public void showGenericMessage(String message) {
 
@@ -1208,12 +1216,16 @@ public class Tui implements View, Observable {
     @Override
     public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
         int size = planetChoices.size();
-        out.println(size);
+
         boolean validInput = false;
 
         do {
             try {
+                out.println();
+                out.println("List Planet choices: ");
+                CardPrintUtils.printPlanetList(planetChoices);
                 String input = readLine("Scegli un pianeta (1-" + size + "), oppure '0' per non scegliere: ").trim();
+
 
                 if (!isValidNumberInRange(input, 0, size)) {
                     System.out.println("Input non valido. Inserisci un numero tra 0 e " + size + ".");
@@ -1295,10 +1307,13 @@ public class Tui implements View, Observable {
             return;
         }
 
-        out.println(" Merci disponibili:");
+
         displayGoods(goods);
 
         int goodIndex = -1;
+        if(goodIndex == 0 ) {
+            askLoadGoodChoice();
+        }
         while (goodIndex < 0 || goodIndex >= goods.size()) {
             try {
                 String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + "): ");
