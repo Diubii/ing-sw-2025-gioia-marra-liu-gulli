@@ -12,7 +12,7 @@ public class PlanetsFSM extends CardFSM {
     public ArrayList<Consumer<CardContext>> initPhases() {
         return new ArrayList<>(
                 Arrays.asList(
-                        PlanetsEffect::sendSelectPlanetResponse,
+                        PlanetsEffect::sendSelectPlanetRequest,
                         PlanetsEffect::receivedSelectPlanetResponse,
                         PlanetsEffect::movePlayers
                 )

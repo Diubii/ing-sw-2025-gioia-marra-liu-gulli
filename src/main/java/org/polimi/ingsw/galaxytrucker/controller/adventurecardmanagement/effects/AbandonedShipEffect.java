@@ -59,6 +59,8 @@ public abstract class AbandonedShipEffect {
         player.addCredits(abandonedShip.getCredits()); //Accredito crediti
         movePlayer(context, player, -abandonedShip.getDaysLost()); //Sposto il player
 
+        //Execute CommonEffects::end
         context.nextPhase();
+        context.executePhase();
     }
 }

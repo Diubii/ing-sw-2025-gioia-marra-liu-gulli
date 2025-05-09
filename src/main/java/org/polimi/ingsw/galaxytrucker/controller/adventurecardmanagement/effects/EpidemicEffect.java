@@ -49,7 +49,9 @@ public abstract class EpidemicEffect {
             context.nextPlayer();
             context.executePhase();
         } else {
+            //Execute CommonEffects::end
             context.nextPhase();
+            context.executePhase();
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms;
 
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.CommonEffects;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -12,13 +13,14 @@ import java.util.function.Consumer;
 public abstract class CardFSM {
     private final ArrayList<Consumer<CardContext>> phases;
     private Consumer<CardContext> currentPhase;
-    private ListIterator<Consumer<CardContext>> phaseIterator;
+    private int currentPhaseIndex = 0;
     private boolean done = false;
 
     protected CardFSM() {
         phases = initPhases();
-        phaseIterator = phases.listIterator();
-        currentPhase = phaseIterator.next();
+        phases.add(CommonEffects::end);
+
+        currentPhase = phases.get(currentPhaseIndex);
     }
 
     public abstract ArrayList<Consumer<CardContext>> initPhases();
@@ -32,24 +34,26 @@ public abstract class CardFSM {
     }
 
     public void previous() {
-        if (phaseIterator.hasPrevious()) currentPhase = phaseIterator.previous();
+        currentPhaseIndex = currentPhaseIndex == 0 ? 0 : currentPhaseIndex - 1;
+        currentPhase = phases.get(currentPhaseIndex);
     }
 
     public void next() {
-        if (phaseIterator.hasNext()) {
-            currentPhase = phaseIterator.next();
-        } else {
+        currentPhaseIndex++;
+        if(currentPhaseIndex < phases.size()) {
+            currentPhase = phases.get(currentPhaseIndex);
+        }
+        else{
             done = true;
         }
     }
 
-    public boolean isDone() {
-        return done;
+    public void reset() {
+        currentPhaseIndex = 0;
+        currentPhase = phases.get(currentPhaseIndex);
     }
 
-    public void reset() {
-        phaseIterator = phases.listIterator();
-        currentPhase = phaseIterator.next();
-        done = false;
+    public boolean isDone() {
+        return done;
     }
 }

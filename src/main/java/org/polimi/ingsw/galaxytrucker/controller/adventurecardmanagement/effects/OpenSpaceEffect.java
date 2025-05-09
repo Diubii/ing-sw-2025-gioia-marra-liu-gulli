@@ -38,8 +38,13 @@ public abstract class OpenSpaceEffect {
 
         movePlayer(context, player, playerEnginePower);
 
-        if (player == context.getCurrentRankedPlayers().getLast()) context.nextPhase();
-        else context.previousPhase();
+        if (player == context.getCurrentRankedPlayers().getLast()) {
+            context.nextPhase();
+        }
+        else{
+            context.nextPlayer();
+            context.previousPhase();
+        }
 
         context.executePhase();
     }
@@ -63,6 +68,8 @@ public abstract class OpenSpaceEffect {
         playerToPowerMapPerGame.get(game).forEach((nickname, ignoredPower) -> playerToPowerMap.remove(nickname));
         playerToPowerMapPerGame.remove(game);
 
+        //Execute CommonEffects::end
         context.nextPhase();
+        context.executePhase();
     }
 }

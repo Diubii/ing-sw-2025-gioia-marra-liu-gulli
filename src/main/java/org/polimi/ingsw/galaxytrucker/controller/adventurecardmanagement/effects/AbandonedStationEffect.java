@@ -36,9 +36,12 @@ public abstract class AbandonedStationEffect {
         }
     }
 
-    public static void end(CardContext context) {
+    public static void moveCurrentPlayer(CardContext context) {
         AbandonedStation abandonedStation = (AbandonedStation) context.getAdventureCard();
         movePlayer(context, context.getCurrentPlayer(), -abandonedStation.getDaysLost());
+
+        //Execute CommonEffects::end
         context.nextPhase();
+        context.executePhase();
     }
 }

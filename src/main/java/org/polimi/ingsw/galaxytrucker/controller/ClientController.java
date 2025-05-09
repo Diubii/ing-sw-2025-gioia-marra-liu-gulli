@@ -485,7 +485,7 @@ public class ClientController implements Observer {
             }
             default -> {
                 new Thread(() -> {
-                    view.showGenericMessage("Invalid option." + input + " Please try again.");
+                    view.showGenericMessage("Invalid option \"" + input + "\". Please try again.");
                     view.showBuildingMenu();
                 }).start();
                 break;
@@ -1415,9 +1415,9 @@ public class ClientController implements Observer {
             myModel.setPlayerState(PlayerState.Spectating);
         }
         if (isLandingEarly) {
-            view.showGenericMessage(" Il giocatore " + nickname + " ha lasciato la partita.");
+            view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.");
         } else {
-            view.showGenericMessage("il gicatore" + nickname + " è stato rimosso forzatamente dalla partita.");
+            view.showGenericMessage("il giocatore " + nickname + " è stato rimosso forzatamente dalla partita.");
         }
     }
 

@@ -81,7 +81,9 @@ public abstract class MeteorSwarmEffect {
             projectileCounters.remove(game);
             diceRolls.remove(game);
 
+            //Execute CommonEffects::end
             context.nextPhase();
+            context.executePhase();
         }
     }
 }
