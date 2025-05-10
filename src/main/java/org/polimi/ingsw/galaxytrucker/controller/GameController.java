@@ -128,7 +128,6 @@ public class GameController {
     }
 
     public void removePlayerFromGame(String nickname, boolean isLandingEarly) throws PlayerNotFoundException {
-
         game.getRealGame().getPlayer(nickname).setPlayerState(PlayerState.Spectating);
         game.getRealGame().getFlightBoard().removePlayer(game.getPlayerColors().get(nickname));
 
@@ -146,6 +145,7 @@ public class GameController {
     }
 
     public void kickPlayerFromGame(String nickname) throws PlayerNotFoundException {
+        game.getPlayerColors().remove(nickname);
         game.getRealGame().getFlightBoard().removePlayer(game.getPlayerColors().get(nickname));
         game.getRealGame().removePlayer(nickname);
 

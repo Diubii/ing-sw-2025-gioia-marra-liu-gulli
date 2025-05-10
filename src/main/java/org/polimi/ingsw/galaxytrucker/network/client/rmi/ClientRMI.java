@@ -43,12 +43,12 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
     }
 
     @Override
-    public void sendMessage(NetworkMessage message) throws IOException, RemoteException, ExecutionException, InterruptedException {
+    public void sendMessage(NetworkMessage message) throws IOException, ExecutionException, InterruptedException {
         server.receiveMessage(message, stub);
     }
 
     @Override
-    public void receiveMessage(NetworkMessage message) throws IOException, ExecutionException, InvalidTilePosition {
+    public void receiveMessage(NetworkMessage message){
         new Thread(() -> {
             try {
                 notifyObservers(message);

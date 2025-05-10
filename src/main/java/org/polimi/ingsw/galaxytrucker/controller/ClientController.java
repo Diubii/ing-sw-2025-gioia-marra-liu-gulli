@@ -109,7 +109,6 @@ public class ClientController implements Observer {
 
     @Override
     public void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException {
-
         try {
             message.accept(messageVisitor);
         } catch (Exception e) {
@@ -326,7 +325,7 @@ public class ClientController implements Observer {
                 view.askRoomCode();
             }
         } catch (Exception e) {
-            view.showGenericMessage("Error waiting for join room response: " + e.getStackTrace());
+            view.showGenericMessage("Error while waiting for join room response: " + e.getStackTrace());
         }
 
     }
