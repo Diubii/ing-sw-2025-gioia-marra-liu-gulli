@@ -116,4 +116,6 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest);
 
     T visit(EarlyLandingRequest earlyLandingRequest);
+
+    T visit(ReadyTurnRequest readyTurnRequest);
 }

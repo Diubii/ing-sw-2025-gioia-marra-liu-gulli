@@ -353,4 +353,10 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         serverController.handleEarlyLandingRequest(earlyLandingRequest, clientHandler);
         return null;
     }
+
+    @Override
+    public Void visit(ReadyTurnRequest readyTurnRequest) {
+        serverController.handleReadyTurnRequest(readyTurnRequest, clientHandler);
+        return null;
+    }
 }

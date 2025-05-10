@@ -20,6 +20,7 @@ public class MenuManager {
             case BUILDING_START -> currentMenu = MenuText.BUILDING_MENU;
             case SHIP_CHECK -> currentMenu = MenuText.CHECK_SHIP_MENU;
             case CREW_INIT -> currentMenu = MenuText.EMBARK_CREW_MENU;
+            case FLIGHT ->  currentMenu = MenuText.FLIGHT_MENU;
             default -> currentMenu = MenuText.NONE;
         }
 
@@ -30,6 +31,8 @@ public class MenuManager {
             case BUILDING_MENU -> showBuildingMenu();
             case CHECK_SHIP_MENU -> showCheckShipMenu();
             case EMBARK_CREW_MENU -> showEmbarkCrewMenu();
+            case FLIGHT_MENU -> showFlightMenu();
+
             default -> {
                 return;
             }
@@ -102,26 +105,18 @@ public class MenuManager {
         }
     }
 
-    public void showEndTurnMenu() {
+    public void showFlightMenu() {
         clearConsole();
-        out.println("\n End Turn Menu:");
-        out.println("a. view my ship");
+        out.println("\n Flight Menu:");
+        out.println("a. view a ship");
         out.println("b. view flight board");
         out.println("c. land early");
+        out.println("d. ready for the next turn");
 
         out.println("menu. show menu");
     }
 
-    public void showLeaderEndTurnMenu() {
-        clearConsole();
-        out.println("\n End Turn Menu:");
-        out.println("a. view my ship");
-        out.println("b. view flight board");
-        out.println("c. land early");
-        out.println("d. draw a card");
 
-        out.println("menu. show menu");
-    }
 
 
     private void showBuildStart() {
