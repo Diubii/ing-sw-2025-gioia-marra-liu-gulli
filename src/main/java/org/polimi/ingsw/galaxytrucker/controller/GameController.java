@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -88,8 +90,6 @@ public class GameController {
         cardDeckTest = Util.createTestDeck();
         game.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
 
-
-
 //        handleTurnBeforeDrawnCard();
     }
 
@@ -127,17 +127,115 @@ public class GameController {
         AdventureCard drawnAdventureCard = getCardDeckTest().pop();
 
         DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(drawnAdventureCard);
-        game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(drawnAdventureCardUpdate)); //Mando match info update
+        game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(drawnAdventureCardUpdate)); //Mando drawnAdventureCardUpdate a tutti i player
 
         CardContext context = new CardContext(game, drawnAdventureCard);
         currentCardContext = context;
         context.executePhase();
-        //completeCardDrawn();
+
+
+
     }
+
+    public void handleEndTurn(){
+
+        CardDeck cardDeck = getCardDeckTest();
+        EndTurnUpdate etu = new EndTurnUpdate();
+        //invare end turn update
+
+        if (cardDeck.getSize() ==0 ){
+            etu.setEndGame(true);
+            game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(etu));
+            handleEndGame();
+        }
+        else{
+            etu.setEndGame(false);
+            game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(etu));
+        }
+
+        game.resetReadyPlayers();
+        currentCardContext = null;
+
+    }
+
+
+
+
+    public List<PlayerScore> calculateScores() {
+        List<Player> players = game.getRealGame().getPlayers();
+
+        int minExposed = players.stream()
+                .mapToInt(p -> p.getShip().getnExposedConnector())
+                .min()
+                .orElse(Integer.MAX_VALUE);
+
+        return players.stream()
+                .map(player -> {
+                    int bestLooking = player.getShip().getnExposedConnector() == minExposed ? 2 : 0;
+                    int fishOrder = calculateFinishOrderScore(player);
+                    int reward = calculateGoodRewardScore(player);
+                    int losses = calculateLossesScore(player);
+                    int credits = player.getNCredits();
+
+                    return new PlayerScore(
+                            player.getNickName(),
+                            bestLooking,
+                            fishOrder,
+                            reward,
+                            losses,
+                            credits
+                    );
+                })
+                .sorted(Comparator.comparingInt(PlayerScore::getTotalScore).reversed())
+                .toList();
+    }
+    private int calculateFinishOrderScore(Player player) {
+        int score = 0;
+        ArrayList<Player> activePlayers = getRankedPlayers();
+        if(!activePlayers.contains(player)){
+            return score;
+        }
+        else{
+            int playerIndex = activePlayers.indexOf(player);
+            int nPlayers = game.getRealGame().getPlayers().size();
+            score= nPlayers - playerIndex;
+            return score;
+
+        }
+
+    }
+    private int calculateGoodRewardScore(Player player) {
+        ArrayList<Good> goods = player.getShip().getGoodsOnShipBoard();
+        int score = 0;
+        for(Good good : goods){
+            score += good.getValue();
+        }
+        double tmpScore = 0;
+        if(PlayerState.Spectating == player.getPlayerState()){
+            tmpScore = score * 0.5;
+            return (int) Math.ceil(tmpScore);
+        }
+
+        return score;
+
+    }
+    private int calculateLossesScore(Player player) {
+        int score = 0;
+        int LossesScore = player.getShip().getDestroyedTiles();
+        score += LossesScore;
+        return score;
+    }
+
 
     public void handleEndGame() {
-    }
+        List<PlayerScore> scores = calculateScores();
+        GameEndUpdate geu = new GameEndUpdate(new ArrayList<>(scores));
+        game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(geu));
 
+
+
+//        game.setFinished(true);
+    }
     @NeedsToBeCompleted
     public void completeCardDrawn() {
         if (cardDrawn != null) {
@@ -159,7 +257,7 @@ public class GameController {
 
         if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
-            completeCardDrawn();
+//            completeCardDrawn();
         }
     }
 
@@ -178,7 +276,8 @@ public class GameController {
 
         if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
-            completeCardDrawn();
+//            completeCardDrawn();
+
         }
     }
 

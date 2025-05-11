@@ -305,4 +305,10 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(AskTrunkResponse askTrunkResponse) {
         return NetworkMessageType.AskTrunkResponse;
     }
+
+    @Override
+    public NetworkMessageType visit(GameEndUpdate gameEndUpdate) {
+
+        return NetworkMessageType.GameEndUpdate;
+    }
 }

@@ -971,47 +971,6 @@ public class ServerController {
 
         }, seconds, TimeUnit.SECONDS);
     }
-
-    public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {
-        for (ClientHandler clientHandler : clients) {
-            clientHandler.sendMessage(message);
-        }
-    }
-
-    private static final Map<GameState, Set<GameAction>> allowedActionsPerState = new EnumMap<>(GameState.class);
-
-    private void initActionsAllowed() {
-        allowedActionsPerState.put(GameState.BUILDING_START, EnumSet.of(GameAction.DRAW_TILE, GameAction.PLACE_TILE, GameAction.DISCARD_TILE));
-        allowedActionsPerState.put(GameState.BUILDING_TIMER, EnumSet.of(GameAction.DRAW_TILE, GameAction.PLACE_TILE, GameAction.DISCARD_TILE, GameAction.FINISH_BUILDING));
-//        allowedActionsPerState.put(GameState.SHIP_CHECK, EnumSet.of(GameAction.FETCH_SHIP));
-        // altri stati se necessario
-    }
-
-    private boolean isActionAllowed(LobbyManager myGame, GameAction action) {
-        GameState currentState = myGame.getGameController().getGameState();
-        Set<GameAction> allowedActions = allowedActionsPerState.getOrDefault(currentState, Collections.emptySet());
-        return allowedActions.contains(action);
-    }
-
-    public String getNicknameFromClientHandler(ClientHandler clientHandler) {
-        return clientNicknameMap.get(clientHandler);
-    }
-
-    private Player getPlayerFromClientHandler(ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
-    }
-
-    private Player getPlayerFromClientHandler(ClientHandler clientHandler, LobbyManager myGame) {
-        return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
-    }
-
-    public void startNewHeartbeat(ClientHandler clientHandler) {
-        Heartbeat heartbeat = new Heartbeat(this, clientHandler);
-        heartbeats.add(heartbeat);
-        new Thread(heartbeat).start();
-    }
-
     public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         GameController gameController = myGame.getGameController();
@@ -1055,7 +1014,7 @@ public class ServerController {
             myGame.getGameController().removePlayerFromGame(nickname, true);
             new Thread(() -> {
 //                myGame.getGameController().handleTurnBeforeDrawnCard();
-                     myGame.addEarlyLandingPlayer(nickname);
+                myGame.addEarlyLandingPlayer(nickname);
                 if(myGame.allActivePlayerReady()){
                     gameController.sendMatchInfoUpdate();
                 }
@@ -1066,6 +1025,9 @@ public class ServerController {
 
     }
 
+
+
+
     private void tryExecutePhaseAfterMessage(LobbyManager game, NetworkMessageType type) {
         game.getGameController().getCurrentCardContext().decrementExpectedNumberOfNetworkMessages(type);
         int expectedNetworkMessages = game.getGameController().getCurrentCardContext().getExpectedNumberOfNetworkMessagesPerType().get(type);
@@ -1075,6 +1037,47 @@ public class ServerController {
             game.getGameController().getCurrentCardContext().incrementExpectedNumberOfNetworkMessages(type);
         }
     }
+    public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {
+        for (ClientHandler clientHandler : clients) {
+            clientHandler.sendMessage(message);
+        }
+    }
+
+    private static final Map<GameState, Set<GameAction>> allowedActionsPerState = new EnumMap<>(GameState.class);
+
+    private void initActionsAllowed() {
+        allowedActionsPerState.put(GameState.BUILDING_START, EnumSet.of(GameAction.DRAW_TILE, GameAction.PLACE_TILE, GameAction.DISCARD_TILE));
+        allowedActionsPerState.put(GameState.BUILDING_TIMER, EnumSet.of(GameAction.DRAW_TILE, GameAction.PLACE_TILE, GameAction.DISCARD_TILE, GameAction.FINISH_BUILDING));
+//        allowedActionsPerState.put(GameState.SHIP_CHECK, EnumSet.of(GameAction.FETCH_SHIP));
+        // altri stati se necessario
+    }
+
+    private boolean isActionAllowed(LobbyManager myGame, GameAction action) {
+        GameState currentState = myGame.getGameController().getGameState();
+        Set<GameAction> allowedActions = allowedActionsPerState.getOrDefault(currentState, Collections.emptySet());
+        return allowedActions.contains(action);
+    }
+
+    public String getNicknameFromClientHandler(ClientHandler clientHandler) {
+        return clientNicknameMap.get(clientHandler);
+    }
+
+    private Player getPlayerFromClientHandler(ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
+    }
+
+    private Player getPlayerFromClientHandler(ClientHandler clientHandler, LobbyManager myGame) {
+        return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
+    }
+
+    public void startNewHeartbeat(ClientHandler clientHandler) {
+        Heartbeat heartbeat = new Heartbeat(this, clientHandler);
+        heartbeats.add(heartbeat);
+        new Thread(heartbeat).start();
+    }
+
+
 }
 
 

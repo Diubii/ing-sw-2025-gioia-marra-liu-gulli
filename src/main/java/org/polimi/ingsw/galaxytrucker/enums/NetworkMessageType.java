@@ -77,6 +77,6 @@ public enum NetworkMessageType {
     EarlyLandingRequest,
     ReadyTurnRequest,
     CollectRewardsRequest, CollectRewardsResponse,
-    AskTrunkRequest, AskTrunkResponse
-
+    AskTrunkRequest, AskTrunkResponse,
+    GameEndUpdate
 }

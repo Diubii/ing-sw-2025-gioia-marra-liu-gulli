@@ -46,7 +46,11 @@ public class GenericCargoHolds extends Component {
 
     public void loadGood(Good g) {
 
-        if (Goods == null) Goods.add(g);
+        if (Goods == null) {
+            Goods = new ArrayList<>();
+            Goods.add(g);
+        }
+
         else {
             for (int i = 0; i < Goods.size(); i++) {
                 if (Goods.get(i).getColor().equals(g.getColor())) {

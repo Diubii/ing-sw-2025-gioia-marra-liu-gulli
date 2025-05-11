@@ -379,4 +379,9 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     public Void visit(AskTrunkResponse askTrunkResponse) {
         return null;
     }
+
+    @Override
+    public Void visit(GameEndUpdate gameEndUpdate) {
+        return null;
+    }
 }

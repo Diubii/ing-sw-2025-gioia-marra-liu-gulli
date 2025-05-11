@@ -383,4 +383,10 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     public Void visit(AskTrunkResponse askTrunkResponse) {
         return null;
     }
+
+    @Override
+    public Void visit(GameEndUpdate gameEndUpdate) {
+        clientController.handleGameEndUpdate(gameEndUpdate);
+        return null;
+    }
 }

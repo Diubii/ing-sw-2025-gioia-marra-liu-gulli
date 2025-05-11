@@ -8,6 +8,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
+import org.polimi.ingsw.galaxytrucker.model.PlayerScore;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
@@ -1072,6 +1073,13 @@ public class ClientController implements Observer {
     public void handleEndTurnUpdate(EndTurnUpdate update) {
 
         view.showGenericMessage("turn ended");
+        if(update.isEndGame()){
+            view.showGenericMessage("Game ended");
+            return;
+        }
+
+        view.toShowCurrentMenu();
+        view.showFlightMenu();
 
     }
 
@@ -1103,7 +1111,6 @@ public class ClientController implements Observer {
                     case "menu", "m", "?" -> {
 
                         view.handleChoiceForPhase(phase);
-
 
 
                     }
@@ -1400,6 +1407,11 @@ public class ClientController implements Observer {
     }
 
 
+    public void handleGameEndUpdate(GameEndUpdate update) {
+        ArrayList<PlayerScore> scores = update.getScores();
+        view.showEndGame(scores);
+
+    }
     private ArrayList<Position> getCargoHolds(Ship ship) {
         return ship.getComponentPositionsFromName("GenericCargoHolds");
     }

@@ -124,4 +124,8 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(AskTrunkRequest askTrunkRequest);
     T visit(AskTrunkResponse askTrunkResponse);
+
+    T visit(GameEndUpdate gameEndUpdate);
+
+
 }
