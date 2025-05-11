@@ -300,4 +300,9 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(AskTrunkResponse askTrunkResponse) {
         return NetworkMessageType.AskTrunkRequest;
     }
+
+    @Override
+    public NetworkMessageType visit(GameEndUpdate gameEndUpdate) {
+        return null;
+    }
 }
