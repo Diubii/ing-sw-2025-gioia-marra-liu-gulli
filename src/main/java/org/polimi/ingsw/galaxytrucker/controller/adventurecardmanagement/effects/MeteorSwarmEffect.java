@@ -82,7 +82,7 @@ public abstract class MeteorSwarmEffect {
             diceRolls.remove(game);
 
             //Execute CommonEffects::end
-            context.nextPhase();
+            context.goToEndPhase();
             context.executePhase();
         }
     }

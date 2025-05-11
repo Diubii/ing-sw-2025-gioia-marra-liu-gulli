@@ -28,7 +28,7 @@ import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.ClientNetworkMessageVisitor;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
 import java.io.FilterInputStream;
@@ -1201,8 +1201,6 @@ public class ClientController implements Observer {
     public void handleSelectPlanetRequest(SelectPlanetRequest request) {
         ArrayList<Planet> landablePlanet = request.getLandablePlanets();
         view.askSelectPlanetChoice(landablePlanet);
-
-
     }
 // Dopo aver ricevuto una SelectPlanetRequest, chiedo al giocatore quale pianeta vuole scegliere.
 // Quando il giocatore ha fatto la sua scelta, devo inviare sia il pianeta selezionato sia l'indice corrispondente,

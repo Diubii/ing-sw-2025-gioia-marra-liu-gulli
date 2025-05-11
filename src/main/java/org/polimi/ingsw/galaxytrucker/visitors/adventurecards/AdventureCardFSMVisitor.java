@@ -1,7 +1,7 @@
-package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms;
+package org.polimi.ingsw.galaxytrucker.visitors.adventurecards;
 
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms.*;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
 
 public class AdventureCardFSMVisitor implements AdventureCardVisitorsInterface<CardFSM> {
     @Override
@@ -46,16 +46,16 @@ public class AdventureCardFSMVisitor implements AdventureCardVisitorsInterface<C
 
     @Override
     public CardFSM visit(Pirates pirates) {
-        return null;
+        return new PiratesFSM();
     }
 
     @Override
     public CardFSM visit(Slavers slavers) {
-        return null;
+        return new SlaversFSM();
     }
 
     @Override
     public CardFSM visit(Smugglers smugglers) {
-        return null;
+        return new SmugglersFSM();
     }
 }

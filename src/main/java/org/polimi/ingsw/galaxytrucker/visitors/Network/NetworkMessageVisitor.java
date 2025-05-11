@@ -359,4 +359,24 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         serverController.handleReadyTurnRequest(readyTurnRequest, clientHandler);
         return null;
     }
+
+    @Override
+    public Void visit(CollectRewardsRequest collectRewardsRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(CollectRewardsResponse collectRewardsResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskTrunkRequest askTrunkRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskTrunkResponse askTrunkResponse) {
+        return null;
+    }
 }

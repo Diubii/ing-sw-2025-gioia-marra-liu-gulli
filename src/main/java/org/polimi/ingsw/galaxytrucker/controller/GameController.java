@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.DoubleCannon;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
@@ -189,20 +190,24 @@ public class GameController {
      * @author Alessandro Giuseppe Gioia
      */
     @NeedsToBeCompleted("Controllare per tronconi. Un po' scettico sul fatto che il messaggio debba essere mandato da questo metodo.")
-    public void reactToProjectile(Player targetPlayer, Projectile projectile, int diceRoll) {
+    public Tile reactToProjectile(Player targetPlayer, Projectile projectile, int diceRoll) {
         Ship ship = targetPlayer.getShip();
         Position pos = ship.getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll);
-        if (pos == null) return;
+        Tile destroyedTile = null;
+
+        if (pos == null) return null;
 
         boolean aTileHasBeenDestroyed = false;
         String message = "Tile distrutta in posizione [" + pos.getX() + "," + pos.getY() + "]";
 
         if (projectile.getType() == ProjectileType.CannonFire) {
             if (projectile.getSize() == ProjectileSize.Big) {
+                destroyedTile = ship.getTileFromPosition(pos);
                 ship.removeTile(pos, false);
                 aTileHasBeenDestroyed = true;
             } else if (projectile.getSize() == ProjectileSize.Little) {
                 if (!protectWithFirstAvailableCorrectlyOrientedChargedShield(ship, projectile.getDirection())) {
+                    destroyedTile = ship.getTileFromPosition(pos);
                     ship.removeTile(pos, false);
                     aTileHasBeenDestroyed = true;
                 }
@@ -210,6 +215,7 @@ public class GameController {
         } else if (projectile.getType() == ProjectileType.Meteor) {
             if (projectile.getSize() == ProjectileSize.Big) {
                 if (!protectWithFirstAvailableCannon(ship, projectile.getDirection())) {
+                    destroyedTile = ship.getTileFromPosition(pos);
                     ship.removeTile(pos, false);
                     aTileHasBeenDestroyed = true;
                 }
@@ -226,6 +232,7 @@ public class GameController {
 
                 if (tileConnectors.get(index) != Connector.EMPTY) { //Se non è un lato liscio
                     if (!protectWithFirstAvailableCorrectlyOrientedChargedShield(ship, projectile.getDirection())) { //Se non c'è uno shield disponibile a proteggere
+                        destroyedTile = ship.getTileFromPosition(pos);
                         ship.removeTile(pos, false);
                         aTileHasBeenDestroyed = true;
                     }
@@ -236,6 +243,8 @@ public class GameController {
         if (aTileHasBeenDestroyed) {
             game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
         }
+
+        return destroyedTile;
     }
 
     /**

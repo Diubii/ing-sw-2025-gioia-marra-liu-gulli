@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
 import java.util.ArrayList;
 

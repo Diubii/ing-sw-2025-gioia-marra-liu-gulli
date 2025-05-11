@@ -286,4 +286,23 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(ReadyTurnRequest readyTurnRequest) {
         return NetworkMessageType.ReadyTurnRequest;
     }
+
+    @Override
+    public NetworkMessageType visit(CollectRewardsRequest collectRewardsRequest) {
+        return NetworkMessageType.CollectRewardsRequest;
+    }
+    @Override
+    public NetworkMessageType visit(CollectRewardsResponse collectRewardsResponse) {
+        return NetworkMessageType.CollectRewardsResponse;
+    }
+
+    @Override
+    public NetworkMessageType visit(AskTrunkRequest askTrunkRequest) {
+        return NetworkMessageType.AskTrunkRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(AskTrunkResponse askTrunkResponse) {
+        return NetworkMessageType.AskTrunkResponse;
+    }
 }

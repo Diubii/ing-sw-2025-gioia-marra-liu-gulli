@@ -48,6 +48,11 @@ public abstract class CardFSM {
         }
     }
 
+    public void skipToEndState(){
+        currentPhaseIndex = phases.size() - 1;
+        currentPhase = phases.getLast();
+    }
+
     public void reset() {
         currentPhaseIndex = 0;
         currentPhase = phases.get(currentPhaseIndex);

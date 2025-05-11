@@ -363,4 +363,24 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
         clientController.handleReadyTurnRequest();
         return null;
     }
+
+    @Override
+    public Void visit(CollectRewardsRequest collectRewardsRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(CollectRewardsResponse collectRewardsResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskTrunkRequest askTrunkRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskTrunkResponse askTrunkResponse) {
+        return null;
+    }
 }

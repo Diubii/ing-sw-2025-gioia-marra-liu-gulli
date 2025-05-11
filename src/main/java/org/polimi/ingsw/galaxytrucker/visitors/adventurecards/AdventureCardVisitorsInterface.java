@@ -1,13 +1,6 @@
-package org.polimi.ingsw.galaxytrucker.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors.adventurecards;
 
-import org.polimi.ingsw.galaxytrucker.enums.CardPhase;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
-import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
-
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public interface AdventureCardVisitorsInterface<T> {
     T visit(AbandonedShip abandonedShip);

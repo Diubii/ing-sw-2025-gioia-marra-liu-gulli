@@ -41,7 +41,6 @@ module org.polimi.ingsw.galaxytrucker {
     exports org.polimi.ingsw.galaxytrucker.network.server;
     exports org.polimi.ingsw.galaxytrucker.network.client.rmi;
     exports org.polimi.ingsw.galaxytrucker.enums;
-    exports org.polimi.ingsw.galaxytrucker.visitors;
     exports org.polimi.ingsw.galaxytrucker.observer;
     exports org.polimi.ingsw.galaxytrucker.controller;
     exports org.polimi.ingsw.galaxytrucker.exceptions;
@@ -52,4 +51,6 @@ module org.polimi.ingsw.galaxytrucker {
     opens org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement to com.fasterxml.jackson.databind;
     exports org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
     opens org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects to com.fasterxml.jackson.databind;
+    exports org.polimi.ingsw.galaxytrucker.visitors.adventurecards;
+    exports org.polimi.ingsw.galaxytrucker.visitors.components;
 }

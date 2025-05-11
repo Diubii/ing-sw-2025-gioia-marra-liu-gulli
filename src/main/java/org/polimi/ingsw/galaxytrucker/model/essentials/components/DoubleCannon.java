@@ -3,7 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
 public class DoubleCannon extends Cannon {
     private Boolean charged;

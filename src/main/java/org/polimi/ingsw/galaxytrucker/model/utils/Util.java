@@ -4,20 +4,22 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Classe di utilità che fornisce metodi per verificare la connettività di componenti nella nave.
@@ -357,15 +359,128 @@ public class Util {
     }
 
     public static Boolean compatible(Connector connector1, Connector connector2) {
-
         if (connector1 == null && connector2 != null) return true;
         if (connector1 != null && connector2 == null) return true;
 
-
-        if (connector1.equals(Connector.EMPTY) && !connector2.equals(Connector.EMPTY)) return false;
-        if (connector1.equals(connector2)) return true;
-        if (connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY)) return true;
-        return connector2.equals(Connector.UNIVERSAL);
+        if (connector1 != null && connector1.equals(Connector.EMPTY) && !connector2.equals(Connector.EMPTY))
+            return false;
+        if (connector1 != null && connector1.equals(connector2)) return true;
+        if (connector1 != null && connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY))
+            return true;
+        return connector1 != null && connector2.equals(Connector.UNIVERSAL);
     }
 
+    public static ArrayList<Good> getMostValuableGoods(Ship ship) {
+        //red, yellow, green, blue
+        Good firstGood = null;
+        Good secondGood = null;
+
+        ArrayList<Position> storagePos = ship.getComponentPositionsFromName("GenericCargoHolds");
+        Map<Color, ArrayList<Position>> goodPositions = new HashMap<>();
+
+        goodPositions.put(Color.RED, new ArrayList<>());
+        goodPositions.put(Color.BLUE, new ArrayList<>());
+        goodPositions.put(Color.GREEN, new ArrayList<>());
+        goodPositions.put(Color.YELLOW, new ArrayList<>());
+
+
+        //trovo tutte le Tiles da rimuovere
+        List<Slot> Slots = Arrays.stream(ship.getShipBoard())
+                .flatMap(Arrays::stream)
+                .filter(Objects::nonNull)
+                .toList();
+
+        for (Slot s : Slots) {
+            Tile tempTile = s.getTile();
+            if (tempTile != null) {
+                if (storagePos.contains(s.getPosition())) {
+                    //se la firstGood è null
+                    GenericCargoHolds genericCargoHolds = (GenericCargoHolds) tempTile.getMyComponent();
+                    if (genericCargoHolds.hasGood(Color.RED)) {
+                        goodPositions.get(Color.RED).add(s.getPosition());
+                    }
+                    if (genericCargoHolds.hasGood(Color.YELLOW)) {
+                        goodPositions.get(Color.YELLOW).add(s.getPosition());
+                    }
+                    if (genericCargoHolds.hasGood(Color.GREEN)) {
+                        goodPositions.get(Color.GREEN).add(s.getPosition());
+                    }
+                    if (genericCargoHolds.hasGood(Color.BLUE)) {
+                        goodPositions.get(Color.BLUE).add(s.getPosition());
+                    }
+                }
+            }
+        }
+
+        //dopo averle, parto dalla piu importante
+
+
+        List<Color> priority = List.of(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
+        int index = 0;
+
+        while ((firstGood == null || secondGood == null) && index < priority.size()) {
+            int j = 0;
+            while (j < 2 && !goodPositions.get(priority.get(index)).isEmpty()) {
+                Tile tile = ship.getTileFromPosition(goodPositions.get(priority.get(index)).get(j));
+                GenericCargoHolds genericCargoHolds = (GenericCargoHolds) tile.getMyComponent();
+
+                Color currentColor = priority.get(index);
+
+                if (firstGood == null) {
+
+                    //firstGood = priority.get(index);
+
+                    genericCargoHolds.removeGood(currentColor);
+                    firstGood = new Good(currentColor);
+                    goodPositions.get(currentColor).remove(j);
+                    j++;
+                    continue;
+                }
+                if (secondGood == null) {
+
+                    genericCargoHolds.removeGood(currentColor);
+                    secondGood = new Good(currentColor);
+                    goodPositions.get(currentColor).remove(j);
+                    j++;
+                }
+            }
+            index++;
+        }
+
+        return new ArrayList<>(List.of(firstGood, secondGood));
+
+    }
+
+    public static void removeTwoBatteries(Ship ship, Boolean excludeSecond) {
+        boolean firstBattery = false;
+        boolean secondBattery = false;
+
+        ArrayList<Position> storagePos = ship.getComponentPositionsFromName("BatterySlot");
+
+        int index = 0;
+        while ((!firstBattery || (!secondBattery && !excludeSecond)) && index < storagePos.size()) {
+            Tile tile = ship.getTileFromPosition(storagePos.get(index));
+            BatterySlot batterySlot = (BatterySlot) tile.getMyComponent();
+
+            while (batterySlot.getBatteriesLeft() > 0) {
+                if (!firstBattery) {
+                    if (batterySlot.removeBattery()) {
+                        firstBattery = true;
+                    }
+                }
+
+                if (!secondBattery && !excludeSecond) {
+                    if (batterySlot.removeBattery()) {
+                        secondBattery = true;
+                    }
+                }
+
+                if (excludeSecond) {
+                    break;
+                }
+            }
+
+            index++;
+        }
+    }
 }

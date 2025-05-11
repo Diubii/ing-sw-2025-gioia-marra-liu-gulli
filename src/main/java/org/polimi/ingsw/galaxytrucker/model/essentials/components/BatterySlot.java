@@ -3,9 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
 public class BatterySlot extends Component {
 
@@ -22,8 +20,12 @@ public class BatterySlot extends Component {
         return batteriesLeft;
     }
 
-    public void removeBattery() {
-        batteriesLeft--;
+    public boolean removeBattery() {
+        if(batteriesLeft>0){
+            batteriesLeft--;
+            return true;
+        }
+        else return false;
     }
 
     @Override

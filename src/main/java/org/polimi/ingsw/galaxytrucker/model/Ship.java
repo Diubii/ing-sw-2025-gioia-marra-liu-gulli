@@ -6,7 +6,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -547,7 +547,7 @@ public class Ship implements Serializable {
     }
 
 
-    public ArrayList<Ship> getTronc() throws InvalidTilePosition {
+    public ArrayList<Ship> getTronc() {
 
 
         ArrayList<Ship> tronconi = new ArrayList<>();
@@ -585,7 +585,12 @@ public class Ship implements Serializable {
                         System.out.println("TILE DA RIM " + slot.getPosition().getY() + " " + slot.getPosition().getX());
 
                         toRemove.add(board); // Segna la board per la rimozione
-                        toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
+                        try {
+                            toAdd.addAll(truncateShip(temp, brokenPositions)); // Aggiunge nuovi tronconi
+                        }
+                        catch (InvalidTilePosition e){
+                            System.err.println("Error while computing trunks: " + e.getMessage());
+                        }
 
 //                            Ship t2 = toAdd.getLast();
 //                            Ship tSh = new Ship(getLearningMatch());

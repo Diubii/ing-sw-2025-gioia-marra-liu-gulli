@@ -2,11 +2,10 @@ package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitorInterface;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
 import java.util.ArrayList;
 
@@ -41,6 +40,9 @@ public class GenericCargoHolds extends Component {
         return new ArrayList<>(Goods);
     }
 
+    public boolean hasGood(Color color) {
+        return getGoods().stream().anyMatch(g -> g.getColor() == color);
+    }
 
     public void loadGood(Good g) {
 
@@ -75,7 +77,17 @@ public class GenericCargoHolds extends Component {
                 }
             }
         }
+    }
 
+    public void removeGood(Color c){
+        if (c != null) {
+            for (int i = 0; i < Goods.size(); i++) {
+                if (Goods.get(i).getColor().equals(c)) {
+                    Goods.remove(i);
+                    break;
+                }
+            }
+        }
     }
 
 

@@ -281,4 +281,23 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(ReadyTurnRequest readyTurnRequest) {
         return NetworkMessageType.ReadyTurnRequest;
     }
+
+    @Override
+    public NetworkMessageType visit(CollectRewardsRequest collectRewardsRequest) {
+        return NetworkMessageType.CollectRewardsResponse;
+    }
+    @Override
+    public NetworkMessageType visit(CollectRewardsResponse collectRewardsResponse) {
+        return NetworkMessageType.CollectRewardsRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(AskTrunkRequest askTrunkRequest) {
+        return NetworkMessageType.AskTrunkResponse;
+    }
+
+    @Override
+    public NetworkMessageType visit(AskTrunkResponse askTrunkResponse) {
+        return NetworkMessageType.AskTrunkRequest;
+    }
 }
