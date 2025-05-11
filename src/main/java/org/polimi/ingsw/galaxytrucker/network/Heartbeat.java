@@ -38,14 +38,12 @@ public class Heartbeat implements Runnable {
     @Override
     public void run() {
         final int maxTries = 5;
-        //LobbyManager game = serverController.getLobbyFromHandler(clientHandler);
-        //String nickname = serverController.getNicknameFromClientHandler(clientHandler, game);
         String heartbeatLabel = PrinterUtils.getLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED);
         String clientAddress = clientHandler.toString();
 
         System.out.println(heartbeatLabel + " " + "Starting heartbeat for " + clientAddress + ".");
 
-        while (serverController.getClients().contains(clientHandler)) {
+        while (true) {
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
 
             clientHandler.sendMessage(heartbeatRequest);
@@ -69,15 +67,16 @@ public class Heartbeat implements Runnable {
                     //System.out.println("[HEARTBEAT] Received heartbeat");
                     break; //Se ricevo l'heartbeat
                 }
+            }
 
-                if (tries == maxTries) {
-                    try {
-                        System.out.println(heartbeatLabel + " " + clientAddress + " is dead. Kicking from server.");
-                        serverController.removeClient(clientHandler);
-                    } catch (PlayerNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
+            if (tries == maxTries) {
+                try {
+                    System.out.println(heartbeatLabel + " " + clientAddress + " is dead. Kicking from server.");
+                    serverController.removeClient(clientHandler);
+                } catch (PlayerNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
+                break;
             }
 
             heartbeatFuture = new CompletableFuture<>();

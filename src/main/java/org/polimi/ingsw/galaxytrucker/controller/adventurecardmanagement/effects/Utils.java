@@ -15,6 +15,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DiscardCrewMembersResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.FlightBoardUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
+import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
 
@@ -98,6 +99,17 @@ public abstract class Utils {
     protected static void broadcast(CardContext context, NetworkMessage message) {
         LobbyManager lobbyManager = context.getCurrentGame();
         lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(message));
+    }
+
+    protected static void broadcastExcept(CardContext context, NetworkMessage message, Player player) {
+        LobbyManager lobbyManager = context.getCurrentGame();
+        ClientHandler excludedPlayerClientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName());
+        lobbyManager.getPlayerHandlers().values().forEach(ch -> { if(ch != excludedPlayerClientHandler) ch.sendMessage(message); });
+    }
+
+    protected static void broadcastExcept(CardContext context, NetworkMessage message, ClientHandler excludedPlayerClientHandler) {
+        LobbyManager lobbyManager = context.getCurrentGame();
+        lobbyManager.getPlayerHandlers().values().forEach(ch -> { if(ch != excludedPlayerClientHandler) ch.sendMessage(message); });
     }
 
     /**

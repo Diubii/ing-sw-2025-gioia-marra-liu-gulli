@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
-import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -14,7 +13,6 @@ import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
@@ -42,7 +40,7 @@ import java.util.concurrent.*;
 
 public class ServerController {
 
-    private final ArrayList<LobbyManager> LobbyManagers;
+    private final ArrayList<LobbyManager> lobbyManagers;
     private final MessageManager messageManager;
     private final ArrayList<ClientHandler> clients = new ArrayList<>();
     private final HashMap<ClientHandler, String> clientNicknameMap = new HashMap<>();
@@ -55,7 +53,7 @@ public class ServerController {
 
 
     public ServerController(ArrayList<LobbyManager> model) throws IOException {
-        this.LobbyManagers = model;
+        this.lobbyManagers = model;
         messageManager = new MessageManager(this);
         initActionsAllowed();
 //        model.setRealGame(new Game(4, false));
@@ -99,6 +97,17 @@ public class ServerController {
 
         if (game != null) {
             game.getGameController().kickPlayerFromGame(nickname);
+
+            synchronized (lobbyInfos) {
+                lobbyInfos.removeIf(info -> info.getLobbyID() == lobbyManagers.indexOf(game));
+            }
+
+            if(game.getPlayerColors().isEmpty()) {
+                //System.out.println("A game was empty. Cleared from the list of games.");
+                synchronized (lobbyManagers) {
+                    lobbyManagers.remove(game);
+                }
+            }
         }
 
         if (nickname != null && !nickname.isBlank()) {
@@ -125,8 +134,8 @@ public class ServerController {
     public LobbyManager getLobbyFromHandler(ClientHandler clientHandler) {
 
         LobbyManager lobbyManager;
-        synchronized (LobbyManagers) {
-            lobbyManager = LobbyManagers.stream().filter(gameModel ->
+        synchronized (lobbyManagers) {
+            lobbyManager = lobbyManagers.stream().filter(gameModel ->
                     gameModel.getPlayerHandlers().containsValue(clientHandler)).findFirst().orElse(null);
         }
 
@@ -207,11 +216,11 @@ public class ServerController {
         myPlayer.getShip().putTile(centralTile, new Position(2, 3));
 
 
-        synchronized (LobbyManagers) {
-            LobbyManagers.add(newGame);
+        synchronized (lobbyManagers) {
+            lobbyManagers.add(newGame);
 
         }
-        int index = LobbyManagers.indexOf(newGame);
+        int index = lobbyManagers.indexOf(newGame);
         synchronized (lobbyInfos) {
             lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, index));
 
@@ -244,22 +253,20 @@ public class ServerController {
     }
 
     public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException, IOException, InvalidTilePosition {
-
-
         String mess = "";
         LobbyInfo myLobbyInfo;
 
         JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null, message.getID());
         ArrayList<ClientHandler> playerHandlers;
         boolean result = false;
-        PlayerJoinedUpdate playerJoinedUpdate = null;
+        PlayerJoinedUpdate playerJoinedUpdate;
+        LobbyManager myGame = null;
 
 
-        LobbyManager myGame = LobbyManagers.get(message.getRoomId());
-
+        if(message.getRoomId() <= lobbyManagers.size() - 1) myGame = lobbyManagers.get(message.getRoomId());
 
         if (myGame == null) {
-            mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY NUMBER " + message.getRoomId() + "NOT EXISTS");
+            mess = "Lobby number " + message.getRoomId() + " doesn't exist. Try again.";
             joinRoomResponse.setErrMess(mess);
             joinRoomResponse.setOperationSuccess(false);
             joinRoomResponse.setColor(null);

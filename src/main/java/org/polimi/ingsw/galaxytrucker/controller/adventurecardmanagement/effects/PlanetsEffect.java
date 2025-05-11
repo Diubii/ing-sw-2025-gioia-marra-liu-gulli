@@ -60,12 +60,15 @@ public abstract class PlanetsEffect {
     }
 
     public static void movePlayers(CardContext context) {
-        Planets planets = (Planets) context.getAdventureCard();
-        for (Player player : landedPlayers.get(context.getCurrentGame()).reversed()) {
-            movePlayer(context, player, -planets.getDaysLost());
-        }
+        ArrayList<Player> currentGameLandedPlayers = landedPlayers.get(context.getCurrentGame());
+        if(currentGameLandedPlayers != null) {
+            Planets planets = (Planets) context.getAdventureCard();
+            for (Player player : currentGameLandedPlayers.reversed()) {
+                movePlayer(context, player, -planets.getDaysLost());
+            }
 
-        landedPlayers.remove(context.getCurrentGame());
+            landedPlayers.remove(context.getCurrentGame());
+        }
 
         //Execute CommonEffects::end
         context.nextPhase();
