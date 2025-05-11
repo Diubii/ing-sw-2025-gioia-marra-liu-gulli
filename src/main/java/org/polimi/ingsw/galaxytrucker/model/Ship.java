@@ -1073,4 +1073,24 @@ public class Ship implements Serializable {
         return number;
 
     }
+
+    public ArrayList<Good> getGoodsOnShipBoard() {
+        ArrayList<Good> goods = new ArrayList<>();
+        ComponentNameVisitor visitor = new ComponentNameVisitor();
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 7; j++) {
+                Slot slot = shipBoard[i][j];
+                if (slot != null && slot.getTile() != null) {
+                    Component component = slot.getTile().getMyComponent();
+                    if (component.accept(visitor).equals("GenericCargoHolds")) {
+                        GenericCargoHolds hold = (GenericCargoHolds) component;
+                        goods.addAll(hold.getGoods());
+                    }
+                }
+            }
+        }
+
+        return goods;
+    }
 }

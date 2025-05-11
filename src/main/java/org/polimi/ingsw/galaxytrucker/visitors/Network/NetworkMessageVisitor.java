@@ -319,6 +319,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(EndTurnUpdate endTurnUpdate) {
+
         return null;
     }
 
@@ -357,6 +358,11 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     @Override
     public Void visit(ReadyTurnRequest readyTurnRequest) {
         serverController.handleReadyTurnRequest(readyTurnRequest, clientHandler);
+        return null;
+    }
+
+    @Override
+    public Void visit(GameEndUpdate gameEndUpdate) {
         return null;
     }
 }

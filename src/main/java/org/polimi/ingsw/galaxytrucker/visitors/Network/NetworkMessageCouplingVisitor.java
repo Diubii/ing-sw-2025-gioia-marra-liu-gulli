@@ -281,4 +281,9 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(ReadyTurnRequest readyTurnRequest) {
         return NetworkMessageType.ReadyTurnRequest;
     }
+
+    @Override
+    public NetworkMessageType visit(GameEndUpdate gameEndUpdate) {
+        return NetworkMessageType.GameEndUpdate;
+    }
 }

@@ -4,7 +4,7 @@ import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardCon
 
 public abstract class CommonEffects {
     public static void end(CardContext context){
-        context.getCurrentGame().getGameController().handleEndGame();
+        context.getCurrentGame().getGameController().handleEndTurn();
 //        context.getCurrentGame().getGameController().handleTurnBeforeDrawnCard();
     }
 }

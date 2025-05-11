@@ -75,6 +75,8 @@ public enum NetworkMessageType {
     HeartbeatRequest, HeartbeatResponse,
     EndTurnUpdate,
     EarlyLandingRequest,
-    ReadyTurnRequest
+    ReadyTurnRequest,
+    GameEndUpdate
+
 
 }

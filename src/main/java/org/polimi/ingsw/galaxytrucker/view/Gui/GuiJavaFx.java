@@ -407,5 +407,8 @@ public class GuiJavaFx implements View {
 
     }
 
+    @Override
+    public void showEndGame(ArrayList<PlayerScore> scores) {
 
+    }
 }

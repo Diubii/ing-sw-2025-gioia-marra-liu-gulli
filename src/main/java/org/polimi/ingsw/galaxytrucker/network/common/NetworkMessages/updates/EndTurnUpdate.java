@@ -14,9 +14,18 @@ import java.util.concurrent.ExecutionException;
 public class EndTurnUpdate extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 72637L;
+    private boolean endGame;
 
     public EndTurnUpdate() {
 
+    }
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public void setEndGame(boolean endGame) {
+        this.endGame = endGame;
     }
 
     @Override

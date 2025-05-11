@@ -15,10 +15,7 @@ import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
-import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
-import org.polimi.ingsw.galaxytrucker.model.Planet;
-import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
-import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
@@ -1236,6 +1233,7 @@ public class Tui implements View, Observable {
 
                 if (choice == 0) {
                     clientController.sendSelectPlanetResponse(null, -1);
+                    showGenericMessage("Hai scelto di non scegliere un pianeta. Devi aspettare la scelta degli altri giocatori.");
                 } else {
                     Planet selected = planetChoices.get(choice - 1);
                     clientController.sendSelectPlanetResponse(selected, choice - 1);
@@ -1311,12 +1309,13 @@ public class Tui implements View, Observable {
         displayGoods(goods);
 
         int goodIndex = -1;
-        if(goodIndex == 0 ) {
-            askLoadGoodChoice();
-        }
-        while (goodIndex < 0 || goodIndex >= goods.size()) {
+
+        while (goodIndex < -1 || goodIndex >= goods.size()) {
             try {
                 String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + "): ");
+                if (input == "0" ) {
+                    showGenericMessage("Hai scelto di non caricare nessuna merce.Devi aspettare gli altri giocatori.2");
+                }
                 goodIndex = Integer.parseInt(input) - 1;
             } catch (Exception e) {
                 out.println("Input non valido.");
@@ -1508,7 +1507,12 @@ public class Tui implements View, Observable {
         out.println("Carta avventura attiva: ");
         CardPrintUtils.printCard(clientController.getCurrentAdventureCard());
     }
+    @Override
+    public void showEndGame(ArrayList<PlayerScore> scores) {
+        ScorePrintUtils.printScoreTable(scores);
 
+
+    }
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);
@@ -1558,7 +1562,7 @@ public class Tui implements View, Observable {
                         e.printStackTrace();
                     }
 
-                } else {
+                    } else {
                     System.out.println("Input non valido. Inserisci solo 'y' per confermare.");
                 }
             } catch (ExecutionException | InterruptedException e) {
@@ -1586,7 +1590,7 @@ public class Tui implements View, Observable {
                 }
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
-            }
+                        }
         } while (!validInput);
 
     }
@@ -1601,6 +1605,8 @@ public class Tui implements View, Observable {
             return false;
         }
     }
+
+
 }
 
 

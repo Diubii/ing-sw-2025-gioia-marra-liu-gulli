@@ -363,4 +363,10 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
         clientController.handleReadyTurnRequest();
         return null;
     }
+
+    @Override
+    public Void visit(GameEndUpdate gameEndUpdate) {
+        clientController.handleGameEndUpdate(gameEndUpdate);
+        return null;
+    }
 }

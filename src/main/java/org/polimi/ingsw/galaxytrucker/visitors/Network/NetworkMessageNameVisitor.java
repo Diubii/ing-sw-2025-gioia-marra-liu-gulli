@@ -286,4 +286,10 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
     public NetworkMessageType visit(ReadyTurnRequest readyTurnRequest) {
         return NetworkMessageType.ReadyTurnRequest;
     }
+
+    @Override
+    public NetworkMessageType visit(GameEndUpdate gameEndUpdate) {
+
+        return NetworkMessageType.GameEndUpdate;
+    }
 }

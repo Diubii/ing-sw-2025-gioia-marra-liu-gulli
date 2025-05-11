@@ -118,4 +118,8 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(EarlyLandingRequest earlyLandingRequest);
 
     T visit(ReadyTurnRequest readyTurnRequest);
+
+    T visit(GameEndUpdate gameEndUpdate);
+
+
 }
