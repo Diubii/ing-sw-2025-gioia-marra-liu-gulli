@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
 import java.io.Serializable;
 
@@ -81,6 +81,10 @@ public class Component implements Serializable {
         rotation = r;
     }
 
+    public Boolean isCharged() {
+        return false;
+    }
+
     /**
      * Accepts a visitor that can interact with this component.
      * The visitor pattern is used to process the component's name.
@@ -88,11 +92,6 @@ public class Component implements Serializable {
      * @param visitor The visitor that interacts with the component.
      * @return A string result from the visitor's interaction with the component.
      */
-
-    public Boolean isCharged() {
-        return false;
-    }
-
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }

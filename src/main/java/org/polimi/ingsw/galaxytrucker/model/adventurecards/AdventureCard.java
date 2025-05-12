@@ -2,7 +2,7 @@ package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
 import java.io.Serializable;

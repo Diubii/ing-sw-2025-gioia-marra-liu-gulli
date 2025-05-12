@@ -283,7 +283,26 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     }
 
     @Override
+    public NetworkMessageType visit(CollectRewardsRequest collectRewardsRequest) {
+        return NetworkMessageType.CollectRewardsResponse;
+    }
+    @Override
+    public NetworkMessageType visit(CollectRewardsResponse collectRewardsResponse) {
+        return NetworkMessageType.CollectRewardsRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(AskTrunkRequest askTrunkRequest) {
+        return NetworkMessageType.AskTrunkResponse;
+    }
+
+    @Override
+    public NetworkMessageType visit(AskTrunkResponse askTrunkResponse) {
+        return NetworkMessageType.AskTrunkRequest;
+    }
+
+    @Override
     public NetworkMessageType visit(GameEndUpdate gameEndUpdate) {
-        return NetworkMessageType.GameEndUpdate;
+        return null;
     }
 }

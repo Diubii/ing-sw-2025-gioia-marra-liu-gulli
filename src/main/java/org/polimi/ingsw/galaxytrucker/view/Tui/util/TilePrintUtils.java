@@ -1,8 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.view.Tui.util;
 
-import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentPrintVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentPrintVisitor;
 
 import java.util.ArrayList;
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentVisitorInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
 public class ModularHousingUnit extends CentralHousingUnit {
 

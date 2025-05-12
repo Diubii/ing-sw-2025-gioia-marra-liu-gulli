@@ -119,6 +119,12 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(ReadyTurnRequest readyTurnRequest);
 
+    T visit(CollectRewardsRequest collectRewardsRequest);
+    T visit(CollectRewardsResponse collectRewardsResponse);
+
+    T visit(AskTrunkRequest askTrunkRequest);
+    T visit(AskTrunkResponse askTrunkResponse);
+
     T visit(GameEndUpdate gameEndUpdate);
 
 

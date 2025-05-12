@@ -31,7 +31,8 @@ import org.polimi.ingsw.galaxytrucker.network.server.MessageManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class ServerController {
 
     private ArrayList<Tile> gameTiles;
 
+    private static final NetworkMessageNameVisitor networkMessageNameVisitor = new NetworkMessageNameVisitor();
 
     public ServerController(ArrayList<LobbyManager> model) throws IOException {
         this.lobbyManagers = model;
@@ -263,7 +265,7 @@ public class ServerController {
         LobbyManager myGame = null;
 
 
-        if(message.getRoomId() <= lobbyManagers.size() - 1 && message.getRoomId()>=0) myGame = lobbyManagers.get(message.getRoomId());
+        if(message.getRoomId() < lobbyManagers.size()) myGame = lobbyManagers.get(message.getRoomId());
 
         if (myGame == null) {
             mess = "Lobby number " + message.getRoomId() + " doesn't exist. Try again.";
@@ -934,7 +936,7 @@ public class ServerController {
             broadCast(playerHandlers, shipUpdate);
 
             if (game.getGameController().getGameState() == GameState.FLIGHT) {
-                tryExecutePhaseAfterMessage(game, NetworkMessageType.ShipUpdate);
+                tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
             }
         }
     }
@@ -942,7 +944,13 @@ public class ServerController {
     public void handleDiscardCrewMembersResponse(DiscardCrewMembersResponse discardCrewMembersResponse, ClientHandler clientHandler) {
         LobbyManager game = getLobbyFromHandler(clientHandler);
         game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(discardCrewMembersResponse);
-        tryExecutePhaseAfterMessage(game, NetworkMessageType.DiscardCrewMembersResponse);
+        tryExecutePhaseAfterMessage(game, discardCrewMembersResponse.accept(networkMessageNameVisitor));
+    }
+
+    public void handleCollectRewardsResponse(CollectRewardsResponse collectRewardsResponse, ClientHandler clientHandler) {
+        LobbyManager game = getLobbyFromHandler(clientHandler);
+        game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(collectRewardsResponse);
+        tryExecutePhaseAfterMessage(game, collectRewardsResponse.accept(networkMessageNameVisitor));
     }
 
     /*

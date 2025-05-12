@@ -365,6 +365,26 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
+    public Void visit(CollectRewardsRequest collectRewardsRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(CollectRewardsResponse collectRewardsResponse) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskTrunkRequest askTrunkRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskTrunkResponse askTrunkResponse) {
+        return null;
+    }
+
+    @Override
     public Void visit(GameEndUpdate gameEndUpdate) {
         clientController.handleGameEndUpdate(gameEndUpdate);
         return null;

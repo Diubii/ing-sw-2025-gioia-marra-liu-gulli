@@ -1,6 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement;
 
-import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms.AdventureCardFSMVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardFSMVisitor;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms.CardFSM;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.model.Player;
@@ -35,12 +35,15 @@ public class CardContext {
         currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
         cardFSM = adventureCard.accept(new AdventureCardFSMVisitor());
 
+        //Si tiene traccia dei messaggi che dovrebbero arrivarci
         expectedNumberOfNetworkMessagesPerType = new HashMap<>(Map.of(
                 NetworkMessageType.ShipUpdate, 0,
                 NetworkMessageType.ActivateAdventureCardResponse, 0,
                 NetworkMessageType.ActivateComponentResponse, 0,
                 NetworkMessageType.DiscardCrewMembersResponse, 0,
-                NetworkMessageType.SelectPlanetResponse, 0
+                NetworkMessageType.SelectPlanetResponse, 0,
+                NetworkMessageType.AskTrunkResponse, 0,
+                NetworkMessageType.CollectRewardsResponse, 0
         ));
     }
 
@@ -68,9 +71,8 @@ public class CardContext {
         return currentPlayerHandler;
     }
 
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
-        currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
+    public boolean currentPlayerIsLast(){
+        return getCurrentRankedPlayers().getLast().getNickName().equals(currentPlayer.getNickName());
     }
 
     /**
@@ -135,8 +137,22 @@ public class CardContext {
     public void previousPhase() {
         cardFSM.previous();
     }
+    public void previousPhase(int iterations){
+        for(int i=0; i<iterations; i++){
+            cardFSM.previous();
+        }
+    }
 
     public void nextPhase() {
         cardFSM.next();
+    }
+    public void nextPhase(int iterations){
+        for(int i = 0; i < iterations; i++){
+            cardFSM.next();
+        }
+    }
+
+    public void goToEndPhase(){
+        cardFSM.skipToEndState();
     }
 }

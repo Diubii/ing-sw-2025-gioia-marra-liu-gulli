@@ -16,7 +16,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.D
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.FlightBoardUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
 
 /**

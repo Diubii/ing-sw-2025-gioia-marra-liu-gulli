@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
 import java.util.ArrayList;

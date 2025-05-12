@@ -32,7 +32,7 @@ import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.*;
 import org.polimi.ingsw.galaxytrucker.view.View;
-import org.polimi.ingsw.galaxytrucker.visitors.ComponentNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.InputUtils.parseCoordinate;
@@ -1180,7 +1180,7 @@ public class Tui implements View, Observable {
                 () -> clientController.sendActivateAdventureCardResponse(true),
                 () -> {
                     clientController.sendActivateAdventureCardResponse(false);
-                    showGenericMessage("Hai scelto di non attivare l'effetto. In attesa della scelta degli altri giocatori");
+                    showGenericMessage("Hai scelto di non attivare l'effetto.");
                 }
         );
     }

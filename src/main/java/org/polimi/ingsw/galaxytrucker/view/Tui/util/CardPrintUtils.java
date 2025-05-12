@@ -4,8 +4,8 @@ import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardPrintVisitor;
-import org.polimi.ingsw.galaxytrucker.visitors.AdventureCardVisitorsInterface;
+import org.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardPrintVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisitorsInterface;
 
 import java.util.ArrayList;
 

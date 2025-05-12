@@ -15,11 +15,6 @@ import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.
 public abstract class OpenSpaceEffect {
     private final static HashMap<LobbyManager, HashMap<String, Integer>> playerToPowerMapPerGame = new HashMap<>();
 
-    public static void doubleEnginesActivationRequest(CardContext context) {
-        sendMessage(context, context.getCurrentPlayer(), new ActivateComponentRequest(ActivatableComponent.DoubleEngine));
-        context.nextPhase();
-    }
-
     public static void doubleEnginesActivated(CardContext context) {
         LobbyManager game = context.getCurrentGame();
         Player player = context.getCurrentPlayer();
@@ -65,7 +60,7 @@ public abstract class OpenSpaceEffect {
         });
 
         //Cleanup
-        playerToPowerMapPerGame.get(game).forEach((nickname, ignoredPower) -> playerToPowerMap.remove(nickname));
+        playerToPowerMapPerGame.get(game).clear();
         playerToPowerMapPerGame.remove(game);
 
         //Execute CommonEffects::end

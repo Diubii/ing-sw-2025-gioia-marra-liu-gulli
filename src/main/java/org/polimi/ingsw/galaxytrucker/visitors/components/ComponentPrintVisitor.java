@@ -1,5 +1,5 @@
 
-package org.polimi.ingsw.galaxytrucker.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors.components;
 
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;

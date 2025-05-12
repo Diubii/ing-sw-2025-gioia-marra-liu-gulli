@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.visitors;
+package org.polimi.ingsw.galaxytrucker.visitors.adventurecards;
 
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileSize;

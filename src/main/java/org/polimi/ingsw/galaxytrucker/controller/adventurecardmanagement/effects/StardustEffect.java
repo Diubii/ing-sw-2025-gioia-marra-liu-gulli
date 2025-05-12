@@ -12,7 +12,7 @@ public class StardustEffect {
         }
 
         //Execute CommonEffects::end
-        context.nextPhase();
+        context.goToEndPhase();
         context.executePhase();
     }
 }
