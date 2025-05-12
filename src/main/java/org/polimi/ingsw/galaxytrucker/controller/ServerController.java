@@ -222,7 +222,7 @@ public class ServerController {
         }
         int index = lobbyManagers.indexOf(newGame);
         synchronized (lobbyInfos) {
-            lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, index));
+            lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, index,message.getIsLearningMatch()));
 
         }
 
@@ -263,7 +263,7 @@ public class ServerController {
         LobbyManager myGame = null;
 
 
-        if(message.getRoomId() <= lobbyManagers.size() - 1) myGame = lobbyManagers.get(message.getRoomId());
+        if(message.getRoomId() <= lobbyManagers.size() - 1 && message.getRoomId()>=0) myGame = lobbyManagers.get(message.getRoomId());
 
         if (myGame == null) {
             mess = "Lobby number " + message.getRoomId() + " doesn't exist. Try again.";
@@ -376,6 +376,7 @@ public class ServerController {
             hostPlayerInfo.setShip(myGame.getRealGame().getPlayer(myLobbyInfo.getHost()).getShip());
             hostPlayerInfo.setColor(myGame.getPlayerColors().get(myLobbyInfo.getHost()));
 
+            joinRoomResponse.setIsLearningMatch(myLobbyInfo.isLearningMatch());
 
 //            clientHandler.sendMessage(new PlayerJoinedUpdate(hostPlayerInfo));
             clientHandler.sendMessage(new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
@@ -563,6 +564,7 @@ public class ServerController {
         AskPositionUpdate askPositionUpdate;
         ArrayList<Integer> validPos = new ArrayList<>();
         Boolean flag = false;
+        Boolean isLearningMatch = myGame.getRealGame().getIsLearningMatch();
 
         // [1] fisso l'ultima tile di Player
 

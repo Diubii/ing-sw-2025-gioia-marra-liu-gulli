@@ -11,12 +11,14 @@ public class LobbyInfo implements Serializable {
     private final int maxPlayers;
     private int connectedPlayers;
     private final int lobbyID;
+    private final boolean isLearningMatch;
 
-    public LobbyInfo(String host, int maxPlayers, int connectedPlayers, int lobbyID) {
+    public LobbyInfo(String host, int maxPlayers, int connectedPlayers, int lobbyID,boolean isLearningMatch) {
         this.host = host;
         this.maxPlayers = maxPlayers;
         this.connectedPlayers = connectedPlayers;
         this.lobbyID = lobbyID;
+        this.isLearningMatch = isLearningMatch;
     }
 
     public String getHost() {
@@ -44,4 +46,7 @@ public class LobbyInfo implements Serializable {
         return lobbyID;
     }
 
+    public boolean isLearningMatch() {
+        return isLearningMatch;
+    }
 }

@@ -112,9 +112,12 @@ public class ClientController implements Observer {
     @Override
     public void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException {
         try {
+
             message.accept(messageVisitor);
         } catch (Exception e) {
+
             System.err.println("[Error] The message was not processed correctly: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -286,6 +289,8 @@ public class ClientController implements Observer {
                 } else {
                     view.showLobbies(lobbies);
                     view.askRoomCode();
+
+
                 }
             } catch (Exception e) {
                 view.showGenericMessage("Error receiving room options: " + e.getMessage());
@@ -319,6 +324,8 @@ public class ClientController implements Observer {
                 myModel.getMyInfo().setColor(response.getColor());
                 myModel.getMyInfo().setShip(response.getMyShip());
                 myModel.getMyInfo().setNickName(getNickname());
+                myModel.setLearningMatch(response.getIsLearningMatch());
+
 
                 view.showPlayersLobby(myModel.getMyInfo(), myModel.getPlayerInfos());
 
@@ -397,7 +404,7 @@ public class ClientController implements Observer {
                 break;
             }
             case "b" -> {
-                if (myModel.getCardDecks().size() != 1) {
+                if (!myModel.isLearningMatch()) {
 
                     if(isPlaced) {
                         try {
@@ -1109,13 +1116,8 @@ public class ClientController implements Observer {
                             handleReadyTurnRequest();
 
                     case "menu", "m", "?" -> {
-
                         view.handleChoiceForPhase(phase);
-
-
                     }
-
-
                     default -> {
                         view.showGenericMessage("Invalid option. Please try again.");
                         view.handleChoiceForPhase(phase);
@@ -1291,7 +1293,6 @@ public class ClientController implements Observer {
 
     public void handleActivateComponentRequest(ActivateComponentRequest request) {
         ActivatableComponent component = request.getActivatableComponentType();
-
         //Invoca metodo della view fare scegliere al giocatore i componenti da attivare e le batterie da usare
         try {
             view.chooseComponent(myModel.getMyInfo().getShip(), component);

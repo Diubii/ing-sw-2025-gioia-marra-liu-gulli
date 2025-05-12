@@ -31,6 +31,7 @@ public class ClientModel {
     private boolean isLeader;
     private Planet selectedPlanet;
     private PlayerState playerState;
+    private boolean isLearningMatch;
 
     public PlayerState getPlayerState() {
         return playerState;
@@ -132,11 +133,20 @@ public class ClientModel {
         return getPlayerInfoByNickname(nickname) != null;
     }
 
+
     public Planet getSelectedPlanet() {
         return selectedPlanet;
     }
 
     public void setSelectedPlanet(Planet selectedPlanet) {
         this.selectedPlanet = selectedPlanet;
+    }
+
+    public boolean isLearningMatch() {
+        return isLearningMatch;
+    }
+
+    public void setLearningMatch(boolean learningMatch) {
+        isLearningMatch = learningMatch;
     }
 }

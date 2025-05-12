@@ -330,9 +330,13 @@ public class Tui implements View, Observable {
         synchronized (outputLock) {
             out.println("：List of rooms");
             for (LobbyInfo lobby : lobbies) {
-                out.printf("Lobby ID: %d | Host: %s | Players: (%d/%d)  \n",
+                Boolean isLearningMatch = lobby.isLearningMatch();
+                String matchType = isLearningMatch ? "Learning" : "Normal";
+
+                out.printf("Lobby ID: %d | Host: %s | GameType: "+  matchType +" |Players: (%d/%d)  \n",
                         lobby.getLobbyID(),
                         lobby.getHost(),
+
                         lobby.getConnectedPlayers(),
                         lobby.getMaxPlayers());
             }
@@ -1310,11 +1314,12 @@ public class Tui implements View, Observable {
 
         int goodIndex = -1;
 
-        while (goodIndex < -1 || goodIndex >= goods.size()) {
+        while (goodIndex < 0 || goodIndex >= goods.size()) {
             try {
-                String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + "): ");
-                if (input == "0" ) {
-                    showGenericMessage("Hai scelto di non caricare nessuna merce.Devi aspettare gli altri giocatori.2");
+                String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + ", oppure 0 per saltare): ");
+                if (input.equals("0")) {
+                    showGenericMessage("Hai scelto di non caricare nessuna merce. Devi aspettare gli altri giocatori.");
+                    return;
                 }
                 goodIndex = Integer.parseInt(input) - 1;
             } catch (Exception e) {
@@ -1351,7 +1356,12 @@ public class Tui implements View, Observable {
         while (selectedPos == null) {
 
             try {
-                String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7): ");
+                String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7 oppure 0 per saltare): ");
+                if (input.equals("0")) {
+                    out.println("Hai deciso di non caricare la merce.");
+                    return;
+                }
+
                 pos = parseCoordinate(input);
 
                 if (availableCargoHolds.contains(pos)) {
@@ -1378,7 +1388,12 @@ public class Tui implements View, Observable {
         while (selectedPos == null) {
 
             try {
-                String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7): ");
+                String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7 oppure 0 per saltare): ");
+                if (input.equals("0")) {
+                    out.println("Hai deciso di non discard la merce.");
+                    askLoadGoodChoice();
+                    return;
+                }
                 pos = parseCoordinate(input);
 
                 if (occupiedPositions.contains(pos)) {

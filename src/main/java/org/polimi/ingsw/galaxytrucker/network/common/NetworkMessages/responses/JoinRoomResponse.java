@@ -15,13 +15,10 @@ public class JoinRoomResponse extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 112L;
     private String errMess;
-
     private Boolean operationSuccess;
-
-
     private Color color;
-
     private Ship myShip;
+    private Boolean isLearningMatch;
 
     public JoinRoomResponse(String errMess, Boolean operationSuccess, int id) {
         super(id);
@@ -61,6 +58,13 @@ public class JoinRoomResponse extends NetworkMessage implements Serializable {
         this.operationSuccess = operationSuccess;
     }
 
+    public Boolean getIsLearningMatch() {
+        return isLearningMatch;
+    }
+
+    public void setIsLearningMatch(Boolean isLearningMatch) {
+        this.isLearningMatch = isLearningMatch;
+    }
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);

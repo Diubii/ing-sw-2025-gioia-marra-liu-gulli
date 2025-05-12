@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.game;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.Hourglass;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
@@ -38,6 +39,7 @@ public class Game {
 
     public FlightBoard flightBoard;
     private final TileBunch tileBunch;
+    private Hourglass hourglass;
 
 
     /**
@@ -250,6 +252,7 @@ public class Game {
 
 
     }
+
 
 
 }
