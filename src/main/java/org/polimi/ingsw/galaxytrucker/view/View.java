@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.*;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
@@ -107,15 +108,17 @@ public interface View {
 
     void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
 
-    void askLoadGood(Planet selectedPlanet, Ship myShip) throws ExecutionException, InterruptedException;
+
 
     void askLoadGoodChoice();
 
-    void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip);
+    void askSelectGoodToLoad(ArrayList<Good> goods, Ship myShip);
 
-    void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip);
+    void askSelectGoodToDiscard(Ship myShip);
 
     void showEndGame(ArrayList<PlayerScore> scores);
+
+    void askCollectRewards();
 
 //    void askFlightMenuChoice();
 

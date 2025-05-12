@@ -6,9 +6,12 @@ import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +35,8 @@ public class ClientModel {
     private Planet selectedPlanet;
     private PlayerState playerState;
     private boolean isLearningMatch;
+    private ArrayList<Good> unplacedGoods = new ArrayList<>();
+    private AdventureCard currentAdventureCard;
 
     public PlayerState getPlayerState() {
         return playerState;
@@ -148,5 +153,21 @@ public class ClientModel {
 
     public void setLearningMatch(boolean learningMatch) {
         isLearningMatch = learningMatch;
+    }
+
+    public AdventureCard getCurrentAdventureCard() {
+        return currentAdventureCard;
+    }
+
+    public void setCurrentAdventureCard(AdventureCard currentAdventureCard) {
+        this.currentAdventureCard = currentAdventureCard;
+    }
+
+    public ArrayList<Good> getUnplacedGoods() {
+        return unplacedGoods;
+    }
+
+    public void setUnplacedGoods(ArrayList<Good> unplacedGoods) {
+        this.unplacedGoods = unplacedGoods;
     }
 }

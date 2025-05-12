@@ -366,8 +366,10 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(CollectRewardsRequest collectRewardsRequest) {
+        clientController.handleCollectRewardsRequest(collectRewardsRequest);
         return null;
     }
+
 
     @Override
     public Void visit(CollectRewardsResponse collectRewardsResponse) {
@@ -376,6 +378,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(AskTrunkRequest askTrunkRequest) {
+        clientController.handleAskTrunkRequest(askTrunkRequest);
         return null;
     }
 

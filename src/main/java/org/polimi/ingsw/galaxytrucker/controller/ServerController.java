@@ -33,6 +33,7 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.io.File;
 import java.io.IOException;

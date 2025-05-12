@@ -10,8 +10,10 @@ import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.PlayerScore;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AbandonedStation;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.Smugglers;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
@@ -52,23 +54,16 @@ public class ClientController implements Observer {
     private final ExecutorService taskQueue;
     private View view;
     ExecutorService inputExecutor = Executors.newSingleThreadExecutor();
-
     private final CompletableFuture<Void> nicknameAsked = new CompletableFuture<>();
     private final ExecutorService viewExecutor = Executors.newSingleThreadExecutor();
-
     private CompletableFuture<NetworkMessage> completableFuture;
     private Pair<Integer, CompletableFuture<NetworkMessage>> pair;
-
     private final ClientModel myModel;
     private final NetworkMessageVisitorsInterface<Void> messageVisitor = new ClientNetworkMessageVisitor(this);
     private Tile currentTileInHand = null;
-
     private Position currentPosition;
     private ClientPhaseController clientPhaseController = new ClientPhaseController(this);
-
     private GameState phase = GameState.LOBBY;
-
-    private AdventureCard currentAdventureCard;
     private boolean isPlaced = false;
 
     public ClientModel getMyModel() {
@@ -857,69 +852,13 @@ public class ClientController implements Observer {
 
     }
 
-    //update per generic message
-    public void completeFuture(NetworkMessage message) {
-        int responseId = message.getID();
-        if (completableFuture == null) {
-            view.showGenericMessage("⚠️ CompletableFuture is null when receiving response with ID: " + responseId);
-            return;
-        }
 
-        if (!pair.getKey().equals(responseId)) {
-            view.showGenericMessage("⚠️ ID mismatch! Expected: " + pair.getKey() + ", but got: " + responseId);
-            return;
-        }
-        if (completableFuture != null && pair.getKey().equals(message.getID())) {
-            completableFuture.complete(message);
-            completableFuture = null;
-        } else {
-            System.err.println("⚠️ Cannot complete future: ID mismatch or future was null");
 
-        }
-    }
-
-    public Tile[] getReservedTiles() {
-        return myModel.getReservedTiles();
-    }
 
     @Override
     public void update(String message) {
 
         System.out.println("[+]" + message);
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setView(View v) {
-        this.view = v;
-    }
-
-    public View getView() {
-        return view;
-    }
-
-
-    public void setNickname(String nickname) {
-
-        this.myModel.getMyInfo().setNickName(nickname);
-    }
-
-    public String getNickname() {
-        return myModel.getMyInfo().getNickName();
-    }
-
-    public Tile getCurrentTileInHand() {
-        return this.currentTileInHand;
-    }
-
-    public Position getCurrentPosition() {
-        return currentPosition;
-    }
-
-    public void setCurrentTileInHand(Tile currentTileInHand) {
-        this.currentTileInHand = currentTileInHand;
     }
 
     public boolean hasTileInHand() {
@@ -1002,9 +941,7 @@ public class ClientController implements Observer {
     public void handleCheckShipRequest() {
 
         CheckShipStatusRequest checkShipStatusRequest = new CheckShipStatusRequest();
-
         checkShipStatusRequest.setRemovedTilesId(myModel.getTilesToRemove());
-
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, checkShipStatusRequest.getID());
 
@@ -1084,10 +1021,8 @@ public class ClientController implements Observer {
             view.showGenericMessage("Game ended");
             return;
         }
-
         view.toShowCurrentMenu();
         view.showFlightMenu();
-
     }
 
     public void handleFlightMenuChoice(String input) throws RuntimeException {
@@ -1184,8 +1119,8 @@ public class ClientController implements Observer {
 
     public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
         view.forceReset();
-        currentAdventureCard = drawnAdventureCardUpdate.getCard();
-        String nameCard = currentAdventureCard.getName();
+        myModel.setCurrentAdventureCard(drawnAdventureCardUpdate.getCard());
+
 
 
         view.showCurrentAdventureCard();
@@ -1201,6 +1136,12 @@ public class ClientController implements Observer {
             client.sendMessage(response);
         } catch (IOException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
+        }
+
+        if (confirm == true && "AbandonedStation".equals(getCurrentAdventureCard().getName())){
+            AbandonedStation abandonedStation = (AbandonedStation)  getCurrentAdventureCard();
+            myModel.setUnplacedGoods(abandonedStation.getGoods());
+            view.askLoadGoodChoice();
         }
 
     }
@@ -1235,6 +1176,7 @@ public class ClientController implements Observer {
         if (selectingPlayerNickname.equals(getNickname())) {
             Planet selectedPlanet = update.getSelectedPlanet();
             myModel.setSelectedPlanet(selectedPlanet);
+            myModel.setUnplacedGoods(selectedPlanet.getGoods());
             view.askLoadGoodChoice();
         }
     }
@@ -1243,9 +1185,8 @@ public class ClientController implements Observer {
         if (input == null) return;
 
         switch (input.toLowerCase()) {
-            case "l" -> view.askSelectGoodToLoad(myModel.getSelectedPlanet(), myModel.getMyInfo().getShip());
-            case "d" -> view.askSelectGoodToDiscard(myModel.getSelectedPlanet(), myModel.getMyInfo().getShip());
-
+            case "l" -> view.askSelectGoodToLoad(myModel.getUnplacedGoods(), myModel.getMyInfo().getShip());
+            case "d" -> view.askSelectGoodToDiscard( myModel.getMyInfo().getShip());
             case "f" -> {
                 view.showGenericMessage(" Caricamento merci completato.");
                 try {
@@ -1344,22 +1285,47 @@ public class ClientController implements Observer {
     }
 
     //da chiamare nel visitor
-    public void handleTronconiRequest() {
+    public void handleAskTrunkRequest(AskTrunkRequest askTrunkRequest) {
         //Lista di ship
-        ArrayList<Ship> Tronconi = new ArrayList<>();
+        ArrayList<Ship> Trunks = askTrunkRequest.getTrunks();
         try {
-            view.chooseTroncone(Tronconi);
+            view.chooseTroncone(Trunks);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void handleTronconiResponse(int choice) {
-        //Nuovo NetMessage
+    public void handleTrunkResponse(int choice) {
+        AskTrunkResponse response = new AskTrunkResponse(choice-1);
+        try {
+            client.sendMessage(response);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    public void sendCollectRewardsResponse(boolean confirm) {
+       CollectRewardsResponse response = new CollectRewardsResponse(confirm);
+        try {
+            client.sendMessage(response);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        if (confirm && "Smugglers".equals(getCurrentAdventureCard().getName())) {
+            Smugglers smugglers = (Smugglers)  getCurrentAdventureCard();
+            myModel.setUnplacedGoods(smugglers.getGoods());
+            view.askLoadGoodChoice();
+        }
+    }
+
+    public void handleCollectRewardsRequest(CollectRewardsRequest request){
+        view.askCollectRewards();
+
+    }
     public AdventureCard getCurrentAdventureCard() {
-        return currentAdventureCard;
+        return myModel.getCurrentAdventureCard();
     }
 
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate) throws IOException, ExecutionException, InterruptedException {
@@ -1382,6 +1348,41 @@ public class ClientController implements Observer {
         }
         return occupied;
 
+    }
+
+
+
+    public void handleGameEndUpdate(GameEndUpdate update) {
+        ArrayList<PlayerScore> scores = update.getScores();
+        view.showEndGame(scores);
+    }
+
+
+    public void handlePlayerLostUpdate(PlayerLostUpdate update) {
+        boolean isLandingEarly = update.isLandingEarly();
+        String nickname = update.getNickname();
+
+        if (nickname.equals(getNickname())) {
+            myModel.setPlayerState(PlayerState.Spectating);
+        }
+        if (isLandingEarly) {
+            view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.");
+        } else {
+            view.showGenericMessage("il giocatore " + nickname + " è stato rimosso forzatamente dalla partita.");
+        }
+    }
+
+    public Ship getMyShip() {
+        return myModel.getMyInfo().getShip();
+    }
+
+    private Slot getSlot(Ship ship, Position pos) {
+        Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+        return slot;
+    }
+
+    private ArrayList<Position> getCargoHolds(Ship ship) {
+        return ship.getComponentPositionsFromName("GenericCargoHolds");
     }
 
     public ArrayList<Position> getAvailableCargoHolds(Ship ship, Good good) {
@@ -1408,36 +1409,62 @@ public class ClientController implements Observer {
     }
 
 
-    public void handleGameEndUpdate(GameEndUpdate update) {
-        ArrayList<PlayerScore> scores = update.getScores();
-        view.showEndGame(scores);
-
-    }
-    private ArrayList<Position> getCargoHolds(Ship ship) {
-        return ship.getComponentPositionsFromName("GenericCargoHolds");
+    public Client getClient() {
+        return client;
     }
 
-    public void handlePlayerLostUpdate(PlayerLostUpdate update) {
-        boolean isLandingEarly = update.isLandingEarly();
+    public void setView(View v) {
+        this.view = v;
+    }
+
+    public View getView() {
+        return view;
+    }
 
 
-        String nickname = update.getNickname();
-        if (nickname.equals(getNickname())) {
-            myModel.setPlayerState(PlayerState.Spectating);
+    public void setNickname(String nickname) {
+
+        this.myModel.getMyInfo().setNickName(nickname);
+    }
+
+    public String getNickname() {
+        return myModel.getMyInfo().getNickName();
+    }
+
+    public Tile getCurrentTileInHand() {
+        return this.currentTileInHand;
+    }
+
+    public Position getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public void setCurrentTileInHand(Tile currentTileInHand) {
+        this.currentTileInHand = currentTileInHand;
+    }
+    public Tile[] getReservedTiles() {
+        return myModel.getReservedTiles();
+    }
+
+    //update per generic message
+    public void completeFuture(NetworkMessage message) {
+        int responseId = message.getID();
+        if (completableFuture == null) {
+            view.showGenericMessage("⚠️ CompletableFuture is null when receiving response with ID: " + responseId);
+            return;
         }
-        if (isLandingEarly) {
-            view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.");
+
+        if (!pair.getKey().equals(responseId)) {
+            view.showGenericMessage("⚠️ ID mismatch! Expected: " + pair.getKey() + ", but got: " + responseId);
+            return;
+        }
+        if (completableFuture != null && pair.getKey().equals(message.getID())) {
+            completableFuture.complete(message);
+            completableFuture = null;
         } else {
-            view.showGenericMessage("il giocatore " + nickname + " è stato rimosso forzatamente dalla partita.");
+            System.err.println("⚠️ Cannot complete future: ID mismatch or future was null");
+
         }
     }
 
-    public Ship getMyShip() {
-        return myModel.getMyInfo().getShip();
-    }
-
-    private Slot getSlot(Ship ship, Position pos) {
-        Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
-        return slot;
-    }
 }

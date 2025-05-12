@@ -3,15 +3,11 @@ package org.polimi.ingsw.galaxytrucker;
 //import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
-import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
-import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.view.Gui.GUIStart;
-import org.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 //import org.polimi.ingsw.galaxytrucker.view.Tui.Tui;
 import org.polimi.ingsw.galaxytrucker.view.Tui.Tui;
 
 import org.polimi.ingsw.galaxytrucker.view.View;
-import org.polimi.ingsw.galaxytrucker.view.View2;
 
 import java.io.IOException;
 import java.io.PrintStream;

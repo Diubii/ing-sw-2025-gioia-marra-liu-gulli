@@ -13,6 +13,7 @@ import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.*;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
@@ -374,10 +375,7 @@ public class GuiJavaFx implements View {
 
     }
 
-    @Override
-    public void askLoadGood(Planet selectedPlanet, Ship myShip) {
 
-    }
 
     @Override
     public void showGenericMessage(String message) {
@@ -393,12 +391,12 @@ public class GuiJavaFx implements View {
     }
 
     @Override
-    public void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip) {
+    public void askSelectGoodToLoad(ArrayList<Good>  goods , Ship myShip) {
 
     }
 
     @Override
-    public void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip) {
+    public void askSelectGoodToDiscard(Ship myShip) {
 
     }
 
@@ -409,6 +407,11 @@ public class GuiJavaFx implements View {
 
     @Override
     public void showEndGame(ArrayList<PlayerScore> scores) {
+
+    }
+
+    @Override
+    public void askCollectRewards() {
 
     }
 }

@@ -24,18 +24,8 @@ public class AbandonedStation extends AdventureCard {
 
     private final int requiredCrewMembers;
 
-    public int getRequiredCrewMembers() {
-        return requiredCrewMembers;
-    }
 
-    /**
-     * Gets the list of goods found at the abandoned station.
-     *
-     * @return A list of {@link Good} objects associated with the abandoned station.
-     */
-    public ArrayList<Good> getGoods() {
-        return goods;
-    }
+
 
     @JsonCreator
     public AbandonedStation(@JsonProperty("id") int id,
@@ -56,6 +46,18 @@ public class AbandonedStation extends AdventureCard {
         this.requiredCrewMembers = requiredCrewMembers;
     }
 
+    /**
+     * Gets the list of goods found at the abandoned station.
+     *
+     * @return A list of {@link Good} objects associated with the abandoned station.
+     */
+    public ArrayList<Good> getGoods() {
+        return goods;
+    }
+
+    public int getRequiredCrewMembers() {
+        return requiredCrewMembers;
+    }
 
     /**
      * Activates the effect of the Abandoned Station card by triggering the effect

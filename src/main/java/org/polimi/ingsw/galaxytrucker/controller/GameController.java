@@ -142,6 +142,9 @@ public class GameController {
         CardDeck cardDeck = getCardDeckTest();
         EndTurnUpdate etu = new EndTurnUpdate();
         //invare end turn update
+        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
+          return;
+        }
 
         if (cardDeck.getSize() ==0 ){
             etu.setEndGame(true);
@@ -257,6 +260,7 @@ public class GameController {
 
         if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
+            handleEndGame();
 //            completeCardDrawn();
         }
     }

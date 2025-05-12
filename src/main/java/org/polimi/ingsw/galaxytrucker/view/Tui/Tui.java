@@ -137,55 +137,6 @@ public class Tui implements View, Observable {
 
         MenuManager.clearConsole();
         System.out.println("\r".repeat(100));
-//
-//        //TEST STAMPA DA TOGLIERE
-//        Ship testShip = new Ship(false);
-//
-//        //Prendo lista tiles e metto in ship per testare
-//        ObjectMapper mapper = new ObjectMapper();
-//        ArrayList<Tile> tiles = new ArrayList<>();
-//        try{
-//            FileInputStream fis = new FileInputStream("src/main/resources/tiledata.json");
-//            tiles = mapper.readValue(fis, new TypeReference<ArrayList<Tile>>(){});
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//        Good exGood = new Good(Color.BLUE);
-//        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
-//        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
-//        ((GenericCargoHolds)tiles.get(18).getMyComponent()).loadGood(exGood);
-//        printTile(tiles.get(18));
-//
-//        System.out.println (((BatterySlot)tiles.get(4).getMyComponent()).getBatteriesLeft());
-//
-//        try{
-//            for(int i =0; i<7; i++){
-//                for(int j =0; j<5; j++){
-//                    if(j!= 3) {
-//                        testShip.putTile(tiles.get(i * 5 * j), new Position(j, i));
-//                    }
-//                }
-//            }
-//            tiles.get(152).rotate(180);
-//            testShip.putTile(tiles.get(4),new Position(3,0));
-//            testShip.putTile(tiles.get(54),new Position(3,1));
-//            testShip.putTile(tiles.get(64),new Position(3,2));
-//            testShip.putTile(tiles.get(93),new Position(3,3));
-//            testShip.putTile(tiles.get(152),new Position(3,4));
-//            testShip.putTile(tiles.get(136),new Position(3,5));
-//            testShip.putTile(tiles.get(137),new Position(3,6));
-//
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//        ArrayList<Ship> exTronconi = new ArrayList<>();
-//        exTronconi.add(testShip);
-//        exTronconi.add(testShip);
-//        exTronconi.add(testShip);
-//
-//        //chooseTroncone(exTronconi);
-//        chooseComponent(testShip,ActivatableComponent.DoubleCannon);
-//        //chooseDiscardCrew(testShip,2);
 
         String banner = "\033[1;34m" + // Colore Blu Chiaro
                 "   __    _   __    _   _  __ _  __  _____ ___  _ __  __  _    ___  ___    ___\n" +
@@ -196,8 +147,6 @@ public class Tui implements View, Observable {
 
         out.println(banner);
         askServerInfo();
-//        else askRMIServerInfo();
-//        askNickname();
     }
 
     public void askServerInfo() throws ExecutionException, IOException, InterruptedException {
@@ -1054,7 +1003,7 @@ public class Tui implements View, Observable {
         //Mostro tutti i tronconi numerandoli
         System.out.println("The ship divided into pieces choose one to continue ");
         for (int i = 0; i < tronconi.size(); i++) {
-            System.out.println(" ");
+            out.println();
             System.out.println("Ship Fragment " + (i + 1) + ": ");
             printShip(tronconi.get(i));
         }
@@ -1074,7 +1023,7 @@ public class Tui implements View, Observable {
 
         choice--;
         //handle response indicando numero
-        clientController.handleTronconiResponse(choice);
+        clientController.handleTrunkResponse(choice);
 
     }
 
@@ -1252,28 +1201,6 @@ public class Tui implements View, Observable {
     }
 
 
-    @Override
-    public void askLoadGood(Planet selectedPlanet, Ship myShip) throws ExecutionException, InterruptedException {
-//        ArrayList<Position> availableCargoHolds = clientController.getAvailableCargoHolds(myShip);
-//        ArrayList<Good> goods = selectedPlanet.getGoods();
-//        String input = readLine("Cosa vuoi fare? [L]oad, [D]iscard, [F]inish: ").trim().toLowerCase();
-//        if (availableCargoHolds.isEmpty()) {
-//            out.println("Nessuna cargo holds disponibile per caricare merci!");
-//
-//            return;
-//        }
-//        while (!goods.isEmpty() && !availableCargoHolds.isEmpty()) {
-//            displayGoods(goods);
-//
-//            for (int i = 0; i < availableCargoHolds.size(); i++) {
-//                Position pos = availableCargoHolds.get(i);
-//                out.println("[" + (i + 1) + "] " + pos);
-//            }
-//
-
-//        }
-
-    }
 
     @Override
     public void askLoadGoodChoice() {
@@ -1299,8 +1226,7 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void askSelectGoodToLoad(Planet selectedPlanet, Ship myShip) {
-        ArrayList<Good> goods = selectedPlanet.getGoods();
+    public void askSelectGoodToLoad(ArrayList<Good> goods, Ship myShip) {
 
 
         if (goods.isEmpty()) {
@@ -1338,19 +1264,6 @@ public class Tui implements View, Observable {
             return;
         }
 
-//        out.println(" Cargo holds disponibili:");
-//        for (int i = 0; i < availableCargoHolds.size(); i++) {
-//            out.println("[" + (i + 1) + "] Posizione: " + availableCargoHolds.get(i));
-//        }
-//        int posIndex = -1;
-//        while (posIndex < 0 || posIndex >= availableCargoHolds.size()) {
-//            try {
-//                String input = readLine("Seleziona una posizione cargo (1-" + availableCargoHolds.size() + "): ");
-//                posIndex = Integer.parseInt(input) - 1;
-//            } catch (Exception e) {
-//                out.println("Input non valido.");
-//            }
-//        }
         Position selectedPos = null;
         Position pos = null;
         while (selectedPos == null) {
@@ -1381,10 +1294,16 @@ public class Tui implements View, Observable {
 
 
     @Override
-    public void askSelectGoodToDiscard(Planet selectedPlanet, Ship myShip) {
+    public void askSelectGoodToDiscard(Ship myShip) {
+        showShip(myShip);
         ArrayList<Position> occupiedPositions = clientController.getOccupiedCargoHolds(myShip);
         Position selectedPos = null;
         Position pos = null;
+        if(occupiedPositions.isEmpty()){
+            out.println("Nessun cargo hold occupato.");
+            askLoadGoodChoice();
+            return;
+        }
         while (selectedPos == null) {
 
             try {
@@ -1426,18 +1345,6 @@ public class Tui implements View, Observable {
     }
 
 
-//    @Override
-//    public void showEndTurnMenu(boolean amLeader) {
-//        if (clientController.getMyModel().isLeader()) {
-//            menuManager.showLeaderEndTurnMenu();
-//            return;
-//        } else {
-//            menuManager.showEndTurnMenu();
-//        }
-//
-//    }
-
-
     @Override
     public void showFlightMenu() {
         String input;
@@ -1476,39 +1383,23 @@ public class Tui implements View, Observable {
     }
 
 
-//    @Override
-//    public void askFlightMenuChoice() {
-//        String input = null;
-//        boolean valid = false;
-//            do {
-//                try {
-//                    input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ");
-//                    if (input.toLowerCase().matches("[abcd]")) {
-//                        valid = true;
-//                    } else {
-//                        if (input.toLowerCase().matches("reset")) System.out.println();
-//                        else System.out.println("input non valido");
-//                    }
-//
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//            } while (!valid);
-//        try {
-//            clientController.handleFlightMenuChoice(input);
-//        } catch (RuntimeException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//    }
 
     public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
 
         FlightBoardPrintUtils.printFlightBoard(flightBoard, infoPlayers, myinfo);
 
     }
-
+    @Override
+    public void askCollectRewards() {
+        askYesNoConfirmation(
+                "Hai sconfitto con successo il nemico. Scegli se accettare la ricompensa.",
+                () -> clientController.sendCollectRewardsResponse(true),
+                () -> {
+                    clientController.sendCollectRewardsResponse(false);
+                    showGenericMessage("Hai scelto di non accettare la ricompensa.");
+                }
+        );
+    }
     public void displayGoods(List<Good> goods) {
         out.println("Merci disponibili:");
         for (int i = 0; i < goods.size(); i++) {
@@ -1549,6 +1440,7 @@ public class Tui implements View, Observable {
             }
         }
     }
+
 
     @Override
     public void notifyObservers(String message) throws IOException, ExecutionException {
@@ -1620,7 +1512,6 @@ public class Tui implements View, Observable {
             return false;
         }
     }
-
 
 }
 
