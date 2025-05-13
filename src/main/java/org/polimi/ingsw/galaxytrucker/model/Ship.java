@@ -551,8 +551,6 @@ public class Ship implements Serializable {
 
 
     public ArrayList<Ship> getTronc() {
-
-
         ArrayList<Ship> tronconi = new ArrayList<>();
         tronconi.add(this);
 
@@ -701,7 +699,7 @@ public class Ship implements Serializable {
 
         }
 
-        Position down = new Position(pos.getX(), pos.getY() - 1);
+        Position down = new Position(pos.getX(), pos.getY() + 1);
 
         if (!invalidPositions.contains(down) && Util.inBoundaries(down.getX(), down.getY())) {
             System.out.println("VALIDA : " + down);
@@ -784,8 +782,8 @@ public class Ship implements Serializable {
                 Ship myShip = new Ship(this.learningMatch);
                 Slot[][] myshipBoard = myShip.getShipBoard();
 
-                for (int j = 0; j < 5; j++) {
-                    for (int k = 0; k < 7; k++) {
+                for (int j = 0; j < 7; j++) {
+                    for (int k = 0; k < 5; k++) {
                         // Se la tile appartiene alla classe di equivalenza, viene inclusa nella nuova nave
                         if (shipBoard[j][k].getTile() != null && equivalenceClass.contains(shipBoard[j][k].getTile().getId()) || !invalidPositions.contains(new Position(j, k))) {
 //                            myshipBoard[j][k] = shipBoard[j][k];
@@ -811,8 +809,8 @@ public class Ship implements Serializable {
 
         Set<ProjectileDirection> sides = new HashSet<>();
 
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 7; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 5; j++) {
                 Tile tempTile = shipBoard[i][j].getTile();
                 Slot tempSlot = shipBoard[i][j];
                 if (!invalidPositions.contains(tempSlot.getPosition()) && Util.inBoundaries(i, j)) {
