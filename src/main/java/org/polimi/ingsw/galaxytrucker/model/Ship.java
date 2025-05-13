@@ -24,7 +24,10 @@ public class Ship implements Serializable {
     @Serial
     private static final long serialVersionUID = 35856L;
 
-    private Slot[][] shipBoard = new Slot[5][7];
+    private final int shipboardMaxY=5;
+    private final int shipboardMaxX=7;
+
+    private Slot[][] shipBoard = new Slot[shipboardMaxY][shipboardMaxX];
     private final Slot[] setAsideTiles = new Slot[2];
     private int nExposedConnector;
     private int destroyedTiles;
@@ -929,7 +932,12 @@ public class Ship implements Serializable {
     }
 
     public Component getComponentFromPosition(Position position) {
-        return shipBoard[position.getY()][position.getX()].getTile().getMyComponent();
+        if(position.getY() < shipboardMaxY && position.getX() < shipboardMaxX) {
+            return shipBoard[position.getY()][position.getX()].getTile().getMyComponent();
+        }
+        else{
+            return null;
+        }
     }
 
     public ArrayList<Position> getComponentPositionsFromName(String componentName) {
@@ -972,8 +980,8 @@ public class Ship implements Serializable {
     public Position getFirstComponentFromDirectionAndIndex(ProjectileDirection direction, int fixedIndex) {
         int variableIndex = 0;
         switch (direction) {
-            case UP, RIGHT -> variableIndex = 11;
-            case DOWN, LEFT -> variableIndex = 3;
+            case UP, RIGHT -> variableIndex = 7;
+            case DOWN, LEFT -> variableIndex = -1;
         }
 
         Position componentPosition = new Position(0, 0);
@@ -987,7 +995,7 @@ public class Ship implements Serializable {
                 case LEFT, RIGHT -> componentPosition.setPos(fixedIndex, variableIndex);
                 case UP, DOWN -> componentPosition.setPos(variableIndex, fixedIndex);
             }
-        } while (getComponentFromPosition(componentPosition) != null && variableIndex >= 4 && variableIndex <= 10);
+        } while (getComponentFromPosition(componentPosition) != null && variableIndex >= 0 && variableIndex <= 6);
 
         return componentPosition;
     }
