@@ -110,10 +110,10 @@ public class Util {
         ArrayList<Position> tempIP = P.getInvalidPositions();
 
         // Posizioni adiacenti alla tile corrente
-        Position nord = new Position(S.getPosition().getY() - 1, S.getPosition().getX());
-        Position sud = new Position(S.getPosition().getY() + 1, S.getPosition().getX());
-        Position est = new Position(S.getPosition().getY(), S.getPosition().getX() + 1);
-        Position ovest = new Position(S.getPosition().getY(), S.getPosition().getX() - 1);
+        //Position nord = new Position(S.getPosition().getY() - 1, S.getPosition().getX());
+        Position sud = new Position(S.getPosition().getX(), S.getPosition().getY() + 1);
+        //Position est = new Position(S.getPosition().getY(), S.getPosition().getX() + 1);
+        //Position ovest = new Position(S.getPosition().getY(), S.getPosition().getX() - 1);
 
         // Controlla la connessione del motore in base alla rotazione della tile
         if (T.getRotation() == 0) {
@@ -128,10 +128,10 @@ public class Util {
     public static Boolean CannonWellConnected(Tile T, Ship P, Slot S) {
         boolean wellConnected = true;
         ArrayList<Position> tempIP = P.getInvalidPositions();
-        Position nord = new Position(S.getPosition().getY() - 1, S.getPosition().getX());
-        Position sud = new Position(S.getPosition().getY() + 1, S.getPosition().getX());
-        Position est = new Position(S.getPosition().getY(), S.getPosition().getX() + 1);
-        Position ovest = new Position(S.getPosition().getY(), S.getPosition().getX() - 1);
+        Position nord = new Position(S.getPosition().getX(), S.getPosition().getY() - 1);
+        Position sud = new Position(S.getPosition().getX(), S.getPosition().getY() + 1);
+        Position est = new Position(S.getPosition().getX() + 1, S.getPosition().getY());
+        Position ovest = new Position(S.getPosition().getX() - 1, S.getPosition().getY());
 
         switch (T.getRotation()) {
             case 0:
@@ -347,16 +347,16 @@ public class Util {
     }
 
 
-    public static Boolean inBoundaries(int y, int x) {
+    public static Boolean inBoundaries(int x, int y) {
         return (y >= 0 && y < 5) && (x >= 0 && x < 7);
     }
 
     public static ArrayList<Position> getAdjacentPositions(Position pos) {
         ArrayList<Position> adjacent = new ArrayList<>();
-        adjacent.add(new Position(pos.getY() - 1, pos.getX())); // Nord
-        adjacent.add(new Position(pos.getY(), pos.getX() - 1)); // Ovest
-        adjacent.add(new Position(pos.getY() + 1, pos.getX())); // Sud
-        adjacent.add(new Position(pos.getY(), pos.getX() + 1)); // Est
+        adjacent.add(new Position(pos.getX(), pos.getX() - 1)); // Nord
+        adjacent.add(new Position(pos.getX() - 1, pos.getY())); // Ovest
+        adjacent.add(new Position(pos.getX(), pos.getY() + 1)); // Sud
+        adjacent.add(new Position(pos.getX() + 1, pos.getY())); // Est
         return adjacent;
     }
 

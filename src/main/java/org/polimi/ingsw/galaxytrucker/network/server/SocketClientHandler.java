@@ -84,7 +84,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
                         try {
                             serverController.getMessageManager().handle(message, this);
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            e.printStackTrace();
                         }
                     });
                 }

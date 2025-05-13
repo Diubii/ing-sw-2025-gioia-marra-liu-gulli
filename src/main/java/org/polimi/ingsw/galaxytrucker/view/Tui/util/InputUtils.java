@@ -26,7 +26,7 @@ public class InputUtils {
         try {
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
-            return new Position(y, x);
+            return new Position(x, y);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Coordinates must be valid integers.");
         }

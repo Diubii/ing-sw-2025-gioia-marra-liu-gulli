@@ -22,7 +22,7 @@ public class ShipPrintUtils {
         //Ciclo da 0 a 6 per colonne
         for (int i = 0; i < 7; i++) {
             String[] result;
-            if (ship.getInvalidPositions().contains(new Position(row, i))) {
+            if (ship.getInvalidPositions().contains(new Position(i, row))) {
                 result = new String[]{
                         "            ",
                         "            ",
@@ -30,7 +30,7 @@ public class ShipPrintUtils {
                         "            ",
                         "            "};
             } else {
-                result = getTileStrings(ship.getShipBoard()[row][i].getTile(), false);
+                result = getTileStrings(ship.getShipBoard()[i][row].getTile(), false);
             }
             shipRow[i] = result;
         }

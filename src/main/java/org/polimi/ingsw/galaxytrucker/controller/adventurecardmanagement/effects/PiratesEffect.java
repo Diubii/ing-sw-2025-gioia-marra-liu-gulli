@@ -136,8 +136,21 @@ public class PiratesEffect {
         int projectileIndex = projectileIndexes.get(game);
         Projectile projectile = pirates.getCannonFires().get(projectileIndex);
 
-        Random rand = new Random();
-        int diceRoll = rand.nextInt(2, 13);
+//        Random rand = new Random();
+//        int diceRoll = rand.nextInt(2, 13);
+//
+//        switch (projectile.getDirection()) {
+//            case UP, DOWN -> diceRoll -= 4;
+//            case LEFT, RIGHT -> diceRoll -= 5;
+//        }
+
+        //TEST
+        int diceRoll = 0;
+        switch (projectile.getDirection()) {
+            case UP, DOWN -> diceRoll = 3;
+            case LEFT, RIGHT -> diceRoll = 2;
+        }
+
         Tile destroyedTile = game.getGameController().reactToProjectile(player, projectile, diceRoll);
 
         if (destroyedTile != null) {
@@ -156,6 +169,8 @@ public class PiratesEffect {
                 context.previousPhase();
                 context.executePhase();
             }
+
+            broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
         }
     }
 

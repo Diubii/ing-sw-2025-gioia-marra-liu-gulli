@@ -726,7 +726,7 @@ public class ClientController implements Observer {
     }
 
     public void setCurrentPos(int x, int y) throws ExecutionException {
-        Position pos = new Position(y, x);
+        Position pos = new Position(x, y);
         Ship ship = myModel.getMyInfo().getShip();
 
         if (!Util.inBoundaries(pos.getY(), pos.getX()) || ship.getInvalidPositions().contains(pos)) {

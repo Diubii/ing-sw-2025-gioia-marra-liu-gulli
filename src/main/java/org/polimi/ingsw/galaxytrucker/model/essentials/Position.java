@@ -19,11 +19,11 @@ public class Position implements Serializable {
     /**
      * Constructs a Position object with the specified x and y coordinates.
      *
-     * @param y The y-coordinate of the position.
      * @param x The x-coordinate of the position.
+     * @param y The y-coordinate of the position.
      */
 
-    public Position(int y, int x) {
+    public Position(int x, int y) {
         this.x = x;
         this.y = y;
     }

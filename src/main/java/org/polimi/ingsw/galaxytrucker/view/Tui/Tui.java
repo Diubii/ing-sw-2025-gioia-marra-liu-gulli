@@ -785,7 +785,7 @@ public class Tui implements View, Observable {
                 String input = readLine("Enter position to remove the Tile from(format: (x,y)): ").trim();
                 pos1 = parseCoordinate(input);
 
-                Position pos = new Position(pos1.getY() - 5, pos1.getX() - 4);
+                Position pos = new Position(pos1.getX() - 4, pos1.getY() - 5);
 
                 if (!Util.inBoundaries(pos.getY(), pos.getX()) || ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() == null) {
 
@@ -1278,7 +1278,7 @@ public class Tui implements View, Observable {
                 pos = parseCoordinate(input);
 
                 if (availableCargoHolds.contains(pos)) {
-                    selectedPos = new Position(pos.getY() - 5, pos.getX() - 4);
+                    selectedPos = new Position(pos.getX() - 4, pos.getY() - 5);
                 } else {
                     out.println("Questa posizione non è disponibile.");
                 }
@@ -1316,7 +1316,7 @@ public class Tui implements View, Observable {
                 pos = parseCoordinate(input);
 
                 if (occupiedPositions.contains(pos)) {
-                    selectedPos = new Position(pos.getY() - 5, pos.getX() - 4);
+                    selectedPos = new Position(pos.getX() - 4, pos.getY() - 5);
                 } else {
                     out.println("Questa posizione non è disponibile.");
                 }

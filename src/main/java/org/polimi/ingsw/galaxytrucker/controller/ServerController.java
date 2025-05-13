@@ -216,7 +216,7 @@ public class ServerController {
         }
 
 
-        myPlayer.getShip().putTile(centralTile, new Position(2, 3));
+        myPlayer.getShip().putTile(centralTile, new Position(3, 2));
 
 
         synchronized (lobbyManagers) {
@@ -328,7 +328,7 @@ public class ServerController {
                 System.out.println("5");
 
 
-                myPlayer.getShip().putTile(centralTile, new Position(2, 3));
+                myPlayer.getShip().putTile(centralTile, new Position(3, 2));
                 myGame.getRealGame().addPlayer(myPlayer);
 
                 myGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
