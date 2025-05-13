@@ -1,0 +1,127 @@
+.transparent-button {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-text-fill: white;
+    -fx-border-width: 2;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.transparent-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+}
+
+.transparent-button:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.6);
+}
+
+.semitransparent-button {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-border-color: white;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-text-fill: white;
+    -fx-border-width: 2;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.semitransparent-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.6);
+}
+
+.semitransparent-button:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+}
+
+
+.radio-button {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 15px;
+    -fx-background-radius: 15px;
+    -fx-text-fill: white;
+    -fx-opacity: 1.0;
+    -fx-padding: 5 15 5 15;
+}
+
+
+.radio-button > .radio {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+    -fx-shape: "circle";
+}
+
+
+.radio-button > .radio > .dot {
+    -fx-shape: "M0,0";
+}
+
+
+.radio-button:selected > .radio > .dot {
+    -fx-shape: "M0,8 L12,18 L22,6 L12,13";
+    -fx-background-color: yellow;
+    -fx-scale-shape: false;
+}
+
+.scroll-pane{
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-radius: 15;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-radius: 15;
+}
+
+.anchor-pane-for-scroll{
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-background-radius: 15;
+}
+
+
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+
+.scroll-bar .track {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-background-insets: 3;
+    -fx-border-radius: 0px;
+}
+
+
+.scroll-bar .thumb {
+    -fx-background-color: #444444;
+    -fx-background-radius: 2px;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+}
+
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-shape: "";
+}
+
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.OverlayPanel{
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+}

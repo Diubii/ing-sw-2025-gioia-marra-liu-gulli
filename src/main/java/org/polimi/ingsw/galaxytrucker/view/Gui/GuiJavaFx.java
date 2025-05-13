@@ -3,14 +3,17 @@
 
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
+import com.sun.java.accessibility.util.GUIInitializedListener;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
@@ -30,43 +33,61 @@ public class GuiJavaFx implements View {
     private final Stage primaryStage;
     private final ClientController controller;
 
+
     public GuiJavaFx(Stage primaryStage, ClientController controller) {
         this.primaryStage = primaryStage;
         this.controller = controller;
     }
 
 
+    //<editor-fold desc="FOLD: LoginConnect">
     public void askServerInfo() {
+
+        //TEST caricare una pagina qualunque per vedere formato
+//            System.out.println("DEBUG: askServerInfo");
+//            //1-Prima caricare FXML
+//            Parent root;
+//            FXMLLoader loader;
+//            try{
+//                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/ListLobby.fxml"));
+//                root = loader.load();
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+//            ListLobbyController pageController = loader.getController();
+//            pageController.initialSetup(controller);
+//            Scene scene = new Scene(root);
+//           // primaryStage.setFullScreen(true);
+//           // primaryStage.setMaximized(true);
+//            primaryStage.setScene(scene);
+
         Platform.runLater(() -> {
-            VBox layout = new VBox(10);
-            TextField addressField = new TextField("localhost");
-            TextField portField = new TextField(controller.getIsSocket() ? "5000" : "1099");
-            Button connectButton = new Button("Connect");
-
-            connectButton.setOnAction(e -> {
-                String address = addressField.getText().trim();
-                int port;
-                try {
-                    port = Integer.parseInt(portField.getText().trim());
-                    controller.handleServerInfo(new SERVER_INFO(address, port));
-                } catch (NumberFormatException ex) {
-                    showGenericMessage("Invalid port number.");
-                    return;
-                }
-            });
-
-            layout.getChildren().addAll(
-                    new Label("Server Address:"),
-                    addressField,
-                    new Label("Server Port:"),
-                    portField,
-                    connectButton
-            );
-
-            Scene scene = new Scene(layout, 300, 200);
+            System.out.println("DEBUG: askServerInfo");
+            //1-Prima caricare FXML
+            Parent root;
+            FXMLLoader loader;
+            try{
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/LoginConnect.fxml"));
+                root = loader.load();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+            LoginConnectController pageController = loader.getController();
+            pageController.initialSetup(this,controller,primaryStage);
+            Scene scene = new Scene(root);
             primaryStage.setScene(scene);
         });
     }
+    @Override
+    public void askNickname() {
+        System.out.println("DEBUG: askNickname");
+        // now embedded inside LoginConnect scene, this method can be left empty or removed
+        // kept for interface compliance
+    }
+    //</editor-fold>
+
 
 
     @Override
@@ -74,32 +95,30 @@ public class GuiJavaFx implements View {
 
     }
 
-    @Override
-    public void askNickname() {
-        Platform.runLater(() -> {
-            VBox layout = new VBox(10);
-            Label label = new Label("Enter your nickname:");
-            TextField input = new TextField();
-            Button submit = new Button("Submit");
-            submit.setOnAction(e -> {
-                try {
-                    controller.handleNicknameInput(input.getText().trim());
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ExecutionException ex) {
-                    throw new RuntimeException(ex);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-            layout.getChildren().addAll(label, input, submit);
-            primaryStage.setScene(new Scene(layout, 300, 150));
-        });
-    }
+
 
     @Override
     public void askJoinOrCreateRoom() {
         Platform.runLater(() -> {
+            System.out.println("DEBUG: askJoinOrCreateRoom");
+            //1-Prima caricare FXML
+            Parent root;
+            FXMLLoader loader;
+            try{
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/MainMenu.fxml"));
+                root = loader.load();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+            MainMenuController pageController = loader.getController();
+            pageController.initialSetup(this,controller,primaryStage);
+            Scene scene = new Scene(root);
+
+            // primaryStage.setFullScreen(true);// primaryStage.setMaximized(true);
+            primaryStage.setScene(scene);
+        });
+        /*Platform.runLater(() -> {
             VBox layout = new VBox(10);
             Button create = new Button("Create Room");
             Button join = new Button("Join Room");
@@ -119,13 +138,31 @@ public class GuiJavaFx implements View {
             });
             layout.getChildren().addAll(new Label("Choose an option:"), create, join);
             primaryStage.setScene(new Scene(layout, 300, 150));
-        });
+        });*/
     }
 
     @Override
     public void askCreateRoom() {
         Platform.runLater(() -> {
-            VBox layout = new VBox(10);
+            System.out.println("DEBUG: askJoinOrCreateRoom");
+            //1-Prima caricare FXML
+            Parent root;
+            FXMLLoader loader;
+            try{
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/CreateLobby.fxml"));
+                root = loader.load();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+            CreateLobbyController pageController = loader.getController();
+            pageController.initialSetup(this,controller,primaryStage);
+            Scene scene = new Scene(root);
+
+            // primaryStage.setFullScreen(true);// primaryStage.setMaximized(true);
+            primaryStage.setScene(scene);
+
+            /*VBox layout = new VBox(10);
             TextField players = new TextField();
             players.setPromptText("Max Players (2-4)");
             CheckBox learning = new CheckBox("Learning Match");
@@ -139,7 +176,7 @@ public class GuiJavaFx implements View {
                 }
             });
             layout.getChildren().addAll(players, learning, create);
-            primaryStage.setScene(new Scene(layout, 300, 200));
+            primaryStage.setScene(new Scene(layout, 300, 200));*/
         });
     }
 
@@ -151,43 +188,45 @@ public class GuiJavaFx implements View {
     }
 
 
-    @Override
-    public void showLobbies(List<LobbyInfo> lobbies) {
-        Platform.runLater(() -> {
-            VBox layout = new VBox(10);
+@Override
+public void showLobbies(List<LobbyInfo> lobbies) {
+    Platform.runLater(() -> {
+        //Può passare lista lobby a controller pagina da metodo inizializzazione
+        VBox layout = new VBox(10);
 
-            Label instruction = new Label("Click on a lobby to join it, or enter an ID manually:");
-            layout.getChildren().add(instruction);
+        Label instruction = new Label("Click on a lobby to join it, or enter an ID manually:");
+        layout.getChildren().add(instruction);
 
-            for (LobbyInfo info : lobbies) {
-                Button b = new Button("Lobby " + info.getLobbyID() + ": " + info.getHost());
-                b.setOnAction(e -> controller.handleJoinChoice(info.getLobbyID()));
-                layout.getChildren().add(b);
+        for (LobbyInfo info : lobbies) {
+            Button b = new Button("Lobby " + info.getLobbyID() + ": " + info.getHost());
+            b.setOnAction(e -> controller.handleJoinChoice(info.getLobbyID()));
+            layout.getChildren().add(b);
+        }
+
+        HBox manualJoin = new HBox(10);
+        TextField roomIdField = new TextField();
+        roomIdField.setPromptText("Enter Room ID");
+        Button joinBtn = new Button("Join");
+        joinBtn.setOnAction(e -> {
+            try {
+                int id = Integer.parseInt(roomIdField.getText().trim());
+                controller.handleJoinChoice(id);
+            } catch (NumberFormatException ex) {
+                showGenericMessage("Invalid room ID format.");
             }
-
-            HBox manualJoin = new HBox(10);
-            TextField roomIdField = new TextField();
-            roomIdField.setPromptText("Enter Room ID");
-            Button joinBtn = new Button("Join");
-            joinBtn.setOnAction(e -> {
-                try {
-                    int id = Integer.parseInt(roomIdField.getText().trim());
-                    controller.handleJoinChoice(id);
-                } catch (NumberFormatException ex) {
-                    showGenericMessage("Invalid room ID format.");
-                }
-            });
-            manualJoin.getChildren().addAll(roomIdField, joinBtn);
-            layout.getChildren().add(manualJoin);
-
-            primaryStage.setScene(new Scene(layout, 400, 400));
         });
-    }
+        manualJoin.getChildren().addAll(roomIdField, joinBtn);
+        layout.getChildren().add(manualJoin);
+
+        primaryStage.setScene(new Scene(layout, 400, 400));
+    });
+}
 
     @Override
     public void toShowCurrentMenu() {
 
     }
+
 
 
     @Override
@@ -196,7 +235,7 @@ public class GuiJavaFx implements View {
     }
 
     @Override
-    public void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> playerInfo) {
+    public void showPlayersLobby( PlayerInfo myinfo , ArrayList<PlayerInfo> playerInfo) {
         //showGenericMessage("Player joined: " + playerInfo);
     }
 
@@ -235,7 +274,7 @@ public class GuiJavaFx implements View {
     }
 
     @Override
-    public void askShowFaceUpTiles() {
+    public void askShowFaceUpTiles()  {
 
     }
 
@@ -335,12 +374,17 @@ public class GuiJavaFx implements View {
     }
 
     @Override
-    public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
+    public void showFlightBoard(FlightBoard flightBoard,ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
 
     }
 
     @Override
     public void showCurrentAdventureCard() {
+
+    }
+
+    @Override
+    public void showFlightMenu() {
 
     }
 
@@ -366,7 +410,7 @@ public class GuiJavaFx implements View {
     }
 
     @Override
-    public void askDiscardCrew(int nCrewToDiscard, Ship myShip) {
+    public void askDiscardCrew(int nCrewToDiscard,Ship myShip) {
 
     }
 
@@ -374,8 +418,6 @@ public class GuiJavaFx implements View {
     public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
 
     }
-
-
 
     @Override
     public void showGenericMessage(String message) {
@@ -391,17 +433,12 @@ public class GuiJavaFx implements View {
     }
 
     @Override
-    public void askSelectGoodToLoad(ArrayList<Good>  goods , Ship myShip) {
+    public void askSelectGoodToLoad(ArrayList<Good> goods, Ship myShip) {
 
     }
 
     @Override
     public void askSelectGoodToDiscard(Ship myShip) {
-
-    }
-
-    @Override
-    public void showFlightMenu() {
 
     }
 

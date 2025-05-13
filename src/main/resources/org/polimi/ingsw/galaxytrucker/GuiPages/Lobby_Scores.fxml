@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.polimi.ingsw.galaxytrucker.view.Gui.CreateLobbyController">
+   <children>
+      <HBox prefHeight="0.0" prefWidth="644.0" style="-fx-background-color: DARKBLUE;" VBox.vgrow="ALWAYS" />
+      <HBox prefHeight="816.0" prefWidth="1920.0" style="-fx-background-color: DARKBLUE;" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox alignment="CENTER" prefHeight="600.0" prefWidth="644.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <ImageView fitHeight="203.0" fitWidth="408.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../galaxy_trucker_imgs/Logo.png" />
+                     </image>
+                     <effect>
+                        <Glow level="0.38" />
+                     </effect>
+                  </ImageView>
+                  <VBox prefHeight="24.0" prefWidth="644.0" />
+                  <HBox alignment="CENTER" prefHeight="645.0" prefWidth="1920.0">
+                     <children>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="593.0" prefWidth="680.0" style="-fx-background-radius: 20; -fx-background-color: linear-gradient(to right, #5225e6, #182ff5);">
+                           <children>
+                              <Label layoutX="107.0" layoutY="135.0" prefHeight="25.0" prefWidth="227.0" text="Attesa di 4 giocatori..., sottoscena per scelta troncone" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                                 <effect>
+                                    <DropShadow />
+                                 </effect>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="340.0" layoutY="135.0" prefHeight="25.0" prefWidth="161.0" text="Partita" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                                 <effect>
+                                    <DropShadow />
+                                 </effect>
+                              </Label>
+                              <Text fx:id="TxtError" fill="#ff5b5b" layoutX="25.0" layoutY="225.0" strokeType="OUTSIDE" strokeWidth="0.0">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Text>
+                              <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" layoutY="6.0" prefHeight="55.0" prefWidth="680.0" text="LOBBY n" textFill="#f9ff0d">
+                                 <font>
+                                    <Font name="System Bold" size="44.0" />
+                                 </font>
+                                 <effect>
+                                    <DropShadow height="26.86" offsetX="6.0" offsetY="6.0" radius="11.465">
+                                       <input>
+                                          <Glow level="0.55">
+                                             <input>
+                                                <GaussianBlur radius="0.1" />
+                                             </input>
+                                          </Glow>
+                                       </input>
+                                    </DropShadow>
+                                 </effect>
+                              </Label>
+                              <ImageView fitHeight="74.0" fitWidth="62.0" layoutX="511.0" layoutY="113.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../galaxy_trucker_imgs/ganzo.png" />
+                                 </image>
+                                 <effect>
+                                    <DropShadow />
+                                 </effect>
+                              </ImageView>
+                              <ImageView fitHeight="65.0" fitWidth="62.0" layoutX="470.0" layoutY="115.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../galaxy_trucker_imgs/sleepy.png" />
+                                 </image>
+                                 <effect>
+                                    <DropShadow />
+                                 </effect>
+                              </ImageView>
+                              <Text fill="#ff4949" layoutX="107.0" layoutY="596.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                              <Button fx:id="BtnConnect1" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="72.0" styleClass="transparent-button" stylesheets="@style.css" text="ESCI?" textFill="#def201">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Button>
+                              <AnchorPane layoutX="107.0" layoutY="218.0" prefHeight="65.0" prefWidth="466.0" styleClass="scroll-pane" stylesheets="@style.css">
+                                 <children>
+                                    <ImageView fitHeight="49.0" fitWidth="99.0" layoutX="20.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../galaxy_trucker_imgs/pedine/segnalini/AvatarBlu.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Text fill="WHITE" layoutX="192.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="paolo">
+                                       <font>
+                                          <Font name="System Bold" size="31.0" />
+                                       </font>
+                                    </Text>
+                                    <Text fill="WHITE" layoutX="99.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="HOST" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane layoutX="107.0" layoutY="302.0" prefHeight="65.0" prefWidth="466.0" styleClass="scroll-pane" stylesheets="@style.css" />
+                              <AnchorPane layoutX="107.0" layoutY="387.0" prefHeight="65.0" prefWidth="466.0" styleClass="scroll-pane" stylesheets="@style.css" />
+                              <AnchorPane layoutX="107.0" layoutY="475.0" prefHeight="65.0" prefWidth="466.0" styleClass="scroll-pane" stylesheets="@style.css" />
+                           </children>
+                           <effect>
+                              <DropShadow height="90.86" offsetX="10.0" offsetY="10.0" radius="45.785" spread="0.3" width="94.28">
+                                 <color>
+                                    <Color red="0.14000000059604645" green="0.1316000074148178" blue="0.1316000074148178" opacity="0.4770992398262024" />
+                                 </color>
+                              </DropShadow>
+                           </effect>
+                        </AnchorPane>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox prefHeight="8.0" prefWidth="644.0" style="-fx-background-color: DARKBLUE;" VBox.vgrow="ALWAYS" />
+   </children>
+</VBox>

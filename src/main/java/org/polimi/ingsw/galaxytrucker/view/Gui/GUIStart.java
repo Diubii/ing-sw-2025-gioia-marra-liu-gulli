@@ -2,9 +2,13 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
-import org.polimi.ingsw.galaxytrucker.view.Gui.GUIStart;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
 
 public class GUIStart extends Application {
 
@@ -15,6 +19,10 @@ public class GUIStart extends Application {
         controller.setView(gui);
 
         primaryStage.setTitle("Galaxy Trucker - GUI");
+        Image icon = new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/Seduto.png").toString());
+        primaryStage.getIcons().add(icon);
+        //primaryStage.resizableProperty().setValue(Boolean.FALSE);
+
         gui.askServerInfo(); // Prima scena da mostrare
         primaryStage.show();
     }
