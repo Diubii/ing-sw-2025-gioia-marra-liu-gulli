@@ -9,4 +9,6 @@ public abstract class GenericSceneController {
 
     public abstract void initialSetup(GuiJavaFx mainViewController,ClientController clientController, Stage primaryStage);
 
+    public abstract void ShowGenericMessage(String message);
+
 }

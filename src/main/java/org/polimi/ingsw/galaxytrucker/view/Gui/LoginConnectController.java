@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
@@ -13,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 public class LoginConnectController extends GenericSceneController {
 
-    @FXML private Text TxtError;
+    @FXML private Label TxtError;
     @FXML private javafx.scene.control.TextField TxfServerAddr;
     @FXML private javafx.scene.control.TextField TxfPort;
     @FXML private javafx.scene.control.TextField TxfNickname;
@@ -31,6 +32,10 @@ public class LoginConnectController extends GenericSceneController {
         this.primaryStage = primaryStage;
         this.mainViewController = mainViewController;
         TxfPort.setPromptText(this.clientController.getIsSocket() ? "Default Socket: 5000" : "Default RMI: 1099");
+    }
+
+    public void ShowGenericMessage(String message){
+        TxtError.setText(message);
     }
 
 

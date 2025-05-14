@@ -32,6 +32,8 @@ public class GuiJavaFx implements View {
 
     private final Stage primaryStage;
     private final ClientController controller;
+    private GenericSceneController actualPageController;
+    private Scene actualeScene;
 
 
     public GuiJavaFx(Stage primaryStage, ClientController controller) {
@@ -76,8 +78,9 @@ public class GuiJavaFx implements View {
             //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
             LoginConnectController pageController = loader.getController();
             pageController.initialSetup(this,controller,primaryStage);
-            Scene scene = new Scene(root);
-            primaryStage.setScene(scene);
+            actualPageController = pageController;
+            actualeScene = new Scene(root);
+            primaryStage.setScene(actualeScene);
         });
     }
     @Override
@@ -113,10 +116,12 @@ public class GuiJavaFx implements View {
             //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
             MainMenuController pageController = loader.getController();
             pageController.initialSetup(this,controller,primaryStage);
-            Scene scene = new Scene(root);
+            actualPageController = pageController;
+            actualeScene = new Scene(root,actualeScene.getWidth(),actualeScene.getHeight());
 
-            // primaryStage.setFullScreen(true);// primaryStage.setMaximized(true);
-            primaryStage.setScene(scene);
+            // primaryStage.setMaximized(true);
+            primaryStage.setScene(actualeScene);
+            primaryStage.setFullScreen(true);
         });
         /*Platform.runLater(() -> {
             VBox layout = new VBox(10);
@@ -157,11 +162,12 @@ public class GuiJavaFx implements View {
             //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
             CreateLobbyController pageController = loader.getController();
             pageController.initialSetup(this,controller,primaryStage);
-            Scene scene = new Scene(root);
+            actualPageController = pageController;
+            actualeScene = new Scene(root,actualeScene.getWidth(),actualeScene.getHeight());
 
             // primaryStage.setFullScreen(true);// primaryStage.setMaximized(true);
-            primaryStage.setScene(scene);
-
+            primaryStage.setScene(actualeScene);
+            primaryStage.setFullScreen(true);
             /*VBox layout = new VBox(10);
             TextField players = new TextField();
             players.setPromptText("Max Players (2-4)");
@@ -422,8 +428,10 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void showGenericMessage(String message) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
-            alert.showAndWait();
+            actualPageController.ShowGenericMessage(message);
+            //Ogni page controller gestisce come mostrare
+            // Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
+           // alert.showAndWait();
         });
     }
 
