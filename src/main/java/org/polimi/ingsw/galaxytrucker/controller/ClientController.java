@@ -110,9 +110,9 @@ public class ClientController implements Observer {
 
             message.accept(messageVisitor);
         } catch (Exception e) {
-
+            //TODO: gestire crash server
             System.err.println("[Error] The message was not processed correctly: " + e.getMessage());
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -401,7 +401,7 @@ public class ClientController implements Observer {
             case "b" -> {
                 if (!myModel.isLearningMatch()) {
 
-                    if(isPlaced) {
+                    if(isPlaced || currentTileInHand == null) {
                         try {
                             view.askViewAdventureDecks();
                             sendShipUpdate();

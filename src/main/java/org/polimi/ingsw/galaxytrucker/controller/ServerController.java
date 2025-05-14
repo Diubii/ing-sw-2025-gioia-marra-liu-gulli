@@ -1013,7 +1013,6 @@ public class ServerController {
         String nickname = getNicknameFromClientHandler(clientHandler);
         GameController gameController = myGame.getGameController();
 
-        try {
             myGame.getGameController().removePlayerFromGame(nickname, true);
             new Thread(() -> {
 //                myGame.getGameController().handleTurnBeforeDrawnCard();
@@ -1022,9 +1021,6 @@ public class ServerController {
                     gameController.sendMatchInfoUpdate();
                 }
             }).start();
-        } catch (PlayerNotFoundException e) {
-            throw new RuntimeException(e);
-        }
 
     }
 

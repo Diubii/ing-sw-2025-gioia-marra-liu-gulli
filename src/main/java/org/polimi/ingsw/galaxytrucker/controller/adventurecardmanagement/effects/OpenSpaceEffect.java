@@ -51,11 +51,7 @@ public abstract class OpenSpaceEffect {
 
         playerToPowerMap.forEach((nickname, power) -> {
             if (power == 0) {
-                try {
-                    game.getGameController().removePlayerFromGame(nickname, false);
-                } catch (PlayerNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+                game.getGameController().removePlayerFromGame(nickname, false);
             }
         });
 

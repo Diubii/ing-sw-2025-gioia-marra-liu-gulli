@@ -82,7 +82,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
 
                     executor.submit(() -> {
                         try {
-                            serverController.getMessageManager().handle(message, this);
+                            serverController.getMessageManager().handle(message, this);  //Semplicemente visitor
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

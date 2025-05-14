@@ -34,24 +34,25 @@ public class SmugglersEffect {
             //info2.setIsTurn(true);
 
 
-            ArrayList<Good> twoGoods = Util.getMostValuableGoods(player.getShip());
+            ArrayList<Good> mostValuableGoods = Util.getMostValuableGoods(player.getShip());
             //ho rimosso le merci piu importanti
-            int nullGoods = 0;
-            for (Good good : twoGoods) {
-                if (good == null) nullGoods++;
-            }
+            int numberOfGoods = mostValuableGoods.size();
 
 
             //in base alle merci che ho levato decido quante batterie rimuovere
-            if (nullGoods == 1) {Util.removeTwoBatteries(player.getShip(), true); info2.setMessage("Removed your most valuable good and one battery (if it's present)");}
-            if (nullGoods == 2) {Util.removeTwoBatteries(player.getShip(), false); info2.setMessage("Could not remove Goods, batteries were taken instead");}
-            if (nullGoods == 0) info2.setMessage("Removed your two most valuable goods!");
+            if (numberOfGoods == 2) info2.setMessage("[Smugglers] Ha ha! We'll steal your two most valuable goods!");
+            if (numberOfGoods == 1) {
+                Util.removeTwoBatteries(player.getShip(), true);
+                info2.setMessage("[Smugglers] We'll steal your most valuable good and one battery, if you have it.");
+            }
+            if (numberOfGoods == 0) {
+                Util.removeTwoBatteries(player.getShip(), false);
+                info2.setMessage("[Smugglers] You don't have any goods, so we'll steal two of your batteries! Well, if you have any, poor fella.");
+            }
 
             game.getPlayerHandlers().get(player.getNickName()).sendMessage(info2);
 
             context.previousPhase();
-            context.nextPlayer();
-            context.executePhase();
         }
         else if (smugglers.getFirePower() < player.getShip().calculateFirePower()){
             GameMessage personalMessage = new GameMessage("You won against the Smugglers!"); //personalMessage.setIsTurn(true);
@@ -71,15 +72,15 @@ public class SmugglersEffect {
             game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
 
             context.previousPhase();
-            context.nextPlayer();
-            context.executePhase();
         }
 
         if(context.currentPlayerIsLast()){
             //Execute CommonEffects::end
             context.goToEndPhase();
-            context.executePhase();
         }
+
+        context.nextPlayer();
+        context.executePhase();
     }
 
     public static void receivedRewardsCollectionResponse(CardContext context){

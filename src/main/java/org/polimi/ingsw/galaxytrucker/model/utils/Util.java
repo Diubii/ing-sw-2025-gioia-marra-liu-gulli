@@ -70,8 +70,8 @@ public class Util {
         ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
         }).stream().toList());
         ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
-        cardsToTest.add(list.get(2));
-        cardsToTest.add(list.get(3));
+        cardsToTest.add(list.get(1)); //Slavers
+        //cardsToTest.add(list.get(3));
 //        cardsToTest.add(list.get(4)); //Open Space
         cardsToTest.add(list.get(31)); //Planets
         cardsToTest.add(list.get(3)); //Stardust
@@ -449,7 +449,11 @@ public class Util {
             index++;
         }
 
-        return new ArrayList<>(List.of(firstGood, secondGood));
+        ArrayList<Good> goods = new ArrayList<>();
+        if(firstGood != null) goods.add(firstGood);
+        if(secondGood != null) goods.add(secondGood);
+
+        return goods;
 
     }
 

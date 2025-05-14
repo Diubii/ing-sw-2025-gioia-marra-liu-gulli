@@ -36,7 +36,7 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
 
 
     @Override
-    public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws IOException, ExecutionException, InterruptedException {
+    public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI){
         NetworkMessageType type = message.accept(nmnv);
 
 //            if (message.accept(new NetworkMessageNameVisitor()).equals(NetworkMessageType.FinishBuildingRequest)){

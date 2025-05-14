@@ -444,8 +444,8 @@ public class Ship implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 7; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 5; j++) {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
 
                     if (shipBoard[i][j].getTile().getWellConnected()) {
@@ -1140,8 +1140,8 @@ public class Ship implements Serializable {
         ArrayList<Good> goods = new ArrayList<>();
         ComponentNameVisitor visitor = new ComponentNameVisitor();
 
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 7; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 5; j++) {
                 Slot slot = shipBoard[i][j];
                 if (slot != null && slot.getTile() != null) {
                     Component component = slot.getTile().getMyComponent();

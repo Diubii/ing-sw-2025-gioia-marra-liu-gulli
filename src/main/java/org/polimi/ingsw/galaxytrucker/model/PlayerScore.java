@@ -11,7 +11,7 @@ public class PlayerScore implements Serializable {
 
     private final String nickName;
     private final int bestLookingShipScore;
-    private final int fishOrderScore;
+    private final int finishOrderScore;
     private final int goodRewardScore;
     private final int lossesScore;
     private final int credits;
@@ -19,18 +19,18 @@ public class PlayerScore implements Serializable {
 
     public PlayerScore(String nickName,
                        int bestLookingShipScore,
-                       int fishOrderScore,
+                       int finishOrderScore,
                        int goodRewardScore,
                        int lossesScore,
                        int credits) {
 
         this.nickName = nickName;
         this.bestLookingShipScore = bestLookingShipScore;
-        this.fishOrderScore = fishOrderScore;
+        this.finishOrderScore = finishOrderScore;
         this.goodRewardScore = goodRewardScore;
         this.lossesScore = lossesScore;
         this.credits = credits;
-        this.totalScore = bestLookingShipScore + fishOrderScore + goodRewardScore - lossesScore + credits;
+        this.totalScore = bestLookingShipScore + finishOrderScore + goodRewardScore - lossesScore + credits;
     }
     @NeedsToBeCompleted
 
@@ -42,8 +42,8 @@ public class PlayerScore implements Serializable {
     public int getBestLookingShipScore() {
         return bestLookingShipScore;
     }
-    public int getFishOrderScore() {
-        return fishOrderScore;
+    public int getFinishOrderScore() {
+        return finishOrderScore;
     }
     public int getGoodRewardScore() {
         return goodRewardScore;

@@ -132,24 +132,20 @@ public class GameController {
         CardContext context = new CardContext(game, drawnAdventureCard);
         currentCardContext = context;
         context.executePhase();
-
-
-
     }
 
     public void handleEndTurn(){
+        clearPlayersWithNoCrew();
+        clearLappedPlayers();
 
         CardDeck cardDeck = getCardDeckTest();
         EndTurnUpdate etu = new EndTurnUpdate();
-        //invare end turn update
-        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
-          return;
-        }
-
-        if (cardDeck.getSize() ==0 ){
+        //inviare end turn update
+        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty() || cardDeck.getSize() == 0) {
             etu.setEndGame(true);
             game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(etu));
             handleEndGame();
+            return;
         }
         else{
             etu.setEndGame(false);
@@ -158,11 +154,15 @@ public class GameController {
 
         game.resetReadyPlayers();
         currentCardContext = null;
-
     }
 
 
-
+    public void handleEndGame() {
+        List<PlayerScore> scores = calculateScores();
+        GameEndUpdate geu = new GameEndUpdate(new ArrayList<>(scores));
+        game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(geu));
+//        game.setFinished(true);
+    }
 
     public List<PlayerScore> calculateScores() {
         List<Player> players = game.getRealGame().getPlayers();
@@ -175,7 +175,7 @@ public class GameController {
         return players.stream()
                 .map(player -> {
                     int bestLooking = player.getShip().getnExposedConnector() == minExposed ? 2 : 0;
-                    int fishOrder = calculateFinishOrderScore(player);
+                    int finishOrder = calculateFinishOrderScore(player);
                     int reward = calculateGoodRewardScore(player);
                     int losses = calculateLossesScore(player);
                     int credits = player.getNCredits();
@@ -183,7 +183,7 @@ public class GameController {
                     return new PlayerScore(
                             player.getNickName(),
                             bestLooking,
-                            fishOrder,
+                            finishOrder,
                             reward,
                             losses,
                             credits
@@ -203,7 +203,6 @@ public class GameController {
             int nPlayers = game.getRealGame().getPlayers().size();
             score= nPlayers - playerIndex;
             return score;
-
         }
 
     }
@@ -229,25 +228,7 @@ public class GameController {
         return score;
     }
 
-
-    public void handleEndGame() {
-        List<PlayerScore> scores = calculateScores();
-        GameEndUpdate geu = new GameEndUpdate(new ArrayList<>(scores));
-        game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(geu));
-
-
-
-//        game.setFinished(true);
-    }
-    @NeedsToBeCompleted
-    public void completeCardDrawn() {
-        if (cardDrawn != null) {
-            cardDrawn.complete(null);
-        }
-
-    }
-
-    public void removePlayerFromGame(String nickname, boolean isLandingEarly) throws PlayerNotFoundException {
+    public void removePlayerFromGame(String nickname, boolean isLandingEarly) {
         game.getRealGame().getPlayer(nickname).setPlayerState(PlayerState.Spectating);
         game.getRealGame().getFlightBoard().removePlayer(game.getPlayerColors().get(nickname));
 
@@ -401,5 +382,21 @@ public class GameController {
 
     public Player nextPlayer() {
         return rankedPlayersIterator.next();
+    }
+
+    public void clearPlayersWithNoCrew(){
+        for(Player player : game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()) {
+            if(player.getShip().getnCrew() == 0){
+                removePlayerFromGame(player.getNickName(), false);
+            }
+        }
+    }
+
+    public void clearLappedPlayers() {
+        for(Color color : game.getRealGame().getFlightBoard().getRankedPlayers()) {
+            if(game.getRealGame().getFlightBoard().isPlayerLapped(color)){
+                removePlayerFromGame(game.getNicknameFromColor(color), false);
+            }
+        }
     }
 }

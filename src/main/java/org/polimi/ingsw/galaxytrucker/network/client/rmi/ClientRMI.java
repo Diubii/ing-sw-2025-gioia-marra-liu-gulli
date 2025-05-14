@@ -38,7 +38,7 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Couldn't create the ClientRMI: " + e.getMessage());
         }
     }
 

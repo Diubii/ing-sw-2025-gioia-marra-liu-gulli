@@ -39,8 +39,8 @@ public class ClientSocket implements Client, Observable {
 
     public void sendMessage(NetworkMessage message) throws IOException {
         outputStream.writeObject(message);
-        outputStream.flush();  // << Aggiungi questo!
-        outputStream.reset();  // reset serve se mandi oggetti modificati
+        outputStream.flush();
+        outputStream.reset();  // reset serve se mandiamo oggetti modificati
     }
 
     public void receiveMessage() {
