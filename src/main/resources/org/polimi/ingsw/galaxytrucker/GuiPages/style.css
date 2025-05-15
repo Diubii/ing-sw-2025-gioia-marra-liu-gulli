@@ -36,6 +36,49 @@
     -fx-background-color: rgba(0, 0, 0, 0.8);
 }
 
+.button-confirm{
+    -fx-background-color: rgb(51, 204, 51);
+    -fx-border-color: white;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-text-fill: white;
+    -fx-border-width: 2;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.button-confirm:hover{
+    -fx-background-color: rgb(20, 185, 20)
+}
+
+.button-confirm:pressed{
+    -fx-background-color: rgb(0, 153, 0)
+}
+
+.button-cancel{
+    -fx-background-color: rgb(220, 51, 0);
+    -fx-border-color: white;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-text-fill: white;
+    -fx-border-width: 2;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.button-cancel:hover{
+    -fx-background-color: rgb(190, 51, 0);
+}
+
+.button-cancel:pressed{
+    -fx-background-color: rgb(150, 20, 0);
+}
+
+
+
+
+
+
 
 .radio-button {
     -fx-background-color: transparent;
@@ -76,6 +119,9 @@
 .scroll-pane .viewport {
     -fx-background-color: rgba(0, 0, 0, 0.2);
     -fx-background-radius: 15;
+    -fx-border-color: rgba(0, 0, 0, 0.2);
+    -fx-border-radius: 15;
+    -fx-border-width: 5;
 }
 
 .anchor-pane-for-scroll{

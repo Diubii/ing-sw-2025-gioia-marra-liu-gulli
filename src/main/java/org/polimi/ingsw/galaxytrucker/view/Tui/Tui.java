@@ -272,6 +272,7 @@ public class Tui implements View, Observable {
         if (lobbies.isEmpty()) {
             synchronized (outputLock) {
                 out.println(" No game rooms, Returning to main menu. ");
+                askJoinOrCreateRoom();
             }
             return;
         }

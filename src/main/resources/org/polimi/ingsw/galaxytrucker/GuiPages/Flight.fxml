@@ -81,7 +81,7 @@
                            <children>
                               <ImageView fitHeight="21.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../galaxy_trucker_imgs/pedine/segnalini/AvatarBlu.png" />
+                                    <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                                  </image>
                               </ImageView>
                               <Label text="Label" />
@@ -95,7 +95,7 @@
                            <children>
                               <ImageView fitHeight="21.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../galaxy_trucker_imgs/pedine/segnalini/AvatarBlu.png" />
+                                    <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                                  </image>
                               </ImageView>
                               <Label text="Label" />
@@ -109,7 +109,7 @@
                            <children>
                               <ImageView fitHeight="21.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../galaxy_trucker_imgs/pedine/segnalini/AvatarBlu.png" />
+                                    <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                                  </image>
                               </ImageView>
                               <Label text="Label" />
@@ -123,7 +123,7 @@
                            <children>
                               <ImageView fitHeight="21.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../galaxy_trucker_imgs/pedine/segnalini/AvatarBlu.png" />
+                                    <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                                  </image>
                               </ImageView>
                               <Label text="Label" />

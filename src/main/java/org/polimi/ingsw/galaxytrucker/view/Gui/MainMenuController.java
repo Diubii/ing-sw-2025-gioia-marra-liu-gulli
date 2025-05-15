@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -21,41 +22,26 @@ public class MainMenuController extends GenericSceneController {
     @FXML private Label TxtErr;
 
     private GuiJavaFx mainViewController;
-    private Stage primaryStage;
     private ClientController clientController;  // Riferimento al controller del client
+    private Stage primaryStage;
+    private MusicManager musicManager;
 
-    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController, Stage primaryStage) {
+
+    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController,Stage primaryStage, MusicManager musicManager) {
+        this.mainViewController = mainViewController;
         this.clientController = clientController;
         this.primaryStage = primaryStage;
-        this.mainViewController = mainViewController;
-        playWavSound("NGGYU.wav");
+        this.musicManager = musicManager;
     }
 
     public void ShowGenericMessage(String message) {
         TxtErr.setText(message);
     }
 
-    private static void playWavSound(String sound){
-            try {
-                InputStream raw = MainMenuController.class.getResourceAsStream("/org/polimi/ingsw/galaxytrucker/Sounds/"+sound);
-                if (raw == null) {
-                    throw new IllegalArgumentException("File audio non trovato!");
-                }
 
-                // Wrappa in BufferedInputStream
-                BufferedInputStream bufferedIn = new BufferedInputStream(raw);
-
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
-
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioStream);
-                clip.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-    }
 
     public void newLobby(ActionEvent e) {
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         try{
             clientController.handleCreateOrJoinChoice("a");
         }catch (Exception ex){
@@ -64,21 +50,21 @@ public class MainMenuController extends GenericSceneController {
     }
 
     public void listLobby(ActionEvent e) {
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         try{
-
+            clientController.handleCreateOrJoinChoice("b");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     public void exit(ActionEvent e) {
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         //Chiamate a clientController per disconnessione se serve
-
-        //Chiusura tutto, ad esempio la musica va fermata
-
-        //chiusura finestra
-        primaryStage.close();
+        mainViewController.CloseApplication();
     }
+
+
 
 
 }

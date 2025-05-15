@@ -279,8 +279,7 @@ public class ClientController implements Observer {
                 List<LobbyInfo> lobbies = response.getLobbyInfos();
 
                 if (lobbies.isEmpty()) {
-                    view.showGenericMessage("No lobbies found. Try creating a new one.");
-                    view.askJoinOrCreateRoom();
+                    view.showLobbies(lobbies);
                 } else {
                     view.showLobbies(lobbies);
                     view.askRoomCode();

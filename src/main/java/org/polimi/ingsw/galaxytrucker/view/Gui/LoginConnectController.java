@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -20,17 +21,21 @@ public class LoginConnectController extends GenericSceneController {
     @FXML private javafx.scene.control.TextField TxfNickname;
 
     private GuiJavaFx mainViewController;
-    private  Stage primaryStage;
     private ClientController clientController;  // Riferimento al controller del client
+    private Stage primaryStage;
+    private  MusicManager musicManager;
+
 
     public LoginConnectController() {}
 
 
     // Metodo per impostare il riferimento al controller del client
-    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController, Stage primaryStage) {
+    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController,Stage primaryStage, MusicManager musicManager) {
+        this.mainViewController = mainViewController;
         this.clientController = clientController;
         this.primaryStage = primaryStage;
-        this.mainViewController = mainViewController;
+        this.musicManager = musicManager;
+
         TxfPort.setPromptText(this.clientController.getIsSocket() ? "Default Socket: 5000" : "Default RMI: 1099");
     }
 
@@ -40,6 +45,7 @@ public class LoginConnectController extends GenericSceneController {
 
 
     public void ConnectToServer(ActionEvent e) {
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         int port;
         String address = TxfServerAddr.getText().trim();
 
@@ -59,7 +65,6 @@ public class LoginConnectController extends GenericSceneController {
         }
         //Si effettua connessione
         try{
-            //Todo: Mattia dovrebbe lanciare eccezioni non fare direttamente view.ShowGenericMessage
             clientController.handleServerInfo(new SERVER_INFO(address, port));
         } catch (Exception ex) {
             TxfPort.setText(ex.toString());

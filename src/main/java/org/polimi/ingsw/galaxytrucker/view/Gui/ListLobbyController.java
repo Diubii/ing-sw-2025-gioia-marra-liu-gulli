@@ -1,25 +1,66 @@
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SingleLobbyInfo;
+
+import java.io.IOException;
+import java.util.List;
 
 public class ListLobbyController extends GenericSceneController{
 
-    @FXML  private Text TxtErr;
+    @FXML  private Label TxtErr;
+    @FXML private VBox PnlLobbies;
     private GuiJavaFx mainViewController;
-    private Stage primaryStage;
     private ClientController clientController;  // Riferimento al controller del client
+    private Stage primaryStage;
+    private MusicManager musicManager;
 
-    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController, Stage primaryStage) {
+
+    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController,Stage primaryStage, MusicManager musicManager) {
+        this.mainViewController = mainViewController;
         this.clientController = clientController;
         this.primaryStage = primaryStage;
-        this.mainViewController = mainViewController;
+        this.musicManager = musicManager;
     }
 
     public void ShowGenericMessage(String message) {
         TxtErr.setText(message);
+    }
+
+
+    public void backToMainMenu(ActionEvent e) {
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
+        mainViewController.askJoinOrCreateRoom();
+    }
+
+    public void UpdateLobbyList(List<LobbyInfo> lobbies){
+        for (LobbyInfo info : lobbies) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SingleLobbyInfo.fxml"));
+                Parent lobbyNode = loader.load();
+
+                SingleLobbyInfo controller = loader.getController();
+                controller.setData(info.getLobbyID(), info.getHost(), info.getConnectedPlayers(), info.getMaxPlayers(),info.isLearningMatch());
+
+                controller.getJoinButton().setOnAction(e -> clientController.handleJoinChoice(info.getLobbyID()));
+
+                PnlLobbies.getChildren().add(lobbyNode);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

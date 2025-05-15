@@ -1,0 +1,4 @@
+.lobby-pane{
+    -fx-background-color: rgba(120, 80, 255, 0.5);
+    -fx-background-radius: 15;
+}

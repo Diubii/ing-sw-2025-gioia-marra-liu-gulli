@@ -101,7 +101,7 @@
                                  <children>
                                     <ImageView fitHeight="49.0" fitWidth="99.0" layoutX="20.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../galaxy_trucker_imgs/pedine/segnalini/AvatarBlu.png" />
+                                          <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                                        </image>
                                     </ImageView>
                                     <Text fill="WHITE" layoutX="192.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="paolo">

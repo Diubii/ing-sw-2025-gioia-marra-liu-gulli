@@ -11,7 +11,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
@@ -21,26 +23,95 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Dialogs.ConfirmDialogController;
 import org.polimi.ingsw.galaxytrucker.view.View;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class GuiJavaFx implements View {
 
     private final Stage primaryStage;
+    private  Scene primaryScene;
     private final ClientController controller;
     private GenericSceneController actualPageController;
-    private Scene actualeScene;
+    private MusicManager musicManager;
+    private Boolean firstTimeMainMenu = true;
 
 
-    public GuiJavaFx(Stage primaryStage, ClientController controller) {
+    public GuiJavaFx(Stage primaryStage, ClientController controller,Scene primaryScene) {
         this.primaryStage = primaryStage;
         this.controller = controller;
+        this.primaryScene = primaryScene;
+        musicManager= new MusicManager();
+        primaryStage.setOnCloseRequest(event -> {
+            playWavSoundEffect("nenenee.wav");
+            if (ShowCustomConfirmDialog("Vuoi davvero andartene?")) {
+                CloseApplication();
+            } else {
+                event.consume(); // annulla la chiusura
+            }
+        });
     }
 
+    static void playWavSoundEffect(String sound){
+        try {
+            InputStream raw = MainMenuController.class.getResourceAsStream("/org/polimi/ingsw/galaxytrucker/Sounds/SoundEffects/"+sound);
+            if (raw == null) {
+                throw new IllegalArgumentException("File audio non trovato!");
+            }
+
+            // Wrappa in BufferedInputStream
+            BufferedInputStream bufferedIn = new BufferedInputStream(raw);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Boolean ShowCustomConfirmDialog( String message) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
+            Parent page = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Conferma");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.initStyle(StageStyle.UTILITY);
+            dialogStage.setResizable(false);
+            dialogStage.setScene(new Scene(page));
+
+            ConfirmDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setMessage(message);
+
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void CloseApplication(){
+        musicManager.stopBackgroundMusic();
+        primaryStage.close();
+        Platform.exit();
+        System.exit(0);
+    }
 
     //<editor-fold desc="FOLD: LoginConnect">
     public void askServerInfo() {
@@ -66,21 +137,24 @@ public class GuiJavaFx implements View {
 
         Platform.runLater(() -> {
             System.out.println("DEBUG: askServerInfo");
-            //1-Prima caricare FXML
+
             Parent root;
             FXMLLoader loader;
-            try{
+            try {
+                //1-Prima caricare FXML
                 loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/LoginConnect.fxml"));
                 root = loader.load();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                LoginConnectController pageController = loader.getController();
+                pageController.initialSetup(this,controller,primaryStage,musicManager);
+                actualPageController = pageController;
+                //3-impostare la nuova root alla scena principale
+                primaryScene.setRoot(root);
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-            LoginConnectController pageController = loader.getController();
-            pageController.initialSetup(this,controller,primaryStage);
-            actualPageController = pageController;
-            actualeScene = new Scene(root);
-            primaryStage.setScene(actualeScene);
+
         });
     }
     @Override
@@ -102,26 +176,30 @@ public class GuiJavaFx implements View {
 
     @Override
     public void askJoinOrCreateRoom() {
+        System.out.println("DEBUG: askJoinOrCreateRoom");
         Platform.runLater(() -> {
-            System.out.println("DEBUG: askJoinOrCreateRoom");
-            //1-Prima caricare FXML
             Parent root;
             FXMLLoader loader;
-            try{
+            try {
+                //1-Prima caricare FXML
                 loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/MainMenu.fxml"));
                 root = loader.load();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                MainMenuController pageController = loader.getController();
+                pageController.initialSetup(this,controller,primaryStage,musicManager);
+                actualPageController = pageController;
+                //3-impostare la nuova root alla scena principale
+                primaryScene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-            MainMenuController pageController = loader.getController();
-            pageController.initialSetup(this,controller,primaryStage);
-            actualPageController = pageController;
-            actualeScene = new Scene(root,actualeScene.getWidth(),actualeScene.getHeight());
-
-            // primaryStage.setMaximized(true);
-            primaryStage.setScene(actualeScene);
-            primaryStage.setFullScreen(true);
+            //Di default passato a FullScreen quandoe entra il Main Menu
+            if(firstTimeMainMenu){
+                firstTimeMainMenu = false;
+                primaryStage.setFullScreen(true);
+            }
+            //Todo Riattivare musica
+           // musicManager.playBackgroundMusic("CRMIntroMenu.wav",true);
         });
         /*Platform.runLater(() -> {
             VBox layout = new VBox(10);
@@ -148,26 +226,25 @@ public class GuiJavaFx implements View {
 
     @Override
     public void askCreateRoom() {
+        System.out.println("DEBUG: askJoinOrCreateRoom");
         Platform.runLater(() -> {
-            System.out.println("DEBUG: askJoinOrCreateRoom");
-            //1-Prima caricare FXML
             Parent root;
             FXMLLoader loader;
-            try{
+            try {
+                //1-Prima caricare FXML
                 loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/CreateLobby.fxml"));
                 root = loader.load();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                CreateLobbyController pageController = loader.getController();
+                pageController.initialSetup(this,controller,primaryStage,musicManager);
+                actualPageController = pageController;
+                //3-impostare la nuova root alla scena principale
+                primaryScene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-            CreateLobbyController pageController = loader.getController();
-            pageController.initialSetup(this,controller,primaryStage);
-            actualPageController = pageController;
-            actualeScene = new Scene(root,actualeScene.getWidth(),actualeScene.getHeight());
+        });
 
-            // primaryStage.setFullScreen(true);// primaryStage.setMaximized(true);
-            primaryStage.setScene(actualeScene);
-            primaryStage.setFullScreen(true);
             /*VBox layout = new VBox(10);
             TextField players = new TextField();
             players.setPromptText("Max Players (2-4)");
@@ -183,7 +260,7 @@ public class GuiJavaFx implements View {
             });
             layout.getChildren().addAll(players, learning, create);
             primaryStage.setScene(new Scene(layout, 300, 200));*/
-        });
+
     }
 
     @Override
@@ -196,6 +273,26 @@ public class GuiJavaFx implements View {
 
 @Override
 public void showLobbies(List<LobbyInfo> lobbies) {
+    System.out.println("DEBUG: askJoinOrCreateRoom");
+    Platform.runLater(() -> {
+        Parent root;
+        FXMLLoader loader;
+        try {
+            //1-Prima caricare FXML
+            loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/ListLobby.fxml"));
+            root = loader.load();
+            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+            ListLobbyController pageController = loader.getController();
+            pageController.initialSetup(this,controller,primaryStage,musicManager);
+            pageController.UpdateLobbyList(lobbies);
+            actualPageController = pageController;
+            //3-impostare la nuova root alla scena principale
+            primaryScene.setRoot(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    });
+    /*
     Platform.runLater(() -> {
         //Può passare lista lobby a controller pagina da metodo inizializzazione
         VBox layout = new VBox(10);
@@ -226,6 +323,8 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
         primaryStage.setScene(new Scene(layout, 400, 400));
     });
+    */
+
 }
 
     @Override
