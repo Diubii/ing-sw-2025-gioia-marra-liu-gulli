@@ -23,7 +23,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVis
  * This class includes common shared methods among the cards' effects methods.
  */
 public abstract class Utils {
-    private static NetworkMessageCouplingVisitor networkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
+    private final static NetworkMessageCouplingVisitor networkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
 
     /**
      * Moves a specific player in the game's flight board and sends an update to all clients.
@@ -144,5 +144,18 @@ public abstract class Utils {
                     return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
                 } else return false;
             });
+    }
+
+    protected static int getCorrectedDiceRoll(int diceRoll, ProjectileDirection direction){
+        switch (direction) {
+            case UP, DOWN -> {
+                return diceRoll - 4;
+            }
+            case LEFT, RIGHT -> {
+                return diceRoll - 5;
+            }
+
+            default -> throw new IllegalArgumentException("Invalid direction");
+        }
     }
 }

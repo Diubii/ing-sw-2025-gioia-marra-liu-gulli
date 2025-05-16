@@ -29,6 +29,8 @@ public class PiratesEffect {
     private final static HashMap<LobbyManager, Integer> projectileIndexes = new HashMap<>();
     private final static HashMap<LobbyManager, ArrayList<Ship>> trunksPerGame = new HashMap<>();
 
+    private final static Random rand = new Random();
+
     public static void firePowerCheck(CardContext context) {
         LobbyManager game = context.getCurrentGame();
         Pirates pirates = (Pirates) context.getAdventureCard();
@@ -136,13 +138,7 @@ public class PiratesEffect {
         int projectileIndex = projectileIndexes.get(game);
         Projectile projectile = pirates.getCannonFires().get(projectileIndex);
 
-        Random rand = new Random();
-        int diceRoll = rand.nextInt(2, 13);
-
-        switch (projectile.getDirection()) {
-            case UP, DOWN -> diceRoll -= 4;
-            case LEFT, RIGHT -> diceRoll -= 5;
-        }
+        int diceRoll = getCorrectedDiceRoll(rand.nextInt(2, 13), projectile.getDirection());
 
         //TEST
 //        int diceRoll = 0;

@@ -18,18 +18,20 @@ import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.
 public abstract class MeteorSwarmEffect {
     private final static HashMap<LobbyManager, Integer> projectileCounters = new HashMap<>();
     private final static HashMap<LobbyManager, Integer> diceRolls = new HashMap<>();
+    private final static Random rand = new Random();
 
     public static void sendActivateComponentRequests(CardContext context) {
         LobbyManager game = context.getCurrentGame();
         MeteorSwarm meteorSwarm = (MeteorSwarm) context.getAdventureCard();
 
-        int diceRoll = new Random().nextInt(2, 13);
-        diceRolls.put(game, diceRoll);
+        int diceRoll = rand.nextInt(2, 13);
 
         int projectileIndex = projectileCounters.computeIfAbsent(game, _ -> 0);
         Projectile projectile = meteorSwarm.getMeteors().get(projectileIndex);
 
         broadcastGameMessage(context, "Stai per essere colpito da un " + projectile.getType().name() + " da " + projectile.getDirection().name() + ", indice " + diceRoll + "!");
+
+        diceRolls.put(game, getCorrectedDiceRoll(diceRoll, projectile.getDirection())); //Inserisco nei diceRolls l'actual index
 
         ActivateComponentRequest activateShieldsRequest = new ActivateComponentRequest(ActivatableComponent.Shield);
         ActivateComponentRequest activateDoubleCannonsRequest = new ActivateComponentRequest(ActivatableComponent.DoubleCannon);
@@ -75,6 +77,7 @@ public abstract class MeteorSwarmEffect {
 
         //FSM management
         if (projectileIndex < meteorSwarm.getMeteors().size() - 1) {
+            projectileCounters.put(game, projectileIndex + 1);
             context.resetFSM();
             context.executePhase();
         } else { //Finito
