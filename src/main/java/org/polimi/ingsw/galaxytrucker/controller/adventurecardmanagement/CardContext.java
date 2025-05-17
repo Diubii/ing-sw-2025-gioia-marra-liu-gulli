@@ -27,13 +27,13 @@ public class CardContext {
 
     private final HashMap<NetworkMessageType, Integer> expectedNumberOfNetworkMessagesPerType;
 
-    public CardContext(LobbyManager currentGame, AdventureCard firstAdventureCard) {
+    public CardContext(LobbyManager currentGame, AdventureCard adventureCard) {
         this.currentGame = currentGame;
-        adventureCard = firstAdventureCard;
+        this.adventureCard = adventureCard;
         currentRankedPlayers = currentGame.getGameController().getRankedPlayers();
         currentPlayer = currentRankedPlayers.getFirst();
         currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
-        cardFSM = adventureCard.accept(new AdventureCardFSMVisitor());
+        cardFSM = this.adventureCard.accept(new AdventureCardFSMVisitor());
 
         //Si tiene traccia dei messaggi che dovrebbero arrivarci
         expectedNumberOfNetworkMessagesPerType = new HashMap<>(Map.of(
@@ -65,10 +65,6 @@ public class CardContext {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
-    }
-
-    public ClientHandler getCurrentPlayerHandler() {
-        return currentPlayerHandler;
     }
 
     public boolean currentPlayerIsLast(){
@@ -106,11 +102,15 @@ public class CardContext {
     }
 
     public void incrementExpectedNumberOfNetworkMessages(NetworkMessageType type) {
+        if(type == null) return;
+
         int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
         expectedNumberOfNetworkMessagesPerType.replace(type, currentValue + 1);
     }
 
     public void decrementExpectedNumberOfNetworkMessages(NetworkMessageType type) {
+        if(type==null) return;
+
         int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
         expectedNumberOfNetworkMessagesPerType.replace(type, currentValue - 1);
     }

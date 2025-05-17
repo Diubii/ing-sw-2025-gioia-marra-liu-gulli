@@ -10,11 +10,7 @@ import java.util.ArrayList;
 public class ServerManager {
     public static void main(String[] args) {
         try {
-
-            ArrayList<LobbyManager> GameModels = new ArrayList<>();
-
-            ServerController serverController = new ServerController(GameModels);
-
+            ServerController serverController = new ServerController();
 
             ServerRMIInterface serverRMI = new ServerRMI(serverController);
             Registry registry = LocateRegistry.createRegistry(1099);

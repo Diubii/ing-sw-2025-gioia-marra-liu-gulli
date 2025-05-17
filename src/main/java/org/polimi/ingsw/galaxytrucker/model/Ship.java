@@ -92,7 +92,6 @@ public class Ship implements Serializable {
         housingPos = new LinkedHashSet<>();
         storagePos = new LinkedHashSet<>();
         lssPos = new LinkedHashSet<>();
-
     }
 
 

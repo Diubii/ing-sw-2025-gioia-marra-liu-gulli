@@ -99,8 +99,9 @@ public abstract class CombatZoneEffect {
     }
 
     public static void receivedDiscardCrewMembersRequest(CardContext context) {
+        CombatZone combatZone = (CombatZone) context.getAdventureCard();
         DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) context.getIncomingNetworkMessage();
-        discardCrewMembers(getNumberPlayerPairFromHashMap(context, minEnginePowerCheckPairs).getValue(), discardCrewMembersResponse);
+        discardCrewMembers(getNumberPlayerPairFromHashMap(context, minEnginePowerCheckPairs).getValue(), discardCrewMembersResponse, combatZone.getCrewMembersLost());
 
         //Cleanup
         minEnginePowerCheckPairs.remove(context.getCurrentGame());

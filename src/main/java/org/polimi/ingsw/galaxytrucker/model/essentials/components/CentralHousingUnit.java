@@ -49,7 +49,6 @@ public class CentralHousingUnit extends Component {
     }
 
     public void removeCrewMember() {
-
         if (humanCrewNumber > 0) humanCrewNumber--;
     }
 

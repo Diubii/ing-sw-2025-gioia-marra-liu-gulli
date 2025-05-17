@@ -70,12 +70,12 @@ public class Util {
         ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
         }).stream().toList());
         ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
-        cardsToTest.add(list.get(1)); //Slavers
+        cardsToTest.add(list.get(16)); //AbandonedShip
         //cardsToTest.add(list.get(3));
 //        cardsToTest.add(list.get(4)); //Open Space
-        cardsToTest.add(list.get(31)); //Planets
-        cardsToTest.add(list.get(3)); //Stardust
-        cardsToTest.add(list.get(24)); //Epidemic
+        //cardsToTest.add(list.get(31)); //Planets
+        //cardsToTest.add(list.get(3)); //Stardust
+        //cardsToTest.add(list.get(24)); //Epidemic
 
         return new CardDeck(cardsToTest, true);
 
