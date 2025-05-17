@@ -45,22 +45,13 @@ public abstract class Utils {
         context.setCurrentRankedPlayers(context.getCurrentGame().getGameController().getRankedPlayers()); //Aggiorno i currentRankedPlayers del context
     }
 
-    protected static void discardCrewMembers(Player player, DiscardCrewMembersResponse discardCrewMembersResponse) {
-        ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+    protected static void discardCrewMembers(Player player, DiscardCrewMembersResponse discardCrewMembersResponse, int numberOfCrewMembersToBeDiscarded) {
         for (Position position : discardCrewMembersResponse.getHousingPositions()) { //Per ogni posizione (assumo posizioni duplicate per scartare più volte dalla stessa housing unit)
             Component housingUnit = player.getShip().getComponentFromPosition(position); //Prendo la housingUnit dalla position data
-            String componentName = componentNameVisitor.visit(housingUnit); //Visitor
 
-            if (componentName.equals("CentralHousingUnit")) {
-                ((CentralHousingUnit) housingUnit).removeCrewMember();
-            } else { //Altrimenti è una ModularHousingUnit
-                ModularHousingUnit modularHousingUnit = (ModularHousingUnit) housingUnit;
-
-                if (modularHousingUnit.getNCrewMembers() > 0) { //Ci sono solo umani
-                    modularHousingUnit.removeCrewMember();
-                } else { //Ci sono solo alieni
-                    modularHousingUnit.removeAlienCrew();
-                }
+            CentralHousingUnit centralHousingUnit = (CentralHousingUnit) housingUnit;
+            while(centralHousingUnit.getNCrewMembers() > 0 && numberOfCrewMembersToBeDiscarded > 0) {
+                centralHousingUnit.removeCrewMember();
             }
         }
     }
@@ -73,8 +64,8 @@ public abstract class Utils {
      * @param message
      */
     protected static void sendMessage(CardContext context, Player player, NetworkMessage message) {
-        context.getCurrentGame().getPlayerHandlers().get(player.getNickName()).sendMessage(message);
         context.incrementExpectedNumberOfNetworkMessages(message.accept(networkMessageCouplingVisitor));
+        context.getCurrentGame().getPlayerHandlers().get(player.getNickName()).sendMessage(message);
     }
 
 

@@ -62,10 +62,11 @@ public class SlaversEffect {
     }
 
     public static void receivedDiscardCrewMembersResponse(CardContext context){
+        Slavers slavers = (Slavers) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
         DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) context.getIncomingNetworkMessage();
 
-        discardCrewMembers(player, discardCrewMembersResponse);
+        discardCrewMembers(player, discardCrewMembersResponse, slavers.getPenalty());
 
         //Broadcasto nuova nave
         broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));

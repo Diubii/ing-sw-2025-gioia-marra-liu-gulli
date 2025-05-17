@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model;
 import org.polimi.ingsw.galaxytrucker.enums.PlayerState;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 
 import java.util.*;
 

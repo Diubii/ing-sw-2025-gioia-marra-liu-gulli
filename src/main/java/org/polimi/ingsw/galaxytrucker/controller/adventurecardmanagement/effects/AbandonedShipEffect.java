@@ -19,8 +19,8 @@ public abstract class AbandonedShipEffect {
         Player player = context.getCurrentPlayer();
         if (player.getShip().getnCrew() >= abandonedShip.getRequiredCrewMembers()) {
             ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
-            sendMessage(context, player, activateAdventureCardRequest);
             context.nextPhase();
+            sendMessage(context, player, activateAdventureCardRequest);
         } else {
             GameMessage gameMessage = new GameMessage("Non hai abbastanza membri dell'equipaggio per attivare questa carta.");
             sendMessage(context, player, gameMessage);
@@ -35,8 +35,8 @@ public abstract class AbandonedShipEffect {
         ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) context.getIncomingNetworkMessage();
         if (activateAdventureCardResponse.isActivated()) {
             AbandonedShip abandonedShip = (AbandonedShip) context.getAdventureCard();
-            sendMessage(context, context.getCurrentPlayer(), new DiscardCrewMembersRequest(abandonedShip.getRequiredCrewMembers()));
             context.nextPhase();
+            sendMessage(context, context.getCurrentPlayer(), new DiscardCrewMembersRequest(abandonedShip.getRequiredCrewMembers()));
         } else {
             context.resetFSM();
             context.nextPlayer();
@@ -50,7 +50,7 @@ public abstract class AbandonedShipEffect {
 
         DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) context.getIncomingNetworkMessage();
 
-        Utils.discardCrewMembers(context.getCurrentPlayer(), discardCrewMembersResponse);
+        Utils.discardCrewMembers(context.getCurrentPlayer(), discardCrewMembersResponse, abandonedShip.getRequiredCrewMembers());
 
         //Broadcasto nuova nave
         ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());

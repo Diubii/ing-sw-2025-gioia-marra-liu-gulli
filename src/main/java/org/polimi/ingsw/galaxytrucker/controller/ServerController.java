@@ -56,8 +56,8 @@ public class ServerController {
 
     private static final NetworkMessageNameVisitor networkMessageNameVisitor = new NetworkMessageNameVisitor();
 
-    public ServerController(ArrayList<LobbyManager> model) throws IOException {
-        this.lobbyManagers = model;
+    public ServerController() {
+        this.lobbyManagers = new ArrayList<>();
         messageManager = new MessageManager(this);
         initActionsAllowed();
 //        model.setRealGame(new Game(4, false));
@@ -69,12 +69,16 @@ public class ServerController {
         return gameTiles;
     }
 
-    public void generateGameTiles() throws IOException {
+    public void generateGameTiles() {
         File file = new File("src/main/resources/tiledata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        this.gameTiles = (ArrayList<Tile>) mapper.readValue(file, new TypeReference<List<Tile>>() {
-        });
+        try {
+            this.gameTiles = (ArrayList<Tile>) mapper.readValue(file, new TypeReference<List<Tile>>() {
+            });
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void addClient(ClientHandler client) {
@@ -87,6 +91,10 @@ public class ServerController {
         synchronized (clients) {
             return clients;
         }
+    }
+
+    public void addLobbyManager(LobbyManager game) {
+        lobbyManagers.add(game);
     }
 
     /**
@@ -106,7 +114,7 @@ public class ServerController {
                 lobbyInfos.removeIf(info -> info.getLobbyID() == lobbyManagers.indexOf(game));
             }
 
-            if(game.getPlayerColors().isEmpty()) {
+            if (game.getPlayerColors().isEmpty()) {
                 //System.out.println("A game was empty. Cleared from the list of games.");
                 synchronized (lobbyManagers) {
                     lobbyManagers.remove(game);
@@ -222,11 +230,11 @@ public class ServerController {
 
         synchronized (lobbyManagers) {
             lobbyManagers.add(newGame);
-
         }
+
         int index = lobbyManagers.indexOf(newGame);
         synchronized (lobbyInfos) {
-            lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, index,message.getIsLearningMatch()));
+            lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, index, message.getIsLearningMatch()));
 
         }
 
@@ -243,8 +251,6 @@ public class ServerController {
 
         clientHandler.sendMessage(joinRoomResponse);
         clientHandler.sendMessage(new FlightBoardUpdate(newGame.getRealGame().getFlightBoard()));
-
-
     }
 
     public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler) {
@@ -267,7 +273,7 @@ public class ServerController {
         LobbyManager myGame = null;
 
 
-        if(message.getRoomId() < lobbyManagers.size()) myGame = lobbyManagers.get(message.getRoomId());
+        if (message.getRoomId() < lobbyManagers.size()) myGame = lobbyManagers.get(message.getRoomId());
 
         if (myGame == null) {
             mess = "Lobby number " + message.getRoomId() + " doesn't exist. Try again.";
@@ -551,7 +557,7 @@ public class ServerController {
 
     public void handleAskPositionResponse(AskPositionResponse askPositionResponse, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        myGame.completePendingResponse(askPositionResponse.getID(), askPositionResponse);
+        handleFinishBuildingRequest2(askPositionResponse, clientHandler);
     }
 
     public void handleSelectPlanetResponse(SelectPlanetResponse selectPlanetResponse, ClientHandler clientHandler) {
@@ -560,15 +566,11 @@ public class ServerController {
         tryExecutePhaseAfterMessage(game, NetworkMessageType.SelectPlanetResponse);
     }
 
-    @NeedsToBeChecked("Usa una CompletableFuture")
     public void handleFinishBuildingRequest(FinishBuildingRequest finishBuildingRequest, ClientHandler clientHandler) {
-
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         String nickname = myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
         AskPositionUpdate askPositionUpdate;
         ArrayList<Integer> validPos = new ArrayList<>();
-        Boolean flag = false;
-        Boolean isLearningMatch = myGame.getRealGame().getIsLearningMatch();
 
         // [1] fisso l'ultima tile di Player
 
@@ -582,11 +584,8 @@ public class ServerController {
                 //allroa e' il primo e fa partire il timer, e lo aggiungo
                 startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
             } else {
-
-                if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers() - 1) flag = true;
                 //mandare un messaggio "ATTENDENDO ... SCELTA PRECEDENTI"
                 myGame.addPlayerShipFinished(nickname);
-
             }
 
         }
@@ -625,36 +624,39 @@ public class ServerController {
             //aggiungo alle pending responses
 
             myGame.addPendingResponse(future, askPositionUpdate.getID());
+            System.out.println(askPositionUpdate.getID());
 
             clientHandler.sendMessage(askPositionUpdate);
-
-            AskPositionResponse response = null;
-            try {
-                response = (AskPositionResponse) future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-
             //ho la mia posizione scelta, e lo posiziono
+        }
+    }
 
-            Color playerColor = myGame.getPlayerColors().get(nickname);
-            int realPos = 0;
+    public void handleFinishBuildingRequest2(AskPositionResponse askPositionResponse, ClientHandler clientHandler) {
+        Boolean flag = false;
 
-            switch (response.getPosition()) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+        String nickname = getNicknameFromClientHandler(clientHandler);
+
+        Color playerColor = myGame.getPlayerColors().get(nickname);
+
+        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+
+        int realPos = 0;
+        synchronized (myGame.positionLock) {
+            switch (askPositionResponse.getPosition()) {
                 case 1 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFirstPos();
                 case 2 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getSecondPos();
                 case 3 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getThirdPos();
                 case 4 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFourthPos();
             }
             myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos);
-            myGame.getRealGame().getPlayer(nickname).setPlacement(response.getPosition());
+            myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
+        }
 
-            ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
-            broadCast(playerHandlers, new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
+
+        broadCast(playerHandlers, new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
 
 //            myGame.getRealGame().getFlightBoard()
-
-        }
 
 
         synchronized (myGame.getRealGame().getPlayer(nickname).getShip()) {
@@ -685,22 +687,16 @@ public class ServerController {
 
             }
 
-            ArrayList<ClientHandler> playerHandlers = new ArrayList<ClientHandler>(myGame.getPlayerHandlers().values());
-
             broadCast(playerHandlers, new ShipUpdate(myShip, nickname));
         }
 
         //controllo se tutti hanno finito
-        if (flag) {
+        if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers() - 1) {
             //se hanno finito tutti allora si passa alla fase di check_ship
             myGame.getGameController().nextState();
             System.out.println("STATE: " + myGame.getGameController());
-            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
             broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
-
         }
-
-
     }
 
     public void handlePlaceTileRequest(PlaceTileRequest placeTileRequest, ClientHandler clientHandler) throws InvalidTilePosition {
@@ -859,19 +855,21 @@ public class ServerController {
             PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.FLIGHT);
             broadCast(playerHandlers, phaseUpdate);
 
-            new Thread(() -> {
+            //new Thread(() -> {
                 try {
                     myGame.getGameController().startFlight();
                 } catch (ExecutionException | InterruptedException | IOException e) {
                     throw new RuntimeException(e);
                 }
-            }).start();
+            //}).start();
         }
     }
 
     public void handleActivateAdventureCardResponse(ActivateAdventureCardResponse activateAdventureCardResponse, ClientHandler clientHandler) {
         LobbyManager game = getLobbyFromHandler(clientHandler);
-        game.getGameController().notify();
+        synchronized (game.getGameController()) {
+            game.getGameController().notify();
+        }
         game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(activateAdventureCardResponse);
         tryExecutePhaseAfterMessage(game, NetworkMessageType.ActivateAdventureCardResponse);
     }
@@ -978,6 +976,7 @@ public class ServerController {
 
         }, seconds, TimeUnit.SECONDS);
     }
+
     public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         GameController gameController = myGame.getGameController();
@@ -1003,7 +1002,7 @@ public class ServerController {
 
             new Thread(() -> {
                 myGame.addReadyPlayer(nickname);
-                if(myGame.allActivePlayerReady()){
+                if (myGame.allActivePlayerReady()) {
                     gameController.sendMatchInfoUpdate();
                 }
             }).start();
@@ -1012,23 +1011,22 @@ public class ServerController {
         }
 
     }
+
     public void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         String nickname = getNicknameFromClientHandler(clientHandler);
         GameController gameController = myGame.getGameController();
 
-            myGame.getGameController().removePlayerFromGame(nickname, true);
-            new Thread(() -> {
+        myGame.getGameController().removePlayerFromGame(nickname, true);
+        new Thread(() -> {
 //                myGame.getGameController().handleTurnBeforeDrawnCard();
-                myGame.addEarlyLandingPlayer(nickname);
-                if(myGame.allActivePlayerReady()){
-                    gameController.sendMatchInfoUpdate();
-                }
-            }).start();
+            myGame.addEarlyLandingPlayer(nickname);
+            if (myGame.allActivePlayerReady()) {
+                gameController.sendMatchInfoUpdate();
+            }
+        }).start();
 
     }
-
-
 
 
     private void tryExecutePhaseAfterMessage(LobbyManager game, NetworkMessageType type) {
@@ -1040,6 +1038,7 @@ public class ServerController {
             game.getGameController().getCurrentCardContext().incrementExpectedNumberOfNetworkMessages(type);
         }
     }
+
     public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {
         for (ClientHandler clientHandler : clients) {
             clientHandler.sendMessage(message);

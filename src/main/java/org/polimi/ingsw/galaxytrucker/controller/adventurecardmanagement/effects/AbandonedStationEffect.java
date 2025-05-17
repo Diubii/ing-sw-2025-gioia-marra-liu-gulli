@@ -16,8 +16,8 @@ public abstract class AbandonedStationEffect {
         AbandonedStation abandonedStation = (AbandonedStation) context.getAdventureCard();
 
         if (player.getShip().getnCrew() >= abandonedStation.getRequiredCrewMembers()) {
-            sendMessage(context, player, new ActivateAdventureCardRequest());
             context.nextPhase();
+            sendMessage(context, player, new ActivateAdventureCardRequest());
         } else { //Passo al prossimo giocatore
             context.nextPlayer();
             context.executePhase();

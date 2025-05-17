@@ -1,26 +1,42 @@
 package org.polimi.ingsw.galaxytrucker.model.adventurecards;
 
-import javafx.util.Pair;
+import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.model.Planet;
+import org.polimi.ingsw.galaxytrucker.enums.PlayerState;
+import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
+import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.SelectPlanetResponse;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FakeLobbyManager extends LobbyManager {
     private final HashMap<String, ClientHandler> handlers = new HashMap<>();
-    private final ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> pendingResponses = new ArrayList<>();
+    private final HashMap<String, ArrayList<NetworkMessage>> mockResponses;
 
-    public FakeLobbyManager() {
+    public FakeLobbyManager(ArrayList<Player> players, ServerController controller, HashMap<String, ArrayList<NetworkMessage>> mockResponses) {
         super();
-//        PlayerColors = new HashMap<>();
-//        PlayerColors.put("Diubi", Color.RED);
-//        PlayerColors.put("Smattimat", Color.YELLOW);
+        this.mockResponses = mockResponses;
+
+//        FlightBoard flightBoard = new FlightBoard(false);
+//        AtomicInteger i = new AtomicInteger(-1);
+//        players.forEach(p -> {
+//            p.setPlayerState(PlayerState.Playing);
+//            addPlayerHandler(p.getNickName(), new FakeClientHandler(controller, p.getNickName(), this));
+//            try {
+//                getRealGame().addPlayer(p);
+//            } catch (TooManyPlayersException | PlayerAlreadyExistsException e) {
+//                throw new RuntimeException(e);
+//            }
+//            Color c = useNextAvailableColor();
+//            getPlayerColors().put(p.getNickName(), c);
+//            flightBoard.positionPlayer(c, i.incrementAndGet());
+//        });
     }
 
     public void addPlayerHandler(String nickname, ClientHandler handler) {
@@ -32,22 +48,7 @@ public class FakeLobbyManager extends LobbyManager {
         return handlers;
     }
 
-    @Override
-    public void addPendingResponse(CompletableFuture<NetworkMessage> future, Integer id) {
-//        Planet selectedPlanet = new Planet(false, null);
-//        selectedPlanet.setOccupied(false); // Non ancora occupato
-//        SelectPlanetResponse response = new SelectPlanetResponse(selectedPlanet);
-//        future.complete(response);
-//        pendingResponses.add(new Pair<>(id, future));
-    }
-
-    @Override
-    public void completePendingResponse(Integer id, NetworkMessage future) {
-
-    }
-
-    @Override
-    public ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> getPendingResponses() {
-        return pendingResponses;
+    public HashMap<String, ArrayList<NetworkMessage>> getMockResponses() {
+        return mockResponses;
     }
 }
