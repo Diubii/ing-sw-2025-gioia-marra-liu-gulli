@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class ServerController {
 
@@ -815,22 +816,25 @@ public class ServerController {
                 .filter(Objects::nonNull)
                 .toList();
 
+        Map<Position, AlienColor> positionAlienColorMap = crewInitUpdate.getCrewPos().stream()
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
         for (Slot s : Slots) {
 
             Tile tempTile = s.getTile();
             Position tempPos = s.getPosition();
 
-            if (positions.contains(tempPos) && s.getTile() != null) {
 
-                AlienColor color = crewInitUpdate.getCrewPos().stream().filter(pair -> pair.getKey().equals(tempPos)).map(Pair::getValue).findFirst().get();
+            if (positions.contains(tempPos) && tempTile != null) {
+
+                AlienColor color = positionAlienColorMap.get(tempPos);
 
                 if (color.equals(AlienColor.PURPLE)) {
                     ModularHousingUnit purpleHousing = (ModularHousingUnit) tempTile.getMyComponent();
                     purpleHousing.addPurpleAlien();
                 }
 
-
-                if (color.equals(AlienColor.BROWN)) {
+                else if (color.equals(AlienColor.BROWN)) {
                     ModularHousingUnit brownHousing = (ModularHousingUnit) tempTile.getMyComponent();
                     brownHousing.addBrownAlien();
                 } else {
