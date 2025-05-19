@@ -249,7 +249,8 @@ public class ClientController implements Observer {
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
-
+                    myModel.getPlayerInfos().add(myModel.getMyInfo());
+                    view.showPlayersLobby(myModel.getPlayerInfos());
                     view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
                 } else {
                     view.showGenericMessage("Room creation failed: " + response.getErrMess());
@@ -321,7 +322,7 @@ public class ClientController implements Observer {
                 myModel.setLearningMatch(response.getIsLearningMatch());
 
 
-                view.showPlayersLobby(myModel.getMyInfo(), myModel.getPlayerInfos());
+                view.showPlayersLobby(myModel.getPlayerInfos());
 
             } else {
                 view.showGenericMessage("Failed to join the lobby: " + response.getErrMess());
@@ -342,7 +343,7 @@ public class ClientController implements Observer {
         }
 
         view.showPlayerJoined(playerJoinedUpdate.getPlayerInfo());
-        view.showPlayersLobby(myModel.getMyInfo(), myModel.getPlayerInfos());
+        view.showPlayersLobby( myModel.getPlayerInfos());
 
 
     }
@@ -512,13 +513,13 @@ public class ClientController implements Observer {
         exists = myModel.hasPlayerWithNickname(targetNickname);
         if (exists) {
             if(myModel.getMyInfo().getNickName().equals(targetNickname)){
-                view.showShip(myModel.getMyInfo().getShip());
+                view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
                 view.handleChoiceForPhase(phase);
                 return;
             }
             else {
                 Ship targetShip = myModel.getPlayerInfoByNickname(targetNickname).getShip();
-                view.showShip(targetShip);
+                view.showShip(targetShip, targetNickname);
                 view.handleChoiceForPhase(phase);
             }
 
@@ -551,9 +552,13 @@ public class ClientController implements Observer {
                 }
             }
             if (update.getShouldDisplay()) {
-                view.showShip(ship);
+                view.showShip(ship, owner);
                 view.handleChoiceForPhase(phase);
-
+            }
+            //GUI or others always show, TUI only when asked
+            //Todo: maybe Tui should sometimes show updates on myship
+            if(view.autoShowUpdates()){
+                view.showShip(ship, owner);
             }
 
         } else {
@@ -905,7 +910,7 @@ public class ClientController implements Observer {
 
             switch (input) {
                 case "a" -> {
-                    view.showShip(myModel.getMyInfo().getShip());
+                    view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
                     view.showcheckShipMenu();
                 }
                 case "b" -> {
@@ -980,7 +985,7 @@ public class ClientController implements Observer {
 
             switch (string) {
                 case "a" -> {
-                    view.showShip(myModel.getMyInfo().getShip());
+                    view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
                     view.showembarkCrewMenu();
                     break;
                 }

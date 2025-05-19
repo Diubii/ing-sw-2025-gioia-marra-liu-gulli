@@ -14,60 +14,59 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: RED;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: RED;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.polimi.ingsw.galaxytrucker.view.Gui.BuildingController">
    <children>
-      <VBox prefHeight="400.0" prefWidth="355.0">
+      <VBox prefHeight="400.0" prefWidth="6.0" HBox.hgrow="ALWAYS">
          <children>
             <HBox prefHeight="50.0" prefWidth="355.0">
                <children>
                   <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA CLESSIDRA" />
                </children>
             </HBox>
-            <StackPane prefHeight="400.0" prefWidth="373.0">
+            <HBox prefHeight="375.0" prefWidth="307.0" style="-fx-background-color: BLUE;">
                <children>
-                  <HBox prefHeight="400.0" prefWidth="370.0" style="-fx-background-color: BLUE;">
+                  <VBox prefHeight="363.0" prefWidth="175.0" style="-fx-background-color: DARKBLUE;">
                      <children>
-                        <VBox prefHeight="400.0" prefWidth="172.0" style="-fx-background-color: DARKBLUE;">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA NAVI ALTRI" />
+                        <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA NAVI ALTRI" />
-                              <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                              <HBox prefHeight="93.0" prefWidth="208.0">
                                  <children>
-                                    <HBox prefHeight="93.0" prefWidth="208.0">
-                                       <children>
-                                          <ImageView fitHeight="21.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
-                                             </image>
-                                          </ImageView>
-                                          <Label text="Label" />
-                                       </children>
-                                    </HBox>
-                                    <GridPane fx:id="shipOthersGrid1" prefHeight="151.0" prefWidth="245.0" style="-fx-background-color: CYAN;">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                       </rowConstraints>
-                                    </GridPane>
+                                    <ImageView fitHeight="21.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label text="Label" />
                                  </children>
-                              </VBox>
-                              <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
-                              <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
+                              </HBox>
+                              <GridPane fx:id="shipOthersGrid1" prefHeight="151.0" prefWidth="245.0" style="-fx-background-color: CYAN;">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
                            </children>
                         </VBox>
-                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                        <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
+                        <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+                  <StackPane prefHeight="363.0" prefWidth="194.0">
+                     <children>
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                            <children>
                               <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA TILES SCOPERTE" />
                               <Button mnemonicParsing="false" text="PESCA COPERTA" VBox.vgrow="ALWAYS" />
@@ -77,17 +76,17 @@
                                        <children>
                                           <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for%20web1.jpg" />
+                                                <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web1.jpg" />
                                              </image>
                                           </ImageView>
                                           <ImageView fitHeight="43.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for%20web2.jpg" />
+                                                <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web2.jpg" />
                                              </image>
                                           </ImageView>
                                           <ImageView fitHeight="41.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for%20web20.jpg" />
+                                                <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web20.jpg" />
                                              </image>
                                           </ImageView>
                                        </children>
@@ -96,42 +95,47 @@
                               </ScrollPane>
                            </children>
                         </VBox>
+                        <HBox id="OverlayCarte" prefHeight="363.0" prefWidth="208.0" styleClass="OverlayPanel" stylesheets="@style.css">
+                           <children>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Zona2Menu" />
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
-                  <HBox id="OverlayCarte" prefHeight="100.0" prefWidth="200.0" styleClass="OverlayPanel" stylesheets="@style.css">
-                     <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA CARTE SPIATE" />
-                     </children>
-                  </HBox>
+                  </StackPane>
                </children>
-            </StackPane>
+            </HBox>
          </children>
       </VBox>
       <VBox prefHeight="400.0" prefWidth="109.0" style="-fx-background-color: GREEN;" HBox.hgrow="ALWAYS">
          <children>
-            <HBox prefHeight="144.0" prefWidth="245.0" style="-fx-background-color: DARKGREEN;">
+            <HBox prefHeight="27.0" prefWidth="245.0" />
+            <HBox prefHeight="77.0" prefWidth="245.0" style="-fx-background-color: DARKGREEN;">
                <children>
-                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA MAZZI E FINE BUILDING" />
+                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+                  <VBox prefHeight="144.0" prefWidth="118.0" style="-fx-background-color: Coral;" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-            <GridPane fx:id="myShipGrid" prefHeight="151.0" prefWidth="245.0" style="-fx-background-color: CYAN;">
-              <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
+            <StackPane fx:id="gridContainer" VBox.vgrow="ALWAYS">
+               <GridPane fx:id="myShipGrid" alignment="CENTER" prefHeight="151.0" prefWidth="245.0" style="-fx-background-color: BLACK;" VBox.vgrow="SOMETIMES">
+                 <columnConstraints>
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                 </rowConstraints>
+               </GridPane>
+            </StackPane>
+            <HBox prefHeight="72.0" prefWidth="245.0" />
          </children>
       </VBox>
    </children>

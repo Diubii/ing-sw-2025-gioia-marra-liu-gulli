@@ -32,7 +32,7 @@ public class GUIStart extends Application {
         primaryStage.setScene(primaryScene);
 
         ClientController controller = new ClientController(null, true); // true = socket, false = RMI
-        GuiJavaFx gui = new GuiJavaFx(primaryStage, controller,primaryScene);
+        GuiJavaFx gui = new GuiJavaFx(primaryStage,primaryScene, controller, controller.getMyModel());
         controller.setView(gui);
 
 
@@ -45,6 +45,8 @@ public class GUIStart extends Application {
 
         gui.askServerInfo(); // Prima scena da mostrare
         primaryStage.show();
+        primaryStage.toFront();
+        primaryStage.requestFocus();
     }
 
     public static void main(String[] args) {

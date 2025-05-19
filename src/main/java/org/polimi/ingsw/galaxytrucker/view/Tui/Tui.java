@@ -77,6 +77,10 @@ public class Tui implements View, Observable {
 
     }
 
+    @Override
+    public Boolean autoShowUpdates() {
+        return false;
+    }
 
     private volatile CompletableFuture<String> currentInputFuture = null;
     private static final AtomicBoolean stopInput = new AtomicBoolean(false);
@@ -313,16 +317,9 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> infoPlayer) {
+    public void showPlayersLobby( ArrayList<PlayerInfo> infoPlayer) {
         System.out.println("Giocatori nella lobby: ");
         System.out.print("IO: ");
-        switch (myinfo.getColor()) {
-            case RED -> System.out.println(RED + "█" + RESET + " " + myinfo.getNickName());
-            case GREEN -> System.out.println(GREEN + "█" + RESET + " " + myinfo.getNickName());
-            case BLUE -> System.out.println(BLUE + "█" + RESET + " " + myinfo.getNickName());
-            case YELLOW -> System.out.println(BRIGHT_YELLOW + "█" + RESET + " " + myinfo.getNickName());
-            case null, default -> System.out.println();
-        }
         for (int p = 0; p < infoPlayer.size(); p++) {
             switch (infoPlayer.get(p).getColor()) {
                 case RED -> System.out.println(RED + "█" + RESET + " " + infoPlayer.get(p).getNickName());
@@ -839,7 +836,7 @@ public class Tui implements View, Observable {
 
 
     @Override
-    public void showShip(Ship targetShipView) {
+    public void showShip(Ship targetShipView, String Nickname) {
         printShip(targetShipView);
     }
 
@@ -1296,7 +1293,7 @@ public class Tui implements View, Observable {
 
     @Override
     public void askSelectGoodToDiscard(Ship myShip) {
-        showShip(myShip);
+        showShip(myShip,clientController.getMyModel().getMyInfo().getNickName());
         ArrayList<Position> occupiedPositions = clientController.getOccupiedCargoHolds(myShip);
         Position selectedPos = null;
         Position pos = null;
