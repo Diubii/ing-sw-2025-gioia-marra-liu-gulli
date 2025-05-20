@@ -3,8 +3,12 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
@@ -17,9 +21,12 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHo
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SingleLobbyInfoController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SingleShipController;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class BuildingController extends GenericGamePhaseSceneController {
@@ -31,8 +38,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
     private Stage primaryStage;
     private MusicManager musicManager;
 
-    @FXML private StackPane gridContainer;
-    @FXML private GridPane myShipGrid;
+    @FXML private StackPane myShipZone;
+
+    private ArrayList<SingleShipController> shipControllers;
 
     public void initialSetup(GuiJavaFx mainViewController, ClientController clientController,ClientModel mymodel, Stage primaryStage, MusicManager musicManager) {
         this.mainViewController = mainViewController;
@@ -41,41 +49,32 @@ public class BuildingController extends GenericGamePhaseSceneController {
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
 
+        shipControllers = new ArrayList<>();
 
-        double aspectRatio = 7.0 / 5.0;
-        gridContainer.widthProperty().addListener((obs, oldVal, newVal) -> adjustGridPaneSize(aspectRatio));
-        gridContainer.heightProperty().addListener((obs, oldVal, newVal) -> adjustGridPaneSize(aspectRatio));
+        //Mettere tutti sottoElementi
+        //MyShip e anche altre poi in loop
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SingleShip.fxml"));
+            Parent shipNode = loader.load();
 
+            SingleShipController controller = loader.getController();
+            controller.initialize(mymodel.getMyInfo().getNickName(),myShipZone);
+            shipControllers.add(controller);
 
+            myShipZone.getChildren().add(shipNode);
 
-
-
-    }
-
-
-    private void adjustGridPaneSize(double aspectRatio) {
-        double containerWidth = gridContainer.getWidth();
-        double containerHeight = gridContainer.getHeight();
-
-        if (containerWidth <= 0 || containerHeight <= 0) return;
-
-        double newWidth, newHeight;
-
-        if (containerWidth / containerHeight > aspectRatio) {
-            newHeight = containerHeight;
-            newWidth = newHeight * aspectRatio;
-        } else {
-            newWidth = containerWidth;
-            newHeight = newWidth / aspectRatio;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        myShipGrid.setMaxWidth(newWidth);
-        myShipGrid.setPrefWidth(newWidth);
 
 
-        myShipGrid.setMaxHeight(newHeight);
-        myShipGrid.setPrefHeight(newHeight);
+
+
     }
+
+
+
 
     @Override
     public void ShowGenericMessage(String message) {
@@ -85,9 +84,14 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     @Override
     public void showShip(Ship ship, String Nickname) {
-        if(mymodel.getMyInfo().getNickName().equals(Nickname)) {
-            //My SHIP
 
+        //Riferimenti / elenco di tutte le "Single ship"
+        //Scorre lista fino a nickname equivalente e poi si chiama
+        // zUtils.showShipInGrid(ship,singleShip giusta.getGrid);
+
+        //FOR per tutti
+        //Qui fatto solo per mia momentaneamente
+        if(shipControllers.get(0).getNicknameOfPlayer().equals(Nickname)) {
 
             //TEST STAMPA DA TOGLIERE
             Ship testShip = new Ship(false);
@@ -130,7 +134,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                 throw new RuntimeException(e);
             }
 
-            zUtils.showShipInGrid(testShip, myShipGrid);
+            zUtils.showShipInGrid(testShip, shipControllers.get(0).getShipGrid());
             ShipPrintUtils.printShip(testShip);
         }
         else{
