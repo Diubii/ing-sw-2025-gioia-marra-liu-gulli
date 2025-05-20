@@ -45,6 +45,7 @@ public class zUtils {
                     img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
                     //Consider rotation
                     rotation = tile.getRotation();
+                    //Visitor a cui passi tutto e in base al tipo di componente decide se ruotare tutto, ruotare solo imamgine, ruotare con counterrotazioni
 
                 }
                 else{

@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.view.Gui.Elements;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -17,7 +18,8 @@ public class SingleShipController {
         this.shipGridContainer = shipGridContainer;
         this.shipGridContainer.widthProperty().addListener((obs, oldVal, newVal) -> adjustGridPaneSize(aspectRatio));
         this.shipGridContainer.heightProperty().addListener((obs, oldVal, newVal) -> adjustGridPaneSize(aspectRatio));
-
+        //DOPO per il primo setup
+        Platform.runLater(() -> adjustGridPaneSize(aspectRatio));
     }
 
     public GridPane getShipGrid() {
@@ -34,11 +36,15 @@ public class SingleShipController {
 
     private void adjustGridPaneSize(double aspectRatio) {
 
-        System.out.print("AdjustSize Chiamata");
+        System.out.println("AdjustSize Chiamata");
+
+
         double containerWidth = shipGridContainer.getWidth();
         double containerHeight = shipGridContainer.getHeight();
 
-        if (containerWidth <= 0 || containerHeight <= 0) return;
+        if (containerWidth <= 0 || containerHeight <= 0){
+            return;
+        }
 
         double newWidth, newHeight;
 
@@ -50,10 +56,11 @@ public class SingleShipController {
             newHeight = newWidth / aspectRatio;
         }
 
-        shipGrid.setMaxWidth(newWidth);
-        shipGrid.setPrefWidth(newWidth);
 
-        shipGrid.setMaxHeight(newHeight);
+        shipGrid.setMinWidth(0);
+        shipGrid.setMinHeight(0);
+        shipGrid.setPrefWidth(newWidth);
         shipGrid.setPrefHeight(newHeight);
+
     }
 }
