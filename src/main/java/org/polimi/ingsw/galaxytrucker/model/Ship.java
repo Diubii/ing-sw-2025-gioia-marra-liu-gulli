@@ -257,7 +257,7 @@ public class Ship implements Serializable {
      * @param tile La tile da posizionare.
      * @param pos  La posizione in cui posizionare la tile.
      */
-    public void putTile(Tile tile, Position pos) throws InvalidTilePosition {
+    public void putTile(Tile tile, Position pos) {
 
 
         if (Util.inBoundaries(pos.getX(), pos.getY()) && !invalidPositions.contains(pos)) {

@@ -3,7 +3,6 @@ package org.polimi.ingsw.galaxytrucker.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
-import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
@@ -962,7 +961,7 @@ public class ServerController {
         //mando a tutti la notifica di end_timer\
 
         TimerInfo timer = new TimerInfo(index,0,true);
-        GameMessage gameMessage = new GameMessage(timer.toString());
+        GameMessage gameMessage = new GameMessage("Timer n. "+ index + " started");
         broadCast(clients, gameMessage);
 
         new Thread(()->{
@@ -986,9 +985,12 @@ public class ServerController {
             timerinfo.setTimerStatus(TimerStatus.ENDED);
             if (last){
 
+                if (!(gameController.getGameState() == GameState.BUILDING_END)) {
+
                     gameController.nextState();
                     PhaseUpdate update = new PhaseUpdate(GameState.BUILDING_END);
                     broadCast(clients, update);
+                }
 
             }
 

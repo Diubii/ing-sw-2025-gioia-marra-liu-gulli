@@ -70,9 +70,10 @@ public class Util {
         ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
         }).stream().toList());
         ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
-        cardsToTest.add(list.get(16)); //AbandonedShip
         //cardsToTest.add(list.get(3));
-//        cardsToTest.add(list.get(4)); //Open Space
+        cardsToTest.add(list.get(4)); //Open Space
+        cardsToTest.add(list.get(16)); //AbandonedShip
+
         //cardsToTest.add(list.get(31)); //Planets
         //cardsToTest.add(list.get(3)); //Stardust
         //cardsToTest.add(list.get(24)); //Epidemic
@@ -176,28 +177,28 @@ public class Util {
 
         // Controlla la tile sopra
         if (S.getPosition().getY() - 1 >= 0 && TempShipBoard[S.getPosition().getY() - 1][S.getPosition().getX()].getTile() != null) {
-            s1 = TempShipBoard[S.getPosition().getY() - 1][S.getPosition().getX()].getTile().getMyComponent().accept(new ComponentNameVisitor());
+            s1 = TempShipBoard[S.getPosition().getX()][S.getPosition().getY() - 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s1 = null;
         }
 
         // Controlla la tile a sinistra
         if (S.getPosition().getX() - 1 >= 0 && TempShipBoard[S.getPosition().getY()][S.getPosition().getX() - 1].getTile() != null) {
-            s2 = TempShipBoard[S.getPosition().getY()][S.getPosition().getX() - 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
+            s2 = TempShipBoard[S.getPosition().getX() - 1][S.getPosition().getY()].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s2 = null;
         }
 
         // Controlla la tile sotto
         if (S.getPosition().getY() + 1 <= 6 && TempShipBoard[S.getPosition().getY() + 1][S.getPosition().getX()].getTile() != null) {
-            s3 = TempShipBoard[S.getPosition().getY() + 1][S.getPosition().getX()].getTile().getMyComponent().accept(new ComponentNameVisitor());
+            s3 = TempShipBoard[S.getPosition().getX()][S.getPosition().getY() + 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s3 = null;
         }
 
         // Controlla la tile a destra
         if (S.getPosition().getX() + 1 <= 4 && TempShipBoard[S.getPosition().getY()][S.getPosition().getX() + 1].getTile() != null) {
-            s4 = TempShipBoard[S.getPosition().getY()][S.getPosition().getX() + 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
+            s4 = TempShipBoard[S.getPosition().getX() + 1][S.getPosition().getY()].getTile().getMyComponent().accept(new ComponentNameVisitor());
         } else {
             s4 = null;
         }
@@ -239,7 +240,7 @@ public class Util {
         //UP TILE
 
         if (mySlot.getPosition().getY() - 1 >= 0 && TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile() != null) {
-            c1 = TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile().getSides().get(2);
+            c1 = TempShipBoard[mySlot.getPosition().getX()][mySlot.getPosition().getY() - 1].getTile().getSides().get(2);
             sum += 1;
         } else {
             c1 = null;
@@ -250,12 +251,12 @@ public class Util {
         if (mySlot.getPosition().getX() - 1 >= 0 && TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile() != null) {
 
             sum += 1;
-            c2 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile().getSides().get(3);
+            c2 = TempShipBoard[mySlot.getPosition().getX() - 1][mySlot.getPosition().getY()].getTile().getSides().get(3);
         } else c2 = null;
         //DOWN
 
         if (mySlot.getPosition().getY() + 1 < 5 && TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile() != null) {
-            c3 = TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile().getSides().get(0);
+            c3 = TempShipBoard[mySlot.getPosition().getX()][mySlot.getPosition().getY() + 1].getTile().getSides().get(0);
             sum += 1;
 
 
@@ -264,7 +265,7 @@ public class Util {
         //RIGHT TILE
 
         if (mySlot.getPosition().getX() + 1 < 7 && TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile() != null) {
-            c4 = TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile().getSides().get(1);
+            c4 = TempShipBoard[mySlot.getPosition().getX() + 1][mySlot.getPosition().getY()].getTile().getSides().get(1);
             sum += 1;
 
 
@@ -286,7 +287,7 @@ public class Util {
 
         for (Position pos : adjacentPos) {
 
-            Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
+            Slot tempSlot = myShip.getShipBoard()[pos.getX()][pos.getY()];
 
             if (tempSlot != null && tempSlot.getTile() != null) {
                 if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && color.equals(AlienColor.PURPLE)) {
@@ -353,7 +354,7 @@ public class Util {
 
     public static ArrayList<Position> getAdjacentPositions(Position pos) {
         ArrayList<Position> adjacent = new ArrayList<>();
-        adjacent.add(new Position(pos.getX(), pos.getX() - 1)); // Nord
+        adjacent.add(new Position(pos.getX(), pos.getY() - 1)); // Nord
         adjacent.add(new Position(pos.getX() - 1, pos.getY())); // Ovest
         adjacent.add(new Position(pos.getX(), pos.getY() + 1)); // Sud
         adjacent.add(new Position(pos.getX() + 1, pos.getY())); // Est

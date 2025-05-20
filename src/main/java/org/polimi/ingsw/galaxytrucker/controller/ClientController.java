@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.controller;
 
 import javafx.util.Pair;
+import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
@@ -40,7 +41,6 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.sql.Time;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -48,7 +48,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
 
 public class ClientController implements Observer {
 
@@ -1258,6 +1257,7 @@ public class ClientController implements Observer {
     }
 
 
+    @NeedsToBeChecked("non modificare model in locale, creare una TempShip ")
     public void placeMerci(int goodIndex, Good good, Position pos) {
         Ship ship = myModel.getMyInfo().getShip();
         Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
