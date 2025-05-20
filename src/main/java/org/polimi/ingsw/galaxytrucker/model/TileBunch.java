@@ -16,6 +16,14 @@ import java.util.Random;
  * It initializes all tiles and provides functionality for players to draw and return tiles.
  */
 public class TileBunch {
+    public ArrayList<Tile> getTiles() {
+        return tiles;
+    }
+
+    public void setTiles(ArrayList<Tile> tiles) {
+        this.tiles = tiles;
+    }
+
     /**
      * The list of tiles available for drawing.
      */

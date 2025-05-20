@@ -12,8 +12,10 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(CreateRoomRequest createRoomRequest) {
         return NetworkMessageType.CreateRoomResponse;
     }
-
     @Override
+    public NetworkMessageType visit(FlipTimerRequest flipTimerRequest) {
+        return NetworkMessageType.FlipTimerResponse;
+    }
     public NetworkMessageType visit(JoinRoomRequest joinRoomRequest) {
         return NetworkMessageType.JoinRoomResponse;
     }
@@ -303,6 +305,16 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
 
     @Override
     public NetworkMessageType visit(GameEndUpdate gameEndUpdate) {
+        return null;
+    }
+
+    @Override
+    public NetworkMessageType visit(AskTimerInfoRequest askTimerInfoRequest) {
+        return null;
+    }
+
+    @Override
+    public NetworkMessageType visit(TimerInfoResponse timerInfoResponse) {
         return null;
     }
 }

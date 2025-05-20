@@ -2,12 +2,12 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -22,6 +22,7 @@ public class LoginConnectController extends GenericSceneController {
 
     private GuiJavaFx mainViewController;
     private ClientController clientController;  // Riferimento al controller del client
+    private ClientModel mymodel;
     private Stage primaryStage;
     private  MusicManager musicManager;
 
@@ -30,9 +31,10 @@ public class LoginConnectController extends GenericSceneController {
 
 
     // Metodo per impostare il riferimento al controller del client
-    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController,Stage primaryStage, MusicManager musicManager) {
+    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController,ClientModel mymodel,Stage primaryStage, MusicManager musicManager) {
         this.mainViewController = mainViewController;
         this.clientController = clientController;
+        this.mymodel = mymodel;
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
 

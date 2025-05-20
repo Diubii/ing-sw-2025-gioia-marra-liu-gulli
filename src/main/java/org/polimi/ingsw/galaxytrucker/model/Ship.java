@@ -1163,4 +1163,8 @@ public class Ship implements Serializable {
 
         return goods;
     }
+
+    public void setLearningMatch(Boolean isLearningMatch) {
+        this.learningMatch = isLearningMatch;
+    }
 }

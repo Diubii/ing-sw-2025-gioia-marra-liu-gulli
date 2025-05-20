@@ -12,6 +12,11 @@ import static java.lang.System.out;
 
 public class MenuManager {
     MenuText currentMenu = MenuText.NONE;
+    public static Boolean learningMatch = false;
+
+    public void setLearningMatch(Boolean learningMatch){
+        MenuManager.learningMatch = learningMatch;
+    }
 
 
     public void setMenuText(GameState phase) {
@@ -54,6 +59,9 @@ public class MenuManager {
         out.println("h. Discard tile");
         out.println("i. Reserve a tile in one of the slot(1 o 2)");
         out.println("j. Finish building");
+        if (!learningMatch) {
+            out.println("k. See Timers Status/ Flip Timer");
+        }
         out.println("menu. show menu");
         out.println("reset. reset ");
     }

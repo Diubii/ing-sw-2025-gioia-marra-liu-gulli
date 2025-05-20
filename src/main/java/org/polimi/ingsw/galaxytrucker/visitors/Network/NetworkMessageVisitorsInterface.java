@@ -128,4 +128,9 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(GameEndUpdate gameEndUpdate);
 
 
+    T visit(AskTimerInfoRequest askTimerInfoRequest);
+
+    T visit(TimerInfoResponse timerInfoResponse);
+
+    T visit(FlipTimerRequest flipTimerRequest);
 }

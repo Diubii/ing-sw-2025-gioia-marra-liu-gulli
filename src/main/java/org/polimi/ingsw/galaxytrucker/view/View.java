@@ -19,9 +19,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface View {
+
+    //La view deve avere il riferimento al clientController e anche al Model
+
+    Boolean autoShowUpdates();
+
     void forceReset();
 
     void askNickname() throws IOException, ExecutionException, InterruptedException;
+
+    void showShip(Ship targetShipView, String nickname);
 
     void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException;
 
@@ -40,9 +47,11 @@ public interface View {
 
     void showPlayerJoined(PlayerInfo playerInfos);
 
-    void showPlayersLobby(PlayerInfo myInfo, ArrayList<PlayerInfo> playerInfos);
+//    void showPlayersLobby(ArrayList<PlayerInfo> playerInfos);
 
     void handleChoiceForPhase(GameState phase);
+
+        void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> infoPlayer);
 
     void handlePhaseUpdate(PhaseUpdate phaseUpdate);
 
@@ -51,7 +60,8 @@ public interface View {
 
     void showFaceUpTiles();
 
-    void showShip(Ship ship);
+
+//    void showShip(Ship ship, String Nickname);
 
     void FetchMyShip();
 
@@ -117,6 +127,8 @@ public interface View {
     void showEndGame(ArrayList<PlayerScore> scores);
 
     void askCollectRewards();
+
+    void showTimerInfos();
 
 //    void askFlightMenuChoice();
 

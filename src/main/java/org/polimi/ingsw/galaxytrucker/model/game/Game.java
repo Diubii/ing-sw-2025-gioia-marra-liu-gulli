@@ -27,6 +27,16 @@ public class Game {
     private final HashSet<String> usedNicknames;
     private final HashMap<Player, Integer> playerOrder;
 
+    public ArrayList<TimerInfo> getTimerInfos() {
+        return timerInfos;
+    }
+
+    public void setTimerInfos(ArrayList<TimerInfo> timerInfos) {
+        this.timerInfos = timerInfos;
+    }
+
+    private ArrayList<TimerInfo> timerInfos = new ArrayList<>();
+
 
     private Player gameHost;
 
@@ -60,6 +70,7 @@ public class Game {
         this.Decks = new ArrayList<>();
 
         this.tileBunch = new TileBunch();
+        setupTimerInfos();
 
     }
 
@@ -71,6 +82,16 @@ public class Game {
 
     public ArrayList<CardDeck> getDecks() {
         return Decks;
+    }
+
+    private void setupTimerInfos(){
+
+        if (!learningMatch){
+            timerInfos.add(new TimerInfo(0,0,false));
+            timerInfos.add(new TimerInfo(1,0,false));
+            timerInfos.add(new TimerInfo(2,0,false));
+        }
+
     }
 
     public CardDeck getFlightDeck() {

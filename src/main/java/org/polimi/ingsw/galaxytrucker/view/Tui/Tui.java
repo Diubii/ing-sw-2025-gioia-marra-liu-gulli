@@ -20,6 +20,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
@@ -45,6 +46,8 @@ import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.RESET;
 public class Tui implements View, Observable {
 
 
+
+
     private static final String STR_INPUT_CANCELED = "CAXX";
     private static PrintStream out;
     private final Boolean isSocket;
@@ -57,7 +60,17 @@ public class Tui implements View, Observable {
     private final ArrayList<Observer> observers = new ArrayList<>();
 
 
+    public MenuManager getMenuManager() {
+        return menuManager;
+    }
+
+    public void setMenuManager(MenuManager menuManager) {
+        this.menuManager = menuManager;
+    }
+
     private MenuManager menuManager = new MenuManager();
+
+
 
 
     private final Object panelLock = new Object();
@@ -77,6 +90,10 @@ public class Tui implements View, Observable {
 
     }
 
+    @Override
+    public Boolean autoShowUpdates() {
+        return false;
+    }
 
     private volatile CompletableFuture<String> currentInputFuture = null;
     private static final AtomicBoolean stopInput = new AtomicBoolean(false);
@@ -317,12 +334,12 @@ public class Tui implements View, Observable {
         System.out.println("Giocatori nella lobby: ");
         System.out.print("IO: ");
         switch (myinfo.getColor()) {
-            case RED -> System.out.println(RED + "█" + RESET + " " + myinfo.getNickName());
-            case GREEN -> System.out.println(GREEN + "█" + RESET + " " + myinfo.getNickName());
-            case BLUE -> System.out.println(BLUE + "█" + RESET + " " + myinfo.getNickName());
-            case YELLOW -> System.out.println(BRIGHT_YELLOW + "█" + RESET + " " + myinfo.getNickName());
-            case null, default -> System.out.println();
+            case RED -> System.out.println(RED + "█" + RESET + " ");
+            case GREEN -> System.out.println(GREEN + "█" + RESET + " ");
+            case BLUE -> System.out.println(BLUE + "█" + RESET + " ");
+            case YELLOW -> System.out.println(BRIGHT_YELLOW + "█" + RESET + " ");
         }
+
         for (int p = 0; p < infoPlayer.size(); p++) {
             switch (infoPlayer.get(p).getColor()) {
                 case RED -> System.out.println(RED + "█" + RESET + " " + infoPlayer.get(p).getNickName());
@@ -839,7 +856,7 @@ public class Tui implements View, Observable {
 
 
     @Override
-    public void showShip(Ship targetShipView) {
+    public void showShip(Ship targetShipView, String nickname) {
         printShip(targetShipView);
     }
 
@@ -1278,7 +1295,7 @@ public class Tui implements View, Observable {
 
     @Override
     public void askSelectGoodToDiscard(Ship myShip) {
-        showShip(myShip);
+        showShip(myShip,clientController.getMyModel().getMyInfo().getNickName());
         ArrayList<Position> occupiedPositions = clientController.getOccupiedCargoHolds(myShip);
         Position selectedPos = null;
         Position pos = null;
@@ -1383,6 +1400,85 @@ public class Tui implements View, Observable {
                 }
         );
     }
+
+    @Override
+    public void
+    showTimerInfos() {
+
+        new Thread(()->{
+            ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
+
+            printTimerInfo(timerInfos);
+            try {
+                showTimerMenu(timerInfos);
+            } catch (IOException | ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }).start();
+
+    }
+
+    private void showTimerMenu(ArrayList<TimerInfo> timerInfos) throws IOException, ExecutionException, InterruptedException {
+        String input;
+        boolean valid = false;
+        boolean oneActive = false;
+
+        do {
+            try {
+
+
+                boolean now = false;
+
+                for (TimerInfo timerInfo: timerInfos){
+                    if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
+                        oneActive = true;
+                        break;
+                    }
+                }
+
+                if (oneActive){
+                    input = readLine("Inserisci la tua scelta (menu) : ").trim().toLowerCase();
+
+                } else input = readLine("Inserisci la tua scelta  \n a) Flip Timer \n m) (menu/m/?)\n > ").trim().toLowerCase();
+
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (input.equals("m") || input.equals("menu") || input.equals("?")) {
+
+                menuManager.showCurrentMenu();
+                handleChoiceForPhase(clientController.getPhase());
+            }
+
+            if (input.equals("a")) {
+                valid = true;
+
+                //vedo se e' possibile flipparne una
+
+                clientController.sendFlipRequest(timerInfos);
+                out.println("Timer flipped!");
+                menuManager.showCurrentMenu();
+                handleChoiceForPhase(clientController.getPhase());
+
+
+            } else if (input.equals("reset")) {
+                System.out.println(); // No-op for now
+            } else {
+                System.out.println("Input non valido");
+            }
+
+        } while (!valid);
+    }
+
+    private void printTimerInfo(ArrayList<TimerInfo> timerInfos) {
+//        for (TimerInfo timerInfo: timerInfos){
+//            System.out.println(timerInfo.toString());
+//        }
+        TimerPrinter.printTimers(timerInfos);
+    }
+
     public void displayGoods(List<Good> goods) {
         out.println("Merci disponibili:");
         for (int i = 0; i < goods.size(); i++) {

@@ -78,5 +78,5 @@ public enum NetworkMessageType {
     ReadyTurnRequest,
     CollectRewardsRequest, CollectRewardsResponse,
     AskTrunkRequest, AskTrunkResponse,
-    GameEndUpdate
+    AskTimerInfoRequest, TimerInfoResponse, FlipTimerResponse, FlipTimerRequest, GameEndUpdate
 }
