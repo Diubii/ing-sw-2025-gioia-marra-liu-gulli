@@ -25,7 +25,6 @@ import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.AskTimerInfoRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskPositionResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.CrewInitUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
@@ -331,9 +330,16 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void showPlayersLobby( ArrayList<PlayerInfo> infoPlayer) {
+    public void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> infoPlayer) {
         System.out.println("Giocatori nella lobby: ");
         System.out.print("IO: ");
+        switch (myinfo.getColor()) {
+            case RED -> System.out.println(RED + "█" + RESET + " ");
+            case GREEN -> System.out.println(GREEN + "█" + RESET + " ");
+            case BLUE -> System.out.println(BLUE + "█" + RESET + " ");
+            case YELLOW -> System.out.println(BRIGHT_YELLOW + "█" + RESET + " ");
+        }
+
         for (int p = 0; p < infoPlayer.size(); p++) {
             switch (infoPlayer.get(p).getColor()) {
                 case RED -> System.out.println(RED + "█" + RESET + " " + infoPlayer.get(p).getNickName());
@@ -850,7 +856,7 @@ public class Tui implements View, Observable {
 
 
     @Override
-    public void showShip(Ship targetShipView, String Nickname) {
+    public void showShip(Ship targetShipView) {
         printShip(targetShipView);
     }
 

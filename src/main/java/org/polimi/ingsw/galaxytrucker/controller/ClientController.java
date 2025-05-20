@@ -266,7 +266,7 @@ public class ClientController implements Observer {
 
 
                     myModel.getPlayerInfos().add(myModel.getMyInfo());
-                    view.showPlayersLobby(myModel.getPlayerInfos());
+                    view.showPlayersLobby(myModel.getMyInfo(),myModel.getPlayerInfos());
                     view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
                 } else {
                     view.showGenericMessage("Room creation failed: " + response.getErrMess());

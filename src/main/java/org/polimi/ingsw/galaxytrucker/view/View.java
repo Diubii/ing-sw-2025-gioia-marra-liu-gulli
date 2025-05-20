@@ -28,6 +28,8 @@ public interface View {
 
     void askNickname() throws IOException, ExecutionException, InterruptedException;
 
+    void showShip(Ship targetShipView);
+
     void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException;
 
     void showGenericMessage(String s);
@@ -45,9 +47,11 @@ public interface View {
 
     void showPlayerJoined(PlayerInfo playerInfos);
 
-    void showPlayersLobby(ArrayList<PlayerInfo> playerInfos);
+//    void showPlayersLobby(ArrayList<PlayerInfo> playerInfos);
 
     void handleChoiceForPhase(GameState phase);
+
+        void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> infoPlayer);
 
     void handlePhaseUpdate(PhaseUpdate phaseUpdate);
 
@@ -57,7 +61,7 @@ public interface View {
     void showFaceUpTiles();
 
 
-    void showShip(Ship ship, String Nickname);
+//    void showShip(Ship ship, String Nickname);
 
     void FetchMyShip();
 
