@@ -856,7 +856,7 @@ public class Tui implements View, Observable {
 
 
     @Override
-    public void showShip(Ship targetShipView) {
+    public void showShip(Ship targetShipView, String nickname) {
         printShip(targetShipView);
     }
 

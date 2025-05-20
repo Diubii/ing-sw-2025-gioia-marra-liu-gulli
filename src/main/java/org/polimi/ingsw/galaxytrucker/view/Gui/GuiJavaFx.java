@@ -379,7 +379,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void showPlayersLobby( ArrayList<PlayerInfo> playerInfo) {
+    public void showPlayersLobby( PlayerInfo myInfo,ArrayList<PlayerInfo> playerInfo) {
         //Todo: Quando chiamo questo metodo, a volte lo faccio solo perchè è entrato un nuovo giocatore
         //Todo: non perchè devo cambiare scena/pagina.
         //Todo: bisognerebbe fare in modo che se sono già su questa scena/pagina chiamo soltanto pagecontroller.updatePlayersList(playerInfo)

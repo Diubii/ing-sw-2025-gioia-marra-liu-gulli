@@ -28,7 +28,7 @@ public interface View {
 
     void askNickname() throws IOException, ExecutionException, InterruptedException;
 
-    void showShip(Ship targetShipView);
+    void showShip(Ship targetShipView, String nickname);
 
     void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException;
 

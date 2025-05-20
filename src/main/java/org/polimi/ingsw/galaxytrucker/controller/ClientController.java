@@ -542,13 +542,13 @@ public class ClientController implements Observer {
         exists = myModel.hasPlayerWithNickname(targetNickname);
         if (exists) {
             if(myModel.getMyInfo().getNickName().equals(targetNickname)){
-                view.showShip(myModel.getMyInfo().getShip());
+                view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
                 view.handleChoiceForPhase(phase);
                 return;
             }
             else {
                 Ship targetShip = myModel.getPlayerInfoByNickname(targetNickname).getShip();
-                view.showShip(targetShip);
+                view.showShip(targetShip,targetNickname);
                 view.handleChoiceForPhase(phase);
             }
 
@@ -581,7 +581,7 @@ public class ClientController implements Observer {
                 }
             }
             if (update.getShouldDisplay()) {
-                view.showShip(ship);
+                view.showShip(ship,owner);
                 view.handleChoiceForPhase(phase);
 
             }
@@ -962,7 +962,7 @@ public class ClientController implements Observer {
 
             switch (input) {
                 case "a" -> {
-                    view.showShip(myModel.getMyInfo().getShip());
+                    view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
                     view.showcheckShipMenu();
                 }
                 case "b" -> {
@@ -1037,7 +1037,7 @@ public class ClientController implements Observer {
 
             switch (string) {
                 case "a" -> {
-                    view.showShip(myModel.getMyInfo().getShip());
+                    view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
                     view.showembarkCrewMenu();
                     break;
                 }
