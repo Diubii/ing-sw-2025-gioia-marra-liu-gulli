@@ -691,7 +691,7 @@ public class ServerController {
         }
 
         //controllo se tutti hanno finito
-        if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers() - 1) {
+        if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
             //se hanno finito tutti allora si passa alla fase di check_ship
             myGame.getGameController().nextState();
             System.out.println("STATE: " + myGame.getGameController());
@@ -882,9 +882,12 @@ public class ServerController {
         ArrayList<Position> doubleEnginesPositions = activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions();
         ArrayList<Position> batteriesPositions = activateDoubleEnginesResponse.getBatteriesPositions();
 
-        for (int i = 0; i < activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions().size(); i++) {
-            ship.activateDoubleEngine(doubleEnginesPositions.get(i), batteriesPositions.get(i)); //Usare il bool ritornato? //Assumo che ci siano posizioni duplicate nella lista di quelle delle batterie
-        }
+        int doubleEnginesSize = doubleEnginesPositions.size();
+        //if(doubleEnginesPositions != null){
+            for (int i = 0; i < doubleEnginesSize; i++) {
+                ship.activateDoubleEngine(doubleEnginesPositions.get(i), batteriesPositions.get(i)); //Usare il bool ritornato? //Assumo che ci siano posizioni duplicate nella lista di quelle delle batterie
+            }
+        //}
 
         //Mando la shipUpdate
         ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
@@ -1032,7 +1035,7 @@ public class ServerController {
     private void tryExecutePhaseAfterMessage(LobbyManager game, NetworkMessageType type) {
         game.getGameController().getCurrentCardContext().decrementExpectedNumberOfNetworkMessages(type);
         int expectedNetworkMessages = game.getGameController().getCurrentCardContext().getExpectedNumberOfNetworkMessagesPerType().get(type);
-        if (expectedNetworkMessages == 0) {
+        if (expectedNetworkMessages == 0) { //Potrebbe dare problemi con alcune carte
             game.getGameController().getCurrentCardContext().executePhase();
         } else if (expectedNetworkMessages == -1) {
             game.getGameController().getCurrentCardContext().incrementExpectedNumberOfNetworkMessages(type);

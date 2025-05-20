@@ -16,6 +16,7 @@ public abstract class OpenSpaceEffect {
     private final static HashMap<LobbyManager, HashMap<String, Integer>> playerToPowerMapPerGame = new HashMap<>();
 
     public static void doubleEnginesActivated(CardContext context) {
+        System.out.println("DEBUG: OpenSpaceEffect.doubleEnginesActivated()");
         LobbyManager game = context.getCurrentGame();
         Player player = context.getCurrentPlayer();
 
@@ -35,8 +36,7 @@ public abstract class OpenSpaceEffect {
 
         if (player == context.getCurrentRankedPlayers().getLast()) {
             context.nextPhase();
-        }
-        else{
+        } else {
             context.nextPlayer();
             context.previousPhase();
         }
@@ -45,6 +45,7 @@ public abstract class OpenSpaceEffect {
     }
 
     public static void finalCheck(CardContext context) {
+        System.out.println("DEBUG: OpenSpaceEffect.finalCheck()");
         LobbyManager game = context.getCurrentGame();
 
         HashMap<String, Integer> playerToPowerMap = playerToPowerMapPerGame.get(game);

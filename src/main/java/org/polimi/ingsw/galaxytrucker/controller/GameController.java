@@ -325,6 +325,8 @@ public class GameController {
 
         if (aTileHasBeenDestroyed) {
             game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
+
+            //TODO: tronc
         }
 
         return destroyedTile;

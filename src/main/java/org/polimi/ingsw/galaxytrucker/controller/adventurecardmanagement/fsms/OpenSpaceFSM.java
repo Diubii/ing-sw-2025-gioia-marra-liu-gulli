@@ -16,7 +16,7 @@ public class OpenSpaceFSM extends CardFSM {
     @Override
     public ArrayList<Consumer<CardContext>> initPhases() {
         return new ArrayList<>(Arrays.asList(
-                CommonEffects::sendDoubleCannonsActivationRequest,
+                CommonEffects::sendDoubleEnginesActivationRequest,
                 OpenSpaceEffect::doubleEnginesActivated,
                 OpenSpaceEffect::finalCheck
         ));
