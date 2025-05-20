@@ -13,6 +13,12 @@ import java.util.concurrent.ExecutionException;
 
 public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterface<Void> {
 
+    @Override
+    public Void visit(FlipTimerRequest flipTimerRequest) {
+        // Implementation of handling FlipTimerRequest
+        return null;
+    }
+
     ClientController clientController;
 
     public ClientNetworkMessageVisitor(ClientController clientController) {
@@ -391,5 +397,16 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     public Void visit(GameEndUpdate gameEndUpdate) {
         clientController.handleGameEndUpdate(gameEndUpdate);
         return null;
+    }
+
+    @Override
+    public Void visit(AskTimerInfoRequest askTimerInfoRequest) {
+        return null;
+    }
+
+    @Override
+    public Void visit(TimerInfoResponse timerInfoResponse) {
+         clientController.completeFuture(timerInfoResponse);
+         return null;
     }
 }

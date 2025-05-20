@@ -77,8 +77,7 @@ public class GameController {
         synchronized (gameStateLock) {
             switch (gameState) {
                 case LOBBY -> gameState = GameState.BUILDING_START;
-                case BUILDING_START -> gameState = GameState.BUILDING_TIMER;
-                case BUILDING_TIMER -> gameState = GameState.BUILDING_END;
+                case BUILDING_START -> gameState = GameState.BUILDING_END;
                 case BUILDING_END -> gameState = GameState.SHIP_CHECK;
                 case SHIP_CHECK -> gameState = GameState.CREW_INIT;
                 case CREW_INIT -> gameState = GameState.FLIGHT;

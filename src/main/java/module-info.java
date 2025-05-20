@@ -9,6 +9,7 @@ module org.polimi.ingsw.galaxytrucker {
     requires java.smartcardio;
     requires jdk.httpserver;
     requires jdk.accessibility;
+    requires java.sql;
 
     opens org.polimi.ingsw.galaxytrucker.view.Gui.Elements to javafx.fxml;
     opens org.polimi.ingsw.galaxytrucker.model.essentials to com.fasterxml.jackson.databind;

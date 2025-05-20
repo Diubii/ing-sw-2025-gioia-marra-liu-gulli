@@ -311,4 +311,18 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
 
         return NetworkMessageType.GameEndUpdate;
     }
+
+    @Override
+    public NetworkMessageType visit(AskTimerInfoRequest askTimerInfoRequest) {
+        return NetworkMessageType.AskTimerInfoRequest;
+    }
+
+    @Override
+    public NetworkMessageType visit(TimerInfoResponse timerInfoResponse) {
+        return NetworkMessageType.TimerInfoResponse;
+    }
+    @Override
+    public NetworkMessageType visit(FlipTimerRequest flipTimerRequest) {
+        return NetworkMessageType.FlipTimerRequest;
+    }
 }

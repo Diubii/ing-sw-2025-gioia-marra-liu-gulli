@@ -16,6 +16,7 @@ import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.Smugglers;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
+import org.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientRMI;
@@ -28,6 +29,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
+import org.polimi.ingsw.galaxytrucker.view.Tui.MenuManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.ClientNetworkMessageVisitor;
@@ -38,6 +40,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.sql.Time;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -45,6 +48,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 public class ClientController implements Observer {
 
@@ -63,6 +67,15 @@ public class ClientController implements Observer {
     private Tile currentTileInHand = null;
     private Position currentPosition;
     private ClientPhaseController clientPhaseController = new ClientPhaseController(this);
+
+    public GameState getPhase() {
+        return phase;
+    }
+
+    public void setPhase(GameState phase) {
+        this.phase = phase;
+    }
+
     private GameState phase = GameState.LOBBY;
     private boolean isPlaced = false;
 
@@ -249,6 +262,8 @@ public class ClientController implements Observer {
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
+                    MenuManager.learningMatch = isLearningMatch;
+
 
                     view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
                 } else {
@@ -319,6 +334,7 @@ public class ClientController implements Observer {
                 myModel.getMyInfo().setShip(response.getMyShip());
                 myModel.getMyInfo().setNickName(getNickname());
                 myModel.setLearningMatch(response.getIsLearningMatch());
+                MenuManager.learningMatch = response.getIsLearningMatch();
 
 
                 view.showPlayersLobby(myModel.getMyInfo(), myModel.getPlayerInfos());
@@ -481,6 +497,18 @@ public class ClientController implements Observer {
                 break;
             }
 
+            case "k" -> {
+                //devo far vedere i risultati dei TimerInfo e far appararire un menu
+//                if (!myModel.isLearningMatch())
+//                {
+                new Thread(() -> {
+                    view.showTimerInfos();
+
+                }).start();
+//                }
+
+                    break;
+            }
             case "reset" -> {
                 break;
             }
@@ -597,6 +625,33 @@ public class ClientController implements Observer {
         synchronized (myModel.getFaceUpTiles()) {
             myModel.setFaceUpTiles(faceUpTiles);
         }
+
+    }
+
+    public ArrayList<TimerInfo> getSynchTimerInfos(){
+
+        AskTimerInfoRequest askTimerInfoRequest = new AskTimerInfoRequest();
+        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+        setCompletableFuture(future, askTimerInfoRequest.getID());
+        final ArrayList<TimerInfo> timerInfos = new ArrayList<>();
+
+        try {
+            client.sendMessage(askTimerInfoRequest);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            view.showGenericMessage("Failed to send request: " + e.getMessage() + e.getStackTrace());
+        }
+            try {
+                TimerInfoResponse timerInfoResponse = (TimerInfoResponse) future.get();
+                timerInfos.addAll(timerInfoResponse.getTimerInfoList());
+
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+
+
+
+        return timerInfos;
+
 
     }
 
@@ -1466,4 +1521,25 @@ public class ClientController implements Observer {
         }
     }
 
+    public void sendFlipRequest(ArrayList<TimerInfo> timerInfos) throws IOException, ExecutionException, InterruptedException {
+        //trovo quello che si puo flippare
+
+        int index = 0;
+
+        for (TimerInfo timerInfo: timerInfos){
+            if (timerInfo.getTimerStatus().equals(TimerStatus.OFF)){
+                index = timerInfo.getIndex();
+                break;
+            }
+        }
+
+        FlipTimerRequest flipTimerRequest = new FlipTimerRequest();
+        flipTimerRequest.setTimerIndex(index);
+        client.sendMessage(flipTimerRequest);
+
+
+
+
+
+    }
 }

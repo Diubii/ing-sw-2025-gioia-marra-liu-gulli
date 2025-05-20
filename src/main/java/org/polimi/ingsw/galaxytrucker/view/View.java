@@ -120,6 +120,8 @@ public interface View {
 
     void askCollectRewards();
 
+    void showTimerInfos();
+
 //    void askFlightMenuChoice();
 
 

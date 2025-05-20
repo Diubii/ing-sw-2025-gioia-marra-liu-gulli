@@ -30,6 +30,13 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
+    @Override
+    public Void visit(FlipTimerRequest flipTimerRequest) {
+        // Logic for handling FlipTimerRequest should go here
+        serverController.handleFlipTimerRequest(flipTimerRequest, clientHandler);
+        return null;
+    }
+
 
     @Override
     public Void visit(NicknameRequest nicknameRequest) {
@@ -382,6 +389,16 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(GameEndUpdate gameEndUpdate) {
+        return null;
+    }
+
+    @Override
+    public Void visit(AskTimerInfoRequest askTimerInfoRequest) {
+        return serverController.handleAskTimerInfoRequest(askTimerInfoRequest, clientHandler);
+    }
+
+    @Override
+    public Void visit(TimerInfoResponse timerInfoResponse) {
         return null;
     }
 }

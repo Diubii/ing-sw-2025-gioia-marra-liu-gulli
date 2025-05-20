@@ -19,6 +19,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import org.polimi.ingsw.galaxytrucker.network.Heartbeat;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -218,10 +219,13 @@ public class ServerController {
                 CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
                 if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)) {
                     centralTile = tile;
+//                    gameTiles.remove(tile);
                 }
 
             }
         }
+
+        newGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
 
 
         myPlayer.getShip().putTile(centralTile, new Position(3, 2));
@@ -331,10 +335,12 @@ public class ServerController {
                     }
                 }
 
-                System.out.println("5");
+                myGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
 
 
                 myPlayer.getShip().putTile(centralTile, new Position(3, 2));
+
+
                 myGame.getRealGame().addPlayer(myPlayer);
 
                 myGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
@@ -361,6 +367,7 @@ public class ServerController {
                 joinRoomResponse.setOperationSuccess(true);
                 joinRoomResponse.setColor(myColor);
                 joinRoomResponse.setMyShip(myPlayer.getShip());
+//                joinRoomResponse.setIsLearningMatch(myGame.getRealGame().getIsLearningMatch());
                 myGame.addPlayerInfo(playerInfo1);
 
                 if (myLobbyInfo != null) {
@@ -574,20 +581,8 @@ public class ServerController {
         // [1] fisso l'ultima tile di Player
 
         //devo chiedere in che posizione vuole essere
-
-        synchronized (myGame.lock5) {
-            if (myGame.getPlayerShipFinishedSize() == 0) {
                 myGame.addPlayerShipFinished(nickname);
 
-
-                //allroa e' il primo e fa partire il timer, e lo aggiungo
-                startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()));
-            } else {
-                //mandare un messaggio "ATTENDENDO ... SCELTA PRECEDENTI"
-                myGame.addPlayerShipFinished(nickname);
-            }
-
-        }
 
         synchronized (myGame.positionLock) {
             int maxPos = myGame.getRealGame().getNumPlayers();
@@ -679,7 +674,7 @@ public class ServerController {
                 //trovo la tile e la fisso
                 for (Slot slot : slots) {
                     if (slot.getTile() != null && slot.getTile().getId() == lastTileId) {
-                        myShip.getShipBoard()[slot.getPosition().getY()][slot.getPosition().getX()].getTile().setFixed(true);
+                        myShip.getShipBoard()[slot.getPosition().getX()][slot.getPosition().getY()].getTile().setFixed(true);
                         break;
                     }
                 }
@@ -690,11 +685,17 @@ public class ServerController {
         }
 
         //controllo se tutti hanno finito
-        if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers() - 1) {
-            //se hanno finito tutti allora si passa alla fase di check_ship
+        if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
+
             myGame.getGameController().nextState();
-            System.out.println("STATE: " + myGame.getGameController());
-            broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
+            if (myGame.getGameController().getGameState().equals(GameState.BUILDING_END))
+            //se hanno finito tutti allora si passa alla fase di check_ship
+            {
+                myGame.getGameController().nextState();
+                System.out.println("STATE: " + myGame.getGameController());
+                broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
+            }
+
         }
     }
 
@@ -957,20 +958,55 @@ public class ServerController {
      * UTILS
      * */
 
-    public void startTimer(int seconds, GameController gameController, ArrayList<ClientHandler> clients) {
+    public void startTimer(int seconds, GameController gameController, ArrayList<ClientHandler> clients, boolean last, int index) {
         //mando a tutti la notifica di end_timer\
-        gameController.nextState();
 
-        PhaseUpdate timer = new PhaseUpdate(GameState.BUILDING_TIMER);
-        broadCast(clients, timer);
+        TimerInfo timer = new TimerInfo(index,0,true);
+        GameMessage gameMessage = new GameMessage(timer.toString());
+        broadCast(clients, gameMessage);
+
+        new Thread(()->{
+            LobbyManager game = getLobbyFromHandler(clients.getFirst());
+            TimerInfo timerinfo = game.getRealGame().getTimerInfos().stream().filter(t -> t.getIndex() == index).findFirst().get();
+            timerinfo.setTimerStatus(TimerStatus.STARTED);
+
+
+            int secondsIn = 0;
+
+            while (secondsIn < seconds){
+                try {
+                    Thread.sleep(1000);
+                    secondsIn += 1;
+                    timerinfo.setValue(secondsIn);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            timerinfo.setTimerStatus(TimerStatus.ENDED);
+            if (last){
+
+                    gameController.nextState();
+                    PhaseUpdate update = new PhaseUpdate(GameState.BUILDING_END);
+                    broadCast(clients, update);
+
+            }
+
+
+
+
+        }).start();
+
+
+
 
         // Timer scaduto → cambio stato
-        scheduler.schedule(() -> {
-            gameController.nextState();
-            PhaseUpdate update = new PhaseUpdate(GameState.BUILDING_END);
-            broadCast(clients, update);
-
-        }, seconds, TimeUnit.SECONDS);
+//        scheduler.schedule(() -> {
+//            gameController.nextState();
+//            PhaseUpdate update = new PhaseUpdate(GameState.BUILDING_END);
+//            broadCast(clients, update);
+//
+//        }, seconds, TimeUnit.SECONDS);
     }
 
     public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) {
@@ -1076,6 +1112,36 @@ public class ServerController {
     }
 
 
+    public Void handleAskTimerInfoRequest(AskTimerInfoRequest askTimerInfoRequest, ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+//        myGame.completePendingResponse(askTimerInfoRequest.getID());
+        TimerInfoResponse timerInfoResponse = new TimerInfoResponse(askTimerInfoRequest.getID());
+        //predo i timerInfo
+
+        ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
+
+        timerInfoResponse.setTimerInfoList(timerInfos);
+        clientHandler.sendMessage(timerInfoResponse);
+
+        return null;
+
+    }
+
+    public void handleFlipTimerRequest(FlipTimerRequest flipTimerRequest, ClientHandler clientHandler) {
+        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+
+        ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
+        TimerInfo timer = timerInfos.get(flipTimerRequest.getTimerIndex());
+
+//        timer.setTimerStatus(TimerStatus.STARTED);
+        timer.setFlipped(true);
+
+        boolean lastTimer = (flipTimerRequest.getTimerIndex() == myGame.getRealGame().getTimerInfos().size()-1);
+
+        startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()), lastTimer, flipTimerRequest.getTimerIndex());
+
+
+    }
 }
 
 

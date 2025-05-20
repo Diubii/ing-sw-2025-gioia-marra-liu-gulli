@@ -14,6 +14,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
@@ -556,6 +557,13 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void askCollectRewards() {
+
+    }
+
+
+    @NeedsToBeChecked
+    @Override
+    public void showTimerInfos() {
 
     }
 }
