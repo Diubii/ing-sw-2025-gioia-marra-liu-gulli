@@ -172,7 +172,7 @@ public class GameController {
 
         return players.stream()
                 .map(player -> {
-                    int bestLooking = player.getShip().getnExposedConnector() == minExposed ? 2 : 0;
+                    int bestLooking = (player.getShip().getnExposedConnector() == minExposed && getRankedPlayers().contains(player)) ? 2 : 0;
                     int finishOrder = calculateFinishOrderScore(player);
                     int reward = calculateGoodRewardScore(player);
                     int losses = calculateLossesScore(player);
@@ -237,7 +237,7 @@ public class GameController {
             ch.sendMessage(fbu);
         }); //Notifichiamo i client che un player ha perso e aggiorniamo la flight board
 
-        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
+        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty() && isLandingEarly) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
             handleEndGame();
 //            completeCardDrawn();

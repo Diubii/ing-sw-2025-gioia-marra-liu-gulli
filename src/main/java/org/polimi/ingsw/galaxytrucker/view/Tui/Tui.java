@@ -980,37 +980,45 @@ public class Tui implements View, Observable {
         System.out.println("You have to discard " + nCrewToDiscard + " crew:");
         while (nCrewToDiscard > 0) {
             System.out.print("specify the coordinates of a Cabin");
-            String input = readLine(" input (x,y): ").trim().toLowerCase();
-            housingPos = parseCoordinate(input);
-            housingPos.setPos(housingPos.getX() - 4, housingPos.getY() - 5);
-            System.out.println(housingPos.getY() + " " + housingPos.getX());
-            if (!Util.inBoundaries(housingPos.getY(), housingPos.getX()) || myShip.getInvalidPositions().contains(housingPos)) {
-                System.out.println("Wrong Coordinates, out of bounds ");
-            } else if (!myShip.getComponentPositionsFromName("ModularHousingUnit").contains(housingPos) && !myShip.getComponentPositionsFromName("CentralHousingUnit").contains(housingPos)) {
-                System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
-            } else {
-                //Controllare che non comparsa già troppe volte in lista
 
-                int nCrewAtPos = 0;
-                //N di crew sia umani che alieni
-                switch (myShip.getComponentFromPosition(housingPos).accept(componentNameVisitor)) {
-                    case "ModularHousingUnit":
-                        nCrewAtPos = ((ModularHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
-                        break;
-                    case "CentralHousingUnit":
-                        nCrewAtPos = ((CentralHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
+            try {
+                String input = readLine(" input (x,y): ").trim().toLowerCase();
+                housingPos = parseCoordinate(input);
+                housingPos.setPos(housingPos.getX() - 4, housingPos.getY() - 5);
+                System.out.println(housingPos.getY() + " " + housingPos.getX());
 
-                }
-                Position finalHousingPos = housingPos;
-                int timesSlotUsed = (int) housingPositions.stream().filter(p -> p.equals(finalHousingPos)).count();
-                if (nCrewAtPos <= timesSlotUsed) {
-                    System.out.println("Crew already selected ad those coordinates ");
+                if (!Util.inBoundaries(housingPos.getY(), housingPos.getX()) || myShip.getInvalidPositions().contains(housingPos)) {
+                    System.out.println("Wrong Coordinates, out of bounds ");
+                } else if (!myShip.getComponentPositionsFromName("ModularHousingUnit").contains(housingPos) && !myShip.getComponentPositionsFromName("CentralHousingUnit").contains(housingPos)) {
+                    System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
                 } else {
-                    //Se tutto ok aggiungere
+                    //Controllare che non comparsa già troppe volte in lista
+
+                    int nCrewAtPos = 0;
+                    //N di crew sia umani che alieni
+                    switch (myShip.getComponentFromPosition(housingPos).accept(componentNameVisitor)) {
+                        case "ModularHousingUnit":
+                            nCrewAtPos = ((ModularHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
+                            break;
+                        case "CentralHousingUnit":
+                            nCrewAtPos = ((CentralHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
+
+                    }
+                    Position finalHousingPos = housingPos;
+                    int timesSlotUsed = (int) housingPositions.stream().filter(p -> p.equals(finalHousingPos)).count();
+                    if (nCrewAtPos <= timesSlotUsed) {
+                        System.out.println("Crew already selected ad those coordinates ");
+                    } else {
+                        //Se tutto ok aggiungere
+
                     housingPositions.add(housingPos);
-                    nCrewToDiscard--;
-                    System.out.println("Accepted, you have " + nCrewToDiscard + " crew members to discard left");
+                        nCrewToDiscard--;
+                        System.out.println("Accepted, you have " + nCrewToDiscard + " crew members to discard left");
+                    }
                 }
+            } catch (IllegalArgumentException e) {
+                System.out.println("invalid input, out of bounds ");
+
             }
         }
 
