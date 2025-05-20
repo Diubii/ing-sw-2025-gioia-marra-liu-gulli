@@ -3,54 +3,65 @@
 
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
-import com.sun.java.accessibility.util.GUIInitializedListener;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
+import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Dialogs.ConfirmDialogController;
 import org.polimi.ingsw.galaxytrucker.view.View;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.*;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class GuiJavaFx implements View {
 
     private final Stage primaryStage;
     private  Scene primaryScene;
+    //Controller
     private final ClientController controller;
+    //Model
+    private final ClientModel mymodel;
+    //The current controller of the main node tree displayed
     private GenericSceneController actualPageController;
+
     private MusicManager musicManager;
     private Boolean firstTimeMainMenu = true;
 
 
-    public GuiJavaFx(Stage primaryStage, ClientController controller,Scene primaryScene) {
+    public GuiJavaFx(Stage primaryStage,Scene primaryScene, ClientController controller, ClientModel mymodel) {
         this.primaryStage = primaryStage;
         this.controller = controller;
+        this.mymodel = mymodel;
         this.primaryScene = primaryScene;
         musicManager= new MusicManager();
         primaryStage.setOnCloseRequest(event -> {
@@ -61,6 +72,11 @@ public class GuiJavaFx implements View {
                 event.consume(); // annulla la chiusura
             }
         });
+    }
+
+    @Override
+    public Boolean autoShowUpdates() {
+        return true;
     }
 
     static void playWavSoundEffect(String sound){
@@ -147,7 +163,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 LoginConnectController pageController = loader.getController();
-                pageController.initialSetup(this,controller,primaryStage,musicManager);
+                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
                 primaryScene.setRoot(root);
@@ -187,7 +203,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 MainMenuController pageController = loader.getController();
-                pageController.initialSetup(this,controller,primaryStage,musicManager);
+                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
                 primaryScene.setRoot(root);
@@ -197,7 +213,8 @@ public class GuiJavaFx implements View {
             //Di default passato a FullScreen quandoe entra il Main Menu
             if(firstTimeMainMenu){
                 firstTimeMainMenu = false;
-                primaryStage.setFullScreen(true);
+                //Todo Riattivare FullScreen Automatico
+               // primaryStage.setFullScreen(true);
             }
             //Todo Riattivare musica
            // musicManager.playBackgroundMusic("CRMIntroMenu.wav",true);
@@ -237,7 +254,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 CreateLobbyController pageController = loader.getController();
-                pageController.initialSetup(this,controller,primaryStage,musicManager);
+                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
                 primaryScene.setRoot(root);
@@ -274,7 +291,7 @@ public class GuiJavaFx implements View {
 
 @Override
 public void showLobbies(List<LobbyInfo> lobbies) {
-    System.out.println("DEBUG: askJoinOrCreateRoom");
+    System.out.println("DEBUG: showLobbies");
     Platform.runLater(() -> {
         Parent root;
         FXMLLoader loader;
@@ -284,7 +301,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
             root = loader.load();
             //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
             ListLobbyController pageController = loader.getController();
-            pageController.initialSetup(this,controller,primaryStage,musicManager);
+            pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
             pageController.UpdateLobbyList(lobbies);
             actualPageController = pageController;
             //3-impostare la nuova root alla scena principale
@@ -337,12 +354,55 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void showPlayerJoined(PlayerInfo playerInfo) {
+        System.out.println("DEBUG: showPlayerJoined");
+        ArrayList<PlayerInfo> app = new ArrayList<>();
+        app.add(playerInfo);
+        Platform.runLater(() -> {
+            Parent root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Lobby.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                LobbyController pageController = loader.getController();
+                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.updatePlayersList(app);
+                actualPageController = pageController;
+                //3-impostare la nuova root alla scena principale
+                primaryScene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         showGenericMessage("Player joined: " + playerInfo);
     }
 
     @Override
-    public void showPlayersLobby( PlayerInfo myinfo , ArrayList<PlayerInfo> playerInfo) {
-        //showGenericMessage("Player joined: " + playerInfo);
+    public void showPlayersLobby( ArrayList<PlayerInfo> playerInfo) {
+        //Todo: Quando chiamo questo metodo, a volte lo faccio solo perchè è entrato un nuovo giocatore
+        //Todo: non perchè devo cambiare scena/pagina.
+        //Todo: bisognerebbe fare in modo che se sono già su questa scena/pagina chiamo soltanto pagecontroller.updatePlayersList(playerInfo)
+        //Todo: praticamente è la stessa differenza di pagine sincrone e asincrone per il web
+        System.out.println("DEBUG: showPlayersLobby");
+        Platform.runLater(() -> {
+            Parent root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Lobby.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                LobbyController pageController = loader.getController();
+                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.updatePlayersList(playerInfo);
+                actualPageController = pageController;
+                //3-impostare la nuova root alla scena principale
+                primaryScene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -352,11 +412,45 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void handlePhaseUpdate(PhaseUpdate update) {
-        showGenericMessage("Phase changed: " + update.getState().name());
+        System.out.println("DEBUG: handlePhaseUpdate "+update.getState().name());
+        //Fare rendering totali per tutto quel che serve di preparare quando carichi nuove pagine
+        switch (update.getState()){
+            case BUILDING_START:
+                showBuildingMenu();
+            break;
+            case null, default: showGenericMessage("Phase changed: " + update.getState().name());
+            break;
+        }
     }
 
     @Override
     public void showBuildingMenu() {
+
+
+        System.out.println("DEBUG: showBuildingMenu");
+        Platform.runLater(() -> {
+            Parent root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Building.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                BuildingController pageController = loader.getController();
+                pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
+                actualPageController = pageController;
+                //Impostare tutto il rendering iniziale
+                for (PlayerInfo playerInfo : mymodel.getPlayerInfos()) {
+                    showShip(playerInfo.getShip(), playerInfo.getNickName());
+                }
+                //3-impostare la nuova root alla scena principale
+                primaryScene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        /*
         Platform.runLater(() -> {
             VBox layout = new VBox(10);
             String[] options = {"a) Fetch Ship", "d) Draw Tile", "e) Show Tile", "f) Rotate", "g) Move", "h) Place", "j) Finish"};
@@ -366,7 +460,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
                 layout.getChildren().add(b);
             }
             primaryStage.setScene(new Scene(layout, 400, 300));
-        });
+        });*/
     }
 
     @Override
@@ -494,10 +588,16 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     }
 
+
     @Override
-    public void showShip(Ship targetShipView) {
-        return;
+    public void showShip(Ship targetShipView, String Nickname) {
+        System.out.println("DEBUG: showShip ");
+        //showShip exists only in the pages of Building and Flight so it's possible to Cast the actualPage in the
+        //GenericGamePhaseSceneController designed for those phases of actual gameplay
+        ((GenericGamePhaseSceneController) actualPageController).showShip( targetShipView,  Nickname);
     }
+
+
 
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
@@ -552,7 +652,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void showEndGame(ArrayList<PlayerScore> scores) {
-
+        //simile a lobby ma con gli scores quindi ok
     }
 
     @Override

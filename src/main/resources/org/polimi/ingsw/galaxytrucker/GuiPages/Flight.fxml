@@ -53,17 +53,14 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                         </GridPane>
-                        <ImageView fitHeight="250.0" fitWidth="782.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../galaxy_trucker_imgs/cardboard/cardboard-1b.jpg" />
-                           </image>
-                        </ImageView>
                      </children>
                   </VBox>
                   <HBox id="OverlayCarte" prefHeight="424.0" prefWidth="313.0" styleClass="OverlayPanel" stylesheets="@style.css">
                      <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZonaListaTronconi" />
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" stylesheets="@style.css" />
+                        <ScrollPane hbarPolicy="NEVER" prefHeight="400.0" prefWidth="280.0" stylesheets="@style.css" HBox.hgrow="ALWAYS">
+                           <content>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZonaListaTronconi" />
+                           </content></ScrollPane>
                      </children>
                   </HBox>
                </children>

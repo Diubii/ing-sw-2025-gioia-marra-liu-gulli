@@ -265,6 +265,8 @@ public class ClientController implements Observer {
                     MenuManager.learningMatch = isLearningMatch;
 
 
+                    myModel.getPlayerInfos().add(myModel.getMyInfo());
+                    view.showPlayersLobby(myModel.getPlayerInfos());
                     view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
                 } else {
                     view.showGenericMessage("Room creation failed: " + response.getErrMess());
