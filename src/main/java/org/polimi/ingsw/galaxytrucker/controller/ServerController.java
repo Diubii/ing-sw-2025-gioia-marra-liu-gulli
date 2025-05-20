@@ -289,10 +289,10 @@ public class ServerController {
 
         synchronized (myGame) {
 
-            System.out.println("SIZE: " + myGame.getPlayerColors().size());
+            //System.out.println("SIZE: " + myGame.getPlayerColors().size());
 
             if (myGame.getPlayerColors().size() == myGame.getRealGame().getMaxPlayers() || myGame.getGameController().getGameState() != GameState.LOBBY) {
-                System.out.println("2");
+                //System.out.println("2");
 
 
                 mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY" + message.getRoomId() + "DOESN'T MUNGI YOU");
@@ -304,7 +304,7 @@ public class ServerController {
 
             } else {
 
-                System.out.println("3");
+                //System.out.println("3");
 
                 Player myPlayer = new Player(message.getNickName(), 0, 0, myGame.getRealGame().getIsLearningMatch());
 
@@ -319,14 +319,14 @@ public class ServerController {
                 Color myColor = myGame.useNextAvailableColor();
                 myGame.getPlayerColors().putIfAbsent(message.getNickName(), myColor);
 
-                System.out.println("4");
+                //System.out.println("4");
 
                 //trovo la cabina centrale del colore dell'utente
                 Tile centralTile = null;
 
                 for (Tile tile : gameTiles) {
                     if (tile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
-                        System.out.println(tile.getMyComponent().accept(new ComponentNameVisitor()));
+                        //System.out.println(tile.getMyComponent().accept(new ComponentNameVisitor()));
                         CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
                         if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)) {
                             centralTile = tile;
@@ -397,7 +397,7 @@ public class ServerController {
 //            clientHandler.sendMessage(new PlayerJoinedUpdate(hostPlayerInfo));
             clientHandler.sendMessage(new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
             clientHandler.sendMessage(joinRoomResponse);
-            System.out.println("ID RESP: " + joinRoomResponse.getID());
+            //System.out.println("ID RESP: " + joinRoomResponse.getID());
 
             //se tutto è andato bene
             if (result) {
@@ -618,7 +618,7 @@ public class ServerController {
             //aggiungo alle pending responses
 
             myGame.addPendingResponse(future, askPositionUpdate.getID());
-            System.out.println(askPositionUpdate.getID());
+            //System.out.println(askPositionUpdate.getID());
 
             clientHandler.sendMessage(askPositionUpdate);
             //ho la mia posizione scelta, e lo posiziono
@@ -692,7 +692,7 @@ public class ServerController {
             //se hanno finito tutti allora si passa alla fase di check_ship
             {
                 myGame.getGameController().nextState();
-                System.out.println("STATE: " + myGame.getGameController());
+                //System.out.println("STATE: " + myGame.getGameController());
                 broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
             }
 
@@ -782,7 +782,7 @@ public class ServerController {
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) {
 
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        myGame.getTileBunch().getFaceUpTiles();
+        //myGame.getTileBunch().getFaceUpTiles();
         ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
         myGame.getTileBunch().returnTile(discardTileRequest.getTile());
 
@@ -880,6 +880,7 @@ public class ServerController {
         ArrayList<Position> batteriesPositions = activateDoubleEnginesResponse.getBatteriesPositions();
 
         for (int i = 0; i < activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions().size(); i++) {
+            //TODO FIX
             ship.activateDoubleEngine(doubleEnginesPositions.get(i), batteriesPositions.get(i)); //Usare il bool ritornato? //Assumo che ci siano posizioni duplicate nella lista di quelle delle batterie
         }
 
@@ -933,11 +934,11 @@ public class ServerController {
             ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(game.getPlayerHandlers().values());
 
-            broadCast(playerHandlers, shipUpdate);
+            broadCast(playerHandlers, update);
+        }
 
-            if (game.getGameController().getGameState() == GameState.FLIGHT) {
-                tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
-            }
+        if (game.getGameController().getGameState() == GameState.FLIGHT) {
+            tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
         }
     }
 

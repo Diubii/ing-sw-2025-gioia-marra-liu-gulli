@@ -497,7 +497,7 @@ public class Ship implements Serializable {
                         shipBoard[i][j].getTile().setWellConnected(false);
                         return false;
                     } else {
-                        System.out.println("CHECKING : " + shipBoard[i][j].getPosition());
+                        //System.out.println("CHECKING : " + shipBoard[i][j].getPosition());
                         if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Engine") || shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("DoubleEngine")) {
                             Boolean temp = Util.EngineWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
                             shipBoard[i][j].getTile().setWellConnected(temp);

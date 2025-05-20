@@ -12,12 +12,14 @@ import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitor;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class FakeClientHandler implements ClientHandler {
     private final ServerController controller;
     private final ArrayList<NetworkMessage> mockResponses;
     private final NetworkMessageVisitor serverControllerNetworkMessageVisitor;
     private final NetworkMessageCouplingVisitor serverControllerNetworkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
+    private final NetworkMessageNameVisitor serverControllerNetworkMessageNameVisitor = new NetworkMessageNameVisitor();
 
     public FakeClientHandler(ServerController controller, ArrayList<NetworkMessage> mockResponses) {
         this.controller = controller;
@@ -45,10 +47,17 @@ public class FakeClientHandler implements ClientHandler {
             return;
         }
 
-        NetworkMessage response = mockResponses.getFirst();
-        mockResponses.removeFirst();
+        //System.out.println(mockResponses.toString());
 
-        response.accept(serverControllerNetworkMessageVisitor);
+        NetworkMessage response = mockResponses.stream().filter(r -> r.accept(serverControllerNetworkMessageNameVisitor).equals(message.accept(serverControllerNetworkMessageCouplingVisitor))).findFirst().orElse(null);
+
+        if(response != null){
+            mockResponses.remove(response);
+            response.accept(serverControllerNetworkMessageVisitor);
+        }
+        else{
+            System.out.println("[FakeClientHandler] Couldn't find response related to " + message.accept(serverControllerNetworkMessageNameVisitor) + ".");
+        }
     }
 
 }

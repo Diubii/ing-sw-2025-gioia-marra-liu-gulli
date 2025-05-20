@@ -17,6 +17,8 @@ public class Heartbeat implements Runnable {
     private final ClientHandler clientHandler;
     private CompletableFuture<NetworkMessage> heartbeatFuture;
 
+    //Se non ricevo il ping, killo il thread che sta dormendo aspettando che riceva il ping
+
     public Heartbeat(ServerController serverController, ClientHandler clientHandler) {
         this.serverController = serverController;
         this.clientHandler = clientHandler;

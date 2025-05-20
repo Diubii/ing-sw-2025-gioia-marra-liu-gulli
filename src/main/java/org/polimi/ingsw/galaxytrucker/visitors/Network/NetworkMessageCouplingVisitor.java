@@ -72,7 +72,7 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
 
     @Override
     public NetworkMessageType visit(ShipUpdate shipUpdate) {
-        return null;
+        return NetworkMessageType.ShipUpdate;
     }
 
     @Override

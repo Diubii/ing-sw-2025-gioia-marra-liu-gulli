@@ -289,7 +289,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(DiscardCrewMembersRequest discardCrewMembersRequest) {
-        clientController.hardleDiscardCrewMembersRequest(discardCrewMembersRequest);
+        clientController.handleDiscardCrewMembersRequest(discardCrewMembersRequest);
         return null;
     }
 

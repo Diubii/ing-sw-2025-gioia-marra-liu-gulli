@@ -21,9 +21,9 @@ public class ActivateComponentResponse extends NetworkMessage implements Seriali
     @Serial
     private static final long serialVersionUID = 834756945642L;
 
-    public ActivateComponentResponse(ActivatableComponent activatableComponentType, ArrayList<Position> activatedDoubleEnginesPositions, ArrayList<Position> batteriesPositions) {
+    public ActivateComponentResponse(ActivatableComponent activatableComponentType, ArrayList<Position> activatedComponentPositions, ArrayList<Position> batteriesPositions) {
         this.activatableComponentType = activatableComponentType;
-        this.activatedDoubleEnginesPositions = activatedDoubleEnginesPositions;
+        this.activatedDoubleEnginesPositions = activatedComponentPositions;
         this.batteriesPositions = batteriesPositions;
     }
 

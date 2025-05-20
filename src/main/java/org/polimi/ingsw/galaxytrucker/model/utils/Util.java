@@ -47,7 +47,7 @@ public class Util {
         ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
         }).stream().filter(card -> card.getLevel() == 2).toList());
 
-        System.out.println("LVL2: ");
+        //System.out.println("LVL2: ");
 
         return new CardDeck(list, true);
 

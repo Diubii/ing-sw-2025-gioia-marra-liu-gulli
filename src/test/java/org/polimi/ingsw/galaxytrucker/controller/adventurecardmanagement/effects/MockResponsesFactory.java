@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
@@ -10,7 +11,9 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Shi
 import java.util.*;
 
 public class MockResponsesFactory {
-
+    private final static String playerANickname = "A";
+    private final static String playerBNickname = "B";
+    private final static String playerCNickname = "C";
 
     public static Map<String, ArrayList<NetworkMessage>> forAbandonedShip() {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
@@ -95,4 +98,29 @@ public class MockResponsesFactory {
         return responses;
     }
 
+    public static Map<String, ArrayList<NetworkMessage>> forCombatZone(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+
+        int i=0;
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleEngine,
+                                players.get(i).getShip().getComponentPositionsFromName("DoubleEngine"),
+                                players.get(i).getShip().getComponentPositionsFromName("Battery"))
+                        //new DiscardCrewMembersResponse()
+                )));
+
+        i++;
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateAdventureCardResponse(false)
+                )));
+
+        i++;
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(new ActivateAdventureCardResponse(false)
+                )));
+        return responses;
+    }
 }

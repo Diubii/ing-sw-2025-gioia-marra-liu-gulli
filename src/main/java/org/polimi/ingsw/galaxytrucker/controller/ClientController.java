@@ -40,7 +40,6 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.sql.Time;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -48,7 +47,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
 
 public class ClientController implements Observer {
 
@@ -1308,7 +1306,7 @@ public class ClientController implements Observer {
         }
     }
 
-    public void hardleDiscardCrewMembersRequest(DiscardCrewMembersRequest request) {
+    public void handleDiscardCrewMembersRequest(DiscardCrewMembersRequest request) {
         try {
             view.chooseDiscardCrew(myModel.getMyInfo().getShip(), request.getNumberOfCrewMembersToDiscard());
         } catch (Exception e) {

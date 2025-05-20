@@ -55,9 +55,7 @@ class CardEffectTest {
 
     }
 
-
-    private GameTestContext setupGame(Map<String, ArrayList<NetworkMessage>> responses)
-    {
+    private GameTestContext setupGame(Map<String, ArrayList<NetworkMessage>> responses) {
         ServerController serverController = new ServerController();
         HashMap<String, ClientHandler> nicknameToHandlerMap = new HashMap<>();
 
@@ -89,8 +87,6 @@ class CardEffectTest {
             nicknameToHandlerMap.put(p.getNickName(), fakeClientHandler);
         });
 
-        System.out.println("Here!!!");
-
         AtomicInteger position = new AtomicInteger();
         AtomicInteger id = new AtomicInteger(17);
         players.forEach(p -> {
@@ -112,9 +108,9 @@ class CardEffectTest {
     }
 
     @Test
-    void testAbandonedShip() throws IOException {
+    void testAbandonedShip() {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Nave abbandonata", 2);
-        AdventureCard card =cards.get(0);
+        AdventureCard card =cards.getFirst();
 //        AdventureCard card = cards.get(1);  //per test b
         assertNotNull(card);
         assertEquals("Nave abbandonata", card.getName());
@@ -158,11 +154,10 @@ class CardEffectTest {
 
     }
 
-
     @Test
-    void testAbandonedStation() throws IOException {
+    void testAbandonedStation() {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Stazione abbandonata", 2);
-        AdventureCard card =cards.get(0);
+        AdventureCard card = cards.getFirst();
         assertNotNull(card);
         assertEquals("Stazione abbandonata", card.getName());
         System.out.println("Carta pescata: " + card.getName());
@@ -209,14 +204,22 @@ class CardEffectTest {
     }
 
     @Test
-    void testOpenSpaceEffect() throws IOException {
+    void testCombatZone() {
+        List<AdventureCard> cards = CardTestUtils.loadCardsByType("Zona Guerra", 3);
+        AdventureCard combatZone = cards.getFirst();
+        assertNotNull(combatZone);
+        assertEquals("Zona Guerra", combatZone.getName());
+        assertInstanceOf(CombatZone.class, combatZone);
+    }
+
+    @Test
+    void testOpenSpaceEffect() {
 
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Spazio aperto", 3);
-        AdventureCard card = cards.get(0);
+        AdventureCard card = cards.getFirst();
         assertNotNull(card);
         assertEquals("Spazio aperto", card.getName());
-        assertTrue(card instanceof OpenSpace);
-
+        assertInstanceOf(OpenSpace.class, card);
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forOpenSpace();
 
