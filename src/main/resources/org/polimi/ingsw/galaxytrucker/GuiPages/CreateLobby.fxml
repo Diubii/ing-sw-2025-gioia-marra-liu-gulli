@@ -78,17 +78,17 @@
                                     </DropShadow>
                                  </effect>
                               </Label>
-                              <RadioButton fx:id="radioLearning" layoutX="233.0" layoutY="420.0" mnemonicParsing="false" stylesheets="@style.css">
+                              <RadioButton fx:id="radioLearning" layoutX="233.0" layoutY="420.0" mnemonicParsing="false" selected="true" stylesheets="@style.css">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="MatchType" />
                                  </toggleGroup></RadioButton>
                               <RadioButton fx:id="radioLv2" layoutX="401.0" layoutY="420.0" mnemonicParsing="false" stylesheets="@style.css" toggleGroup="$MatchType" />
-                              <RadioButton fx:id="radio2" layoutX="89.0" layoutY="230.0" mnemonicParsing="false" stylesheets="@style.css">
+                              <RadioButton fx:id="radio2" layoutX="89.0" layoutY="230.0" mnemonicParsing="false" selected="true" stylesheets="@style.css">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="Nplayers" />
                                  </toggleGroup></RadioButton>
                               <RadioButton fx:id="radio3" layoutX="320.0" layoutY="230.0" mnemonicParsing="false" stylesheets="@style.css" toggleGroup="$Nplayers" />
-                              <RadioButton fx:id="readio4" layoutX="537.0" layoutY="230.0" mnemonicParsing="false" stylesheets="@style.css" toggleGroup="$Nplayers" />
+                              <RadioButton fx:id="radio4" layoutX="537.0" layoutY="230.0" mnemonicParsing="false" stylesheets="@style.css" toggleGroup="$Nplayers" />
                               <ImageView fitHeight="113.0" fitWidth="169.0" layoutX="260.0" layoutY="120.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../galaxy_trucker_imgs/VermeMaleficoGruppo.png" />
