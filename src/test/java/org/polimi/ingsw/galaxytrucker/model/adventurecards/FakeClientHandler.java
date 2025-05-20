@@ -28,21 +28,27 @@ public class FakeClientHandler implements ClientHandler {
     @Override
     public void sendMessage(NetworkMessage message) {
         LobbyManager game = controller.getLobbyFromHandler(this);
-        if(game == null) return;
+        if (game == null) return;
 
         GameController gameController = game.getGameController();
-        if(gameController == null) return;
+        if (gameController == null) return;
 
         CardContext currentCardContext = gameController.getCurrentCardContext();
-        if(currentCardContext == null) return;
+        if (currentCardContext == null) return;
 
         Integer expectedNetworkMessagesOfTheSameType = controller.getLobbyFromHandler(this).getGameController().getCurrentCardContext().getExpectedNumberOfNetworkMessagesPerType().get(message.accept(serverControllerNetworkMessageCouplingVisitor));
 
-        if(expectedNetworkMessagesOfTheSameType == null || expectedNetworkMessagesOfTheSameType == 0) return;
+        if (expectedNetworkMessagesOfTheSameType == null || expectedNetworkMessagesOfTheSameType == 0) return;
+
+        if (mockResponses.isEmpty()) {
+            System.err.println("[FakeClientHandler] No more mock responses to send for message: " + message.accept(new NetworkMessageNameVisitor()));
+            return;
+        }
 
         NetworkMessage response = mockResponses.getFirst();
-        mockResponses.removeFirst(); //Scarto
+        mockResponses.removeFirst();
 
         response.accept(serverControllerNetworkMessageVisitor);
     }
+
 }

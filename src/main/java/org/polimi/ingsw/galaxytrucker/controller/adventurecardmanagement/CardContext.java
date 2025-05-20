@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement;
 
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardFSMVisitor;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms.CardFSM;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
@@ -103,6 +105,7 @@ public class CardContext {
 
     public void incrementExpectedNumberOfNetworkMessages(NetworkMessageType type) {
         if(type == null) return;
+        //if(type == incomingNetworkMessage.accept(new NetworkMessageNameVisitor())) executePhase();
 
         int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
         expectedNumberOfNetworkMessagesPerType.replace(type, currentValue + 1);

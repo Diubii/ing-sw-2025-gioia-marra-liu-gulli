@@ -27,27 +27,18 @@ public class ModularHousingUnit extends CentralHousingUnit {
 
 
     public void addBrownAlien() {
-
-        if (alienColor == AlienColor.BROWN) {
+            alienColor = AlienColor.BROWN;
             nBrownAlien += 1;
-        }
-        alienColor = AlienColor.BROWN;
 
     }
 
     public void addPurpleAlien() {
-        if (alienColor == AlienColor.PURPLE) {
-            nPurpleAlien += 1;
-        }
-        alienColor = AlienColor.PURPLE;
+          alienColor = AlienColor.PURPLE;
+          nPurpleAlien += 1;
     }
 
-    public int getNBrownAlien() {
-        return nBrownAlien;
-    }
-
-    public int getNPurpleAlien() {
-        return nPurpleAlien;
+    public void addHumanCrew() {
+        super.setHumanCrewNumber(2);
     }
 
     public void removeBrownAlien() {
@@ -87,9 +78,7 @@ public class ModularHousingUnit extends CentralHousingUnit {
         return visitor.visit(this);
     }
 
-    public void addHumanCrew() {
-        super.setHumanCrewNumber(2);
-    }
+
 
     @Override
     public int getNCrewMembers() {
@@ -102,7 +91,13 @@ public class ModularHousingUnit extends CentralHousingUnit {
         }
         return result;
     }
+    public int getNBrownAlien() {
+        return nBrownAlien;
+    }
 
+    public int getNPurpleAlien() {
+        return nPurpleAlien;
+    }
     public AlienColor getAlienColor() {
         return this.alienColor;
     }

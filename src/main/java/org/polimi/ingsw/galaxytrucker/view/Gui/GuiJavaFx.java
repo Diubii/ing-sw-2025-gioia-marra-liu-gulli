@@ -615,10 +615,6 @@ public void showLobbies(List<LobbyInfo> lobbies) {
         });
     }
 
-    @Override
-    public void askDiscardCrew(int nCrewToDiscard,Ship myShip) {
-
-    }
 
     @Override
     public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {

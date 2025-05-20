@@ -114,8 +114,6 @@ public interface View {
 
     void askActivateAdventureCard();
 
-    void askDiscardCrew(int nCrewToDiscard, Ship myShip);
-
     void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
 
 

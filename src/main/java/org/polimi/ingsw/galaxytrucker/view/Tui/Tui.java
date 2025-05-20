@@ -1160,25 +1160,7 @@ public class Tui implements View, Observable {
         );
     }
 
-    @Override
-    public void askDiscardCrew(int nCrewToDiscard, Ship myShip) {
 
-        out.println("Hai scelto di accettare l'effetto della carta, per favore scarta  " + nCrewToDiscard + " membri dell'equipaggio ");
-        ArrayList<Position> housePos = myShip.getComponentPositionsFromName("ModularHousingUnit");
-
-        if (!housePos.isEmpty()) {
-            for (Position pos : housePos) {
-                Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
-                if (tempSlot != null) {
-                    if (tempSlot.getTile() != null) {
-
-                    }
-                }
-            }
-        }
-
-
-    }
 
     // chiedere di selezionare uno dei pianeti disponibili
     @Override

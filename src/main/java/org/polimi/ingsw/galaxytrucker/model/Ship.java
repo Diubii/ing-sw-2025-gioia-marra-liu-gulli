@@ -175,8 +175,16 @@ public class Ship implements Serializable {
     }
 
     public int getnCrew() {
-        return getComponentPositionsFromName("ModularHousingUnit").stream().map(p -> ((ModularHousingUnit) shipBoard[p.getX()][p.getY()].getTile().getMyComponent()).getNCrewMembers()).reduce(0, Integer::sum)
-                + getComponentPositionsFromName("CentralHousingUnit").stream().map(p -> ((CentralHousingUnit) shipBoard[p.getX()][p.getY()].getTile().getMyComponent()).getNCrewMembers()).reduce(0, Integer::sum);
+        this.nCrew =
+                getComponentPositionsFromName("ModularHousingUnit").stream()
+                        .map(p -> ((ModularHousingUnit) shipBoard[p.getX()][p.getY()].getTile().getMyComponent()).getNCrewMembers())
+                        .reduce(0, Integer::sum)
+                        +
+                        getComponentPositionsFromName("CentralHousingUnit").stream()
+                                .map(p -> ((CentralHousingUnit) shipBoard[p.getX()][p.getY()].getTile().getMyComponent()).getNCrewMembers())
+                                .reduce(0, Integer::sum);
+
+        return this.nCrew;
     }
 
     public Boolean getSynch() {
@@ -443,8 +451,9 @@ public class Ship implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 5; j++) {
+             for (int i = 0; i < 7; i++) {
+
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
 
                     if (shipBoard[i][j].getTile().getWellConnected()) {
@@ -456,7 +465,7 @@ public class Ship implements Serializable {
                 } else if (shipBoard[i][j] != null && shipBoard[i][j].getTile() == null) {
                     int finalJ = j;
                     int finalI = i;
-                    if (invalidPositions.stream().anyMatch(pos -> pos.getX() == finalJ && pos.getY() == finalI)) {
+                    if (invalidPositions.stream().anyMatch(pos -> pos.getX() == finalI && pos.getY() == finalJ)) {
                         sb.append("[X] ");
                     } else {
                         sb.append("[.] "); // Slot vuoto

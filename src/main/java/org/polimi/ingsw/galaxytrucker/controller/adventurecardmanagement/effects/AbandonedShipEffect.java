@@ -15,36 +15,53 @@ import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.
 
 public abstract class AbandonedShipEffect {
     public static void start(CardContext context) {
+        System.out.println("DEBUG: Entered AbandonedShipEffect.start()");//
         AbandonedShip abandonedShip = (AbandonedShip) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
+
+
         if (player.getShip().getnCrew() >= abandonedShip.getRequiredCrewMembers()) {
             ActivateAdventureCardRequest activateAdventureCardRequest = new ActivateAdventureCardRequest();
             context.nextPhase();
             sendMessage(context, player, activateAdventureCardRequest);
         } else {
+            System.out.println("[" + player.getNickName() + "] non ha abbastanza membri dell'equipaggio per attivare questa carta. Skippo");
             GameMessage gameMessage = new GameMessage("Non hai abbastanza membri dell'equipaggio per attivare questa carta.");
             sendMessage(context, player, gameMessage);
 
             //Passiamo al prossimo giocatore
-            context.nextPlayer();
+            if(context.currentPlayerIsLast()){
+                context.goToEndPhase();
+            }
+            else{
+                context.nextPlayer();
+            }
             context.executePhase();
         }
     }
 
     public static void receivedCardActivationResponse(CardContext context) {
+        System.out.println("DEBUG: Entered receivedCardActivationResponse");
         ActivateAdventureCardResponse activateAdventureCardResponse = (ActivateAdventureCardResponse) context.getIncomingNetworkMessage();
         if (activateAdventureCardResponse.isActivated()) {
             AbandonedShip abandonedShip = (AbandonedShip) context.getAdventureCard();
             context.nextPhase();
             sendMessage(context, context.getCurrentPlayer(), new DiscardCrewMembersRequest(abandonedShip.getRequiredCrewMembers()));
         } else {
-            context.resetFSM();
-            context.nextPlayer();
+            System.out.println("Rifiuto attivazione carta. Skippo ");
+            if(context.currentPlayerIsLast()){
+                context.goToEndPhase();
+            }
+            else{
+                context.resetFSM();
+                context.nextPlayer();
+            }
             context.executePhase();
         }
     }
 
     public static void crewDiscarded(CardContext context) {
+        System.out.println("DEBUG: Entered crewDiscarded");
         Player player = context.getCurrentPlayer();
         AbandonedShip abandonedShip = (AbandonedShip) context.getAdventureCard();
 
@@ -57,8 +74,9 @@ public abstract class AbandonedShipEffect {
         Utils.broadcast(context, shipUpdate);
 
         player.addCredits(abandonedShip.getCredits()); //Accredito crediti
-        movePlayer(context, player, -abandonedShip.getDaysLost()); //Sposto il player
-
+        if(player !=null) {
+            movePlayer(context, player, -abandonedShip.getDaysLost()); //Sposto il player
+        }
         //Execute CommonEffects::end
         context.nextPhase();
         context.executePhase();
