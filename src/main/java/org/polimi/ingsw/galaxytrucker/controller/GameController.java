@@ -12,6 +12,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.DoubleCannon;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
+import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
@@ -244,23 +245,34 @@ public class GameController {
         }
     }
 
-    public void kickPlayerFromGame(String nickname) throws PlayerNotFoundException {
+    @NeedsToBeCompleted("Fare TODO")
+    public void kickPlayerFromGame(String nickname) {
         game.getPlayerColors().remove(nickname);
-        game.getRealGame().getFlightBoard().removePlayer(game.getPlayerColors().get(nickname));
-        game.getRealGame().removePlayer(nickname);
+        Game realGame = game.getRealGame();
 
-        FlightBoardUpdate fbu = new FlightBoardUpdate(game.getRealGame().getFlightBoard());
+        FlightBoard flightBoard = realGame.getFlightBoard();
+        realGame.removePlayer(nickname);
+
+        final FlightBoardUpdate fbu;
+        if(flightBoard == null) {
+            fbu = null;
+        }
+        else{
+            flightBoard.removePlayer(game.getPlayerColors().get(nickname));
+            fbu = new FlightBoardUpdate(game.getRealGame().getFlightBoard());
+        }
+
         PlayerKickedUpdate pku = new PlayerKickedUpdate(nickname);
         game.getPlayerHandlers().values().forEach(ch -> {
             ch.sendMessage(pku);
-            ch.sendMessage(fbu);
+            if(fbu != null) ch.sendMessage(fbu);
         }); //Notifichiamo i client che un player è stato kickato e aggiorniamo la flight board
         game.removePlayerHandler(nickname);
 
         if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
 //            completeCardDrawn();
-
+            //TODO
         }
     }
 

@@ -23,7 +23,7 @@ public class PlayerKickedUpdate extends NetworkMessage implements Serializable {
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
-        return null;
+        return visitor.visit(this);
     }
 
     public String getNickname() {

@@ -41,6 +41,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.time.Duration;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -148,11 +149,24 @@ public class ClientController implements Observer {
         try {
             connectToServer(info.getAddress(), info.getPort());
         } catch (IOException e) {
-
             view.showGenericMessage(" Failed to connect to server: " + e.getMessage());
-
             return;
         }
+
+        //HEARTBEAT
+        new Thread(() -> {
+            HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
+           while (true) {
+               try {
+                   client.sendMessage(heartbeatRequest);
+                   //System.out.println("[ClientController] Sent heartbeat.");
+                   Thread.sleep(Duration.ofSeconds(1));
+               } catch (IOException | ExecutionException | InterruptedException e) {
+                   throw new RuntimeException(e);
+               }
+           }
+        }).start();
+
         new Thread(() -> {
             try {
                 view.askNickname();
@@ -164,7 +178,6 @@ public class ClientController implements Observer {
 
     /**
      * Handles the user input for a nickname.
-     * <p>
      * Validates the nickname format locally before sending a {@link NicknameRequest}
      * to the server.
      *
@@ -174,7 +187,7 @@ public class ClientController implements Observer {
     private boolean isNicknameLegal(String nickname) {
         //no accetta nickname == null o la string vuota
         if (nickname == null || nickname.trim().isEmpty()) return false;
-        //nickname deve  corrispondere a una stringa che contiene solo lettere (a-z o A-Z), numeri (0-9) o il carattere di sottolineatura (_) e che ha almeno un carattere.
+        //nickname deve corrispondere a una stringa che contiene solo lettere (a-z o A-Z), numeri (0-9) o il carattere di sottolineatura (_) e che ha almeno un carattere.
         return nickname.matches("^[a-zA-Z0-9_]+$");
     }
 
@@ -543,7 +556,6 @@ public class ClientController implements Observer {
             if(myModel.getMyInfo().getNickName().equals(targetNickname)){
                 view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
                 view.handleChoiceForPhase(phase);
-                return;
             }
             else {
                 Ship targetShip = myModel.getPlayerInfoByNickname(targetNickname).getShip();
@@ -555,7 +567,6 @@ public class ClientController implements Observer {
             view.showGenericMessage("No player with nickname " + targetNickname + " found. Please try again.");
             view.askFetchShip();
         }
-
     }
 
 
@@ -639,7 +650,7 @@ public class ClientController implements Observer {
         try {
             client.sendMessage(askTimerInfoRequest);
         } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send request: " + e.getMessage() + e.getStackTrace());
+            view.showGenericMessage("Failed to send request: " + e.getMessage());
         }
             try {
                 TimerInfoResponse timerInfoResponse = (TimerInfoResponse) future.get();
@@ -1193,7 +1204,7 @@ public class ClientController implements Observer {
             throw new RuntimeException(e);
         }
 
-        if (confirm == true && "AbandonedStation".equals(getCurrentAdventureCard().getName())){
+        if (confirm && "AbandonedStation".equals(getCurrentAdventureCard().getName())){
             AbandonedStation abandonedStation = (AbandonedStation)  getCurrentAdventureCard();
             myModel.setUnplacedGoods(abandonedStation.getGoods());
             view.askLoadGoodChoice();
@@ -1326,7 +1337,6 @@ public class ClientController implements Observer {
     }
 
     public void handleHeartbeatRequest(HeartbeatRequest heartbeatRequest) throws IOException, ExecutionException, InterruptedException {
-        client.sendMessage(new HeartbeatResponse());
     }
 
     @NeedsToBeCompleted
@@ -1538,10 +1548,5 @@ public class ClientController implements Observer {
         FlipTimerRequest flipTimerRequest = new FlipTimerRequest();
         flipTimerRequest.setTimerIndex(index);
         client.sendMessage(flipTimerRequest);
-
-
-
-
-
     }
 }

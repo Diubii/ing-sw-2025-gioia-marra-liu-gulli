@@ -71,16 +71,12 @@ public class MockShipFactory {
             modularHousingUnit2.setMyComponent(mhu2);
         }
 
-        try {
-            if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
-            if(battery != null) ship.putTile(battery, new Position(2, 2));
-            if(doubleEngine != null) ship.putTile(doubleEngine, new Position(3, 3));
-            if(cannon != null) ship.putTile(cannon, new Position(3, 1));
-            if(modularHousingUnit != null) ship.putTile(modularHousingUnit, new Position(2, 1));
-            if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
-        } catch (InvalidTilePosition e) {
-            System.err.println("Placement failed: " + e.getMessage());
-        }
+        if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
+        if(battery != null) ship.putTile(battery, new Position(2, 2));
+        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(3, 3));
+        if(cannon != null) ship.putTile(cannon, new Position(3, 1));
+        if(modularHousingUnit != null) ship.putTile(modularHousingUnit, new Position(2, 1));
+        if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
 
         return ship;
     }

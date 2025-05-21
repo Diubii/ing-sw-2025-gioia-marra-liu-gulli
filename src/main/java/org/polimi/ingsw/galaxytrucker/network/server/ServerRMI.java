@@ -44,7 +44,7 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
 //                System.out.println("FINISH FROM + " + mess.name);
 //            }
 
-        if (type != NetworkMessageType.HeartbeatResponse) {
+        if (type != NetworkMessageType.HeartbeatRequest) {
             System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + type));
         }
         RMIClientHandler handler = (RMIClientHandler) clientMap.get(clientRMI);

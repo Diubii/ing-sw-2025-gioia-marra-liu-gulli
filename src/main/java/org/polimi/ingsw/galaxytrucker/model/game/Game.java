@@ -151,19 +151,17 @@ public class Game {
     }
 
 
-    public void removePlayer(String nickname) throws PlayerNotFoundException {
-
+    public void removePlayer(String nickname) {
         synchronized (playerMap) {
 
             Player player = playerMap.get(nickname);
-            if (player == null) {
-                throw new PlayerNotFoundException(nickname);
-            }
+
+            if (player == null) return;
+
             playerMap.remove(nickname);
             synchronized (usedNicknames) {
                 usedNicknames.remove(nickname);
             }
-//        playerShip.remove(player);
         }
     }
 

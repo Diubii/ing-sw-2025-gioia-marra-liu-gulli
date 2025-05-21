@@ -22,9 +22,9 @@ public class ClientStartApp {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
         //Aggiungere che se args contengono cli o gui ad esempio non chiede nemmeno e parte subito con quell'impostazione
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Digita 1 per l'interfaccia grafica oppure digita 2 per l'interfaccia testuale e poi premi invio ");
+        System.out.print("Digita 1 per l'interfaccia grafica oppure digita 2 per l'interfaccia testuale e poi premi invio: ");
         String scelta = scanner.nextLine();
-        System.out.println("Digita 1 per RMI oppure digita 2 per SOCKET e poi premi invio ");
+        System.out.print("Digita 1 per RMI oppure digita 2 per SOCKET e poi premi invio: ");
         String scelta2 = scanner.nextLine();
 
         View myT = null;
