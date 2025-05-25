@@ -39,6 +39,14 @@ public class Shield extends Component {
         this.charged = charged;
     }
 
+    @Override
+    public Shield clone() {
+        Shield copy = (Shield) super.clone();
+        copy.protectedSides = new ArrayList<>(this.protectedSides);
+        copy.charged = this.charged;
+        return copy;
+    }
+
 
     @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {

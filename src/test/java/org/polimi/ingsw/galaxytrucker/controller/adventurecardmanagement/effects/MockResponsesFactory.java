@@ -1,21 +1,38 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.AbandonedStation;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.Planets;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class MockResponsesFactory {
     private final static String playerANickname = "A";
     private final static String playerBNickname = "B";
     private final static String playerCNickname = "C";
 
-    public static Map<String, ArrayList<NetworkMessage>> forAbandonedShip() {
+    public static Map<String, ArrayList<NetworkMessage>> emptyResponsesFor(List<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+        for (Player player : players) {
+            responses.put(player.getNickName(), new ArrayList<>());
+        }
+        return responses;
+    }
+
+    public static Map<String, ArrayList<NetworkMessage>> forAbandonedShip_A() {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
         responses.put("A", new ArrayList<>(
                 List.of(
@@ -45,13 +62,52 @@ public class MockResponsesFactory {
                         )));
         return responses;
     }
-
-    public static Map<String, ArrayList<NetworkMessage>> forAbandonedStation() {
+    public static Map<String, ArrayList<NetworkMessage>> forAbandonedShip_B() {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
         responses.put("A", new ArrayList<>(
                 List.of(
                         new ActivateAdventureCardResponse(true),
-                        new ShipUpdate(new Ship(false), "A")
+                        new DiscardCrewMembersResponse(new ArrayList<>(
+                                List.of(
+                                        new Position(3, 2)
+                                )
+                        ))
+                )));
+        responses.put("B", new ArrayList<>(
+                List.of(
+                        new ActivateAdventureCardResponse(true),
+                        new DiscardCrewMembersResponse(new ArrayList<>(
+                                List.of(
+                                        new Position(3, 2)
+                                )
+                        ))
+                )));
+        responses.put("C", new ArrayList<>(
+                List.of(new ActivateAdventureCardResponse(true),
+                        new DiscardCrewMembersResponse(new ArrayList<>(
+                                List.of(
+                                        new Position(3, 2)
+                                )
+                        ))
+                )));
+        return responses;
+    }
+
+    public static Map<String, ArrayList<NetworkMessage>> forAbandonedStation_A(ArrayList<Player> players,  AbandonedStation card) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+        Player playerA = players.get(0);
+        Ship newShipA = playerA.getShip();
+        ArrayList<Good> goodsToLoad  = card.getGoods();
+        ArrayList<Position> normalPositions = new ArrayList<>();
+        ArrayList<Position> specialPositions = new ArrayList<>();
+        normalPositions.add(new Position(2, 3));
+        normalPositions.add(new Position(2, 3));
+        loadGoodsIntoShip(newShipA, goodsToLoad, normalPositions, specialPositions);
+
+        responses.put("A", new ArrayList<>(
+                List.of(
+                        new ActivateAdventureCardResponse(true),
+                        new ShipUpdate(newShipA, "A")
                 )));
         responses.put("B", new ArrayList<>(
                 List.of(
@@ -71,11 +127,11 @@ public class MockResponsesFactory {
         componentPositions.add(new Position(3, 3));
         responses.put("A", new ArrayList<>(
                 List.of(
-                       new ActivateComponentResponse(
-                               ActivatableComponent.DoubleEngine,
-                               componentPositions,
-                               batteryPositions
-                                )
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleEngine,
+                                componentPositions,
+                                batteryPositions
+                        )
 
                 )));
         responses.put("B", new ArrayList<>(
@@ -97,6 +153,35 @@ public class MockResponsesFactory {
                 )));
         return responses;
     }
+
+    public static Map<String,ArrayList<NetworkMessage>> forPlanet_NormalConditions(ArrayList<Player> players, Planets planets) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+        Player playerA = players.get(0);
+        Player playerB = players.get(1);
+        Player playerC = players.get(2);
+        ArrayList<Planet> planetsToLoad = planets.getPlanets();
+        responses.put(playerA.getNickName(), new ArrayList<>(
+                List.of(
+                        new SelectPlanetResponse(planetsToLoad.get(0),0 ),
+                        new ShipUpdate(playerA.getShip(), playerA.getNickName())
+
+                )));
+        responses.put(playerB.getNickName(), new ArrayList<>(
+                List.of(
+                        new SelectPlanetResponse(planetsToLoad.get(1),1 ),
+                        new ShipUpdate(playerB.getShip(), playerB.getNickName())
+
+                )
+                ));
+        responses.put(playerC.getNickName(), new ArrayList<>(
+                List.of(
+                        new SelectPlanetResponse(null,null ),
+                        new ShipUpdate(playerA.getShip(), playerA.getNickName())
+
+                )));
+     return responses;
+    }
+
 
     public static Map<String, ArrayList<NetworkMessage>> forCombatZone(ArrayList<Player> players) {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
@@ -123,4 +208,27 @@ public class MockResponsesFactory {
                 )));
         return responses;
     }
+    private static void loadGoodsIntoShip(Ship ship, List<Good> goods, List<Position> normal, List<Position> special) {
+        int n = 0, s = 0;
+        for (Good good : goods) {
+            boolean isSpecial = false;
+            if(good.getColor().equals(Color.RED)) {
+                isSpecial = true;
+            }
+
+            Position pos = isSpecial ? (s < special.size() ? special.get(s++) : null) : (n < normal.size() ? normal.get(n++) : null);
+            if (pos == null) {
+                System.err.println("[MockResponsesFactory] No more space for " + good);
+                continue;
+            }
+
+            Component c = ship.getComponentFromPosition(pos);
+            if (c instanceof GenericCargoHolds hold) {
+                hold. playerLoadGood(good);
+            } else {
+                System.err.println("[MockResponsesFactory] Position " + pos + " is not a valid cargo hold.");
+            }
+        }
+    }
+
 }

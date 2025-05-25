@@ -38,7 +38,7 @@ public class CentralHousingUnit extends Component {
     }
 
     public void setHumanCrewNumber(int humanCrewNumber) {
-        if (humanCrewNumber > 0 && humanCrewNumber <= 2) {
+        if (humanCrewNumber >= 0 && humanCrewNumber <= 2) {
             this.humanCrewNumber = humanCrewNumber;
 
         } else throw new IllegalArgumentException("humanCrewNumber must be between 0 and 2");
@@ -52,6 +52,14 @@ public class CentralHousingUnit extends Component {
         if (humanCrewNumber > 0) humanCrewNumber--;
     }
 
+    @Override
+    public CentralHousingUnit clone() {
+        CentralHousingUnit copy = (CentralHousingUnit) super.clone();
+        copy.humanCrewNumber = this.humanCrewNumber;
+        copy.isColored = this.isColored;
+        copy.setRotation(this.getRotation());
+        return copy;
+    }
     @Override
 
     public <T> T accept(ComponentVisitorInterface<T> visitor) {

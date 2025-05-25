@@ -200,8 +200,9 @@ public class ServerController {
 
         LobbyManager newGame = new LobbyManager();
         Player myPlayer = new Player(message.getNickName(), 0, 0, message.getIsLearningMatch());
-        Color myColor = newGame.useNextAvailableColor();
 
+        Color myColor = newGame.useNextAvailableColor();
+        myPlayer.setColor(myColor);
 
         newGame.getPlayerColors().putIfAbsent(message.getNickName(), myColor);
         newGame.getRealGame().setLearningMatch(message.getIsLearningMatch());
@@ -317,6 +318,7 @@ public class ServerController {
 
                 Color myColor = myGame.useNextAvailableColor();
                 myGame.getPlayerColors().putIfAbsent(message.getNickName(), myColor);
+                myPlayer.setColor(myColor);
 
                 //System.out.println("4");
 

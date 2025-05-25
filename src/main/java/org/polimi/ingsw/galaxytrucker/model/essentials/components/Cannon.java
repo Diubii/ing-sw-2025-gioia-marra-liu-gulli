@@ -24,7 +24,12 @@ public class Cannon extends Component {
             FirePower = FirePower / 2;
         }
     }
-
+    @Override
+    public Cannon clone() {
+        Cannon copy = (Cannon) super.clone();
+        copy.FirePower = this.FirePower;
+        return copy;
+    }
     @Override
 
     public <T> T accept(ComponentVisitorInterface<T> visitor) {

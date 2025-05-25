@@ -95,6 +95,21 @@ public class GenericCargoHolds extends Component {
     }
 
 
+    public boolean isFull() {
+        return Goods.size() >= nMaxContainers;
+    }
+
+    public boolean isEmpty() {
+        return Goods.isEmpty();
+    }
+
+    @Override
+    public GenericCargoHolds clone() {
+        GenericCargoHolds copy = (GenericCargoHolds) super.clone();
+        copy.Goods = new ArrayList<>(Goods);
+        return copy;
+    }
+
     @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
@@ -105,11 +120,5 @@ public class GenericCargoHolds extends Component {
         return special;
     }
 
-    public boolean isFull() {
-        return Goods.size() >= nMaxContainers;
-    }
 
-    public boolean isEmpty() {
-        return Goods.isEmpty();
-    }
 }

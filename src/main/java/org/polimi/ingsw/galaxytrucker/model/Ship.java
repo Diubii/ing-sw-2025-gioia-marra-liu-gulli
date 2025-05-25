@@ -404,16 +404,17 @@ public class Ship implements Serializable {
                         } else nExposedConnector++;
 
                     }
-                    //OVEST
+                    //EST
                     if (myTile.getSides().get(1) != Connector.EMPTY) {
-                        if (!invalidPositions.contains(ovest) && Util.inBoundaries(ovest.getX(), ovest.getY())) {
-                            Tile tempTile = shipBoard[ovest.getX()][ovest.getY()].getTile();
+                        if (!invalidPositions.contains(est) && Util.inBoundaries(est.getX(), est.getY())) {
+                            Tile tempTile = shipBoard[est.getX()][est.getY()].getTile();
                             if (tempTile == null) {
                                 nExposedConnector++;
                             }
                         } else nExposedConnector++;
 
                     }
+
                     //SUD
                     if (myTile.getSides().get(2) != Connector.EMPTY) {
                         if (!invalidPositions.contains(sud) && Util.inBoundaries(sud.getX(), sud.getY())) {
@@ -424,10 +425,10 @@ public class Ship implements Serializable {
                         } else nExposedConnector++;
 
                     }
-                    //EST
+                    //OVEST
                     if (myTile.getSides().get(3) != Connector.EMPTY) {
-                        if (!invalidPositions.contains(est) && Util.inBoundaries(est.getX(), est.getY())) {
-                            Tile tempTile = shipBoard[est.getX()][est.getY()].getTile();
+                        if (!invalidPositions.contains(ovest) && Util.inBoundaries(ovest.getX(), ovest.getY())) {
+                            Tile tempTile = shipBoard[ovest.getX()][ovest.getY()].getTile();
                             if (tempTile == null) {
                                 nExposedConnector++;
                             }
@@ -936,7 +937,11 @@ public class Ship implements Serializable {
     }
 
     public int calculateEnginePower() {
-        int enginePower = getEnginePos().stream().mapToInt(p -> ((Engine) getComponentFromPosition(p)).getEnginePower()).sum();
+        int enginePower = getEnginePos()
+                .stream()
+                .mapToInt(p ->
+                        ((Engine) getComponentFromPosition(p)).getEnginePower())
+                .sum();
         if (enginePower != 0) {
             enginePower += getNBrownAlien() * 2;
         }
@@ -945,7 +950,7 @@ public class Ship implements Serializable {
     }
 
     public Component getComponentFromPosition(Position position) {
-        if(position.getY() > 0 && position.getX() > 0 && position.getY() < shipboardMaxY && position.getX() < shipboardMaxX) {
+        if(position.getY() >= 0 && position.getX() >= 0 && position.getY() < shipboardMaxY && position.getX() < shipboardMaxX) {
             Tile tile = getTileFromPosition(position);
             if (tile != null) {
                 return tile.getMyComponent();
@@ -1081,23 +1086,32 @@ public class Ship implements Serializable {
 
         Tile tile = getTileFromPosition(position);
 
-        Tile tileUp = shipBoard[positionX][positionUp].getTile();
-        Tile tileRight = shipBoard[positionRight][positionY].getTile();
-        Tile tileDown = shipBoard[positionX][positionDown].getTile();
-        Tile tileLeft = shipBoard[positionLeft][positionY].getTile();
 
-        if (tileUp != null && tile.getSides().get(0).equals(tileUp.getSides().get(2))) {
-            connectedTilesWithPosition.add(new Pair<>(new Position(positionX, positionUp), tile));
+        if (positionUp >= 0) {
+            Tile tileUp = shipBoard[positionX][positionUp].getTile();
+            if (tileUp != null) {
+                connectedTilesWithPosition.add(new Pair<>(new Position(positionX, positionUp), tileUp));
+            }
         }
-        if (tileRight != null && tile.getSides().get(1).equals(tileRight.getSides().get(3))) {
-            connectedTilesWithPosition.add(new Pair<>(new Position(positionRight, positionY), tile));
+        if (positionRight < shipboardMaxX) {
+            Tile tileRight = shipBoard[positionRight][positionY].getTile();
+            if (tileRight != null) {
+                connectedTilesWithPosition.add(new Pair<>(new Position(positionRight, positionY), tileRight));
+            }
         }
-        if (tileDown != null && tile.getSides().get(2).equals(tileDown.getSides().get(0))) {
-            connectedTilesWithPosition.add(new Pair<>(new Position(positionX, positionDown), tile));
+        if (positionDown < shipboardMaxY) {
+            Tile tileDown = shipBoard[positionX][positionDown].getTile();
+            if (tileDown != null ) {
+                connectedTilesWithPosition.add(new Pair<>(new Position(positionX, positionDown), tileDown));
+            }
         }
-        if (tileLeft != null && tile.getSides().get(3).equals(tileLeft.getSides().get(1))) {
-            connectedTilesWithPosition.add(new Pair<>(new Position(positionLeft, positionY), tile));
+        if (positionLeft >= 0) {
+            Tile tileLeft = shipBoard[positionLeft][positionY].getTile();
+            if (tileLeft != null ) {
+                connectedTilesWithPosition.add(new Pair<>(new Position(positionLeft, positionY), tileLeft));
+            }
         }
+
 
         return connectedTilesWithPosition;
     }
@@ -1111,6 +1125,7 @@ public class Ship implements Serializable {
      */
     public ArrayList<Pair<Position, Tile>> getConnectedHousingUnitTiles(Position position) {
         ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+        ArrayList<Pair<Position,Tile>> connected = getConnectedTiles(position);
         return getConnectedTiles(position).stream()
                 .filter(p -> (p.getValue().getMyComponent().accept(componentNameVisitor).equals("CentralHousingUnit") || p.getValue().getMyComponent().accept(componentNameVisitor).equals("ModularHousingUnit")))
                 .collect(Collectors.toCollection(ArrayList::new));

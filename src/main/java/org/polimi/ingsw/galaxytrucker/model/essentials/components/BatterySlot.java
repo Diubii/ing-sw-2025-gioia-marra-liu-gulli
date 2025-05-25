@@ -29,6 +29,13 @@ public class BatterySlot extends Component {
     }
 
     @Override
+    public BatterySlot clone() {
+        BatterySlot copy = (BatterySlot) super.clone();
+        copy.batteriesLeft = this.batteriesLeft;
+        return copy;
+    }
+
+    @Override
 
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);

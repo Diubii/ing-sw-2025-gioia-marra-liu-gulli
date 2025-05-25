@@ -22,7 +22,7 @@ public class DoubleEngine extends Engine {
     }
 
     private void calculatePower() {
-        if (getRotation() != 0) {
+        if (getRotation() == 0) {
             if (charged) {
                 enginePower = 2;
                 charged = false;
@@ -42,6 +42,12 @@ public class DoubleEngine extends Engine {
         this.charged = charged;
     }
 
+    @Override
+    public DoubleEngine clone() {
+        DoubleEngine copy = (DoubleEngine) super.clone();
+        copy.charged = this.charged;
+        return copy;
+    }
     @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);

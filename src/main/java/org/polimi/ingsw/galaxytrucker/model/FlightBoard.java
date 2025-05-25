@@ -125,4 +125,12 @@ public class FlightBoard implements Serializable {
     public FlightBoardMap getFlightBoardMap() {
         return flightBoardMap;
     }
+
+    public int getPlayerPosition(Color token) {
+        if (!playerSteps.containsKey(token)) {
+            throw new IllegalArgumentException("Player with token " + token + " not found on the flight board.");
+        }
+        int size = flightBoardMap.getFlightBoardMapSlots().size();
+        return ((playerSteps.get(token) % size) + size) % size;
+    }
 }

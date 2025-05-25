@@ -10,7 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Tile implements Serializable {
+public class Tile implements Serializable,Cloneable {
 
     @Serial
     private static final long serialVersionUID = 535L;
@@ -172,5 +172,17 @@ public class Tile implements Serializable {
 
     public void setFixed(Boolean fixed) {
         this.fixed = fixed;
+    }
+@Override
+    public Tile clone() {
+        try {
+            Tile copy = new Tile(this);
+            if (this.myComponent != null) {
+                copy.myComponent = this.myComponent.clone();
+            }
+            return copy;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to clone Tile", e);
+        }
     }
 }

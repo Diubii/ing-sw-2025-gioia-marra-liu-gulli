@@ -25,6 +25,12 @@ public class Engine extends Component {
             enginePower = 0;
         }
     }
+    @Override
+    public Engine clone() {
+        Engine copy = (Engine) super.clone();
+        copy.enginePower = this.enginePower;
+        return copy;
+    }
 
     @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {

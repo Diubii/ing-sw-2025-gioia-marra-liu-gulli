@@ -21,6 +21,13 @@ public class LifeSupportSystem extends Component {
     }
 
     @Override
+    public LifeSupportSystem clone() {
+        LifeSupportSystem copy = (LifeSupportSystem) super.clone();
+        copy.color = this.color;
+        return copy;
+    }
+
+    @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }

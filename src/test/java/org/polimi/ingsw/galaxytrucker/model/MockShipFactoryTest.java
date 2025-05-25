@@ -1,7 +1,7 @@
-package org.polimi.ingsw.galaxytrucker.model.essentials;
+package org.polimi.ingsw.galaxytrucker.model;
 
 import org.junit.jupiter.api.Test;
-import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
@@ -32,4 +32,19 @@ class MockShipFactoryTest {
         ShipPrintUtils.printShip(ship);
 
         }
+    @Test
+    void testCreateMockShip2()  {
+        Ship ship = MockShipFactory.createMockShip2();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+
+    }
+
+    @Test
+    void testCreateShipWithConnectedHousingUnits()  {
+        Ship ship = MockShipFactory.createShipWithConnectedHousingUnits();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+
+    }
 }

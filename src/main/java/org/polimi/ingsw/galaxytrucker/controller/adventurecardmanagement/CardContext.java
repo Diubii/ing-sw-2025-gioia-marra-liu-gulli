@@ -69,6 +69,12 @@ public class CardContext {
         return currentPlayer;
     }
 
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+
+
     public boolean currentPlayerIsLast(){
         return getCurrentRankedPlayers().getLast().getNickName().equals(currentPlayer.getNickName());
     }

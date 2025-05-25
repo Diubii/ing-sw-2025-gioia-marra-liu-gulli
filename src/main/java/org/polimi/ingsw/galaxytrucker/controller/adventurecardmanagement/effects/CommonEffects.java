@@ -22,6 +22,7 @@ public abstract class CommonEffects {
     }
 
     public static void end(CardContext context) {
+        System.out.println("DEBUG: CommonEffects.end()");
         context.getCurrentGame().getGameController().handleEndTurn();
 //        context.getCurrentGame().getGameController().handleTurnBeforeDrawnCard();
     }

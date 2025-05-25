@@ -20,15 +20,22 @@ public class FakeClientHandler implements ClientHandler {
     private final NetworkMessageVisitor serverControllerNetworkMessageVisitor;
     private final NetworkMessageCouplingVisitor serverControllerNetworkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
     private final NetworkMessageNameVisitor serverControllerNetworkMessageNameVisitor = new NetworkMessageNameVisitor();
+    private final ArrayList<NetworkMessage> sentMessages = new ArrayList<>();
 
     public FakeClientHandler(ServerController controller, ArrayList<NetworkMessage> mockResponses) {
         this.controller = controller;
         serverControllerNetworkMessageVisitor = new NetworkMessageVisitor(controller, this);
-        this.mockResponses = mockResponses;
+        this.mockResponses = new ArrayList<>(mockResponses);
     }
 
+
+    public void setMockResponses(ArrayList<NetworkMessage> responses) {
+        this.mockResponses.clear();
+        this.mockResponses.addAll(responses);
+    }
     @Override
     public void sendMessage(NetworkMessage message) {
+        sentMessages.add(message);
         LobbyManager game = controller.getLobbyFromHandler(this);
         if (game == null) return;
 
@@ -58,6 +65,14 @@ public class FakeClientHandler implements ClientHandler {
         else{
             System.out.println("[FakeClientHandler] Couldn't find response related to " + message.accept(serverControllerNetworkMessageNameVisitor) + ".");
         }
+
+    }
+    public ArrayList<NetworkMessage> getSentMessages() {
+        return new ArrayList<>(sentMessages);
+    }
+
+    public void clearSentMessages() {
+        sentMessages.clear();
     }
 
 }

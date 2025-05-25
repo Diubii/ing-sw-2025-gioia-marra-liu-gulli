@@ -8,6 +8,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public abstract class EpidemicEffect {
 
@@ -19,28 +20,37 @@ public abstract class EpidemicEffect {
         housings.addAll(ship.getComponentPositionsFromName("CentralHousingUnit"));
         housings.addAll(ship.getComponentPositionsFromName("ModularHousingUnit"));
 
+        HashSet<String> processedPairs = new HashSet<>(); //per evitare una seconda eliminazione
+
+
         for (Position housingUnitPosition : housings) {
+
             //Dynamic binding, anche se faccio il cast a CentralHousingUnit il tipo dinamico potrebbe essere ModularHousingUnit
             CentralHousingUnit housingUnit = (CentralHousingUnit) ship.getComponentFromPosition(housingUnitPosition);
-
+            if(housingUnit.getNCrewMembers() == 0 ) {
+                continue;
+            }
             ArrayList<Pair<Position, Tile>> connectedHousingUnitTilesWithPositions = ship.getConnectedHousingUnitTiles(housingUnitPosition);
+
             for (Pair<Position, Tile> connectedHousingUnitTileWithPosition : connectedHousingUnitTilesWithPositions) {
                 //Dynamic binding, anche se faccio il cast a CentralHousingUnit il tipo dinamico potrebbe essere ModularHousingUnit
                 CentralHousingUnit connectedHousingUnit = (CentralHousingUnit) connectedHousingUnitTileWithPosition.getValue().getMyComponent();
+                Position connectedPos = connectedHousingUnitTileWithPosition.getKey();
 
+                if(connectedHousingUnit == null || connectedHousingUnit.getNCrewMembers() == 0 ) {
+                    continue;
+                }
+                String key = createSortedKey(housingUnitPosition, connectedPos);
+                if(processedPairs.contains(key)) {
+                    continue;
+                }
                 //Se entrambe le housingUnits hanno equipaggio, lo rimuovo da entrambe
-                if (housingUnit.getNCrewMembers() != 0 && connectedHousingUnit.getNCrewMembers() != 0) {
+                if (housingUnit.getNCrewMembers() > 0 && connectedHousingUnit.getNCrewMembers() > 0) {
                     housingUnit.removeCrewMember();
                     connectedHousingUnit.removeCrewMember();
+                    processedPairs.add(key);
                 }
 
-                //Se nella housing unit connessa non ci sono più membri la rimuovo dalle housing units da controllare
-                if (connectedHousingUnit.getNCrewMembers() == 0)
-                    housings.remove(connectedHousingUnitTileWithPosition.getKey());
-
-                //Se nella housing unit che stiamo guardando non ci sono più membri, esco dal foreach
-                if (housingUnit.getNCrewMembers() == 0)
-                    break;
             }
         }
 
@@ -54,4 +64,14 @@ public abstract class EpidemicEffect {
             context.executePhase();
         }
     }
+
+
+    private static String createSortedKey(Position p1, Position p2) {
+        if (p1.getX() < p2.getX() || (p1.getX() == p2.getX() && p1.getY() < p2.getY())) {
+            return p1.getX() + "," + p1.getY() + "-" + p2.getX() + "," + p2.getY();
+        } else {
+            return p2.getX() + "," + p2.getY() + "-" + p1.getX() + "," + p1.getY();
+        }
+    }
+
 }

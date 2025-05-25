@@ -21,6 +21,7 @@ public abstract class OpenSpaceEffect {
         Player player = context.getCurrentPlayer();
 
         int playerEnginePower = player.getShip().calculateEnginePower();
+        System.out.println("DEBUG: playerEnginePower = " + playerEnginePower);
         HashMap<String, Integer> playerToPowerMap;
 
         //Populating HashMap
@@ -52,6 +53,7 @@ public abstract class OpenSpaceEffect {
 
         playerToPowerMap.forEach((nickname, power) -> {
             if (power == 0) {
+                System.out.println("DEBUG " + nickname + " removed from game");
                 game.getGameController().removePlayerFromGame(nickname, false);
             }
         });

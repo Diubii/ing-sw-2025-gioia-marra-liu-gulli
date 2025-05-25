@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.PlayerState;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
@@ -15,9 +16,10 @@ public class Player {
 
     private final String nickname;
     private int nCredits;
-
+    private Color color;
     private Ship ship;
     private int placement;
+
 
     private HashMap<String, Integer> detailedScores;
 
@@ -74,5 +76,13 @@ public class Player {
 
     public void setPlayerState(PlayerState playerState) {
         this.playerState = playerState;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }

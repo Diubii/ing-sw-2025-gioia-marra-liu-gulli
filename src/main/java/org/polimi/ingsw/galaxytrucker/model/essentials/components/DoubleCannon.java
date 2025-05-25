@@ -45,6 +45,12 @@ public class DoubleCannon extends Cannon {
     }
 
     @Override
+    public DoubleCannon clone() {
+        DoubleCannon copy = (DoubleCannon) super.clone();
+        copy.charged = this.charged;
+        return copy;
+    }
+    @Override
     public <T> T accept(ComponentVisitorInterface<T> visitor) {
         return visitor.visit(this);
     }

@@ -67,15 +67,10 @@ public class ModularHousingUnit extends CentralHousingUnit {
     @Override
     public void removeCrewMember() {
         switch (alienColor) {
-            case EMPTY -> removeCrewMember();
+            case EMPTY -> super.removeCrewMember();
             case BROWN -> removeBrownAlien();
             case PURPLE -> removePurpleAlien();
         }
-    }
-
-    @Override
-    public <T> T accept(ComponentVisitorInterface<T> visitor) {
-        return visitor.visit(this);
     }
 
 
@@ -101,5 +96,19 @@ public class ModularHousingUnit extends CentralHousingUnit {
     public AlienColor getAlienColor() {
         return this.alienColor;
     }
+    @Override
+    public ModularHousingUnit clone() {
+        ModularHousingUnit copy = (ModularHousingUnit) super.clone();
+        copy.nBrownAlien = this.nBrownAlien;
+        copy.nPurpleAlien = this.nPurpleAlien;
+        copy.alienColor = this.alienColor;
+        return copy;
+    }
+
+    @Override
+    public <T> T accept(ComponentVisitorInterface<T> visitor) {
+        return visitor.visit(this);
+    }
+
 
 }

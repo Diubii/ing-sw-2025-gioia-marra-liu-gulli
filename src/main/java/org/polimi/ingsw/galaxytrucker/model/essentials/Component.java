@@ -31,7 +31,7 @@ import java.io.Serializable;
  * Represents a component in the game, which could be part of a ship .
  * Each component has a name, a structural property, and a rotation value.
  */
-public class Component implements Serializable {
+public class Component implements Serializable,Cloneable {
 
 
 //    private final String Name;
@@ -85,6 +85,15 @@ public class Component implements Serializable {
         return false;
     }
 
+
+    @Override
+    public Component clone() {
+        try {
+            return (Component) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Component cloning failed", e);
+        }
+    }
     /**
      * Accepts a visitor that can interact with this component.
      * The visitor pattern is used to process the component's name.
