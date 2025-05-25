@@ -102,7 +102,7 @@ public class ServerController {
      * @param client The client's {@link ClientHandler}
      * @author Alessandro Giuseppe Gioia
      */
-    public void removeClient(ClientHandler client) throws PlayerNotFoundException {
+    public void removeClient(ClientHandler client) {
         String nickname = getNicknameFromClientHandler(client);
         LobbyManager game = getLobbyFromHandler(client);
 
@@ -110,10 +110,13 @@ public class ServerController {
             game.getGameController().kickPlayerFromGame(nickname);
 
             synchronized (lobbyInfos) {
-                lobbyInfos.removeIf(info -> info.getLobbyID() == lobbyManagers.indexOf(game));
+                lobbyInfos.get(lobbyManagers.indexOf(game)).removeConnectedPlayer();
             }
 
-            if (game.getPlayerColors().isEmpty()) {
+            if (game.getPlayerHandlers().isEmpty()) {
+                synchronized (lobbyInfos) {
+                    lobbyInfos.removeIf(info -> info.getLobbyID() == lobbyManagers.indexOf(game));
+                }
                 //System.out.println("A game was empty. Cleared from the list of games.");
                 synchronized (lobbyManagers) {
                     lobbyManagers.remove(game);
@@ -501,7 +504,6 @@ public class ServerController {
     @NeedsToBeCompleted
     //Se player inserisce un Nickname non esiste? cosa ricevo
     public void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler) {
-
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
 
         Player targetPlayer = myGame.getRealGame().getPlayer(message.getTargetNickname());
@@ -513,7 +515,6 @@ public class ServerController {
         shipViewUpdate.setShouldDisplay(true);
 
         clientHandler.sendMessage(shipViewUpdate);
-
     }
 
     public void handleCheckShipStatusRequest(CheckShipStatusRequest message, ClientHandler clientHandler) {
@@ -820,13 +821,14 @@ public class ServerController {
 
             if (positions.contains(tempPos) && s.getTile() != null) {
 
-                AlienColor color = crewInitUpdate.getCrewPos().stream().filter(pair -> pair.getKey().equals(tempPos)).map(Pair::getValue).findFirst().get();
+                AlienColor color = crewInitUpdate.getCrewPos().stream().filter(pair -> pair.getKey().equals(tempPos)).map(Pair::getValue).findFirst().orElse(null);
+
+                if(color == null) return;
 
                 if (color.equals(AlienColor.PURPLE)) {
                     ModularHousingUnit purpleHousing = (ModularHousingUnit) tempTile.getMyComponent();
                     purpleHousing.addPurpleAlien();
                 }
-
 
                 if (color.equals(AlienColor.BROWN)) {
                     ModularHousingUnit brownHousing = (ModularHousingUnit) tempTile.getMyComponent();
@@ -895,9 +897,12 @@ public class ServerController {
 
     }
 
-    public void handleHeartbeatResponse(HeartbeatResponse heartbeatResponse, ClientHandler clientHandler) {
+    public void handleHeartbeatRequest(HeartbeatRequest ignoredHeartbeatRequest, ClientHandler clientHandler) {
+        //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED, "Received heartbeat from " + clientHandler.toString() + "."));
+
         heartbeats.stream().filter(h -> h.getClientHandler() == clientHandler).findFirst().ifPresent(h -> {
-            h.getHeartbeatFuture().complete(heartbeatResponse);
+            heartbeats.remove(h);
+            h.regenerate();
         });
     }
 
@@ -1113,11 +1118,11 @@ public class ServerController {
     public void startNewHeartbeat(ClientHandler clientHandler) {
         Heartbeat heartbeat = new Heartbeat(this, clientHandler);
         heartbeats.add(heartbeat);
-        new Thread(heartbeat).start();
+        heartbeat.start();
     }
 
 
-    public Void handleAskTimerInfoRequest(AskTimerInfoRequest askTimerInfoRequest, ClientHandler clientHandler) {
+    public void handleAskTimerInfoRequest(AskTimerInfoRequest askTimerInfoRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
 //        myGame.completePendingResponse(askTimerInfoRequest.getID());
         TimerInfoResponse timerInfoResponse = new TimerInfoResponse(askTimerInfoRequest.getID());
@@ -1127,9 +1132,6 @@ public class ServerController {
 
         timerInfoResponse.setTimerInfoList(timerInfos);
         clientHandler.sendMessage(timerInfoResponse);
-
-        return null;
-
     }
 
     public void handleFlipTimerRequest(FlipTimerRequest flipTimerRequest, ClientHandler clientHandler) {
@@ -1144,8 +1146,6 @@ public class ServerController {
         boolean lastTimer = (flipTimerRequest.getTimerIndex() == myGame.getRealGame().getTimerInfos().size()-1);
 
         startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()), lastTimer, flipTimerRequest.getTimerIndex());
-
-
     }
 }
 

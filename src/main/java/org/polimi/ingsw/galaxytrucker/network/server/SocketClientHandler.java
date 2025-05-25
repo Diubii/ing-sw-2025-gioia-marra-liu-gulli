@@ -76,7 +76,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
                         System.out.println("Nickname received: " + request.getNickname());
                     }
 
-                    if (type != NetworkMessageType.HeartbeatResponse) {
+                    if (type != NetworkMessageType.HeartbeatRequest) {
                         System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerSocket, TuiColor.GREEN, "MESSAGE " + type + " RECEIVED FROM " + clientSocket.getInetAddress().toString()));
                     }
 
@@ -103,7 +103,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
             output.writeObject(message);
             output.flush();
         } catch (IOException e) {
-            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ClientSocket, TuiColor.GREEN, "Tried to send a message to a closed socket: " + clientSocket.getInetAddress().toString()));
+            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerSocket, TuiColor.GREEN, "Tried to send a message to a closed socket: " + clientSocket.getInetAddress().toString()));
         }
     }
 

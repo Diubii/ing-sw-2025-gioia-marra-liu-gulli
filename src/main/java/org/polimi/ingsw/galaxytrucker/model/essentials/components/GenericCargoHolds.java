@@ -44,6 +44,7 @@ public class GenericCargoHolds extends Component {
         return getGoods().stream().anyMatch(g -> g.getColor() == color);
     }
 
+    //Perchè fatta così, e anche metodo playerloadgood?
     public void loadGood(Good g) {
 
         if (Goods == null) {

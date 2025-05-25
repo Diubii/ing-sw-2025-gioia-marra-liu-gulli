@@ -252,12 +252,7 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
 
     @Override
     public NetworkMessageType visit(HeartbeatRequest heartbeatRequest) {
-        return NetworkMessageType.HeartbeatResponse;
-    }
-
-    @Override
-    public NetworkMessageType visit(HeartbeatResponse heartbeatResponse) {
-        return NetworkMessageType.HeartbeatRequest;
+        return null;
     }
 
     @Override

@@ -107,8 +107,6 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(HeartbeatRequest heartbeatRequest);
 
-    T visit(HeartbeatResponse heartbeatResponse);
-
     T visit(DrawAdventureCardRequest drawAdventureCardRequest);
 
     T visit(EndTurnUpdate endTurnUpdate);

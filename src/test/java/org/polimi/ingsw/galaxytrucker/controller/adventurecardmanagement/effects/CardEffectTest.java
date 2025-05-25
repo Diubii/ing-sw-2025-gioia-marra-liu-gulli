@@ -152,7 +152,7 @@ class CardEffectTest {
 
         System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
 
-        //AbandonedShip Test a :A sceglie di non accettare l'effetto della carta, mentre B e C scelgono di accettarlo
+        //AbandonedShip Test A: A sceglie di non accettare l'effetto della carta, mentre B e C scelgono di accettarlo
         assertEquals(0, first.getNCredits());
         assertEquals(2, first.getShip().getnCrew());
         assertEquals(3, second.getNCredits());

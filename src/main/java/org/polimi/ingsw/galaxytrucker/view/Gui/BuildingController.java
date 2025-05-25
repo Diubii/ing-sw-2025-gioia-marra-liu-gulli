@@ -20,7 +20,9 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
@@ -135,7 +137,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                 if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
 
                     zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid());
-                    /*
+
                     //TEST STAMPA DA TOGLIERE
                     Ship testShip = new Ship(false);
 
@@ -173,13 +175,23 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         testShip.putTile(tiles.get(137), new Position(6, 3));
 
                         testShip.getShipBoard()[0][3].getTile().rotate(90);
+                        testShip.getShipBoard()[1][3].getTile().rotate(270);
+                        testShip.getShipBoard()[4][2].getTile().rotate(270);
+                        ((CentralHousingUnit)testShip.getShipBoard()[4][3].getTile().getMyComponent()).setHumanCrewNumber(2);
+                        ((ModularHousingUnit)testShip.getShipBoard()[4][2].getTile().getMyComponent()).addPurpleAlien();
+                        ((GenericCargoHolds)testShip.getShipBoard()[2][3].getTile().getMyComponent()).playerLoadGood(exGood);
+                        ((GenericCargoHolds)testShip.getShipBoard()[2][3].getTile().getMyComponent()).playerLoadGood(exGood);
+                        exGood = new Good(Color.GREEN);
+                        testShip.getShipBoard()[2][2].getTile().rotate(90);
+                        ((GenericCargoHolds)testShip.getShipBoard()[2][2].getTile().getMyComponent()).playerLoadGood(exGood);
+                        ((GenericCargoHolds)testShip.getShipBoard()[2][2].getTile().getMyComponent()).playerLoadGood(exGood);
 
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
 
                     zUtils.showShipInGrid(testShip, shipControllers.get(i).getShipGrid());
-                    */
+
 
                 } else {
                     zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid());

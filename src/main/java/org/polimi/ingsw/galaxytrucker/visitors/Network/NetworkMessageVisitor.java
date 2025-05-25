@@ -346,12 +346,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(HeartbeatRequest heartbeatRequest) {
-        return null;
-    }
-
-    @Override
-    public Void visit(HeartbeatResponse heartbeatResponse) {
-        serverController.handleHeartbeatResponse(heartbeatResponse, clientHandler);
+        serverController.handleHeartbeatRequest(heartbeatRequest, clientHandler);
         return null;
     }
 
@@ -394,7 +389,8 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(AskTimerInfoRequest askTimerInfoRequest) {
-        return serverController.handleAskTimerInfoRequest(askTimerInfoRequest, clientHandler);
+        serverController.handleAskTimerInfoRequest(askTimerInfoRequest, clientHandler);
+        return null;
     }
 
     @Override

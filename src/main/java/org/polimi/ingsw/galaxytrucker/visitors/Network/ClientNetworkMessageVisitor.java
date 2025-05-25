@@ -342,11 +342,6 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
     @Override
-    public Void visit(HeartbeatResponse heartbeatResponse) {
-        return null;
-    }
-
-    @Override
     public Void visit(PlayerLostUpdate playerLostUpdate) {
         clientController.handlePlayerLostUpdate(playerLostUpdate);
         return null;
