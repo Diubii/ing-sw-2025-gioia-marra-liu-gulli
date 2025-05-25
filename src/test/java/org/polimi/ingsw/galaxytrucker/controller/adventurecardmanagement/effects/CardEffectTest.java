@@ -686,23 +686,8 @@ class CardEffectTest {
         });
 
 
-//        Planet planet1 =  planetCard.getPlanets().get(0);
-//        Planet planet2 =  planetCard.getPlanets().get(1);;
-//        Planet planet3 =  planetCard.getPlanets().get(2);
-//        Planet planet4 =  planetCard.getPlanets().get(3);
 
-        // Step 3: 模拟响应 A 选择 planet1，B 选择 planet2，C 无法选
-//        Map<String, ArrayList<NetworkMessage>> responses = Map.of(
-//                playerA.getNickName(), ArrayList.of(new SelectPlanetResponse(planet1, 0)),
-//                playerB.getNickName(), List.of(new SelectPlanetResponse(planet2, 1)),
-//                playerC.getNickName(), List.of(new SelectPlanetResponse(null, -1)) // 玩家 C 没选
-//        );
-//        responses.forEach((nick, msgs) -> {
-//            FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
-//            handler.setMockResponses(msgs);
-//        });
 
-        // Step 4: 添加卡牌 & 触发
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
         ctx.serverController.handleDrawAdventureCardRequest(
@@ -710,13 +695,6 @@ class CardEffectTest {
                 ctx.nicknameToHandlerMap.get(playerA.getNickName())
         );
 
-        // Step 5: 验证断言
-
-        // 行星是否被标记为占据
-//        assertTrue(planet1.isOccupied());
-//        assertTrue(planet2.isOccupied());
-
-        // 玩家是否得到了正确的 ShipUpdate（可以加额外断言）
         Ship updatedShipA = playerA.getShip();
         assertNotNull(updatedShipA);
 
@@ -725,10 +703,7 @@ class CardEffectTest {
         int posB = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(playerB.getColor());
         int posC = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(playerC.getColor());
 
-//        assertEquals(posA, posB); // A 和 B 应该没被罚时，仍然领先
-//        assertEquals(posC, posB); // C 没选，也不动
 
-        // 如果你后续调用 movePlayers(context)，可断言 A, B 被后退
     }
 
 
