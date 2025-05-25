@@ -526,6 +526,11 @@ public class Tui implements View, Observable {
     }
 
     @Override
+    public void handleFaceUpTilesUpdate(){
+
+    }
+
+    @Override
     public void showFaceUpTiles() {
         List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
 

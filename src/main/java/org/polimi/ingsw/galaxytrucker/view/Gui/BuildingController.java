@@ -2,16 +2,15 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
@@ -56,6 +55,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private StackPane shipZone2;
     @FXML private StackPane shipZone3;
     @FXML private StackPane shipZone4;
+    @FXML private FlowPane listaTiles;
+    @FXML private ScrollPane scrollListaTiles;
+    @FXML private HBox menu2;
 
     private ArrayList<SingleShipController> shipControllers;
 
@@ -65,6 +67,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
         this.mymodel = mymodel;
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
+
+        menu2.visibleProperty().set(false);
+        listaTiles.prefWidthProperty().bind(scrollListaTiles.widthProperty());
 
         shipControllers = new ArrayList<>();
 
@@ -124,6 +129,26 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @Override
     public void ShowGenericMessage(String message) {
 
+    }
+
+    public void updateFaceUpTiles(){
+        listaTiles.getChildren().clear();
+        System.out.println("Building controller DEBUG: showFaceUpTiles");
+        //Todo handle resizing maybe?
+         mymodel.getFaceUpTiles().forEach(tile -> {
+             String tileIdVal = String.valueOf(tile.getId());
+             String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+             Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+             ImageView imgView = new ImageView(img);
+             imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
+             imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
+             listaTiles.getChildren().add(imgView);
+         });
+
+    }
+
+    public void pescaRandom(ActionEvent actionEvent){
+        clientController.handleDrawFaceDownTile();
     }
 
 
@@ -199,6 +224,11 @@ public class BuildingController extends GenericGamePhaseSceneController {
             }
         }
 
+    }
+
+    public void finishBuilding(ActionEvent e){
+        //Disable di tutto ciò che è interagibile aparte la clessidra in teoria
+        clientController.handleBuildingMenuChoice("j");
     }
 
 

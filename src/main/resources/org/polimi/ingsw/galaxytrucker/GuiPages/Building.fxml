@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -81,10 +82,10 @@
                         <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                            <children>
                               <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA TILES SCOPERTE" />
-                              <Button mnemonicParsing="false" text="PESCA COPERTA" VBox.vgrow="ALWAYS" />
-                              <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" stylesheets="@style.css">
+                              <Button fx:id="BtnPescaRandom" mnemonicParsing="false" onAction="#pescaRandom" styleClass="semitransparent-button" stylesheets="@style.css" text="PESCA COPERTA" VBox.vgrow="ALWAYS" />
+                              <ScrollPane fx:id="scrollListaTiles" fitToWidth="true" hbarPolicy="NEVER" prefHeight="324.0" prefWidth="177.0" stylesheets="@style.css" VBox.vgrow="ALWAYS">
                                  <content>
-                                    <FlowPane hgap="5.0" prefHeight="200.0" prefWidth="200.0" vgap="5.0">
+                                    <FlowPane fx:id="listaTiles" hgap="5.0" prefHeight="137.0" prefWidth="Infinity" style="-fx-background-color: pink;" vgap="5.0">
                                        <children>
                                           <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -102,12 +103,15 @@
                                              </image>
                                           </ImageView>
                                        </children>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </FlowPane>
                                  </content>
                               </ScrollPane>
                            </children>
                         </VBox>
-                        <HBox id="OverlayCarte" prefHeight="363.0" prefWidth="208.0" styleClass="OverlayPanel" stylesheets="@style.css">
+                        <HBox id="OverlayCarte" fx:id="menu2" prefHeight="363.0" prefWidth="208.0" styleClass="OverlayPanel" stylesheets="@style.css">
                            <children>
                               <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Zona2Menu" />
                            </children>
@@ -123,7 +127,14 @@
             <HBox prefHeight="27.0" prefWidth="245.0" />
             <HBox prefHeight="77.0" prefWidth="245.0" style="-fx-background-color: DARKGREEN;">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="BtnFinishBuilding" mnemonicParsing="false" onAction="#finishBuilding" prefHeight="4.0" prefWidth="97.0" styleClass="semitransparent-button" stylesheets="@style.css" text="FINISH" />
+                           </children>
+                        </HBox>
+                     </children></VBox>
                   <VBox prefHeight="144.0" prefWidth="118.0" style="-fx-background-color: Coral;" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>

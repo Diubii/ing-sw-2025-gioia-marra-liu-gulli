@@ -58,6 +58,7 @@ public interface View {
     //building
     void showBuildingMenu();
 
+    void handleFaceUpTilesUpdate();
     void showFaceUpTiles();
 
 
@@ -129,6 +130,8 @@ public interface View {
     void askCollectRewards();
 
     void showTimerInfos();
+
+
 
 //    void askFlightMenuChoice();
 

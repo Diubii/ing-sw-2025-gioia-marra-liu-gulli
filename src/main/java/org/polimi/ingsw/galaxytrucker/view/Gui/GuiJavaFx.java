@@ -464,8 +464,16 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
-    public void showFaceUpTiles() {
+    public void handleFaceUpTilesUpdate(){
+        showFaceUpTiles();
+    }
 
+    @Override
+    public void showFaceUpTiles() {
+        System.out.println("DEBUG: showFaceUpTiles");
+        Platform.runLater(() -> {
+            ((BuildingController) actualPageController).updateFaceUpTiles();
+        });
     }
 
     @Override
@@ -500,6 +508,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void showTile(Tile tile) {
+        //Associare al cursore per poi poter rilasciare su nave in pratica
         showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName());
     }
 

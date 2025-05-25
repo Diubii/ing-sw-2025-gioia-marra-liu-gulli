@@ -637,6 +637,7 @@ public class ClientController implements Observer {
         synchronized (myModel.getFaceUpTiles()) {
             myModel.setFaceUpTiles(faceUpTiles);
         }
+        view.handleFaceUpTilesUpdate();
 
     }
 
@@ -700,6 +701,7 @@ public class ClientController implements Observer {
                 } else {
                     view.showGenericMessage("Unexpected response while drawing tile: " + error);
                 }
+                //Todo: MAI per la GUI ridisegnare tutto, quindi no chiamare così
                 view.showBuildingMenu();
 
             } catch (ExecutionException | InterruptedException e) {
