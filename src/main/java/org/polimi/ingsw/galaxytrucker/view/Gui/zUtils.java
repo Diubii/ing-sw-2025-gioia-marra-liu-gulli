@@ -2,12 +2,14 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentGuiLayerRotationVisitor;
 
 public class zUtils {
 
@@ -43,42 +45,36 @@ public class zUtils {
                     String tileIdVal = String.valueOf(tile.getId());
                     String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
                     img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
-                    //Consider rotation
+
                     rotation = tile.getRotation();
-                    //Visitor a cui passi tutto e in base al tipo di componente decide se ruotare tutto, ruotare solo imamgine, ruotare con counterrotazioni
+                    ImageView imageView = new ImageView(img);
+                    StackPane stackPane = new StackPane();
+                    stackPane.getChildren().add(imageView);
+
+                    // Fa sì che l'immagine si adatti alle dimensioni
+                    imageView.setPreserveRatio(false); // oppure true, se vuoi mantenerle
+                    imageView.setSmooth(true);
+
+                    // Permetti alla cella di espandersi
+                    GridPane.setHgrow(stackPane, Priority.ALWAYS);
+                    GridPane.setVgrow(stackPane, Priority.ALWAYS);
+                    GridPane.setFillWidth(stackPane, true);
+                    GridPane.setFillHeight(stackPane, true);
+
+                    // Dopo aver aggiunto l’immagine alla griglia, lega dinamicamente la dimensione
+                    imageView.fitWidthProperty().bind(griglia.widthProperty().divide(7));
+                    imageView.fitHeightProperty().bind(griglia.heightProperty().divide(5));
+
+                    ComponentGuiLayerRotationVisitor visitor = new ComponentGuiLayerRotationVisitor(stackPane,imageView,rotation);
+                    tile.getMyComponent().accept(visitor);
+                    //Visitor a cui passi tutto e in base al tipo di componente decide se ruotare tutto, ruotare solo immagine, ruotare con counterrotazioni
+                    //e aggiunge i vari sottoelementi
+
+                    griglia.add(stackPane, x, y);
+
 
                 }
-                else{
-                    String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web157.jpg";
-                    img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
-                }
-                ImageView imageView = new ImageView(img);
 
-                // Fa sì che l'immagine si adatti alle dimensioni
-                imageView.setPreserveRatio(false); // oppure true, se vuoi mantenerle
-                imageView.setSmooth(true);
-
-                // Permetti alla cella di espandersi
-                GridPane.setHgrow(imageView, Priority.ALWAYS);
-                GridPane.setVgrow(imageView, Priority.ALWAYS);
-                GridPane.setFillWidth(imageView, true);
-                GridPane.setFillHeight(imageView, true);
-
-                // Aggiungi l'immagine direttamente alla griglia
-                //Aggiungere uno stack pane
-                //Aggiungere immagine
-                griglia.add(imageView, x, y);
-                //Aggiungere Anchor Pane?
-                //aggiungere elementi extra
-
-                // Dopo aver aggiunto l’immagine alla griglia, lega dinamicamente la dimensione
-                imageView.fitWidthProperty().bind(griglia.widthProperty().divide(7));
-                imageView.fitHeightProperty().bind(griglia.heightProperty().divide(5));
-
-                //Rotate direttamente allo StackPane?
-                //Per pile e storage ok
-                //ma per cabine girerebbe anche umani quindi si ruota solo Imageview
-                imageView.setRotate(rotation);
             }
         }
     }

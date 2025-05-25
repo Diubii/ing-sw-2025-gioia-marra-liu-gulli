@@ -2,11 +2,9 @@ package org.polimi.ingsw.galaxytrucker.model.essentials;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
-import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitorInterface;
 
 import java.io.File;
 import java.io.IOException;
