@@ -8,6 +8,5 @@ import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 
 public interface Client {
-
-    public void sendMessage(NetworkMessage message) throws IOException, ExecutionException, InterruptedException;
+    void sendMessage(NetworkMessage message);
 }

@@ -193,7 +193,6 @@ public class ServerController {
 
         clientHandler.sendMessage(nicknameResponse);
         //System.out.println("SENDING RESPONSE\n");
-
     }
 
     public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition {

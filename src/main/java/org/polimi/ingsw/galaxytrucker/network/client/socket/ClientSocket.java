@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -37,10 +38,16 @@ public class ClientSocket implements Client, Observable {
         taskQueue = Executors.newSingleThreadExecutor();
     }
 
-    public void sendMessage(NetworkMessage message) throws IOException {
-        outputStream.writeObject(message);
-        outputStream.flush();
-        outputStream.reset();  // reset serve se mandiamo oggetti modificati
+    public void sendMessage(NetworkMessage message) {
+        try {
+            synchronized (outputStream) {
+                outputStream.writeObject(message);
+                outputStream.flush();
+                outputStream.reset();  // reset serve se mandiamo oggetti modificati
+            }
+        } catch (IOException e) {
+            System.err.println("Error while sending " + message.accept(new NetworkMessageNameVisitor()) + ": " + e.getMessage());
+        }
     }
 
     public void receiveMessage() {
