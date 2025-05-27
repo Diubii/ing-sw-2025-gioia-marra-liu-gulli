@@ -45,6 +45,10 @@ public class LoginConnectController extends GenericSceneController {
         TxtError.setText(message);
     }
 
+    @Override
+    public String pageName() {
+        return "LoginConnectPage";
+    }
 
     public void ConnectToServer(ActionEvent e) {
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");

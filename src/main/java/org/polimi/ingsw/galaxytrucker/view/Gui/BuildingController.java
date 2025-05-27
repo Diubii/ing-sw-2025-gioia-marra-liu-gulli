@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
+import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
@@ -23,8 +25,11 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousing
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SMCheckShipController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SMSpiedCardsController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SingleLobbyInfoController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SingleShipController;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
@@ -57,7 +62,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private StackPane shipZone4;
     @FXML private FlowPane listaTiles;
     @FXML private ScrollPane scrollListaTiles;
-    @FXML private HBox menu2;
+    @FXML private StackPane StackCenterMenu;
+    @FXML private StackPane StackLeftMenu;
+    @FXML private HBox learningMatchOverlay;
 
     private ArrayList<SingleShipController> shipControllers;
 
@@ -68,12 +75,15 @@ public class BuildingController extends GenericGamePhaseSceneController {
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
 
-        menu2.visibleProperty().set(false);
         listaTiles.prefWidthProperty().bind(scrollListaTiles.widthProperty());
 
         shipControllers = new ArrayList<>();
 
         //Mettere tutti sottoElementi
+        //Se learning match niente deck da spiare
+        if(mymodel.isLearningMatch()){
+            learningMatchOverlay.visibleProperty().set(true);
+        }
         //MyShip e anche altre poi in loop
         int j = 0;
         List<StackPane> shipZones = List.of(shipZone2, shipZone3, shipZone4);
@@ -123,7 +133,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
-
+    @Override
+    public String pageName() {
+        return "BuildingPage";
+    }
 
 
     @Override
@@ -231,5 +244,73 @@ public class BuildingController extends GenericGamePhaseSceneController {
         clientController.handleBuildingMenuChoice("j");
     }
 
+    public void updateBuildingPageInterface(GameState state){
+        //Todo: magari rivedere con visitor, però sono solo 3 o 4 combinazioni
+        switch(state){
+            case SHIP_CHECK:
+                Platform.runLater(() -> {
+                    VBox root;
+                    FXMLLoader loader;
+                    try {
+                        //1-Prima caricare FXML
+                        loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMCheckShip.fxml"));
+                        root = loader.load();
+                        //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                        SMCheckShipController pageController = loader.getController();
+                        pageController.initialize(clientController);
+                        root.setMaxWidth(Double.MAX_VALUE);
+                        root.setMaxHeight(Double.MAX_VALUE);
+                        //3-impostare la nuova root alla scena principale
+                        StackCenterMenu.getChildren().add(root);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            break;
+            case null, default:
+                break;
+        }
+
+    }
+
+    public void viewMazzoUno(){
+        viewMazzo(0);
+    }
+
+    public void viewMazzoDue(){
+        viewMazzo(1);
+    }
+
+    public void viewMazzoTre(){
+        viewMazzo(2);
+    }
+
+    public void viewMazzo(int num){
+        //Non fa un tubo, va bene per la Tui ma qui no
+        if(clientController.viewAdventureCardDeck(num)){
+            Platform.runLater(() -> {
+                //C'è altro oltre al layout di default (Altri menu left aperti)
+                if(StackLeftMenu.getChildren().size() > 1 ){
+                    StackLeftMenu.getChildren().removeLast();
+                }
+                VBox root;
+                FXMLLoader loader;
+                try {
+                    //1-Prima caricare FXML
+                    loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMSpiedCards.fxml"));
+                    root = loader.load();
+                    //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                    SMSpiedCardsController pageController = loader.getController();
+                    pageController.initialize(mymodel.getCardDecks().get(num),StackLeftMenu);
+                    root.setMaxWidth(Double.MAX_VALUE);
+                    root.setMaxHeight(Double.MAX_VALUE);
+                    //3-impostare la nuova root alla scena principale
+                    StackLeftMenu.getChildren().add(root);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
 
 }

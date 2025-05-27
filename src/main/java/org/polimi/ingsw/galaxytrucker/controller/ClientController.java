@@ -604,20 +604,27 @@ public class ClientController implements Observer {
     }
 
     //case (b)
-    public void viewAdventureCardDeck(int DeckID) {
+    public Boolean viewAdventureCardDeck(int DeckID) {
+        Boolean allowed=false;
         ArrayList<CardDeck> cardDecks = myModel.getCardDecks();
 
-        CardDeck deck = cardDecks.get(DeckID);
-        boolean spyable = deck.isSpyable();
         if (!cardDecks.isEmpty()) {
 
-            if (spyable) {
-                int colums = 3;
-                CardPrintUtils.printDeck(deck, colums);
-                DeckID++;
-                view.showGenericMessage("Deck  " + DeckID + " received successfully. ");
-            } else {
-                view.showGenericMessage("You are not allowed to spy on this deck!");
+            if(cardDecks.size() <= DeckID){
+                view.showGenericMessage("Numero del deck non valido");
+            }
+            else {
+                CardDeck deck = cardDecks.get(DeckID);
+                boolean spyable = deck.isSpyable();
+                if (spyable) {
+                    int colums = 3;
+                    CardPrintUtils.printDeck(deck, colums);
+                    DeckID++;
+                    view.showGenericMessage("Deck  " + DeckID + " received successfully. ");
+                    allowed = true;
+                } else {
+                    view.showGenericMessage("You are not allowed to spy on this deck!");
+                }
             }
 
 
@@ -626,6 +633,7 @@ public class ClientController implements Observer {
             view.showGenericMessage("No card decks found.");
         }
         view.showBuildingMenu();
+        return allowed;
     }
 
 //case (c)

@@ -418,6 +418,12 @@ public void showLobbies(List<LobbyInfo> lobbies) {
             case BUILDING_START:
                 showBuildingMenu();
             break;
+            case BUILDING_END:
+            case BUILDING_TIMER:
+            case CREW_INIT:
+            case SHIP_CHECK:
+                ((BuildingController)actualPageController).updateBuildingPageInterface(update.getState());
+            break;
             case null, default: showGenericMessage("Phase changed: " + update.getState().name());
             break;
         }
@@ -426,29 +432,31 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void showBuildingMenu() {
 
-
         System.out.println("DEBUG: showBuildingMenu");
-        Platform.runLater(() -> {
-            Parent root;
-            FXMLLoader loader;
-            try {
-                //1-Prima caricare FXML
-                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Building.fxml"));
-                root = loader.load();
-                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-                BuildingController pageController = loader.getController();
-                pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
-                actualPageController = pageController;
-                //Impostare tutto il rendering iniziale
-                for (PlayerInfo playerInfo : mymodel.getPlayerInfos()) {
-                    showShip(playerInfo.getShip(), playerInfo.getNickName());
+        if(!actualPageController.pageName().equals("BuildingPage")){
+            Platform.runLater(() -> {
+                Parent root;
+                FXMLLoader loader;
+                try {
+                    //1-Prima caricare FXML
+                    loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Building.fxml"));
+                    root = loader.load();
+                    //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                    BuildingController pageController = loader.getController();
+                    pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
+                    actualPageController = pageController;
+                    //Impostare tutto il rendering iniziale
+                    for (PlayerInfo playerInfo : mymodel.getPlayerInfos()) {
+                        showShip(playerInfo.getShip(), playerInfo.getNickName());
+                    }
+                    //3-impostare la nuova root alla scena principale
+                    primaryScene.setRoot(root);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                //3-impostare la nuova root alla scena principale
-                primaryScene.setRoot(root);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        }
+
 
         /*
         Platform.runLater(() -> {

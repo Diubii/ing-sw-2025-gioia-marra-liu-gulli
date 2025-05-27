@@ -46,6 +46,11 @@ public class LobbyController extends GenericSceneController {
     }
 
     @Override
+    public String pageName() {
+        return "LobbyPage";
+    }
+
+    @Override
     public void ShowGenericMessage(String message) {
         lblErr.setText(message);
     }

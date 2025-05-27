@@ -12,4 +12,6 @@ public abstract class GenericSceneController {
 
     public abstract void ShowGenericMessage(String message);
 
+    public abstract String pageName();
+
 }
