@@ -12,6 +12,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -38,15 +39,11 @@ public class ClientSocket implements Client, Observable {
         taskQueue = Executors.newSingleThreadExecutor();
     }
 
-    public void sendMessage(NetworkMessage message) {
-        try {
-            synchronized (outputStream) {
-                outputStream.writeObject(message);
-                outputStream.flush();
-                outputStream.reset();  // reset serve se mandiamo oggetti modificati
-            }
-        } catch (IOException e) {
-            System.err.println("Error while sending " + message.accept(new NetworkMessageNameVisitor()) + ": " + e.getMessage());
+    public void sendMessage(NetworkMessage message) throws IOException {
+        synchronized (outputStream) {
+            outputStream.writeObject(message);
+            outputStream.flush();
+            outputStream.reset();  // reset serve se mandiamo oggetti modificati
         }
     }
 

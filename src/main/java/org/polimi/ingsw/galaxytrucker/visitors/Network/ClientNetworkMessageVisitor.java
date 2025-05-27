@@ -104,7 +104,11 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(ViewAdventureDecksRequest viewAdventureDecksRequest) {
+        try {
             clientController.getClient().sendMessage(viewAdventureDecksRequest);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         return null;
     }
