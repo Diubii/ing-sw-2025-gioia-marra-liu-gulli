@@ -47,4 +47,27 @@ class MockShipFactoryTest {
         ShipPrintUtils.printShip(ship);
 
     }
+
+    @Test
+    void testCreateShipCreateHighFirePowerShip()  {
+        Ship ship = MockShipFactory.createHighFirePowerShip();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+
+    }
+    @Test
+    void testCreateMockShipForCheckShip()  {
+        Ship ship = MockShipFactory.createMockShipForCheckShip();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+
+    }
+
+    @Test
+    void testCreateMockShipWithShield()  {
+        Ship ship = MockShipFactory.createMockShipWithShield();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+
+    }
 }

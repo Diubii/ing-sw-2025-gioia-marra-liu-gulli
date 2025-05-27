@@ -2,8 +2,8 @@ package org.polimi.ingsw.galaxytrucker.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
+import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 
@@ -202,14 +202,14 @@ class ShipTest {
         assertEquals(1, num);
 
         Tile doubleEngine = TileRegistry.getFirstTileOfType("DoubleEngine");
-        myShip.putTile(doubleEngine, pos2);
+        myShip.putTile(doubleEngine, pos4);
         List<Position>  enginePos = myShip.getEnginePos();
         Tile testTile3 = myShip.getTileFromPosition(pos3);
         Tile testTile4 = myShip.getTileFromPosition(pos4);
-        num = myShip.getCannonPos().size();
+        num = myShip.getEnginePos().size();
         assertEquals(2, num);
-        assertEquals(testTile3.getId(),cannon.getId());
-        assertEquals(testTile4.getId(),doubleCannon.getId());
+        assertEquals(testTile3.getId(),engine.getId());
+        assertEquals(testTile4.getId(),doubleEngine.getId());
 
 
     }
@@ -219,7 +219,7 @@ class ShipTest {
     }
 
     @Test
-    void calcExposedConnectors() {
+    void testCalcExposedConnectors() {
 
         Ship mockShip1 = MockShipFactory.createMockShip();
         Ship mockShip2 = MockShipFactory.createMockShip2();
@@ -242,23 +242,46 @@ class ShipTest {
 
 
     @Test
-    void checkShip() {
-        ArrayList<Connector> connectors = new ArrayList<>();
-        connectors.add(Connector.UNIVERSAL);
-        connectors.add(Connector.UNIVERSAL);
-        connectors.add(Connector.UNIVERSAL);
-        connectors.add(Connector.UNIVERSAL);
+    void testCheckShip() {
+        Ship ship = MockShipFactory.createMockShip();
+        assertTrue(ship.checkShip());
+        Ship errorShip = MockShipFactory.createMockShipForCheckShip();
+        assertFalse(errorShip.checkShip());
+    }
 
-        BatterySlot myComponent = new BatterySlot(2);
-        Tile myTile1 = new Tile(0,0,connectors, myComponent);
-        Tile myTile2 = new Tile(1,0,connectors, myComponent);
+    @Test
+    void testGetFirstComponentFromDirectionAndIndex() {
+
+        //Test per trovare il primo tile in ogni direzione
+        Ship ship = MockShipFactory.createMockShip();
+        Position pos1 = ship.getFirstComponentFromDirectionAndIndex(ProjectileDirection.UP,3);
+        Position pos2 = ship.getFirstComponentFromDirectionAndIndex(ProjectileDirection.DOWN,2);
+        Position pos3 = ship.getFirstComponentFromDirectionAndIndex(ProjectileDirection.LEFT,1);
+        Position pos4 = ship.getFirstComponentFromDirectionAndIndex(ProjectileDirection.RIGHT,3);
+
+        Position realPos1 = new Position(3,1);
+        Position realPos2 = new Position(2,3);
+        Position realPos3 = new Position(2,1);
+        Position realPos4 = new Position(3,3);
+
+        assertEquals(realPos1,pos1);
+        assertEquals(realPos2,pos2);
+        assertEquals(realPos3,pos3);
+        assertEquals(realPos4,pos4);
+
+        System.out.println("1  " + pos1);
+        System.out.println("2  " + pos2);
+        System.out.println("3  " + pos3);
+        System.out.println("4  " + pos4);
+
+        //Test per verificare che venga restituito null per righe o colonne senza alcun tile.
+        Position pos5 = ship.getFirstComponentFromDirectionAndIndex(ProjectileDirection.UP,10);
+        Position pos6 = ship.getFirstComponentFromDirectionAndIndex(ProjectileDirection.DOWN,10);
+
+        assertNull(pos5);
+        assertNull(pos6);
 
 
-
-        myShip.putTile(myTile1, new Position(4,4));
-        myShip.putTile(myTile2, new Position(4,5));
-
-        assertTrue(myShip.checkShip());
     }
 
     @Test

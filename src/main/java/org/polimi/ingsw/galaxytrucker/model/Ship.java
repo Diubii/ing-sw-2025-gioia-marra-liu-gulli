@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
+import javafx.geometry.Pos;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
@@ -50,7 +51,8 @@ public class Ship implements Serializable {
     private Set<Position> batteryPos;
     private Set<Position> cannonPos;
     private Set<Position> lssPos;
-    private Set<Position> enginePos = new LinkedHashSet<>();
+    private Set<Position> enginePos;
+
     private ArrayList<Position> invalidPositions;
     public Queue<Position> brokenPositions = new LinkedList<>();
 
@@ -318,9 +320,10 @@ public class Ship implements Serializable {
             }
 
             case "LifeSupportSystem":
-
                 lssPos.add(pos);
                 break;
+
+            case "Shield"     :
 
         }
 
@@ -367,6 +370,8 @@ public class Ship implements Serializable {
         if (!isNormalRemove) {
             brokenPositions.add(pos);
         }
+
+        Tile tileNeedToRemove = getTileFromPosition(pos);
 
         destroyedTiles++;
         shipBoard[pos.getX()][pos.getY()].removeTile();
@@ -493,7 +498,7 @@ public class Ship implements Serializable {
                 if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
                     String name = shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor());
 
-                    if (!Util.wellConnectedConnectors(this, shipBoard[i][j], shipBoard[i][j].getTile()).getKey()) {
+                    if (!Util.wellConnectedConnectors(this, shipBoard[i][j], shipBoard[i][j].getTile())) {
 
                         shipBoard[i][j].getTile().setWellConnected(false);
                         return false;
@@ -937,7 +942,15 @@ public class Ship implements Serializable {
     }
 
     public int calculateEnginePower() {
-        int enginePower = getEnginePos()
+
+        ArrayList<Position> enginePos = getComponentPositionsFromName("Engine");
+        ArrayList<Position> doubleEnginePos = getComponentPositionsFromName("doubleEngine");
+
+        ArrayList<Position> allEnginePos = new ArrayList<>();
+        allEnginePos.addAll(enginePos);
+        allEnginePos.addAll(doubleEnginePos);
+
+        int enginePower = allEnginePos
                 .stream()
                 .mapToInt(p ->
                         ((Engine) getComponentFromPosition(p)).getEnginePower())
@@ -1004,62 +1017,56 @@ public class Ship implements Serializable {
 
         switch (direction) {
             case UP, DOWN -> {
-                if(fixedIndex > shipboardMaxX - 1) {
+                if(fixedIndex >= shipboardMaxX ) {
                     return null;
                 }
             }
             case LEFT, RIGHT -> {
-                if(fixedIndex > shipboardMaxY - 1) {
+                if(fixedIndex >= shipboardMaxY ) {
                     return null;
                 }
             }
         }
-
-        int variableIndex = 0;
+        int start, end, step;
         switch (direction) {
-            case UP, LEFT -> variableIndex = -1;
-            case DOWN -> variableIndex = 5;
-            case RIGHT -> variableIndex = 7;
-        }
-
-        Position componentPosition = new Position(0, 0);
-        do {
-            boolean outOfBounds = false;
-            switch (direction) {
-                case UP, LEFT -> {
-                    variableIndex++;
-                    switch (direction) {
-                        case UP -> {
-                            if(variableIndex > shipboardMaxY - 1){
-                                outOfBounds = true;
-                            }
-                        }
-                        case LEFT -> {
-                            if(variableIndex > shipboardMaxX - 1){
-                                outOfBounds = true;
-                            }
-                        }
-                    }
-                }
-                case DOWN, RIGHT -> {
-                    variableIndex--;
-                    if(variableIndex<0){
-                        outOfBounds = true;
-                    }
-                }
+            case UP -> {
+                start = 0;
+                end = shipboardMaxY;
+                step = 1;
             }
-
-            if(outOfBounds){
+            case DOWN -> {
+                start = shipboardMaxY - 1;
+                end = -1;
+                step = -1;
+            }
+            case LEFT -> {
+                start = 0;
+                end = shipboardMaxX;
+                step = 1;
+            }
+            case RIGHT -> {
+                start = shipboardMaxX - 1;
+                end = -1;
+                step = -1;
+            }
+            default -> {
                 return null;
             }
+        }
 
-            switch (direction) {
-                case LEFT, RIGHT -> componentPosition.setPos(variableIndex, fixedIndex);
-                case UP, DOWN -> componentPosition.setPos(fixedIndex, variableIndex);
+
+            for (int i = start; i != end; i += step) {
+                Position pos = switch (direction) {
+                    case UP, DOWN -> new Position(fixedIndex, i);
+                    case LEFT, RIGHT -> new Position(i, fixedIndex);
+                };
+
+                if (getComponentFromPosition(pos) != null) {
+                    return pos;
+                }
             }
-        } while (getComponentFromPosition(componentPosition) == null);
 
-        return componentPosition;
+            return null;
     }
 
     public Tile getTileFromPosition(Position position) {
@@ -1132,7 +1139,13 @@ public class Ship implements Serializable {
     }
 
     public Float calculateFirePower() {
-        return (float) getCannonPos().stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();
+        ArrayList<Position> cannonPos = getComponentPositionsFromName("Cannon");
+        ArrayList<Position> doubleCannonPos = getComponentPositionsFromName("DoubleCannon");
+        ArrayList<Position> allCannons = new ArrayList<>();
+        allCannons.addAll(getComponentPositionsFromName("Cannon"));
+        allCannons.addAll(getComponentPositionsFromName("DoubleCannon"));
+
+        return (float) allCannons.stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();
     }
 
     public int getHumanCrewNumber() {

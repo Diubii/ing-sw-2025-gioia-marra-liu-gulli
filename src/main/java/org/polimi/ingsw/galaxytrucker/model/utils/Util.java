@@ -227,56 +227,63 @@ public class Util {
      * @param T      La tile in esame.
      * @return Una coppia contenente un booleano che indica se la connessione è valida e un intero con il numero di connessioni valide.
      */
-    public static Pair<Boolean, Integer> wellConnectedConnectors(Ship s, Slot mySlot, Tile T) {
+    public static Boolean wellConnectedConnectors(Ship s, Slot mySlot, Tile T) {
 
         Slot[][] TempShipBoard = s.getShipBoard();
-        Connector c1;
-        Connector c2;
-        Connector c3;
-        Connector c4;
-        int sum = 0;
+
+        Boolean wellConnected = true;
 
 
+        int myPosX = mySlot.getPosition().getX();
+        int myPosY = mySlot.getPosition().getY();
+
+        Connector cUp;
+        Connector cLeft;
+        Connector cDown;
+        Connector cRight;
         //UP TILE
 
-        if (mySlot.getPosition().getY() - 1 >= 0 && TempShipBoard[mySlot.getPosition().getY() - 1][mySlot.getPosition().getX()].getTile() != null) {
-            c1 = TempShipBoard[mySlot.getPosition().getX()][mySlot.getPosition().getY() - 1].getTile().getSides().get(2);
-            sum += 1;
-        } else {
-            c1 = null;
+        if (myPosY - 1 >= 0 && TempShipBoard[myPosX][myPosY-1].getTile() != null) {
+             cUp = TempShipBoard[myPosX][myPosY - 1].getTile().getSides().get(2);
+            //Controlla se il connettore superiore del tile corrente è compatibile con il connettore inferiore del tile superiore
+            wellConnected = compatible(cUp,T.getSides().get(0));
+            if(!wellConnected){
+                return false;
+            }
         }
 
         //LEFT
 
-        if (mySlot.getPosition().getX() - 1 >= 0 && TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() - 1].getTile() != null) {
-
-            sum += 1;
-            c2 = TempShipBoard[mySlot.getPosition().getX() - 1][mySlot.getPosition().getY()].getTile().getSides().get(3);
-        } else c2 = null;
+        if (myPosX - 1 >= 0 && TempShipBoard[myPosX-1][myPosY].getTile() != null) {
+            cLeft = TempShipBoard[myPosX- 1][myPosY].getTile().getSides().get(1);
+            //Controlla se il connettore sinistra del tile corrente è compatibile con il connettore destra del tile a sinistra
+            wellConnected = compatible(cLeft,T.getSides().get(3));
+            if(!wellConnected){
+                return false;
+            }
+        }
         //DOWN
 
-        if (mySlot.getPosition().getY() + 1 < 5 && TempShipBoard[mySlot.getPosition().getY() + 1][mySlot.getPosition().getX()].getTile() != null) {
-            c3 = TempShipBoard[mySlot.getPosition().getX()][mySlot.getPosition().getY() + 1].getTile().getSides().get(0);
-            sum += 1;
-
-
-        } else c3 = null;
-
+        if (myPosY + 1 < 5 && TempShipBoard[myPosX][myPosY+1].getTile() != null) {
+            cDown = TempShipBoard[myPosX][myPosY + 1].getTile().getSides().get(0);
+            //Controlla se il connettore inferiore del tile corrente è compatibile con il connettore superiore del tile inferiore
+            wellConnected = compatible(cDown, T.getSides().get(2));
+            if (!wellConnected) {
+                return false;
+            }
+        }
         //RIGHT TILE
 
-        if (mySlot.getPosition().getX() + 1 < 7 && TempShipBoard[mySlot.getPosition().getY()][mySlot.getPosition().getX() + 1].getTile() != null) {
-            c4 = TempShipBoard[mySlot.getPosition().getX() + 1][mySlot.getPosition().getY()].getTile().getSides().get(1);
-            sum += 1;
+        if (myPosX + 1 < 7 && TempShipBoard[myPosX+1][myPosY].getTile() != null) {
+            cRight = TempShipBoard[myPosX+1][myPosY].getTile().getSides().get(3);
 
+            wellConnected = compatible(cRight, T.getSides().get(1));
+            if(!wellConnected){
+                return false;
+            }
 
-        } else c4 = null;
-
-
-        if ((compatible(c1, T.getSides().get(0)) || c1 == null) && (compatible(c2, T.getSides().get(1)) || c2 == null) && (compatible(c2, T.getSides().get(2)) || c3 == null) && (compatible(c3, T.getSides().get(3)) || c4 == null)) {
-            return new Pair<>(true, sum);
         }
-
-        return new Pair<>(false, sum);
+        return wellConnected;
 
     }
 
@@ -362,15 +369,22 @@ public class Util {
     }
 
     public static Boolean compatible(Connector connector1, Connector connector2) {
+        //casi null
         if (connector1 == null && connector2 != null) return true;
-        if (connector1 != null && connector2 == null) return true;
+        if (connector1 == null || connector2 == null) return true;
 
-        if (connector1 != null && connector1.equals(Connector.EMPTY) && !connector2.equals(Connector.EMPTY))
-            return false;
-        if (connector1 != null && connector1.equals(connector2)) return true;
-        if (connector1 != null && connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY))
-            return true;
-        return connector1 != null && connector2.equals(Connector.UNIVERSAL);
+        //con un connetore empty
+        if (connector1.equals(Connector.EMPTY) && !connector2.equals(Connector.EMPTY)) return false;
+        if (connector2.equals(Connector.EMPTY) && !connector1.equals(Connector.EMPTY)) return false;
+
+        //sono identici
+        if (connector1.equals(connector2)) return true;
+
+        //con un connetore universal
+        if (connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY)) return true;
+        if (connector2.equals(Connector.UNIVERSAL) && !connector1.equals(Connector.EMPTY)) return true;
+
+        return false;
     }
 
     public static ArrayList<Good> getMostValuableGoods(Ship ship) {

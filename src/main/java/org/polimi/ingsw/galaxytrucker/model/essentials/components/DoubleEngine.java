@@ -21,6 +21,7 @@ public class DoubleEngine extends Engine {
         return enginePower;
     }
 
+
     private void calculatePower() {
         if (getRotation() == 0) {
             if (charged) {

@@ -285,14 +285,15 @@ public class GameController {
      */
     @NeedsToBeCompleted("Controllare per tronconi. Un po' scettico sul fatto che il messaggio debba essere mandato da questo metodo.")
     public Tile reactToProjectile(Player targetPlayer, Projectile projectile, int diceRoll) {
+
         Ship ship = targetPlayer.getShip();
         Position pos = ship.getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll);
-        Tile destroyedTile = null;
 
         if (pos == null) return null;
 
+        Tile destroyedTile = null;
         boolean aTileHasBeenDestroyed = false;
-        String message = "Tile distrutta in posizione [" + pos.getX() + "," + pos.getY() + "]";
+        String message = "Tile distrutta in posizione" + pos;
 
         if (projectile.getType() == ProjectileType.CannonFire) {
             if (projectile.getSize() == ProjectileSize.Big) {
@@ -326,6 +327,7 @@ public class GameController {
 
                 if (tileConnectors.get(index) != Connector.EMPTY) { //Se non è un lato liscio
                     if (!protectWithFirstAvailableCorrectlyOrientedChargedShield(ship, projectile.getDirection())) { //Se non c'è uno shield disponibile a proteggere
+
                         destroyedTile = ship.getTileFromPosition(pos);
                         ship.removeTile(pos, false);
                         aTileHasBeenDestroyed = true;

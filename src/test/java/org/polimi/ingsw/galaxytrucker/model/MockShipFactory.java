@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.TileRegistry;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
@@ -192,6 +191,49 @@ public class MockShipFactory {
 
     }
 
+    public static Ship  createHighFirePowerShip(){
+        Ship ship = new Ship(false);
+        Map<String, List<Tile>> tiles = MockShipFactory.getAllClonedTiles();
+
+
+        Tile cannon = getRequiredTile(tiles, "Cannon", 0);
+        Tile doubleCannon2 = getRequiredTile(tiles, "DoubleCannon", 10);
+        Tile cannon2 = getRequiredTile(tiles, "Cannon", 2);
+        Tile cannon3 = getRequiredTile(tiles, "Cannon", 14);
+        Tile battery = getRequiredTile(tiles, "BatterySlot", 0);
+        Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
+
+
+
+        Tile modularHousingUnit4 = getRequiredTile(tiles, "ModularHousingUnit", 3);
+        Tile genericCargoHold = getRequiredTile(tiles, "GenericCargoHolds", 0);
+        Tile brownLifeSupport = getRequiredTile(tiles, "BrownLifeSupportSystem", 0);
+        Tile purpleLifeSupport = getRequiredTile(tiles, "PurpleLifeSupportSystem", 0);
+        Tile doubleEngine = getRequiredTile(tiles, "DoubleEngine", 8);
+        Tile doubleCannon = getRequiredTile(tiles, "DoubleCannon", 0);
+
+
+
+
+        addCrewToHousingUnit(modularHousingUnit4);
+
+
+        if(doubleCannon2 != null )ship.putTile(doubleCannon2, new Position(5, 2));
+        if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
+        if(battery != null) ship.putTile(battery, new Position(2, 2));
+        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(3, 3));
+        if(cannon != null) ship.putTile(cannon, new Position(3, 1));
+        if(doubleCannon != null) ship.putTile(doubleCannon, new Position(2, 1));
+        if(cannon3 != null) ship.putTile(cannon3, new Position(4, 2));
+        if(cannon2 != null ) ship.putTile(cannon2, new Position(1, 1));
+        if(modularHousingUnit4!= null ) ship.putTile(modularHousingUnit4, new Position(1, 2));
+        if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
+
+        return ship;
+
+
+    }
+
     private static void addCrewToHousingUnit(Tile tile) {
         if (tile != null && tile.getMyComponent() instanceof ModularHousingUnit) {
             ModularHousingUnit unit = (ModularHousingUnit) tile.getMyComponent();
@@ -201,4 +243,95 @@ public class MockShipFactory {
     }
 
 
+    public static Ship createMockShipForCheckShip() {
+        Ship ship = new Ship(false);
+        Map<String, List<Tile>> tiles = MockShipFactory.getAllClonedTiles();
+
+
+        Tile cannon = getRequiredTile(tiles, "Cannon", 0);
+        Tile engine = getRequiredTile(tiles, "Engine", 10);
+        Tile battery = getRequiredTile(tiles, "BatterySlot", 0);
+        Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
+        Tile modularHousingUnit = getRequiredTile(tiles, "ModularHousingUnit", 0);
+        Tile modularHousingUnit2 = getRequiredTile(tiles, "ModularHousingUnit", 1);
+        Tile genericCargoHold = getRequiredTile(tiles, "GenericCargoHolds", 0);
+        Tile brownLifeSupport = getRequiredTile(tiles, "BrownLifeSupportSystem", 0);
+        Tile purpleLifeSupport = getRequiredTile(tiles, "PurpleLifeSupportSystem", 0);
+        Tile doubleEngine = getRequiredTile(tiles, "DoubleEngine", 8);
+        Tile doubleCannon = getRequiredTile(tiles, "DoubleCannon", 0);
+
+        ModularHousingUnit mhu;
+        if(modularHousingUnit != null) {
+            mhu = (ModularHousingUnit) modularHousingUnit.getMyComponent();
+            mhu.addHumanCrew();
+            modularHousingUnit.setMyComponent(mhu);
+        }
+
+        ModularHousingUnit mhu2;
+        if(modularHousingUnit2 != null) {
+            mhu2 = (ModularHousingUnit) modularHousingUnit2.getMyComponent();
+            mhu2.addHumanCrew();
+            modularHousingUnit2.setMyComponent(mhu2);
+        }
+
+        if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
+        if(battery != null) ship.putTile(battery, new Position(3, 3));
+        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(2, 2));
+        if(cannon != null) ship.putTile(cannon, new Position(3, 1));
+        if(modularHousingUnit != null) ship.putTile(modularHousingUnit, new Position(2, 1));
+        if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
+        if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
+
+        return ship;
+    }
+
+    public static Ship createMockShipWithShield() {
+        Ship ship = new Ship(false);
+        Map<String, List<Tile>> tiles = MockShipFactory.getAllClonedTiles();
+
+
+        Tile cannon = getRequiredTile(tiles, "Cannon", 0);
+        Tile engine = getRequiredTile(tiles, "Engine", 10);
+        Tile battery = getRequiredTile(tiles, "BatterySlot", 0);
+        Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
+        Tile modularHousingUnit = getRequiredTile(tiles, "ModularHousingUnit", 0);
+        Tile modularHousingUnit2 = getRequiredTile(tiles, "ModularHousingUnit", 1);
+        Tile genericCargoHold = getRequiredTile(tiles, "GenericCargoHolds", 0);
+        Tile brownLifeSupport = getRequiredTile(tiles, "BrownLifeSupportSystem", 0);
+        Tile purpleLifeSupport = getRequiredTile(tiles, "PurpleLifeSupportSystem", 0);
+        Tile doubleEngine = getRequiredTile(tiles, "DoubleEngine", 8);
+        Tile doubleCannon = getRequiredTile(tiles, "DoubleCannon", 0);
+        Tile shield1 = getRequiredTile(tiles, "Shield", 0);
+        Tile shield2 = getRequiredTile(tiles, "Shield", 1);
+        shield2.rotate(180);
+
+
+
+        ModularHousingUnit mhu;
+        if(modularHousingUnit != null) {
+            mhu = (ModularHousingUnit) modularHousingUnit.getMyComponent();
+            mhu.addHumanCrew();
+            modularHousingUnit.setMyComponent(mhu);
+        }
+
+        ModularHousingUnit mhu2;
+        if(modularHousingUnit2 != null) {
+            mhu2 = (ModularHousingUnit) modularHousingUnit2.getMyComponent();
+            mhu2.addHumanCrew();
+            modularHousingUnit2.setMyComponent(mhu2);
+        }
+
+        if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
+        if(battery != null) ship.putTile(battery, new Position(3, 3));
+        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(2, 2));
+        if(cannon != null) ship.putTile(cannon, new Position(3, 1));
+        if(modularHousingUnit != null) ship.putTile(modularHousingUnit, new Position(2, 1));
+        if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
+        if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
+        if(shield1 != null) ship.putTile(shield1, new Position(1, 1));
+        if(shield2 != null) ship.putTile(shield2, new Position(2, 4));
+
+
+        return ship;
+    }
 }

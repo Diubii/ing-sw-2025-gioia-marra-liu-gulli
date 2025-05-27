@@ -24,6 +24,7 @@ public class Engine extends Component {
         if (getRotation() != 0) {
             enginePower = 0;
         }
+
     }
     @Override
     public Engine clone() {

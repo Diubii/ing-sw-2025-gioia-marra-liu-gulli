@@ -182,6 +182,42 @@ public class MockResponsesFactory {
      return responses;
     }
 
+    public static Map<String, ArrayList<NetworkMessage>> forPirates(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+
+        int i=0;
+               ArrayList<Position>  doubleCannonPosList =  players.get(i).getShip().getComponentPositionsFromName("DoubleCannon");
+               ArrayList<Position>  batteryPosList = players.get(i).getShip().getComponentPositionsFromName("BatterySlot");
+
+               ArrayList<Position> doubleCannonPosChosen = new ArrayList<>();
+               ArrayList<Position> batteryPosChosen = new ArrayList<>();
+               doubleCannonPosChosen.add(doubleCannonPosList.get(0));
+               batteryPosChosen.add(batteryPosList.get(0));
+
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                        doubleCannonPosChosen,
+                        batteryPosChosen)
+
+                        //new DiscardCrewMembersResponse()
+                )));
+
+        i++;
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateAdventureCardResponse(false)
+                )));
+
+        i++;
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(new ActivateAdventureCardResponse(false)
+                )));
+        return responses;
+    }
+
+
 
     public static Map<String, ArrayList<NetworkMessage>> forCombatZone(ArrayList<Player> players) {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();

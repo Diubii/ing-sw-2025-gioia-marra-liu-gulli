@@ -20,14 +20,28 @@ public class Shield extends Component {
     }
 
     @JsonCreator
-    public Shield(@JsonProperty("protectedSides") ArrayList<ProjectileDirection> protectedSides, @JsonProperty("charged") Boolean charged) {
+    public Shield(@JsonProperty("protectedSides") ArrayList<ProjectileDirection> protectedSides,
+                  @JsonProperty("charged") Boolean charged) {
         super(false);
-        this.protectedSides = new ArrayList<>(protectedSides);
         this.charged = charged;
+        if (protectedSides == null || protectedSides.isEmpty()) {
+            this.protectedSides = new ArrayList<>();
+            this.protectedSides.add(ProjectileDirection.UP);
+            this.protectedSides.add(ProjectileDirection.RIGHT);
+        } else {
+            this.protectedSides = new ArrayList<>(protectedSides);
+        }
     }
 
     public ArrayList<ProjectileDirection> getProtectedSides() {
-        return new ArrayList<>(protectedSides);
+
+            int steps = ((rotation % 360) + 360) % 360 / 90;
+            ArrayList<ProjectileDirection> rotatedSides = new ArrayList<>();
+            for (ProjectileDirection dir : protectedSides) {
+                rotatedSides.add(dir.rotate(steps));
+            }
+            return rotatedSides;
+
     }
 
     @Override
