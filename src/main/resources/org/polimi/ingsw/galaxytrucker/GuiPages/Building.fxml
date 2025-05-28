@@ -25,7 +25,7 @@
             </HBox>
             <StackPane fx:id="StackLeftMenu" prefHeight="374.0" prefWidth="334.0" VBox.vgrow="ALWAYS">
                <children>
-                  <HBox prefHeight="375.0" prefWidth="307.0" style="-fx-background-color: BLUE;">
+                  <HBox prefHeight="375.0" prefWidth="307.0" style="-fx-background-color: Navy;">
                      <children>
                         <VBox prefHeight="363.0" prefWidth="175.0" style="-fx-background-color: DARKBLUE;" HBox.hgrow="ALWAYS">
                            <children>
@@ -87,28 +87,10 @@
                            <children>
                               <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                                  <children>
-                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA TILES SCOPERTE" />
-                                    <Button fx:id="BtnPescaRandom" mnemonicParsing="false" onAction="#pescaRandom" styleClass="semitransparent-button" stylesheets="@style.css" text="PESCA COPERTA" VBox.vgrow="ALWAYS" />
+                                    <Button fx:id="BtnPescaRandom" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#pescaRandom" prefHeight="52.0" prefWidth="130.0" styleClass="semitransparent-button" stylesheets="@style.css" text="PESCA COPERTA" wrapText="true" />
                                     <ScrollPane fx:id="scrollListaTiles" fitToWidth="true" hbarPolicy="NEVER" prefHeight="324.0" prefWidth="177.0" stylesheets="@style.css" VBox.vgrow="ALWAYS">
                                        <content>
-                                          <FlowPane fx:id="listaTiles" hgap="5.0" prefHeight="137.0" prefWidth="Infinity" style="-fx-background-color: pink;" vgap="5.0">
-                                             <children>
-                                                <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web1.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="43.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web2.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="41.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web20.jpg" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
+                                          <FlowPane fx:id="listaTiles" hgap="5.0" prefHeight="137.0" prefWidth="Infinity" style="-fx-background-color: transparent;" vgap="5.0">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
@@ -132,7 +114,7 @@
                <children>
                   <VBox prefHeight="77.0" prefWidth="64.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                        <HBox alignment="CENTER" prefHeight="77.0" prefWidth="154.0" VBox.vgrow="ALWAYS">
                            <children>
                               <Button fx:id="BtnFinishBuilding" mnemonicParsing="false" onAction="#finishBuilding" prefHeight="4.0" prefWidth="97.0" styleClass="semitransparent-button" stylesheets="@style.css" text="FINISH" />
                            </children>
@@ -142,7 +124,7 @@
                      <children>
                         <StackPane prefHeight="150.0" prefWidth="200.0">
                            <children>
-                              <HBox fx:id="spiableDeckZone" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                              <HBox fx:id="spiableDeckZone" alignment="CENTER" prefHeight="77.0" prefWidth="31.0" spacing="15.0">
                                  <children>
                                     <ImageView fitHeight="48.0" fitWidth="84.0" onMouseClicked="#viewMazzoUno" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -186,9 +168,36 @@
                      </children></VBox>
                </children>
             </HBox>
-            <HBox VBox.vgrow="ALWAYS">
+            <HBox alignment="CENTER" prefHeight="46.0" prefWidth="335.0" style="-fx-background-color: navy;">
                <children>
-                  <StackPane fx:id="myShipZone" HBox.hgrow="ALWAYS" />
+                  <VBox fx:id="VbPescata" prefHeight="57.0" prefWidth="222.0" visible="false">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="57.0" prefWidth="107.0" spacing="20.0" style="-fx-background-color: red;">
+                           <children>
+                              <Label text="Trascina" textFill="WHITE" />
+                              <ImageView fx:id="inHandTileImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for%20web26.jpg" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="57.0" prefWidth="330.0">
+                     <children>
+                        <HBox prefHeight="57.0" prefWidth="233.0">
+                           <children>
+                              <Label text="Quelle da parte" textFill="WHITE" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="260.0" prefWidth="353.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <StackPane fx:id="myShipZone" prefHeight="132.0" prefWidth="335.0" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0" />

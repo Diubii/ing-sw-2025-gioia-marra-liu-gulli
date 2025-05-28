@@ -7,10 +7,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
@@ -65,6 +69,8 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private StackPane StackCenterMenu;
     @FXML private StackPane StackLeftMenu;
     @FXML private HBox learningMatchOverlay;
+    @FXML private VBox VbPescata;
+    @FXML private ImageView inHandTileImage;
 
     private ArrayList<SingleShipController> shipControllers;
 
@@ -78,6 +84,8 @@ public class BuildingController extends GenericGamePhaseSceneController {
         listaTiles.prefWidthProperty().bind(scrollListaTiles.widthProperty());
 
         shipControllers = new ArrayList<>();
+
+
 
         //Mettere tutti sottoElementi
         //Se learning match niente deck da spiare
@@ -127,7 +135,26 @@ public class BuildingController extends GenericGamePhaseSceneController {
             e.printStackTrace();
         }
 
+        scrollListaTiles.setOnDragOver(event -> {
+            if (event.getDragboard().hasImage()) {
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            event.consume();
+        });
 
+        scrollListaTiles.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasImage()) {
+                System.out.println("Immagine rilasciata!");
+                // esegui le tue istruzioni qui
+                clientController.handleBuildingMenuChoice("h");
+                VbPescata.visibleProperty().set(false);
+                event.setDropCompleted(true);
+            } else {
+                event.setDropCompleted(false);
+            }
+            event.consume();
+        });
 
 
 
@@ -155,13 +182,31 @@ public class BuildingController extends GenericGamePhaseSceneController {
              ImageView imgView = new ImageView(img);
              imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
              imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
+             imgView.setOnMouseClicked(event -> {
+                 if(clientController.getCurrentTileInHand() == null){
+                     clientController.handleChooseFaceUpTile(tile);
+                 }
+                 // Puoi fare qualsiasi altra azione qui
+             });
+
              listaTiles.getChildren().add(imgView);
          });
 
     }
 
     public void pescaRandom(ActionEvent actionEvent){
-        clientController.handleDrawFaceDownTile();
+        if(clientController.getCurrentTileInHand() != null){
+            //Suono di errore
+            //Flicker o animazione di tile inhand
+
+        }
+        else{
+            clientController.handleDrawFaceDownTile();
+        }
+    }
+
+    public void hideZonaPescata(){
+        VbPescata.visibleProperty().set(false);
     }
 
 
@@ -174,9 +219,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
                 if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
 
-                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid());
+                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController);
 
-                    //TEST STAMPA DA TOGLIERE
+                   /* //TEST STAMPA DA TOGLIERE
                     Ship testShip = new Ship(false);
 
                     //Prendo lista tiles e metto in ship per testare
@@ -228,16 +273,17 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         throw new RuntimeException(e);
                     }
 
-                    zUtils.showShipInGrid(testShip, shipControllers.get(i).getShipGrid());
+                    zUtils.showShipInGrid(testShip, shipControllers.get(i).getShipGrid(),clientController);*/
 
 
                 } else {
-                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid());
+                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController);
                 }
             }
         }
 
     }
+
 
     public void finishBuilding(ActionEvent e){
         //Disable di tutto ciò che è interagibile aparte la clessidra in teoria
@@ -311,6 +357,33 @@ public class BuildingController extends GenericGamePhaseSceneController {
                 }
             });
         }
+    }
+
+    public void showDrawnTile(Tile tile){
+        String tileIdVal = String.valueOf(tile.getId());
+        String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+        Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+
+        VbPescata.visibleProperty().set(true);
+
+        inHandTileImage.setImage(img);
+        inHandTileImage.setVisible(true);
+        inHandTileImage.setRotate(tile.getRotation());
+
+
+
+        // Imposta il drag quando si clicca e trascina sull'immagine
+        inHandTileImage.setOnDragDetected(event -> {
+            //Per mantenere rotazione in "fantasma" che segue il cursore
+            SnapshotParameters params = new SnapshotParameters();
+            Image rotatedImage = inHandTileImage.snapshot(params, null);
+            Dragboard db = inHandTileImage.startDragAndDrop(TransferMode.COPY);
+            ClipboardContent content = new ClipboardContent();
+            content.putImage(rotatedImage);
+            db.setContent(content);
+            db.setDragView(rotatedImage);
+            event.consume();
+        });
     }
 
 }

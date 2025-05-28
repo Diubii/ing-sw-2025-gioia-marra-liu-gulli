@@ -81,8 +81,8 @@ public class ComponentGuiLayerRotationVisitor implements ComponentVisitorInterfa
         for(int i=1; i< component.getNCrewMembers()+1;i++){
             ImageView viewSegnalino = new ImageView(segnalino);
             //Binding delle dimensioni e posizione
-            viewSegnalino.fitWidthProperty().bind(stackPane.widthProperty().divide(3));
-            viewSegnalino.fitHeightProperty().bind(stackPane.heightProperty().divide(4));
+            viewSegnalino.fitWidthProperty().bind(imageView.fitWidthProperty().divide(3));
+            viewSegnalino.fitHeightProperty().bind(imageView.fitHeightProperty().divide(4));
 
             //Aggiunta a anchor pane
             hBox.getChildren().add(viewSegnalino);

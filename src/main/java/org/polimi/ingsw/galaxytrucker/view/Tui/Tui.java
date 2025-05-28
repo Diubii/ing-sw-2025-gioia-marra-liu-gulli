@@ -522,7 +522,9 @@ public class Tui implements View, Observable {
 // TileView
     @Override
     public void showTile(Tile tile) {
-        printTile(tile);
+        if(tile != null){
+            printTile(tile);
+        }
     }
 
     @Override

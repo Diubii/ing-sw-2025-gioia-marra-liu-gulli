@@ -8,6 +8,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -51,6 +57,8 @@ public class GuiJavaFx implements View {
     private Boolean firstTimeMainMenu = true;
 
 
+
+
     public GuiJavaFx(Stage primaryStage,Scene primaryScene, ClientController controller, ClientModel mymodel) {
         this.primaryStage = primaryStage;
         this.controller = controller;
@@ -65,7 +73,23 @@ public class GuiJavaFx implements View {
                 event.consume(); // annulla la chiusura
             }
         });
+
+        primaryScene.setOnKeyPressed(event -> {
+            if(controller.getCurrentTileInHand() != null) {
+                if (event.getCode() == KeyCode.Q) {
+                    controller.rotateCurrentTile(90);
+                    //showTile(controller.getCurrentTileInHand());
+                } else if (event.getCode() == KeyCode.E) {
+                    controller.rotateCurrentTile(-90);
+                    //showTile(controller.getCurrentTileInHand());
+                }
+            }
+        });
+
+
     }
+
+
 
     @Override
     public Boolean autoShowUpdates() {
@@ -508,9 +532,21 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
+    //Todo: rinominare a showInHandTile?
     public void showTile(Tile tile) {
         //Associare al cursore per poi poter rilasciare su nave in pratica
-        showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName());
+        //Chiamato solo per la inHandTile
+        if(tile != null) {
+            System.out.println("DEBUG: showTile");
+            //Gestisce il controller della pagina building:
+            ((BuildingController) actualPageController).showDrawnTile(tile);
+            showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName());
+        }
+        else{
+            ((BuildingController) actualPageController).hideZonaPescata();
+        }
+
+
     }
 
     @Override
@@ -602,9 +638,12 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void showShip(Ship targetShipView, String Nickname) {
         System.out.println("DEBUG: showShip ");
+
         //showShip exists only in the pages of Building and Flight so it's possible to Cast the actualPage in the
         //GenericGamePhaseSceneController designed for those phases of actual gameplay
-        ((GenericGamePhaseSceneController) actualPageController).showShip( targetShipView,  Nickname);
+        Platform.runLater(() -> {
+            ((GenericGamePhaseSceneController) actualPageController).showShip(targetShipView, Nickname);
+        });
     }
 
 

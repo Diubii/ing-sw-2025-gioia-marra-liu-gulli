@@ -32,6 +32,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.MenuManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.ClientNetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
@@ -571,6 +572,9 @@ public class ClientController implements Observer {
 
 
     public void handleShipUpdate(ShipUpdate update) {
+
+        System.out.println("Debug: handleShipUpdate");
+
         String owner = update.getNickName();
         Ship ship = update.getShipView();
 
@@ -594,6 +598,11 @@ public class ClientController implements Observer {
                 view.showShip(ship,owner);
                 view.handleChoiceForPhase(phase);
 
+            }
+            if(view.autoShowUpdates()){
+                view.showShip(ship,owner);
+                System.out.println("Debug: stampo ultimo shipUpdate");
+                ShipPrintUtils.printShip(ship);
             }
 
         } else {
@@ -805,7 +814,7 @@ public class ClientController implements Observer {
         Position pos = new Position(x, y);
         Ship ship = myModel.getMyInfo().getShip();
 
-        if (!Util.inBoundaries(pos.getY(), pos.getX()) || ship.getInvalidPositions().contains(pos)) {
+        if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos)) {
             throw new IllegalArgumentException("Invalid Position" + pos.getY() + pos.getX());
         }
 
@@ -825,8 +834,10 @@ public class ClientController implements Observer {
             view.showBuildingMenu();
             return;
         }
+        //Todo Cambiare non deve fare modifica diretta e show diretto
         myModel.getMyInfo().getShip().putTile(currentTileInHand, currentPosition);   //ship.putTile(tileInHand)
         myModel.getMyInfo().getShip().setLastTile(currentTileInHand);               //ship.setLastTile
+        //view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
 
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -849,8 +860,8 @@ public class ClientController implements Observer {
                     resetCurrentPos();
                     currentTileInHand = null;
                     isPlaced = true;
+                    view.showTile(currentTileInHand);
                 }
-
             } catch (Exception e) {
                 view.showGenericMessage("Error during tile placement: " + e.getMessage());
             } finally {
