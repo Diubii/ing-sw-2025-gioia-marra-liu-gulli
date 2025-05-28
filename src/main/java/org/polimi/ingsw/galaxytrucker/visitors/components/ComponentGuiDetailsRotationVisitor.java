@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ComponentGuiLayerRotationVisitor implements ComponentVisitorInterface<StackPane>{
+public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInterface<StackPane>{
 
 
     StackPane stackPane;
     ImageView imageView;
     int rotation;
 
-    public ComponentGuiLayerRotationVisitor(StackPane stackPane,ImageView imageView, int rotation) {
+    public ComponentGuiDetailsRotationVisitor(StackPane stackPane, ImageView imageView, int rotation) {
         this.stackPane = stackPane;
         this.imageView = imageView;
         this.rotation = rotation;
@@ -29,7 +29,6 @@ public class ComponentGuiLayerRotationVisitor implements ComponentVisitorInterfa
 
     @Override
     public StackPane visit(Component component) {
-        imageView.setRotate(rotation);
         return null;
     }
 
@@ -57,13 +56,11 @@ public class ComponentGuiLayerRotationVisitor implements ComponentVisitorInterfa
         }
         //CounterRotazione per segnalini
         vbox.setRotate(-rotation);
-        stackPane.setRotate(rotation);
         return null;
     }
 
     @Override
     public StackPane visit(Cannon component) {
-        stackPane.setRotate(rotation);
         return null;
     }
 
@@ -90,7 +87,6 @@ public class ComponentGuiLayerRotationVisitor implements ComponentVisitorInterfa
         }
         //CounterRotazione per segnalini
         hBox.setRotate(-rotation);
-        stackPane.setRotate(rotation);
         return null;
     }
 
@@ -293,7 +289,6 @@ public class ComponentGuiLayerRotationVisitor implements ComponentVisitorInterfa
             }
         }
         stackPane.getChildren().add(group);
-        stackPane.setRotate(rotation);
         for(int i=0;i<slots.size();i++){
             slots.get(i).setRotate(-rotation);
         }
@@ -303,7 +298,6 @@ public class ComponentGuiLayerRotationVisitor implements ComponentVisitorInterfa
     @Override
     public StackPane visit(LifeSupportSystem component) {
         //Nulla
-        stackPane.setRotate(rotation);
         return null;
     }
 
@@ -345,7 +339,6 @@ public class ComponentGuiLayerRotationVisitor implements ComponentVisitorInterfa
 
         //CounterRotazione per segnalini
         hBox.setRotate(-rotation);
-        stackPane.setRotate(rotation);
         return null;
     }
 

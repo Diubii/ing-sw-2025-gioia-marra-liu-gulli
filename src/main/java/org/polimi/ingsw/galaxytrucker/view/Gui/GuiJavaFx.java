@@ -77,11 +77,11 @@ public class GuiJavaFx implements View {
         primaryScene.setOnKeyPressed(event -> {
             if(controller.getCurrentTileInHand() != null) {
                 if (event.getCode() == KeyCode.Q) {
-                    controller.rotateCurrentTile(90);
-                    //showTile(controller.getCurrentTileInHand());
-                } else if (event.getCode() == KeyCode.E) {
                     controller.rotateCurrentTile(-90);
-                    //showTile(controller.getCurrentTileInHand());
+
+                } else if (event.getCode() == KeyCode.E) {
+                    controller.rotateCurrentTile(+90);
+
                 }
             }
         });
@@ -538,8 +538,10 @@ public void showLobbies(List<LobbyInfo> lobbies) {
         //Chiamato solo per la inHandTile
         if(tile != null) {
             System.out.println("DEBUG: showTile");
-            //Gestisce il controller della pagina building:
-            ((BuildingController) actualPageController).showDrawnTile(tile);
+            Platform.runLater(() -> {
+                        //Gestisce il controller della pagina building:
+                        ((BuildingController) actualPageController).showDrawnTile(tile);
+                    });
             showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName());
         }
         else{

@@ -2,8 +2,6 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
@@ -11,7 +9,7 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentGuiLayerRotationVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentGuiDetailsRotationVisitor;
 
 import java.util.concurrent.ExecutionException;
 
@@ -29,7 +27,7 @@ public class zUtils {
      * @param ship
      * @param griglia
      */
-    public static void showShipInGrid(Ship ship, GridPane griglia, ClientController clientController) {
+    public static void showShipInGrid(Ship ship, GridPane griglia, ClientController clientController,Boolean editable,Boolean viewDetails) {
         //Empty the grid from previous configuration
         griglia.getChildren().clear();
         Slot[][] shipboard =  ship.getShipBoard();
@@ -63,8 +61,12 @@ public class zUtils {
                     imageView.fitWidthProperty().bind(griglia.prefWidthProperty().divide(7));
                     imageView.fitHeightProperty().bind(griglia.prefHeightProperty().divide(5));
 
-                    ComponentGuiLayerRotationVisitor visitor = new ComponentGuiLayerRotationVisitor(stackPane,imageView,rotation);
-                    tile.getMyComponent().accept(visitor);
+                    if(viewDetails) {
+                        ComponentGuiDetailsRotationVisitor visitor = new ComponentGuiDetailsRotationVisitor(stackPane,imageView,rotation);
+                        tile.getMyComponent().accept(visitor);
+                    }
+                    stackPane.setRotate(rotation);
+
                     //Visitor a cui passi tutto e in base al tipo di componente decide se ruotare tutto, ruotare solo immagine, ruotare con counterrotazioni
                     //e aggiunge i vari sottoelementi
                 }
@@ -107,37 +109,29 @@ public class zUtils {
                 GridPane.setFillWidth(stackPane, true);
                 GridPane.setFillHeight(stackPane, true);
 
-                stackPane.setOnDragOver(event -> {
-                    if (event.getGestureSource() != stackPane && event.getDragboard().hasImage()) {
-                        event.acceptTransferModes(TransferMode.COPY);
-                    }
-                    event.consume();
-                });
 
-                // Gestisce il drop
-                stackPane.setOnDragDropped(event -> {
-                    Dragboard db = event.getDragboard();
-                    if (db.hasImage()) {
+                //Gestisce inserimento
+                if(editable){
+                    stackPane.setOnMouseClicked(event -> {
 
-                        try {
-                            clientController.setCurrentPos(fX,fY);
-                            clientController.handleTilePlacement(true);
-                        } catch (ExecutionException e) {
-                            throw new RuntimeException(e);
-                        } catch (InvalidTilePosition e) {
-                            throw new RuntimeException(e);
+                        if(clientController.getCurrentTileInHand() != null) {
+                            try {
+                                clientController.setCurrentPos(fX, fY);
+                                clientController.handleTilePlacement(true);
+                            } catch (ExecutionException e) {
+                                throw new RuntimeException(e);
+                            } catch (InvalidTilePosition e) {
+                                throw new RuntimeException(e);
+                            }
+                        }else{
+                            if(clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
+                                //Todo: rimozione tile già piazzata
+                            }
                         }
+                        event.consume();
+                    });
+                }
 
-                        event.setDropCompleted(true);
-                    } else {
-                        event.setDropCompleted(false);
-                    }
-                    event.consume();
-                });
-
-                stackPane.setOnMouseClicked(event -> {
-                    System.out.println("Ho cliccato in posizione: "+ fX + ", " + fY);
-                });
 
                 griglia.add(stackPane, x, y);
 

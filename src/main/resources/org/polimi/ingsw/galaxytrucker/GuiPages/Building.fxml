@@ -9,199 +9,197 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: RED;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.polimi.ingsw.galaxytrucker.view.Gui.BuildingController">
+<StackPane fx:id="mainStackPane" prefHeight="400.0" prefWidth="623.0" style="-fx-background-color: #00f7ff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.polimi.ingsw.galaxytrucker.view.Gui.BuildingController">
    <children>
-      <VBox prefHeight="400.0" prefWidth="6.0" HBox.hgrow="ALWAYS">
+      <HBox style="-fx-background-color: RED;">
          <children>
-            <HBox prefHeight="50.0" prefWidth="355.0" VBox.vgrow="SOMETIMES">
+            <VBox prefHeight="400.0" prefWidth="6.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA CLESSIDRA" />
-               </children>
-            </HBox>
-            <StackPane fx:id="StackLeftMenu" prefHeight="374.0" prefWidth="334.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <HBox prefHeight="375.0" prefWidth="307.0" style="-fx-background-color: Navy;">
+                  <HBox prefHeight="50.0" prefWidth="355.0" VBox.vgrow="SOMETIMES">
                      <children>
-                        <VBox prefHeight="363.0" prefWidth="175.0" style="-fx-background-color: DARKBLUE;" HBox.hgrow="ALWAYS">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="152.0">
-                                       <children>
-                                          <ImageView fx:id="avatar2" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
-                                             <image>
-                                                <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
-                                             </image>
-                                          </ImageView>
-                                          <VBox prefHeight="17.0" prefWidth="11.0" />
-                                          <Label fx:id="name2" alignment="CENTER" text="Label" textFill="WHITE" HBox.hgrow="ALWAYS">
-                                             <font>
-                                                <Font name="System Bold" size="16.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <StackPane fx:id="shipZone2" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                                 </children>
-                              </VBox>
-                              <VBox layoutX="10.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="152.0">
-                                       <children>
-                                          <ImageView fx:id="avatar3" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
-                                          <VBox prefHeight="20.0" prefWidth="12.0" />
-                                          <Label fx:id="name3" alignment="CENTER" textFill="WHITE" HBox.hgrow="ALWAYS">
-                                             <font>
-                                                <Font name="System Bold" size="16.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <StackPane fx:id="shipZone3" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                                 </children>
-                              </VBox>
-                              <VBox layoutX="10.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="152.0">
-                                       <children>
-                                          <ImageView fx:id="avatar4" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
-                                          <VBox prefHeight="20.0" prefWidth="14.0" />
-                                          <Label fx:id="name4" alignment="CENTER" textFill="WHITE" HBox.hgrow="ALWAYS">
-                                             <font>
-                                                <Font name="System Bold" size="16.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <StackPane fx:id="shipZone4" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </VBox>
-                        <StackPane fx:id="StackCenterMenu" prefHeight="363.0" prefWidth="194.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
-                                 <children>
-                                    <Button fx:id="BtnPescaRandom" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#pescaRandom" prefHeight="52.0" prefWidth="130.0" styleClass="semitransparent-button" stylesheets="@style.css" text="PESCA COPERTA" wrapText="true" />
-                                    <ScrollPane fx:id="scrollListaTiles" fitToWidth="true" hbarPolicy="NEVER" prefHeight="324.0" prefWidth="177.0" stylesheets="@style.css" VBox.vgrow="ALWAYS">
-                                       <content>
-                                          <FlowPane fx:id="listaTiles" hgap="5.0" prefHeight="137.0" prefWidth="Infinity" style="-fx-background-color: transparent;" vgap="5.0">
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </FlowPane>
-                                       </content>
-                                    </ScrollPane>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </StackPane>
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA CLESSIDRA" />
                      </children>
                   </HBox>
+                  <StackPane fx:id="StackLeftMenu" prefHeight="374.0" prefWidth="334.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <HBox prefHeight="375.0" prefWidth="307.0" style="-fx-background-color: Navy;">
+                           <children>
+                              <VBox prefHeight="363.0" prefWidth="175.0" style="-fx-background-color: DARKBLUE;" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="152.0">
+                                             <children>
+                                                <ImageView fx:id="avatar2" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                                                   <image>
+                                                      <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <VBox prefHeight="17.0" prefWidth="11.0" />
+                                                <Label fx:id="name2" alignment="CENTER" text="Label" textFill="WHITE" HBox.hgrow="ALWAYS">
+                                                   <font>
+                                                      <Font name="System Bold" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <StackPane fx:id="shipZone2" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                    <VBox layoutX="10.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="152.0">
+                                             <children>
+                                                <ImageView fx:id="avatar3" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+                                                <VBox prefHeight="20.0" prefWidth="12.0" />
+                                                <Label fx:id="name3" alignment="CENTER" textFill="WHITE" HBox.hgrow="ALWAYS">
+                                                   <font>
+                                                      <Font name="System Bold" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <StackPane fx:id="shipZone3" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                    <VBox layoutX="10.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="152.0">
+                                             <children>
+                                                <ImageView fx:id="avatar4" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+                                                <VBox prefHeight="20.0" prefWidth="14.0" />
+                                                <Label fx:id="name4" alignment="CENTER" textFill="WHITE" HBox.hgrow="ALWAYS">
+                                                   <font>
+                                                      <Font name="System Bold" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <StackPane fx:id="shipZone4" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <StackPane fx:id="StackCenterMenu" prefHeight="363.0" prefWidth="194.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                                       <children>
+                                          <Button fx:id="BtnPescaRandom" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#pescaRandom" prefHeight="52.0" prefWidth="130.0" styleClass="semitransparent-button" stylesheets="@style.css" text="PESCA COPERTA" wrapText="true" />
+                                          <ScrollPane fx:id="scrollListaTiles" fitToWidth="true" hbarPolicy="NEVER" prefHeight="324.0" prefWidth="177.0" stylesheets="@style.css" VBox.vgrow="ALWAYS">
+                                             <content>
+                                                <FlowPane fx:id="listaTiles" hgap="5.0" prefHeight="137.0" prefWidth="Infinity" style="-fx-background-color: transparent;" vgap="5.0">
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </FlowPane>
+                                             </content>
+                                          </ScrollPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
+                     </children>
+                  </StackPane>
                </children>
-            </StackPane>
+            </VBox>
+            <VBox prefHeight="400.0" prefWidth="109.0" style="-fx-background-color: GREEN;" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox prefHeight="27.0" prefWidth="245.0" />
+                  <HBox prefHeight="77.0" prefWidth="245.0" style="-fx-background-color: DARKGREEN;">
+                     <children>
+                        <VBox prefHeight="77.0" prefWidth="64.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="77.0" prefWidth="154.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Button fx:id="BtnFinishBuilding" mnemonicParsing="false" onAction="#finishBuilding" prefHeight="4.0" prefWidth="97.0" styleClass="semitransparent-button" stylesheets="@style.css" text="FINISH" />
+                                 </children>
+                              </HBox>
+                           </children></VBox>
+                        <VBox prefHeight="144.0" prefWidth="118.0" style="-fx-background-color: Coral;" HBox.hgrow="ALWAYS">
+                           <children>
+                              <StackPane prefHeight="150.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox fx:id="spiableDeckZone" alignment="CENTER" prefHeight="77.0" prefWidth="31.0" spacing="15.0">
+                                       <children>
+                                          <ImageView fitHeight="48.0" fitWidth="84.0" onMouseClicked="#viewMazzoUno" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../galaxy_trucker_imgs/pedineSegnalini/iconMazzo1.png" />
+                                             </image>
+                                          </ImageView>
+                                          <ImageView fitHeight="48.0" fitWidth="84.0" layoutX="66.0" layoutY="25.0" onMouseClicked="#viewMazzoDue" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../galaxy_trucker_imgs/pedineSegnalini/iconMazzo2.png" />
+                                             </image>
+                                          </ImageView>
+                                          <ImageView fitHeight="48.0" fitWidth="84.0" layoutX="44.0" layoutY="25.0" onMouseClicked="#viewMazzoTre" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../galaxy_trucker_imgs/pedineSegnalini/iconMazzo3.png" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </HBox>
+                                    <HBox fx:id="learningMatchOverlay" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="OverlayPanel" stylesheets="@style.css" visible="false">
+                                       <children>
+                                          <ImageView fitHeight="62.0" fitWidth="112.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../galaxy_trucker_imgs/sleepy.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label text="non si spia" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <StackPane.margin>
+                                          <Insets />
+                                       </StackPane.margin>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </StackPane>
+                           </children></VBox>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="46.0" prefWidth="335.0" style="-fx-background-color: navy;">
+                     <children>
+                        <VBox prefHeight="57.0" prefWidth="330.0">
+                           <children>
+                              <HBox prefHeight="57.0" prefWidth="233.0">
+                                 <children>
+                                    <Label text="Quelle da parte" textFill="WHITE" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="260.0" prefWidth="353.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <StackPane fx:id="myShipZone" prefHeight="132.0" prefWidth="335.0" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" />
+               </children>
+            </VBox>
          </children>
-      </VBox>
-      <VBox prefHeight="400.0" prefWidth="109.0" style="-fx-background-color: GREEN;" HBox.hgrow="ALWAYS">
+      </HBox>
+      <Pane fx:id="overlayPane" pickOnBounds="false">
          <children>
-            <HBox prefHeight="27.0" prefWidth="245.0" />
-            <HBox prefHeight="77.0" prefWidth="245.0" style="-fx-background-color: DARKGREEN;">
-               <children>
-                  <VBox prefHeight="77.0" prefWidth="64.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <HBox alignment="CENTER" prefHeight="77.0" prefWidth="154.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <Button fx:id="BtnFinishBuilding" mnemonicParsing="false" onAction="#finishBuilding" prefHeight="4.0" prefWidth="97.0" styleClass="semitransparent-button" stylesheets="@style.css" text="FINISH" />
-                           </children>
-                        </HBox>
-                     </children></VBox>
-                  <VBox prefHeight="144.0" prefWidth="118.0" style="-fx-background-color: Coral;" HBox.hgrow="ALWAYS">
-                     <children>
-                        <StackPane prefHeight="150.0" prefWidth="200.0">
-                           <children>
-                              <HBox fx:id="spiableDeckZone" alignment="CENTER" prefHeight="77.0" prefWidth="31.0" spacing="15.0">
-                                 <children>
-                                    <ImageView fitHeight="48.0" fitWidth="84.0" onMouseClicked="#viewMazzoUno" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../galaxy_trucker_imgs/pedineSegnalini/iconMazzo1.png" />
-                                       </image>
-                                    </ImageView>
-                                    <ImageView fitHeight="48.0" fitWidth="84.0" layoutX="66.0" layoutY="25.0" onMouseClicked="#viewMazzoDue" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../galaxy_trucker_imgs/pedineSegnalini/iconMazzo2.png" />
-                                       </image>
-                                    </ImageView>
-                                    <ImageView fitHeight="48.0" fitWidth="84.0" layoutX="44.0" layoutY="25.0" onMouseClicked="#viewMazzoTre" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../galaxy_trucker_imgs/pedineSegnalini/iconMazzo3.png" />
-                                       </image>
-                                    </ImageView>
-                                 </children>
-                              </HBox>
-                              <HBox fx:id="learningMatchOverlay" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="OverlayPanel" stylesheets="@style.css" visible="false">
-                                 <children>
-                                    <ImageView fitHeight="62.0" fitWidth="112.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../galaxy_trucker_imgs/sleepy.png" />
-                                       </image>
-                                    </ImageView>
-                                    <Label text="non si spia" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="18.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                                 <StackPane.margin>
-                                    <Insets />
-                                 </StackPane.margin>
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding>
-                              </HBox>
-                           </children>
-                        </StackPane>
-                     </children></VBox>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER" prefHeight="46.0" prefWidth="335.0" style="-fx-background-color: navy;">
-               <children>
-                  <VBox fx:id="VbPescata" prefHeight="57.0" prefWidth="222.0" visible="false">
-                     <children>
-                        <HBox alignment="CENTER" prefHeight="57.0" prefWidth="107.0" spacing="20.0" style="-fx-background-color: red;">
-                           <children>
-                              <Label text="Trascina" textFill="WHITE" />
-                              <ImageView fx:id="inHandTileImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for%20web26.jpg" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="57.0" prefWidth="330.0">
-                     <children>
-                        <HBox prefHeight="57.0" prefWidth="233.0">
-                           <children>
-                              <Label text="Quelle da parte" textFill="WHITE" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="260.0" prefWidth="353.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <StackPane fx:id="myShipZone" prefHeight="132.0" prefWidth="335.0" HBox.hgrow="ALWAYS" />
-               </children>
-            </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" />
-         </children>
-      </VBox>
+            <ImageView fx:id="inHandTileImage" fitHeight="50.0" fitWidth="50.0" layoutX="89.0" layoutY="175.0" mouseTransparent="true" opacity="0.76" preserveRatio="true" visible="false">
+               <image>
+                  <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for%20web38.jpg" />
+               </image></ImageView>
+         </children></Pane>
    </children>
-</HBox>
+</StackPane>

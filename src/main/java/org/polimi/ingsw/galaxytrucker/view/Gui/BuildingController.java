@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
@@ -68,9 +69,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private ScrollPane scrollListaTiles;
     @FXML private StackPane StackCenterMenu;
     @FXML private StackPane StackLeftMenu;
+    @FXML private StackPane  mainStackPane;
     @FXML private HBox learningMatchOverlay;
-    @FXML private VBox VbPescata;
     @FXML private ImageView inHandTileImage;
+    @FXML private Pane overlayPane;
 
     private ArrayList<SingleShipController> shipControllers;
 
@@ -135,28 +137,22 @@ public class BuildingController extends GenericGamePhaseSceneController {
             e.printStackTrace();
         }
 
-        scrollListaTiles.setOnDragOver(event -> {
-            if (event.getDragboard().hasImage()) {
-                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            }
-            event.consume();
-        });
 
-        scrollListaTiles.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            if (db.hasImage()) {
-                System.out.println("Immagine rilasciata!");
+
+        scrollListaTiles.setOnMouseClicked(event -> {
+            if (clientController.getCurrentTileInHand() != null) {
                 // esegui le tue istruzioni qui
                 clientController.handleBuildingMenuChoice("h");
-                VbPescata.visibleProperty().set(false);
-                event.setDropCompleted(true);
-            } else {
-                event.setDropCompleted(false);
+                inHandTileImage.visibleProperty().set(false);
             }
             event.consume();
         });
 
+        mainStackPane.setOnMouseMoved(event -> {
+            inHandTileImage.setLayoutX(event.getX() - inHandTileImage.getFitWidth() / 2);
+            inHandTileImage.setLayoutY(event.getY() - inHandTileImage.getFitHeight() / 2);
 
+        });
 
     }
 
@@ -206,7 +202,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     }
 
     public void hideZonaPescata(){
-        VbPescata.visibleProperty().set(false);
+        inHandTileImage.setVisible(false);
     }
 
 
@@ -219,9 +215,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
                 if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
 
-                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController);
+                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController,true,false);
 
-                   /* //TEST STAMPA DA TOGLIERE
+                    /*//TEST STAMPA DA TOGLIERE
                     Ship testShip = new Ship(false);
 
                     //Prendo lista tiles e metto in ship per testare
@@ -273,11 +269,11 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         throw new RuntimeException(e);
                     }
 
-                    zUtils.showShipInGrid(testShip, shipControllers.get(i).getShipGrid(),clientController);*/
+                    zUtils.showShipInGrid(testShip, shipControllers.get(i).getShipGrid(),clientController,true,true);*/
 
 
                 } else {
-                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController);
+                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,false);
                 }
             }
         }
@@ -364,26 +360,12 @@ public class BuildingController extends GenericGamePhaseSceneController {
         String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
         Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
 
-        VbPescata.visibleProperty().set(true);
-
         inHandTileImage.setImage(img);
-        inHandTileImage.setVisible(true);
         inHandTileImage.setRotate(tile.getRotation());
+        inHandTileImage.setVisible(true);
+        inHandTileImage.setFitHeight(100.00);
+        inHandTileImage.setFitWidth(100.00);
 
-
-
-        // Imposta il drag quando si clicca e trascina sull'immagine
-        inHandTileImage.setOnDragDetected(event -> {
-            //Per mantenere rotazione in "fantasma" che segue il cursore
-            SnapshotParameters params = new SnapshotParameters();
-            Image rotatedImage = inHandTileImage.snapshot(params, null);
-            Dragboard db = inHandTileImage.startDragAndDrop(TransferMode.COPY);
-            ClipboardContent content = new ClipboardContent();
-            content.putImage(rotatedImage);
-            db.setContent(content);
-            db.setDragView(rotatedImage);
-            event.consume();
-        });
     }
 
 }
