@@ -440,7 +440,7 @@ public class GameController {
     }
 
     public void clearPlayersWithNoCrew(){
-        for(Player player : getPlayingPlayers) {
+        for(Player player : getPlayingPlayers()) {
             Ship ship = player.getShip();
             int nCrewAndAlien = ship.getnCrew();
             int nCrew = 0;
