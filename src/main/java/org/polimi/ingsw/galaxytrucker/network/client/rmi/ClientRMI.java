@@ -14,6 +14,9 @@ import java.rmi.registry.Registry;
 import org.polimi.ingsw.galaxytrucker.network.server.ServerRMIInterface;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -43,8 +46,12 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
     }
 
     @Override
-    public void sendMessage(NetworkMessage message) throws IOException, ExecutionException, InterruptedException {
-        server.receiveMessage(message, stub);
+    public void sendMessage(NetworkMessage message) {
+        try {
+            server.receiveMessage(message, stub);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            System.err.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.BRIGHT_YELLOW, "Couldn't send message: " + e.getMessage()));
+        }
     }
 
     @Override
@@ -53,7 +60,7 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
             try {
                 notifyObservers(message);
             } catch (IOException | ExecutionException | InvalidTilePosition e) {
-                throw new RuntimeException(e);
+                System.err.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.BRIGHT_YELLOW, "Couldn't receive message: " + e.getMessage()));
             }
         }).start();
 

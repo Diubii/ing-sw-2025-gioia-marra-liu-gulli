@@ -107,7 +107,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
         try {
             clientController.getClient().sendMessage(viewAdventureDecksRequest);
         } catch (IOException | ExecutionException | InterruptedException e) {
-            System.err.println("Error occurred while sending the viewAdventureDecksRequest: " + e.getMessage());
+            throw new RuntimeException(e);
         }
 
         return null;

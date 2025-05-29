@@ -32,6 +32,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.MenuManager;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.ClientNetworkMessageVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
@@ -156,15 +157,15 @@ public class ClientController implements Observer {
         //HEARTBEAT
         new Thread(() -> {
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
-           while (true) {
-               try {
-                   client.sendMessage(heartbeatRequest);
-                   //System.out.println("[ClientController] Sent heartbeat.");
-                   Thread.sleep(Duration.ofSeconds(1));
-               } catch (IOException | ExecutionException | InterruptedException e) {
-                   throw new RuntimeException(e);
-               }
-           }
+            while (true) {
+                try {
+                    client.sendMessage(heartbeatRequest);
+                    //System.out.println("[ClientController] Sent heartbeat.");
+                    Thread.sleep(Duration.ofSeconds(1));
+                } catch (IOException | ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }).start();
 
         new Thread(() -> {
@@ -419,8 +420,8 @@ public class ClientController implements Observer {
 
         switch (input) {
             case "menu", "?", "m" -> {
-               view.toShowCurrentMenu();
-               view.handleChoiceForPhase(phase);
+                view.toShowCurrentMenu();
+                view.handleChoiceForPhase(phase);
                 break;
             }
             case "a" -> {
@@ -521,7 +522,7 @@ public class ClientController implements Observer {
                 }).start();
 //                }
 
-                    break;
+                break;
             }
             case "reset" -> {
                 break;
@@ -571,6 +572,9 @@ public class ClientController implements Observer {
 
 
     public void handleShipUpdate(ShipUpdate update) {
+
+        System.out.println("Debug: handleShipUpdate");
+
         String owner = update.getNickName();
         Ship ship = update.getShipView();
 
@@ -595,6 +599,11 @@ public class ClientController implements Observer {
                 view.handleChoiceForPhase(phase);
 
             }
+            if(view.autoShowUpdates()){
+                view.showShip(ship,owner);
+                System.out.println("Debug: stampo ultimo shipUpdate");
+                ShipPrintUtils.printShip(ship);
+            }
 
         } else {
             view.showGenericMessage("No ship belongs to this player.");
@@ -604,20 +613,27 @@ public class ClientController implements Observer {
     }
 
     //case (b)
-    public void viewAdventureCardDeck(int DeckID) {
+    public Boolean viewAdventureCardDeck(int DeckID) {
+        Boolean allowed=false;
         ArrayList<CardDeck> cardDecks = myModel.getCardDecks();
 
-        CardDeck deck = cardDecks.get(DeckID);
-        boolean spyable = deck.isSpyable();
         if (!cardDecks.isEmpty()) {
 
-            if (spyable) {
-                int colums = 3;
-                CardPrintUtils.printDeck(deck, colums);
-                DeckID++;
-                view.showGenericMessage("Deck  " + DeckID + " received successfully. ");
-            } else {
-                view.showGenericMessage("You are not allowed to spy on this deck!");
+            if(cardDecks.size() <= DeckID){
+                view.showGenericMessage("Numero del deck non valido");
+            }
+            else {
+                CardDeck deck = cardDecks.get(DeckID);
+                boolean spyable = deck.isSpyable();
+                if (spyable) {
+                    int colums = 3;
+                    CardPrintUtils.printDeck(deck, colums);
+                    DeckID++;
+                    view.showGenericMessage("Deck  " + DeckID + " received successfully. ");
+                    allowed = true;
+                } else {
+                    view.showGenericMessage("You are not allowed to spy on this deck!");
+                }
             }
 
 
@@ -626,6 +642,7 @@ public class ClientController implements Observer {
             view.showGenericMessage("No card decks found.");
         }
         view.showBuildingMenu();
+        return allowed;
     }
 
 //case (c)
@@ -653,13 +670,13 @@ public class ClientController implements Observer {
         } catch (IOException | ExecutionException | InterruptedException e) {
             view.showGenericMessage("Failed to send request: " + e.getMessage());
         }
-            try {
-                TimerInfoResponse timerInfoResponse = (TimerInfoResponse) future.get();
-                timerInfos.addAll(timerInfoResponse.getTimerInfoList());
+        try {
+            TimerInfoResponse timerInfoResponse = (TimerInfoResponse) future.get();
+            timerInfos.addAll(timerInfoResponse.getTimerInfoList());
 
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
 
 
 
@@ -798,7 +815,7 @@ public class ClientController implements Observer {
         Ship ship = myModel.getMyInfo().getShip();
 
         if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos)) {
-            throw new IllegalArgumentException("Invalid Position" + pos);
+            throw new IllegalArgumentException("Invalid Position" + pos.getY() + pos.getX());
         }
 
 //    if (ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
@@ -817,8 +834,10 @@ public class ClientController implements Observer {
             view.showBuildingMenu();
             return;
         }
+        //Todo Cambiare non deve fare modifica diretta e show diretto
         myModel.getMyInfo().getShip().putTile(currentTileInHand, currentPosition);   //ship.putTile(tileInHand)
         myModel.getMyInfo().getShip().setLastTile(currentTileInHand);               //ship.setLastTile
+        //view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
 
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -841,6 +860,7 @@ public class ClientController implements Observer {
                     resetCurrentPos();
                     currentTileInHand = null;
                     isPlaced = true;
+                    view.showTile(currentTileInHand);
                 }
 
 

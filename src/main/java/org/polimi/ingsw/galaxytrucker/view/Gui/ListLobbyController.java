@@ -39,6 +39,11 @@ public class ListLobbyController extends GenericSceneController {
         TxtErr.setText(message);
     }
 
+    @Override
+    public String pageName() {
+        return "LobbyListPage";
+    }
+
 
     public void backToMainMenu(ActionEvent e) {
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");

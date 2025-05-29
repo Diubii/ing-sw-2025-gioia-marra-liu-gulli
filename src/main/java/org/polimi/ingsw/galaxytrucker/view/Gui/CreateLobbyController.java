@@ -43,6 +43,11 @@ public class CreateLobbyController extends GenericSceneController {
         mainViewController.askJoinOrCreateRoom(); //Main menu
     }
 
+    @Override
+    public String pageName() {
+        return "CreateLobbyPage";
+    }
+
     public void confirm(ActionEvent e) {
         Toggle selectedToggleNumber = Nplayers.getSelectedToggle();
         Toggle selectedToggleMatch = MatchType.getSelectedToggle();

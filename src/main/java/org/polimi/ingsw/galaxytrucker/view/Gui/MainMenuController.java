@@ -32,6 +32,10 @@ public class MainMenuController extends GenericSceneController {
         TxtErr.setText(message);
     }
 
+    @Override
+    public String pageName() {
+        return "MainMenuPage";
+    }
 
 
     public void newLobby(ActionEvent e) {

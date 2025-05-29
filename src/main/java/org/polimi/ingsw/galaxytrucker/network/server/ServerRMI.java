@@ -2,18 +2,13 @@ package org.polimi.ingsw.galaxytrucker.network.server;
 
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
-import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
-import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.client.rmi.ClientInterfaceRMI;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.FinishBuildingRequest;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
@@ -36,7 +31,7 @@ public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface
 
 
     @Override
-    public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI){
+    public void receiveMessage(NetworkMessage message, ClientInterfaceRMI clientRMI) throws RemoteException, ExecutionException, InterruptedException {
         NetworkMessageType type = message.accept(nmnv);
 
 //            if (message.accept(new NetworkMessageNameVisitor()).equals(NetworkMessageType.FinishBuildingRequest)){

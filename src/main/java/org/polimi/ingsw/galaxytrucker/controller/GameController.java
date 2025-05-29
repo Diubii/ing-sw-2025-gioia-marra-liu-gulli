@@ -125,6 +125,12 @@ public class GameController {
     public void handleTurn() {
         AdventureCard drawnAdventureCard = getCardDeckTest().pop();
 
+//        if(getPlayingPlayers().size() == 1){
+//            while(drawnAdventureCard.getName().equals("Zona Guerra")){
+//                drawnAdventureCard = getCardDeckTest().pop();
+//            }
+//        }
+
         DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(drawnAdventureCard);
         game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(drawnAdventureCardUpdate)); //Mando drawnAdventureCardUpdate a tutti i player
 
@@ -422,7 +428,11 @@ public class GameController {
     }
 
     public ArrayList<Player> getRankedPlayers() {
-        return new ArrayList<>(game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).sorted(Comparator.comparingInt(Player::getPlacement)).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
+        return new ArrayList<>(getPlayingPlayers().stream().sorted(Comparator.comparingInt(Player::getPlacement)).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
+    }
+
+    public List<Player> getPlayingPlayers(){
+        return game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList();
     }
 
     public Player nextPlayer() {
@@ -430,7 +440,7 @@ public class GameController {
     }
 
     public void clearPlayersWithNoCrew(){
-        for(Player player : game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()) {
+        for(Player player : getPlayingPlayers) {
             Ship ship = player.getShip();
             int nCrewAndAlien = ship.getnCrew();
             int nCrew = 0;

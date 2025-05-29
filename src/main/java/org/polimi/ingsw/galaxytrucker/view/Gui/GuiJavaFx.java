@@ -3,26 +3,27 @@
 
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
@@ -30,13 +31,11 @@ import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneCon
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Dialogs.ConfirmDialogController;
 import org.polimi.ingsw.galaxytrucker.view.View;
-import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.*;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -58,6 +57,8 @@ public class GuiJavaFx implements View {
     private Boolean firstTimeMainMenu = true;
 
 
+
+
     public GuiJavaFx(Stage primaryStage,Scene primaryScene, ClientController controller, ClientModel mymodel) {
         this.primaryStage = primaryStage;
         this.controller = controller;
@@ -72,7 +73,23 @@ public class GuiJavaFx implements View {
                 event.consume(); // annulla la chiusura
             }
         });
+
+        primaryScene.setOnKeyPressed(event -> {
+            if(controller.getCurrentTileInHand() != null) {
+                if (event.getCode() == KeyCode.Q) {
+                    controller.rotateCurrentTile(-90);
+
+                } else if (event.getCode() == KeyCode.E) {
+                    controller.rotateCurrentTile(+90);
+
+                }
+            }
+        });
+
+
     }
+
+
 
     @Override
     public Boolean autoShowUpdates() {
@@ -418,6 +435,12 @@ public void showLobbies(List<LobbyInfo> lobbies) {
             case BUILDING_START:
                 showBuildingMenu();
             break;
+            case BUILDING_END:
+            case BUILDING_TIMER:
+            case CREW_INIT:
+            case SHIP_CHECK:
+                ((BuildingController)actualPageController).updateBuildingPageInterface(update.getState());
+            break;
             case null, default: showGenericMessage("Phase changed: " + update.getState().name());
             break;
         }
@@ -426,29 +449,31 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void showBuildingMenu() {
 
-
         System.out.println("DEBUG: showBuildingMenu");
-        Platform.runLater(() -> {
-            Parent root;
-            FXMLLoader loader;
-            try {
-                //1-Prima caricare FXML
-                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Building.fxml"));
-                root = loader.load();
-                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-                BuildingController pageController = loader.getController();
-                pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
-                actualPageController = pageController;
-                //Impostare tutto il rendering iniziale
-                for (PlayerInfo playerInfo : mymodel.getPlayerInfos()) {
-                    showShip(playerInfo.getShip(), playerInfo.getNickName());
+        if(!actualPageController.pageName().equals("BuildingPage")){
+            Platform.runLater(() -> {
+                Parent root;
+                FXMLLoader loader;
+                try {
+                    //1-Prima caricare FXML
+                    loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Building.fxml"));
+                    root = loader.load();
+                    //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                    BuildingController pageController = loader.getController();
+                    pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
+                    actualPageController = pageController;
+                    //Impostare tutto il rendering iniziale
+                    for (PlayerInfo playerInfo : mymodel.getPlayerInfos()) {
+                        showShip(playerInfo.getShip(), playerInfo.getNickName());
+                    }
+                    //3-impostare la nuova root alla scena principale
+                    primaryScene.setRoot(root);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                //3-impostare la nuova root alla scena principale
-                primaryScene.setRoot(root);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        }
+
 
         /*
         Platform.runLater(() -> {
@@ -507,9 +532,23 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     @Override
+    //Todo: rinominare a showInHandTile?
     public void showTile(Tile tile) {
         //Associare al cursore per poi poter rilasciare su nave in pratica
-        showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName());
+        //Chiamato solo per la inHandTile
+        if(tile != null) {
+            System.out.println("DEBUG: showTile");
+            Platform.runLater(() -> {
+                        //Gestisce il controller della pagina building:
+                        ((BuildingController) actualPageController).showDrawnTile(tile);
+                    });
+            showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName());
+        }
+        else{
+            ((BuildingController) actualPageController).hideZonaPescata();
+        }
+
+
     }
 
     @Override
@@ -601,9 +640,12 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void showShip(Ship targetShipView, String Nickname) {
         System.out.println("DEBUG: showShip ");
+
         //showShip exists only in the pages of Building and Flight so it's possible to Cast the actualPage in the
         //GenericGamePhaseSceneController designed for those phases of actual gameplay
-        ((GenericGamePhaseSceneController) actualPageController).showShip( targetShipView,  Nickname);
+        Platform.runLater(() -> {
+            ((GenericGamePhaseSceneController) actualPageController).showShip(targetShipView, Nickname);
+        });
     }
 
 
