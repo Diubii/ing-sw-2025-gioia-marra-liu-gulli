@@ -52,6 +52,7 @@ public abstract class Utils {
             CentralHousingUnit centralHousingUnit = (CentralHousingUnit) housingUnit;
             while(centralHousingUnit.getNCrewMembers() > 0 && numberOfCrewMembersToBeDiscarded > 0) {
                 centralHousingUnit.removeCrewMember();
+                numberOfCrewMembersToBeDiscarded--;
             }
         }
     }

@@ -146,8 +146,7 @@ public class CardContext {
     public void previousPhase() {
         cardFSM.previous();
     }
-    public void previousPhase(int iterations){
-        for(int i=0; i<iterations; i++){
+    public void previousPhase(int iterations){for(int i=1; i<=iterations; i++){
             cardFSM.previous();
         }
     }
@@ -156,7 +155,7 @@ public class CardContext {
         cardFSM.next();
     }
     public void nextPhase(int iterations){
-        for(int i = 0; i < iterations; i++){
+        for(int i = 1; i <= iterations; i++){
             cardFSM.next();
         }
     }

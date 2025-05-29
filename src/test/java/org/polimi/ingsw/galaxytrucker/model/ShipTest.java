@@ -83,6 +83,7 @@ class ShipTest {
         assertTrue(enginePositions.contains(pos), "enginePos should contain DoubleEngine position");
     }
 
+
 //tests for calculateEnginePower
     @Test
     public void testPowerEngine_NoEngines() {

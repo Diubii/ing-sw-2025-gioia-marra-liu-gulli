@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -874,17 +875,32 @@ public class ServerController {
         tryExecutePhaseAfterMessage(game, NetworkMessageType.ActivateAdventureCardResponse);
     }
 
-    public void handleActivateComponentResponse(ActivateComponentResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
+    public void handleActivateComponentResponse(ActivateComponentResponse activateComponentResponse, ClientHandler clientHandler) {
         LobbyManager game = getLobbyFromHandler(clientHandler);
         Player player = getPlayerFromClientHandler(clientHandler);
         Ship ship = player.getShip();
+        ActivatableComponent activatableComponent = activateComponentResponse.getActivatableComponentType();
 
-        ArrayList<Position> doubleEnginesPositions = activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions();
-        ArrayList<Position> batteriesPositions = activateDoubleEnginesResponse.getBatteriesPositions();
+        ArrayList<Position> activatedComponentPositions = activateComponentResponse.getActivatedComponentPositions();
+        ArrayList<Position> batteriesPositions = activateComponentResponse.getBatteriesPositions();
 
-        for (int i = 0; i < activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions().size(); i++) {
+
+        if (activatedComponentPositions == null || batteriesPositions == null ||
+                activatedComponentPositions.isEmpty() || batteriesPositions.isEmpty()) {
+            tryExecutePhaseAfterMessage(game, NetworkMessageType.ActivateComponentResponse);
+            return;
+        }
+
+        for (int i = 0; i < activateComponentResponse.getActivatedComponentPositions().size(); i++) {
             //TODO FIX
-            ship.activateDoubleEngine(doubleEnginesPositions.get(i), batteriesPositions.get(i)); //Usare il bool ritornato? //Assumo che ci siano posizioni duplicate nella lista di quelle delle batterie
+            Position componentPos = activatedComponentPositions.get(i);
+            Position batteryPos = batteriesPositions.get(i);
+
+            switch (activatableComponent) {
+                case DoubleEngine -> ship.activateDoubleEngine(componentPos, batteryPos);
+                case DoubleCannon -> ship.activateDoubleCannon(componentPos, batteryPos);
+                case Shield -> ship.activateShield(componentPos, batteryPos);
+            }
         }
 
         //Mando la shipUpdate
@@ -1072,8 +1088,9 @@ public class ServerController {
 
 
     private void tryExecutePhaseAfterMessage(LobbyManager game, NetworkMessageType type) {
-        game.getGameController().getCurrentCardContext().decrementExpectedNumberOfNetworkMessages(type);
-        int expectedNetworkMessages = game.getGameController().getCurrentCardContext().getExpectedNumberOfNetworkMessagesPerType().get(type);
+        CardContext cardContext =game.getGameController().getCurrentCardContext();
+        cardContext.decrementExpectedNumberOfNetworkMessages(type);
+        int expectedNetworkMessages = cardContext.getExpectedNumberOfNetworkMessagesPerType().get(type);
         if (expectedNetworkMessages == 0) {
             game.getGameController().getCurrentCardContext().executePhase();
         } else if (expectedNetworkMessages == -1) {

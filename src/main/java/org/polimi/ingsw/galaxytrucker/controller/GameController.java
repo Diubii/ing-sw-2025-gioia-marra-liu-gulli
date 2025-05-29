@@ -309,13 +309,13 @@ public class GameController {
             }
         } else if (projectile.getType() == ProjectileType.Meteor) {
             if (projectile.getSize() == ProjectileSize.Big) {
-                if (!protectWithFirstAvailableCannon(ship, projectile.getDirection())) {
+                if (!protectWithFirstAvailableCannon(ship, projectile.getDirection(),diceRoll)) {
                     destroyedTile = ship.getTileFromPosition(pos);
                     ship.removeTile(pos, false);
                     aTileHasBeenDestroyed = true;
                 }
             } else if (projectile.getSize() == ProjectileSize.Little) {
-                ArrayList<Connector> tileConnectors = ship.getShipBoard()[pos.getY()][pos.getX()].getTile().getSides();
+                ArrayList<Connector> tileConnectors = ship.getShipBoard()[pos.getX()][pos.getY()].getTile().getSides();
                 int index = -1;
 
                 switch (projectile.getDirection()) {
@@ -353,19 +353,50 @@ public class GameController {
      * @return {@code true} if the ship is protected, {@code false} if it is not.
      * @author Alessandro Giuseppe Gioia
      */
-    private boolean protectWithFirstAvailableCannon(Ship ship, ProjectileDirection direction) {
+    private boolean protectWithFirstAvailableCannon(Ship ship, ProjectileDirection direction,int diceRoll) {
+
         for (Position cannonPos : ship.getComponentPositionsFromName("Cannon")) {
             Cannon cannon = (Cannon) ship.getComponentFromPosition(cannonPos);
-            if (cannon.getRotation() == direction.ordinal()) {
-                return true;
+            ProjectileDirection directionCannon = ProjectileDirection.fromRotation(cannon.getRotation());
+
+            if (direction.equals(ProjectileDirection.UP)) {
+                if (directionCannon.equals(ProjectileDirection.UP) && diceRoll == cannonPos.getX()) {
+                    return true;
+                }
+            }
+            else if(direction.equals(ProjectileDirection.DOWN)){
+               if(directionCannon.equals(ProjectileDirection.DOWN) && (Math.abs(cannonPos.getX() - diceRoll) <= 1)) {
+                   return true;
+               }
+            }
+            else{
+                if(directionCannon.equals(direction) && (Math.abs(cannonPos.getY() - diceRoll) <= 1)) {
+                    return true;
+                }
             }
         }
 
         for (Position cannonPos : ship.getComponentPositionsFromName("DoubleCannon")) {
             DoubleCannon doubleCannon = (DoubleCannon) ship.getComponentFromPosition(cannonPos);
-            if (doubleCannon.getRotation() == direction.ordinal() && doubleCannon.isCharged()) {
-                doubleCannon.setCharged(false);
-                return true;
+            ProjectileDirection directionDoubleCannon = ProjectileDirection.fromRotation(doubleCannon.getRotation());
+
+            if(doubleCannon.isCharged()) {
+                if (direction.equals(ProjectileDirection.UP)) {
+                    if (directionDoubleCannon.equals(ProjectileDirection.UP) && diceRoll == cannonPos.getX()) {
+                        doubleCannon.setCharged(false);
+                        return true;
+                    }
+                } else if (direction.equals(ProjectileDirection.DOWN)) {
+                    if (directionDoubleCannon.equals(ProjectileDirection.DOWN) && (Math.abs(cannonPos.getX() - diceRoll) <= 1)) {
+                        doubleCannon.setCharged(false);
+                        return true;
+                    }
+                } else {
+                    if (directionDoubleCannon.equals(direction) && (Math.abs(cannonPos.getY() - diceRoll) <= 1)) {
+                       doubleCannon.setCharged(false);
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -400,7 +431,11 @@ public class GameController {
 
     public void clearPlayersWithNoCrew(){
         for(Player player : game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList()) {
-            if(player.getShip().getnCrew() == 0){
+            Ship ship = player.getShip();
+            int nCrewAndAlien = ship.getnCrew();
+            int nCrew = 0;
+            nCrew = nCrewAndAlien - ship.getNBrownAlien()-ship.getNPurpleAlien();
+            if( nCrew== 0){
                 removePlayerFromGame(player.getNickName(), false);
             }
         }

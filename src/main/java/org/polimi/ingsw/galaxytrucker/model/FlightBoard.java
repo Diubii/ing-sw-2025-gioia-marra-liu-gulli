@@ -127,6 +127,7 @@ public class FlightBoard implements Serializable {
     }
 
     public int getPlayerPosition(Color token) {
+
         if (!playerSteps.containsKey(token)) {
             throw new IllegalArgumentException("Player with token " + token + " not found on the flight board.");
         }

@@ -70,4 +70,18 @@ class MockShipFactoryTest {
         ShipPrintUtils.printShip(ship);
 
     }
+    @Test
+    void testCreateHighFirePowerShipWithMultiDirection()  {
+        Ship ship = MockShipFactory.createHighFirePowerShipWithMultiDirection();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+
+    }
+    @Test
+    void testCreateHighFirePowerShipWithMultiDirection2()  {
+        Ship ship = MockShipFactory.createHighFirePowerShipWithMultiDirection2();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+
+    }
 }

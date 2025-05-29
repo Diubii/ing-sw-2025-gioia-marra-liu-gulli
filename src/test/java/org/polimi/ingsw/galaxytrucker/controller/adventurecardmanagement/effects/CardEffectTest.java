@@ -24,6 +24,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Cre
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
 import java.io.IOException;
+import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 class CardEffectTest {
 
@@ -667,12 +669,13 @@ class CardEffectTest {
 
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
 
-
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
         Player playerA = rankedPlayers.get(0);
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
-        playerA.replaceShip(MockShipFactory.createHighFirePowerShip());
+        playerA.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
+        playerB.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection()); //power 3.5~5
+        playerC.replaceShip(MockShipFactory.createMockShip());//1
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forPirates(rankedPlayers);
         responses.forEach((nick, responseList) -> {
@@ -704,6 +707,219 @@ class CardEffectTest {
 
 
     }
+    @Test
+    void testSlavers_PlayerADefeatedEnemy() {
+        List<AdventureCard> cards = CardTestUtils.loadCardsByType("Schiavisti", 1);
+        AdventureCard card = cards.getFirst();
+        assertNotNull(card);
+        assertTrue(card instanceof Slavers);
+        Slavers slavers = (Slavers) card;
+
+        GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
+
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
+        Player playerA = rankedPlayers.get(0);
+//        Player playerB = rankedPlayers.get(1);
+//        Player playerC = rankedPlayers.get(2);
+
+        playerA.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2()); //power 5.5~8
+//        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
+//        playerC.replaceShip(MockShipFactory.createMockShip());//1
+
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSlavers_PlayerADefeatedEnemy(rankedPlayers);
+        responses.forEach((nick, responseList) -> {
+            FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
+            handler.setMockResponses(responseList);
+        });
+
+        ctx.lobby.getGameController().getCardDeckTest().clear();
+        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.serverController.handleDrawAdventureCardRequest(
+                new DrawAdventureCardRequest(),
+                ctx.nicknameToHandlerMap.get(playerA.getNickName())
+        );
+
+        int posA = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(playerA.getColor());
+        int creditA = playerA.getNCredits();
+        assertEquals(5,posA);
+        assertEquals(5,creditA);
+
+    }
+
+    @Test
+    void testSlavers_AllPlayersWereDefeated() {
+        List<AdventureCard> cards = CardTestUtils.loadCardsByType("Schiavisti", 1);
+        AdventureCard card = cards.getFirst();
+        assertNotNull(card);
+        assertTrue(card instanceof Slavers);
+        Slavers slavers = (Slavers) card;
+
+        GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
+
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
+        Player playerA = rankedPlayers.get(0);
+        Player playerB = rankedPlayers.get(1);
+        Player playerC = rankedPlayers.get(2);
+
+        playerA.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2()); //power 5.5~8
+        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
+        playerC.replaceShip(MockShipFactory.createMockShip());//1
+
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSlavers_AllPlayersWereDefeated(rankedPlayers);
+        responses.forEach((nick, responseList) -> {
+            FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
+            handler.setMockResponses(responseList);
+        });
+
+        ctx.lobby.getGameController().getCardDeckTest().clear();
+        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        int nCrewA = playerA.getShip().getnCrew();
+        int nCrewB = playerB.getShip().getnCrew();
+        int nCrewC = playerC.getShip().getnCrew();
+        System.out.println("Before");
+        System.out.println("nCrewA: "+ nCrewA);
+        System.out.println("nCrewB: "+ nCrewB);
+        System.out.println("nCrewC: "+ nCrewC);
+        System.out.println();
+        ctx.serverController.handleDrawAdventureCardRequest(
+                new DrawAdventureCardRequest(),
+                ctx.nicknameToHandlerMap.get(playerA.getNickName())
+        );
+        nCrewA = playerA.getShip().getnCrew();
+        nCrewB = playerB.getShip().getnCrew();
+        nCrewC = playerC.getShip().getnCrew();
+
+        System.out.println();
+        System.out.println("After");
+        System.out.println("nCrewA: "+ nCrewA);
+        System.out.println("nCrewB: "+ nCrewB);
+        System.out.println("nCrewC: "+ nCrewC);
+
+
+
+        assertEquals(0,nCrewA);
+        assertEquals(1,nCrewB);
+        assertEquals(3,nCrewC);
+
+    }
+
+    /**
+     * Tests the effect of the "Slaver" card on multiple players during combat resolution.
+     *
+     * <p>Test setup:
+     * <ul>
+     *   <li>Player A has 2 crew members.</li>
+     *   <li>Player B has enough power to tie with the Slaver.</li>
+     *   <li>Player C has enough power to defeat the Slaver.</li>
+     *   <li>The Slaver card requires 3 crew to be discarded upon defeat.</li>
+     * </ul>
+     *
+     * <p>Expected behavior:
+     * <ol>
+     *   <li>Player A is defeated and receives the discardCrew penalty.</li>
+     *   <li>Since Player A has fewer crew members than required, all crew are removed.</li>
+     *   <li>Player A is eliminated from the game due to having no remaining crew.</li>
+     *   <li>Player B ties with the Slaver and does not receive any penalty.</li>
+     *   <li>Player C defeats the Slaver, receives a reward, and moves backward according to the value specified on the Slaver card.</li>
+     * </ol>
+     *
+     * <p>Assertions:
+     * <ul>
+     *   <li>Player A has been removed from the match after losing all crew.</li>
+     *   <li>Player B remains in the same state, with no penalties applied.</li>
+     *   <li>Player C's reward is granted and their position is updated correctly based on the backward movement.</li>
+     *   <li>The remaining number of players in the match is reduced by one.</li>
+     * </ul>
+     */
+
+    @Test
+    void testSlavers_PlayerC_DefeatedEnemy() {
+        List<AdventureCard> cards = CardTestUtils.loadCardsByType("Schiavisti", 1);
+        AdventureCard card = cards.getFirst();
+        assertNotNull(card);
+        assertTrue(card instanceof Slavers);
+        Slavers slavers = (Slavers) card;
+
+        GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
+
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
+        Player playerA = rankedPlayers.get(0);
+        Player playerB = rankedPlayers.get(1);
+        Player playerC = rankedPlayers.get(2);
+
+        playerA.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2()); //power 5.5~8
+        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
+        playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//power 5.5~8
+
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSlavers_PlayerC_DefeatedEnemy(rankedPlayers);
+        responses.forEach((nick, responseList) -> {
+            FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
+            handler.setMockResponses(responseList);
+        });
+
+
+        ctx.lobby.getGameController().getCardDeckTest().clear();
+        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+
+        FlightBoard flightBoard =  ctx.lobby.getRealGame().getFlightBoard();
+
+        int nCrewA = playerA.getShip().getnCrew();
+        int nCrewB = playerB.getShip().getnCrew();
+        int nCrewC = playerC.getShip().getnCrew();
+        System.out.println("Before");
+        System.out.println("nCrewA: "+ nCrewA);
+        System.out.println("nCrewB: "+ nCrewB);
+        System.out.println("nCrewC: "+ nCrewC);
+        System.out.println();
+        System.out.println("Position A  :" +flightBoard.getPlayerPosition(playerA.getColor()));
+        System.out.println("Position B  :" +flightBoard.getPlayerPosition(playerB.getColor()));
+        System.out.println("Position C  :" + flightBoard.getPlayerPosition(playerC.getColor()));
+        System.out.println();
+        ctx.serverController.handleDrawAdventureCardRequest(
+                new DrawAdventureCardRequest(),
+                ctx.nicknameToHandlerMap.get(playerA.getNickName())
+        );
+        nCrewA = playerA.getShip().getnCrew();
+        nCrewB = playerB.getShip().getnCrew();
+        nCrewC = playerC.getShip().getnCrew();
+
+        System.out.println();
+        System.out.println("After");
+        System.out.println("nCrewA: "+ nCrewA);
+        System.out.println("nCrewB: "+ nCrewB);
+        System.out.println("nCrewC: "+ nCrewC);
+//
+//
+//
+        assertEquals(0,nCrewA);
+        assertEquals(4,nCrewB);
+        assertEquals(2,nCrewC);
+
+         ArrayList<Player>  rankedPlayer = ctx.lobby.getGameController().getRankedPlayers();
+
+        assertFalse(rankedPlayer.contains(playerA));
+
+        int PosB = flightBoard.getPlayerPosition(playerB.getColor());
+        int PosC = flightBoard.getPlayerPosition(playerC.getColor());
+
+        System.out.println();
+        System.out.println("Position B  :" +PosB);
+        System.out.println("Position C  :" + PosC);
+
+        assertEquals(5,playerC.getNCredits());
+        assertEquals(0,playerB.getNCredits());
+
+        assertEquals(0,playerA.getNCredits());
+
+        assertEquals(3,PosB);
+        assertEquals(0,PosC);
+
+
+
+
+
+    }
+
     @Test
     void testCombatZone() {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Zona Guerra", 3);

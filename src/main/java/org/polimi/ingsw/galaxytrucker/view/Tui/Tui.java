@@ -504,7 +504,6 @@ public class Tui implements View, Observable {
             try {
                 String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
                 if (checkReset(input)) return;
-                ;
                 pos = parseCoordinate(input);
                 clientController.setCurrentPos(pos.getX() - 4, pos.getY() - 5);
                 valid = true;
@@ -810,14 +809,14 @@ public class Tui implements View, Observable {
 
                 Position pos = new Position(pos1.getX() - 4, pos1.getY() - 5);
 
-                if (!Util.inBoundaries(pos.getY(), pos.getX()) || ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() == null) {
+                if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() == null) {
 
-                    throw new IllegalArgumentException("Invalid Position" + pos.getY() + pos.getX());
+                    throw new IllegalArgumentException("Invalid Position " + pos);
 
                 }
 
 
-                Tile tile = ship.getShipBoard()[pos.getY()][pos.getX()].getTile();
+                Tile tile = ship.getShipBoard()[pos.getX()][pos.getY()].getTile();
 
 
                 clientController.getMyModel().addTileToRemove(tile.getId());

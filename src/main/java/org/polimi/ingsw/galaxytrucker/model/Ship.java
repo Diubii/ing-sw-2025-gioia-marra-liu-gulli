@@ -1139,13 +1139,24 @@ public class Ship implements Serializable {
     }
 
     public Float calculateFirePower() {
+
         ArrayList<Position> cannonPos = getComponentPositionsFromName("Cannon");
         ArrayList<Position> doubleCannonPos = getComponentPositionsFromName("DoubleCannon");
         ArrayList<Position> allCannons = new ArrayList<>();
-        allCannons.addAll(getComponentPositionsFromName("Cannon"));
-        allCannons.addAll(getComponentPositionsFromName("DoubleCannon"));
+        allCannons.addAll(cannonPos);
+        allCannons.addAll(doubleCannonPos);
 
-        return (float) allCannons.stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();
+
+        Float firePower = (float) allCannons
+                .stream()
+                .mapToDouble(p->
+                        ((Cannon)getComponentFromPosition(p)).getFirePower() )
+                .sum();
+        if (firePower != 0) {
+            firePower += getNPurpleAlien() * 2;
+        }
+
+        return firePower;
     }
 
     public int getHumanCrewNumber() {

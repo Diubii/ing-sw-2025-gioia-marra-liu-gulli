@@ -234,6 +234,7 @@ public class MockShipFactory {
 
     }
 
+
     private static void addCrewToHousingUnit(Tile tile) {
         if (tile != null && tile.getMyComponent() instanceof ModularHousingUnit) {
             ModularHousingUnit unit = (ModularHousingUnit) tile.getMyComponent();
@@ -334,4 +335,99 @@ public class MockShipFactory {
 
         return ship;
     }
+    public static Ship  createHighFirePowerShipWithMultiDirection(){
+        Ship ship = new Ship(false);
+        Map<String, List<Tile>> tiles = MockShipFactory.getAllClonedTiles();
+
+
+        Tile cannon = getRequiredTile(tiles, "Cannon", 20);
+        Tile doubleCannon2 = getRequiredTile(tiles, "DoubleCannon", 10);
+        Tile cannon2 = getRequiredTile(tiles, "Cannon", 2);
+        Tile cannon3 = getRequiredTile(tiles, "Cannon", 14);
+        Tile battery = getRequiredTile(tiles, "BatterySlot", 0);
+        Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
+
+
+
+
+        Tile genericCargoHold = getRequiredTile(tiles, "GenericCargoHolds", 0);
+        Tile brownLifeSupport = getRequiredTile(tiles, "BrownLifeSupportSystem", 0);
+        Tile purpleLifeSupport = getRequiredTile(tiles, "PurpleLifeSupportSystem", 0);
+        Tile doubleEngine = getRequiredTile(tiles, "DoubleEngine", 8);
+        Tile doubleCannon = getRequiredTile(tiles, "DoubleCannon", 0);
+
+
+
+
+
+        cannon.rotate(270);
+        doubleCannon2.rotate(90);
+        cannon2.rotate(180);
+
+        if(doubleCannon2 != null )ship.putTile(doubleCannon2, new Position(5, 2));
+        if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
+        if(battery != null) ship.putTile(battery, new Position(2, 2));
+        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(3, 3));
+        if(cannon != null) ship.putTile(cannon, new Position(1, 2));
+        if(doubleCannon != null) ship.putTile(doubleCannon, new Position(2, 1));
+        if(cannon3 != null) ship.putTile(cannon3, new Position(4, 2));
+        if(cannon2 != null ) ship.putTile(cannon2, new Position(1, 3));
+
+        if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
+
+        return ship;
+
+
+    }
+
+    public static Ship  createHighFirePowerShipWithMultiDirection2(){
+        Ship ship = new Ship(false);
+        Map<String, List<Tile>> tiles = MockShipFactory.getAllClonedTiles();
+
+
+        Tile cannon = getRequiredTile(tiles, "Cannon", 20);
+        Tile doubleCannon2 = getRequiredTile(tiles, "DoubleCannon", 10);
+        Tile cannon2 = getRequiredTile(tiles, "Cannon", 2);
+        Tile cannon3 = getRequiredTile(tiles, "Cannon", 14);
+        Tile cannon4 = getRequiredTile(tiles, "Cannon", 10);
+        Tile battery = getRequiredTile(tiles, "BatterySlot", 0);
+        Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
+        Tile doubleCannon3 = getRequiredTile(tiles, "DoubleCannon", 1);
+        Tile battery2 = getRequiredTile(tiles, "BatterySlot", 1);
+
+
+        Tile genericCargoHold = getRequiredTile(tiles, "GenericCargoHolds", 0);
+        Tile brownLifeSupport = getRequiredTile(tiles, "BrownLifeSupportSystem", 0);
+        Tile purpleLifeSupport = getRequiredTile(tiles, "PurpleLifeSupportSystem", 0);
+        Tile doubleEngine = getRequiredTile(tiles, "DoubleEngine", 8);
+        Tile doubleCannon = getRequiredTile(tiles, "DoubleCannon", 0);
+
+
+
+
+
+        cannon.rotate(270);
+        doubleCannon2.rotate(90);
+        cannon2.rotate(180);
+
+        if(doubleCannon2 != null )ship.putTile(doubleCannon2, new Position(5, 2));
+        if(doubleCannon3!=null) ship.putTile(doubleCannon3, new Position(5, 1));
+        if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
+        if(battery != null) ship.putTile(battery, new Position(2, 2));
+        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(3, 3));
+        if(cannon != null) ship.putTile(cannon, new Position(1, 2));
+        if(doubleCannon != null) ship.putTile(doubleCannon, new Position(2, 1));
+        if(cannon3 != null) ship.putTile(cannon3, new Position(4, 2));
+        if(cannon2 != null ) ship.putTile(cannon2, new Position(1, 3));
+
+        if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
+        if(battery2!= null) ship.putTile(battery2, new Position(2, 4));
+        if(cannon4!=null) ship.putTile(cannon4, new Position(3, 1));
+
+        return ship;
+
+
+    }
+
+
 }

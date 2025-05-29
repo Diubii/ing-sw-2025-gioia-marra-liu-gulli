@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effect
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.Smugglers;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
@@ -18,10 +19,15 @@ import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.
 public class SmugglersEffect {
 
     public static void firePowerCheck(CardContext context){
+
         LobbyManager game = context.getCurrentGame();
         Smugglers smugglers = (Smugglers) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
+
+
+        System.out.println( player.getNickName() + "  Debug: Fire Power Check");
         if (smugglers.getFirePower() > player.getShip().calculateFirePower()){
+            System.out.println( player.getNickName() + "  Debug: smugglers.getFirePower() > player.getShip().calculateFirePower())");
             GameMessage personalMessage = new GameMessage("The Smugglers are going to haunt you!"); //personalMessage.setIsTurn(true);
             game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
             GameMessage info = new GameMessage(); info.setMessage(player.getNickName() + " has less FirePower than the Smugglers!");
@@ -55,6 +61,7 @@ public class SmugglersEffect {
             context.previousPhase();
         }
         else if (smugglers.getFirePower() < player.getShip().calculateFirePower()){
+            System.out.println(player.getNickName() + "DEBUG: smugglers.getFirePower() < player.getShip().calculateFirePower())");
             GameMessage personalMessage = new GameMessage("You won against the Smugglers!"); //personalMessage.setIsTurn(true);
             game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
             GameMessage info = new GameMessage(); info.setMessage(player.getNickName() + " has defeated the Smugglers!");
@@ -68,6 +75,7 @@ public class SmugglersEffect {
             return;
         }
         else if (smugglers.getFirePower() == player.getShip().calculateFirePower()){
+            System.out.println(player.getNickName() + " DEBUG: smugglers.getFirePower() == player.getShip().calculateFirePower(");
             GameMessage personalMessage = new GameMessage("The Smugglers are not going to haunt you!"); //personalMessage.setIsTurn(true);
             game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
 
@@ -84,9 +92,11 @@ public class SmugglersEffect {
     }
 
     public static void receivedRewardsCollectionResponse(CardContext context){
+
         CollectRewardsResponse collectRewardsResponse = (CollectRewardsResponse) context.getIncomingNetworkMessage();
         Player player = context.getCurrentPlayer();
 
+        System.out.println(player.getNickName() + "  Debug: Received rewards collection response");
         if(collectRewardsResponse.doesWantToCollect()) {
             context.incrementExpectedNumberOfNetworkMessages(NetworkMessageType.ShipUpdate);
             broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " chose to collect the rewards!"), player);
@@ -102,6 +112,9 @@ public class SmugglersEffect {
     }
 
     public static void receivedShipUpdate(CardContext context){
+        Player currentPlayer = context.getCurrentPlayer();
+        System.out.println(currentPlayer.getNickName() + "  Debug: Received ship update response");
+
         Smugglers smugglers = (Smugglers) context.getAdventureCard();
         movePlayer(context, context.getCurrentPlayer(), -smugglers.getDaysLost());
 

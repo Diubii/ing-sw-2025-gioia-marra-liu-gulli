@@ -369,6 +369,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(CollectRewardsResponse collectRewardsResponse) {
+        serverController.handleCollectRewardsResponse(collectRewardsResponse, clientHandler);
         return null;
     }
 

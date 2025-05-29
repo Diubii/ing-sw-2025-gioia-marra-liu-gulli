@@ -797,8 +797,8 @@ public class ClientController implements Observer {
         Position pos = new Position(x, y);
         Ship ship = myModel.getMyInfo().getShip();
 
-        if (!Util.inBoundaries(pos.getY(), pos.getX()) || ship.getInvalidPositions().contains(pos)) {
-            throw new IllegalArgumentException("Invalid Position" + pos.getY() + pos.getX());
+        if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos)) {
+            throw new IllegalArgumentException("Invalid Position" + pos);
         }
 
 //    if (ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
@@ -842,6 +842,7 @@ public class ClientController implements Observer {
                     currentTileInHand = null;
                     isPlaced = true;
                 }
+
 
             } catch (Exception e) {
                 view.showGenericMessage("Error during tile placement: " + e.getMessage());
@@ -1273,7 +1274,7 @@ public class ClientController implements Observer {
     @NeedsToBeChecked("non modificare model in locale, creare una TempShip ")
     public void placeMerci(int goodIndex, Good good, Position pos) {
         Ship ship = myModel.getMyInfo().getShip();
-        Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+        Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
         GenericCargoHolds hold = (GenericCargoHolds) slot.getTile().getMyComponent();
         hold.playerLoadGood(good);
         myModel.getSelectedPlanet().getGoods().remove(goodIndex);
@@ -1301,11 +1302,36 @@ public class ClientController implements Observer {
 
     public void handleActivateComponentRequest(ActivateComponentRequest request) {
         ActivatableComponent component = request.getActivatableComponentType();
-        //Invoca metodo della view fare scegliere al giocatore i componenti da attivare e le batterie da usare
-        try {
-            view.chooseComponent(myModel.getMyInfo().getShip(), component);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        String componentName;
+        switch (component) {
+            case ActivatableComponent.DoubleCannon:
+                componentName = "DoubleCannon";
+                break;
+            case ActivatableComponent.DoubleEngine:
+                componentName = "DoubleEngine";
+                break;
+            case ActivatableComponent.Shield:
+                componentName = "Shield";
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown component type: " + component);
+        }
+
+        Ship myShip = getMyShip();
+
+        ArrayList<Position> activateComponentPosition = myShip.getComponentPositionsFromName(componentName);
+        if (activateComponentPosition == null||activateComponentPosition.size()==0) {
+            handleActivateComponentResponse(component,null,null);
+            return;
+
+        }
+        else {
+            //Invoca metodo della view fare scegliere al giocatore i componenti da attivare e le batterie da usare
+            try {
+                view.chooseComponent(myModel.getMyInfo().getShip(), component);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -1406,7 +1432,7 @@ public class ClientController implements Observer {
         ArrayList<Position> occupied = new ArrayList<>();
 
         for (Position pos : cargoHolds) {
-            Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+            Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
             if (slot != null && slot.getTile() != null) {
                 Component c = slot.getTile().getMyComponent();
                 if (c instanceof GenericCargoHolds hold && !hold.isEmpty()) {
@@ -1445,7 +1471,7 @@ public class ClientController implements Observer {
     }
 
     private Slot getSlot(Ship ship, Position pos) {
-        Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+        Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
         return slot;
     }
 
@@ -1458,7 +1484,7 @@ public class ClientController implements Observer {
         ArrayList<Position> available = new ArrayList<>();
 
         for (Position pos : cargoHolds) {
-            Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+            Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
             if (slot != null && slot.getTile() != null) {
                 Component c = slot.getTile().getMyComponent();
                 if (c instanceof GenericCargoHolds hold && !hold.isFull()) {
