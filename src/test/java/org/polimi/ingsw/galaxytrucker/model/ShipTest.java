@@ -6,6 +6,7 @@ import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,7 +246,10 @@ class ShipTest {
     void testCheckShip() {
         Ship ship = MockShipFactory.createMockShip();
         assertTrue(ship.checkShip());
+        ShipPrintUtils.printShip(ship);
         Ship errorShip = MockShipFactory.createMockShipForCheckShip();
+        ShipPrintUtils.printShip(errorShip);
+
         assertFalse(errorShip.checkShip());
     }
 
@@ -286,52 +290,18 @@ class ShipTest {
 
     @Test
     void truncateShip() {
-//        ArrayList<Connector> connectors = new ArrayList<>();
-//        connectors.add(Connector.UNIVERSAL);
-//        connectors.add(Connector.UNIVERSAL);
-//        connectors.add(Connector.UNIVERSAL);
-//        connectors.add(Connector.UNIVERSAL);
-//
-//        BatterySlot myComponent = new BatterySlot(2);
-//        Tile myTile1 = new Tile(0,0,connectors, myComponent);
-//        Tile myTile2 = new Tile(1,0,connectors, myComponent);
-//        Tile myTile3 = new Tile(2,0,connectors, myComponent);
-//
-//        Tile myTile4 = new Tile(3,0,connectors, myComponent);
-//        Tile myTile5 = new Tile(3,0,connectors, new Shield(new ArrayList<>(), false));
-//
-//
-//
-//        myShip.putTile(myTile1, new Position(4,4));
-//        myShip.putTile(myTile2, new Position(4,5));
-//        myShip.getShipBoard()[4][5].getTile().setMyComponent(new LifeSupportSystem(AlienColor.BROWN));
-//
-//        myShip.putTile(myTile2, new Position(3,4));
-//        myShip.putTile(myTile3, new Position(3,5));
-//        myShip.getShipBoard()[3][5].getTile().setMyComponent(new ModularHousingUnit());
-//        ((ModularHousingUnit)myShip.getShipBoard()[3][5].getTile().getMyComponent()).addPurpleAlien();
-//
-//
-//        myShip.putTile(myTile4, new Position(2,4));
-//        myShip.putTile(myTile5, new Position(1,4));
-/// /
-/// /        myShip.removeTile(myTile2,new Position(4,5));
-/// /        myShip.brokenPositions.add(new Position(4,5));
-//
-//        myShip.checkShip();
-//        System.out.println(myShip.toString());
-//
-//        myShip.removeTile(myTile2,new Position(3,4));
-//
-//
-//        ArrayList<Slot[][]> tronconi = myShip.getTronc();
-//
-//        for (Slot[][] slots : tronconi) {
-//            myShip.updateShipBoard(slots);
-//            System.out.println(myShip.toString());
-//        }
-//
-//        assertEquals(2, tronconi.size());
+
+        Ship ship = MockShipFactory.createMockShip();
+        //distruggo tile
+
+        ship.removeTile(new Position(3,2), false);
+
+        ArrayList<Ship> Troncons = ship.getTronc();
+
+        for (Ship ship1: Troncons){
+            ShipPrintUtils.printShip(ship1);
+        }
+
 
     }
 

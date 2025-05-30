@@ -337,10 +337,10 @@ public class Util {
                 int s = positions.size();
                 for (int i = 0; i < s; i++) {
 
-                    if (inBoundaries(positions.get(i).getY(), positions.get(i).getX()) && myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile() != null && compatible(myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
-                        Tile tempTile = myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile();
-                        System.out.println("STO PER VISITARE : " + positions.get(i).getY() + positions.get(i).getX());
-                        visitTile(tempTile, tilesID, myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()], invalidPositions, newBrokenPos, myShip);
+                    if (inBoundaries(positions.get(i).getX(), positions.get(i).getY()) && myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile() != null && compatible(myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
+                        Tile tempTile = myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile();
+                        System.out.println("STO PER VISITARE : " + positions.get(i).getX() + positions.get(i).getY());
+                        visitTile(tempTile, tilesID, myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()], invalidPositions, newBrokenPos, myShip);
 
 
                     }
