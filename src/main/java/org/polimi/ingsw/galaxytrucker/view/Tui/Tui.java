@@ -800,6 +800,7 @@ public class Tui implements View, Observable {
     }
 
     @Override
+    //Todo verificare ordine x e y
     public void askRemoveTile(Ship ship) {
 
         boolean valid = false;
