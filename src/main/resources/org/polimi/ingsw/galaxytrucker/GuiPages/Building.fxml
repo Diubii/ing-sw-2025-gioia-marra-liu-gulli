@@ -208,9 +208,7 @@
       <Pane fx:id="overlayPane" pickOnBounds="false">
          <children>
             <ImageView fx:id="inHandTileImage" fitHeight="50.0" fitWidth="50.0" layoutX="89.0" layoutY="175.0" mouseTransparent="true" opacity="0.76" preserveRatio="true" visible="false">
-               <image>
-                  <Image url="@../galaxy_trucker_imgs/tiles/GT-new_tiles_16_for%20web38.jpg" />
-               </image></ImageView>
+             </ImageView>
          </children></Pane>
    </children>
 </StackPane>
