@@ -132,9 +132,4 @@ public interface View {
     void showTimerInfos();
 
 
-
-//    void askFlightMenuChoice();
-
-
-//    public void askNickname(Thread thread) throws IOException;
 }

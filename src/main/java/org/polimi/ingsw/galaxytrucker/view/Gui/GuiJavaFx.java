@@ -26,6 +26,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.CrewInitUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
@@ -150,24 +151,23 @@ public class GuiJavaFx implements View {
     //<editor-fold desc="FOLD: LoginConnect">
     public void askServerInfo() {
 
-        //TEST caricare una pagina qualunque per vedere formato
+//        //TEST caricare una pagina qualunque per vedere formato
 //            System.out.println("DEBUG: askServerInfo");
 //            //1-Prima caricare FXML
 //            Parent root;
 //            FXMLLoader loader;
 //            try{
-//                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/ListLobby.fxml"));
+//                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Flight.fxml"));
 //                root = loader.load();
 //            } catch (Exception e) {
 //                throw new RuntimeException(e);
 //            }
 //            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-//            ListLobbyController pageController = loader.getController();
-//            pageController.initialSetup(controller);
-//            Scene scene = new Scene(root);
+//            FlightController pageController = loader.getController();
+//            pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
 //           // primaryStage.setFullScreen(true);
 //           // primaryStage.setMaximized(true);
-//            primaryStage.setScene(scene);
+//             primaryScene.setRoot(root);
 
         Platform.runLater(() -> {
             System.out.println("DEBUG: askServerInfo");
@@ -435,11 +435,26 @@ public void showLobbies(List<LobbyInfo> lobbies) {
             case BUILDING_START:
                 showBuildingMenu();
             break;
+            case CREW_INIT:
+                try {
+                    chooseCrew(mymodel.getMyInfo().getShip());
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             case BUILDING_END:
             case BUILDING_TIMER:
-            case CREW_INIT:
             case SHIP_CHECK:
                 ((BuildingController)actualPageController).updateBuildingPageInterface(update.getState());
+            break;
+            case FLIGHT:
+                showFlightMenu();
+            break;
+            case END:
+               // showEndGame();
             break;
             case null, default: showGenericMessage("Phase changed: " + update.getState().name());
             break;
@@ -606,9 +621,33 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     }
 
+    private CrewInitUpdate crewInitUpdate;
     @Override
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
+        //Inizializza il crew init update
+        crewInitUpdate = new CrewInitUpdate();
+        System.out.println("ChooseCrewinvocato");
+    }
 
+    public void editPositionCrew(int x,int y){
+        //Verificare che sia una cabina
+        //Verificare se ha un colore o un supporto vitale vicino mi sa con utils .checknearlfs
+        //prendere se c'è già nell'update e scambiare tra umani e alieni
+        //modificare nella SHIP Locale e farla ridisegnare
+    }
+
+    public void confirmCrew(){
+        //Senda l'update
+        try {
+            controller.handleCrewInitUpdate(crewInitUpdate);
+            System.out.println("CrewInitSent");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -633,7 +672,30 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void showFlightMenu() {
-
+        System.out.println("DEBUG: showFlightMenu");
+        if(!actualPageController.pageName().equals("Flight")){
+            Platform.runLater(() -> {
+                Parent root;
+                FXMLLoader loader;
+                try {
+                    //1-Prima caricare FXML
+                    loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Flight.fxml"));
+                    root = loader.load();
+                    //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                    FlightController pageController = loader.getController();
+                    pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
+                    actualPageController = pageController;
+                    //Impostare tutto il rendering iniziale
+                   /* for (PlayerInfo playerInfo : mymodel.getPlayerInfos()) {
+                        showShip(playerInfo.getShip(), playerInfo.getNickName());
+                    }*/
+                    //3-impostare la nuova root alla scena principale
+                    primaryScene.setRoot(root);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
 

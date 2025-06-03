@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
+import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -9,8 +10,10 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentGuiDetailsRotationVisitor;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class zUtils {
@@ -27,11 +30,13 @@ public class zUtils {
      * @param ship
      * @param griglia
      */
+    //TODO magari aggiungere action o altri parametri per indicare nella fase di volo cosa si può fare:
+    //TODO ad esempio un tipo di componente da selezionare oppure che tipi di interazioni, sacrifica crew o altro...
     public static void showShipInGrid(Ship ship, GridPane griglia, ClientController clientController,Boolean editable,Boolean viewDetails) {
+
         //Empty the grid from previous configuration
         griglia.getChildren().clear();
         Slot[][] shipboard =  ship.getShipBoard();
-
 
         //Go over each Slot of the grid
         for (int x = 0; x < shipboard.length; x++) {
@@ -39,6 +44,7 @@ public class zUtils {
 
                 final int fX = x;
                 final int fY = y;
+                final Position pos = new Position(fX, fY);
 
                 Tile tile = shipboard[x][y].getTile();
                 Image img;
@@ -71,6 +77,7 @@ public class zUtils {
                     //e aggiunge i vari sottoelementi
                 }
                 else if(clientController.getMyShip().getInvalidPositions().contains(new Position(x,y))){
+                    //INVALID POSIITON
                     String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web157.jpg";
                     img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
                     ImageView imageView = new ImageView(img);
@@ -88,6 +95,7 @@ public class zUtils {
 
                 }
                 else{
+                    //EMPTY VALID POSITION
                     String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/empty.jpg";
                     img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
                     ImageView imageView = new ImageView(img);
@@ -110,24 +118,55 @@ public class zUtils {
                 GridPane.setFillHeight(stackPane, true);
 
 
-                //Gestisce inserimento
+
                 if(editable){
+                    //Tutto fatto con click ma dipende dalla fase:
                     stackPane.setOnMouseClicked(event -> {
 
-                        if(clientController.getCurrentTileInHand() != null) {
-                            try {
-                                clientController.setCurrentPos(fX, fY);
-                                clientController.handleTilePlacement(true);
-                            } catch (ExecutionException e) {
-                                throw new RuntimeException(e);
-                            } catch (InvalidTilePosition e) {
-                                throw new RuntimeException(e);
-                            }
-                        }else{
-                            if(clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
-                                //Todo: rimozione tile già piazzata
-                            }
+                        switch (clientController.getPhase()){
+                            case SHIP_CHECK:
+                                //RIMOZIONE DI QUALUNQUE TILE
+
+                                clientController.getMyModel().addTileToRemove(tile.getId());
+                                //Todo deve comunicarlo al server e mandare uno ship Update
+                                try {
+                                    //Todo: non così perchè modifico il modello locale...
+                                    clientController.sendShipUpdate();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                } catch (ExecutionException e) {
+                                    throw new RuntimeException(e);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                ship.removeTile(pos, true);
+
+
+                                break;
+                            case CREW_INIT:
+                                break;
+                            case null, default:
+                                if(clientController.getCurrentTileInHand() != null) {
+                                    try {
+                                        if(clientController.getMyShip().getShipBoard()[fX][fY].getTile() == null) {
+                                            clientController.setCurrentPos(fX, fY);
+                                            clientController.handleTilePlacement(true);
+                                        }
+                                    } catch (ExecutionException e) {
+                                        throw new RuntimeException(e);
+                                    } catch (InvalidTilePosition e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }else{
+                                    if(clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
+                                        //Todo: rimozione tile già piazzata
+                                    }
+                                }
+                                break;
+                            //FLIGHT sacrificare Crew, caricare merci quindi qualcosa per indicare quello.
                         }
+
                         event.consume();
                     });
                 }
