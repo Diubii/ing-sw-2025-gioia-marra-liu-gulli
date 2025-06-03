@@ -375,11 +375,13 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(AskTrunkRequest askTrunkRequest) {
+
         return null;
     }
 
     @Override
     public Void visit(AskTrunkResponse askTrunkResponse) {
+      serverController.handleAskTrunkResponse(askTrunkResponse, clientHandler);
         return null;
     }
 

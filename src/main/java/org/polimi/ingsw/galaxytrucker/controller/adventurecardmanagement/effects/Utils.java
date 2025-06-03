@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.enums.ProjectileType;
 import org.polimi.ingsw.galaxytrucker.model.FlightBoard;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
+import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
@@ -114,28 +115,66 @@ public abstract class Utils {
     protected static boolean playerCanDefendThemselvesWithAShield(Player player, Projectile projectile) {
         if (projectile.getSize() == ProjectileSize.Big) return false;
         else
-            return player.getShip().getComponentPositionsFromName("Shield").stream().anyMatch(p -> ((Shield) player.getShip().getComponentFromPosition(p)).getProtectedSides().contains(projectile.getDirection()));
+            return player
+                    .getShip()
+                    .getComponentPositionsFromName("Shield")
+                    .stream()
+                    .anyMatch(p -> ((Shield) player.getShip()
+                            .getComponentFromPosition(p))
+                            .getProtectedSides()
+                            .contains(projectile.getDirection()));
     }
 
     protected static boolean playerCanDefendThemselvesWithASingleCannon(Player player, Projectile projectile, int diceRoll) {
         if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.Big) return false;
-        else return player.getShip().getComponentPositionsFromName("Cannon").stream().anyMatch(p -> {
-            Cannon c = (Cannon) player.getShip().getComponentFromPosition(p);
-            if (c.getRotation() == projectile.getDirection().ordinal()) {
-                return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
-            } else return false;
-        });
+
+        Ship ship = player.getShip();
+        ProjectileDirection direction = projectile.getDirection();
+
+        for (Position cannonPos : ship.getComponentPositionsFromName("Cannon")) {
+            Cannon cannon = (Cannon) ship.getComponentFromPosition(cannonPos);
+            ProjectileDirection directionCannon = ProjectileDirection.fromRotation(cannon.getRotation());
+
+            if (!directionCannon.equals(direction)) continue;
+
+            if (direction == ProjectileDirection.UP) {
+                if (diceRoll == cannonPos.getX()) return true;
+            } else if (direction == ProjectileDirection.DOWN) {
+                if (Math.abs(cannonPos.getX() - diceRoll) <= 1) return true;
+            } else {
+                if (Math.abs(cannonPos.getY() - diceRoll) <= 1) return true;
+            }
+        }
+        return false;
     }
 
     protected static boolean playerCanDefendThemselvesWithADoubleCannon(Player player, Projectile projectile, int diceRoll) {
         if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.Big) return false;
-        else
-            return player.getShip().getComponentPositionsFromName("DoubleCannon").stream().anyMatch(p -> {
-                DoubleCannon c = (DoubleCannon) player.getShip().getComponentFromPosition(p);
-                if (c.getRotation() == projectile.getDirection().ordinal()) {
-                    return projectile.getDirection() != ProjectileDirection.UP || (projectile.getDirection() == ProjectileDirection.UP && p.getX() == diceRoll);
-                } else return false;
-            });
+        Ship ship = player.getShip();
+        ProjectileDirection direction = projectile.getDirection();
+
+        for (Position cannonPos : ship.getComponentPositionsFromName("DoubleCannon")) {
+            DoubleCannon doubleCannon = (DoubleCannon) ship.getComponentFromPosition(cannonPos);
+            ProjectileDirection directionDoubleCannon = ProjectileDirection.fromRotation(doubleCannon.getRotation());
+
+            if (!directionDoubleCannon.equals(direction)) continue;
+            if (!doubleCannon.isCharged()) continue;
+
+            if (direction == ProjectileDirection.UP) {
+                if (diceRoll == cannonPos.getX()) {
+                    return true;
+                }
+            } else if (direction == ProjectileDirection.DOWN) {
+                if (Math.abs(cannonPos.getX() - diceRoll) <= 1) {
+                    return true;
+                }
+            } else {
+                if (Math.abs(cannonPos.getY() - diceRoll) <= 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected static int getCorrectedDiceRoll(int diceRoll, ProjectileDirection direction){

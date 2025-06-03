@@ -290,6 +290,7 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
 
     @Override
     public NetworkMessageType visit(AskTrunkRequest askTrunkRequest) {
+
         return NetworkMessageType.AskTrunkResponse;
     }
 

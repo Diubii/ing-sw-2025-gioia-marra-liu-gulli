@@ -176,7 +176,7 @@ public class MockResponsesFactory {
                 ));
         responses.put(playerC.getNickName(), new ArrayList<>(
                 List.of(
-                        new SelectPlanetResponse(null,null ),
+                        new SelectPlanetResponse(planetsToLoad.get(2),2 ),
                         new ShipUpdate(playerA.getShip(), playerA.getNickName())
 
                 )));
@@ -202,9 +202,11 @@ public class MockResponsesFactory {
                 List.of(
                         new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
                         doubleCannonPosChosen,
-                        batteryPosChosen)
+                        batteryPosChosen),
 
-                        //new DiscardCrewMembersResponse()
+                        new CollectRewardsResponse(true)
+
+
                 )));
 
         i++;
@@ -216,12 +218,88 @@ public class MockResponsesFactory {
                 )));
 
         i++;
+
+        doubleCannonPosChosen = new ArrayList<>();
+        batteryPosChosen = new ArrayList<>();
         responses.put(players.get(i).getNickName(), new ArrayList<>(
-                List.of(new ActivateAdventureCardResponse(false)
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                        doubleCannonPosChosen,
+                        batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                doubleCannonPosChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                doubleCannonPosChosen,
+                                batteryPosChosen)
                 )));
         return responses;
     }
+    public static Map<String, ArrayList<NetworkMessage>> forPirates_AllPlayerLost(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
 
+        int i=0;
+        ArrayList<Position>  doubleCannonPosList =  players.get(i).getShip().getComponentPositionsFromName("DoubleCannon");
+        ArrayList<Position>  batteryPosList = players.get(i).getShip().getComponentPositionsFromName("BatterySlot");
+
+        ArrayList<Position> doubleCannonPosChosen = new ArrayList<>();
+        ArrayList<Position> batteryPosChosen = new ArrayList<>();
+
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                                doubleCannonPosChosen,
+                                batteryPosChosen),
+
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                doubleCannonPosChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                doubleCannonPosChosen,
+                                batteryPosChosen)
+
+
+                )));
+
+        i++;
+        doubleCannonPosChosen = new ArrayList<>();
+        batteryPosChosen = new ArrayList<>();
+        ArrayList<Position> shieldChosen;
+        shieldChosen = new ArrayList<>();
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                                shieldChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                shieldChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                shieldChosen,
+                                batteryPosChosen)
+
+                )));
+
+        i++;
+
+
+        shieldChosen = new ArrayList<>();
+        batteryPosChosen = new ArrayList<>();
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                                doubleCannonPosChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                shieldChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                shieldChosen,
+                                batteryPosChosen)
+                )));
+        return responses;
+    }
 
     public static Map<String, ArrayList<NetworkMessage>> forSlavers_PlayerADefeatedEnemy(ArrayList<Player> players) {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
@@ -327,6 +405,8 @@ public class MockResponsesFactory {
         return responses;
     }
 
+
+
     public static Map<String, ArrayList<NetworkMessage>> forSlavers_PlayerC_DefeatedEnemy(ArrayList<Player> players) {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
 
@@ -376,8 +456,8 @@ public class MockResponsesFactory {
 
         Ship shipC = players.get(i).getShip();
 
-         doubleCannonPosList =  players.get(i).getShip().getComponentPositionsFromName("DoubleCannon");
-         batteryPosList = players.get(i).getShip().getComponentPositionsFromName("BatterySlot");
+        doubleCannonPosList =  players.get(i).getShip().getComponentPositionsFromName("DoubleCannon");
+        batteryPosList = players.get(i).getShip().getComponentPositionsFromName("BatterySlot");
 
         doubleCannonPosChosen = new ArrayList<>();
         batteryPosChosen = new ArrayList<>();
@@ -389,9 +469,9 @@ public class MockResponsesFactory {
         responses.put(players.get(i).getNickName(), new ArrayList<>(
                 List.of(  new ActivateComponentResponse(
                                 ActivatableComponent.DoubleCannon,
-                              doubleCannonPosChosen,
-                               batteryPosChosen
-                       ),
+                                doubleCannonPosChosen,
+                                batteryPosChosen
+                        ),
                         new CollectRewardsResponse(true)
 
                 )));
@@ -399,8 +479,124 @@ public class MockResponsesFactory {
     }
 
 
+    public static Map<String, ArrayList<NetworkMessage>> forSmugglers_PlayerA_DefeatedEnemy(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+
+        int i=0;
+        Player playerA = players.get(i);
+        Ship shipA = playerA.getShip();
+        ArrayList<Position>  centralHousingUnit = shipA.getComponentPositionsFromName("CentralHousingUnit");
+        ArrayList<Position>  discardCrewPositionsA = new ArrayList<>();
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+
+                        new CollectRewardsResponse(true),
+                        new ShipUpdate(shipA,playerA.getNickName())
+
+                )));
 
 
+        return responses;
+    }
+
+    public static Map<String, ArrayList<NetworkMessage>> forSmugglers_PlayerA_TieCondition(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+
+        int i=0;
+        Player playerA = players.get(i);
+        Ship shipA = playerA.getShip();
+        ArrayList<Position>  centralHousingUnit = shipA.getComponentPositionsFromName("CentralHousingUnit");
+        ArrayList<Position>  discardCrewPositionsA = new ArrayList<>();
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        )
+
+                )));
+        i++;
+        Player playerB = players.get(i);
+        Ship shipB = playerB.getShip();
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+                        new CollectRewardsResponse(true),
+                        new ShipUpdate(shipB,playerB.getNickName())
+
+                )));
+        i++;
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+
+
+                )));
+
+
+        return responses;
+    }
+
+
+    public static Map<String, ArrayList<NetworkMessage>> forSmugglers_PlayerA_SmugglersWin(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+
+        int i=0;
+        Player playerA = players.get(i);
+        Ship shipA = playerA.getShip();
+        ArrayList<Position>  centralHousingUnit = shipA.getComponentPositionsFromName("CentralHousingUnit");
+        ArrayList<Position>  discardCrewPositionsA = new ArrayList<>();
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        )
+
+                )));
+        i++;
+        Player playerB = players.get(i);
+        Ship shipB = playerB.getShip();
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+                        new CollectRewardsResponse(true),
+                        new ShipUpdate(shipB,playerB.getNickName())
+
+                )));
+        i++;
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+
+
+                )));
+
+
+        return responses;
+    }
 
     public static Map<String, ArrayList<NetworkMessage>> forCombatZone(ArrayList<Player> players) {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();

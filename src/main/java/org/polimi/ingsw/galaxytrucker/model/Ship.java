@@ -1185,18 +1185,14 @@ public class Ship implements Serializable {
 
     public ArrayList<Good> getGoodsOnShipBoard() {
         ArrayList<Good> goods = new ArrayList<>();
-        ComponentNameVisitor visitor = new ComponentNameVisitor();
 
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 5; j++) {
-                Slot slot = shipBoard[i][j];
-                if (slot != null && slot.getTile() != null) {
-                    Component component = slot.getTile().getMyComponent();
-                    if (component.accept(visitor).equals("GenericCargoHolds")) {
-                        GenericCargoHolds hold = (GenericCargoHolds) component;
-                        goods.addAll(hold.getGoods());
-                    }
-                }
+        ArrayList<Position> genericCargoHoldsPos = getComponentPositionsFromName("GenericCargoHolds");
+
+        for (Position p : genericCargoHoldsPos) {
+            Component component = getComponentFromPosition(p);
+            if (component instanceof GenericCargoHolds) {
+                GenericCargoHolds hold = (GenericCargoHolds) component;
+                goods.addAll(hold.getGoods());
             }
         }
 

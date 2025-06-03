@@ -23,9 +23,30 @@ import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.
 public abstract class CombatZoneEffect {
     //PHASE 1
     private final static HashMap<LobbyManager, Pair<Integer, Player>> minCrewMembersCheckPairs = new HashMap<>();
+    private final static HashMap<LobbyManager,Integer> levelCombatZone = new HashMap<>();
 
+
+    public static void checkLevel(CardContext context) {
+        System.out.println("Checking level");
+        CombatZone combatZone = (CombatZone) context.getAdventureCard();
+        LobbyManager game = context.getCurrentGame();
+        int level = combatZone.getLevel();
+        levelCombatZone.putIfAbsent(game,level);
+
+        if(level == 1){
+            context.nextPhase();
+            context.executePhase();
+        }
+        else if(level == 2){
+            context.nextPhase(6);
+            context.executePhase();
+
+        }
+
+    }
     public static void minCrewMembersCheck(CardContext context) {
         CombatZone combatZone = (CombatZone) context.getAdventureCard();
+
         Player player = context.getCurrentPlayer();
 
         int playerCrewMembersNumber = player.getShip().getnCrew();
@@ -118,7 +139,7 @@ public abstract class CombatZoneEffect {
 
         //Controllo se il player può attivare DoubleEngines
         if (player.getShip().getComponentPositionsFromName("DoubleCannon").stream().anyMatch(p -> player.getShip().getComponentFromPosition(p).isCharged())) {
-            ActivateComponentRequest activateDoubleCannonsRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
+            ActivateComponentRequest activateDoubleCannonsRequest = new ActivateComponentRequest(ActivatableComponent.DoubleCannon);
             sendMessage(context, player, activateDoubleCannonsRequest);
             context.nextPhase();
         } else {

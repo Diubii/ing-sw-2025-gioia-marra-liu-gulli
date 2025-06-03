@@ -573,6 +573,11 @@ public class ServerController {
         game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(selectPlanetResponse);
         tryExecutePhaseAfterMessage(game, NetworkMessageType.SelectPlanetResponse);
     }
+    public void handleAskTrunkResponse(AskTrunkResponse askTrunkResponse, ClientHandler clientHandler) {
+        LobbyManager game = getLobbyFromHandler(clientHandler);
+        game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(askTrunkResponse);
+        tryExecutePhaseAfterMessage(game, NetworkMessageType.AskTrunkResponse);
+    }
 
     public void handleFinishBuildingRequest(FinishBuildingRequest finishBuildingRequest, ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -923,10 +928,11 @@ public class ServerController {
 
     public void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) {
         LobbyManager game = getLobbyFromHandler(clientHandler);
+        String nickname = game.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
+        Player myPlayer = game.getRealGame().getPlayer(nickname);
+        Ship myShip = myPlayer.getShip();
         if (shipUpdate.getOnlyFix()) {
-            String nickname = game.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
-            Player myPlayer = game.getRealGame().getPlayer(nickname);
-            Ship myShip = myPlayer.getShip();
+
 
             synchronized (myShip) {
                 List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
@@ -952,15 +958,16 @@ public class ServerController {
 
             }
 
-            ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
-            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(game.getPlayerHandlers().values());
-
-            broadCast(playerHandlers, update);
         }
 
         if (game.getGameController().getGameState() == GameState.FLIGHT) {
+            game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(shipUpdate);
             tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
         }
+
+        ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
+        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(game.getPlayerHandlers().values());
+        broadCast(playerHandlers, update);
     }
 
     public void handleDiscardCrewMembersResponse(DiscardCrewMembersResponse discardCrewMembersResponse, ClientHandler clientHandler) {

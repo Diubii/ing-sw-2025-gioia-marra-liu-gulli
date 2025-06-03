@@ -11,6 +11,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.CollectRewardsRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.CollectRewardsResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 
 import java.util.ArrayList;
 
@@ -24,89 +25,103 @@ public class SmugglersEffect {
         Smugglers smugglers = (Smugglers) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
 
+        float smugglerFirePower = smugglers.getFirePower();
+        float playerFirePower =  player.getShip().calculateFirePower();
 
         System.out.println( player.getNickName() + "  Debug: Fire Power Check");
-        if (smugglers.getFirePower() > player.getShip().calculateFirePower()){
-            System.out.println( player.getNickName() + "  Debug: smugglers.getFirePower() > player.getShip().calculateFirePower())");
-            GameMessage personalMessage = new GameMessage("The Smugglers are going to haunt you!"); //personalMessage.setIsTurn(true);
-            game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
-            GameMessage info = new GameMessage(); info.setMessage(player.getNickName() + " has less FirePower than the Smugglers!");
-            broadcastExcept(context, info, player);
-            //gestisco la sua sconfitta
-            //rimuovo le 2 merci piu preziose
 
-
-            GameMessage info2 = new GameMessage();
-            //info2.setIsTurn(true);
-
-
-            ArrayList<Good> mostValuableGoods = Util.getMostValuableGoods(player.getShip());
-            //ho rimosso le merci piu importanti
-            int numberOfGoods = mostValuableGoods.size();
-
-
-            //in base alle merci che ho levato decido quante batterie rimuovere
-            if (numberOfGoods == 2) info2.setMessage("[Smugglers] Ha ha! We'll steal your two most valuable goods!");
-            if (numberOfGoods == 1) {
-                Util.removeTwoBatteries(player.getShip(), true);
-                info2.setMessage("[Smugglers] We'll steal your most valuable good and one battery, if you have it.");
-            }
-            if (numberOfGoods == 0) {
-                Util.removeTwoBatteries(player.getShip(), false);
-                info2.setMessage("[Smugglers] You don't have any goods, so we'll steal two of your batteries! Well, if you have any, poor fella.");
-            }
-
-            game.getPlayerHandlers().get(player.getNickName()).sendMessage(info2);
-
+        if (smugglerFirePower> playerFirePower){
+            handleSmugglersWin(context,game,player,smugglers);
             context.previousPhase();
         }
-        else if (smugglers.getFirePower() < player.getShip().calculateFirePower()){
-            System.out.println(player.getNickName() + "DEBUG: smugglers.getFirePower() < player.getShip().calculateFirePower())");
-            GameMessage personalMessage = new GameMessage("You won against the Smugglers!"); //personalMessage.setIsTurn(true);
-            game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
-            GameMessage info = new GameMessage(); info.setMessage(player.getNickName() + " has defeated the Smugglers!");
-            broadcastExcept(context, info, player);
-
-            //chiedo se vuole accettare la ricompensa o no, in caso l'accettasse lo muovo indietro e aggiorno i crediti
-            CollectRewardsRequest collectRewardsRequest = new CollectRewardsRequest();
-            sendMessage(context, player, collectRewardsRequest);
-
+        else if (smugglerFirePower < playerFirePower){
             context.nextPhase();
+            handlePlayerWin(context, game, player);
+
             return;
         }
-        else if (smugglers.getFirePower() == player.getShip().calculateFirePower()){
-            System.out.println(player.getNickName() + " DEBUG: smugglers.getFirePower() == player.getShip().calculateFirePower(");
-            GameMessage personalMessage = new GameMessage("The Smugglers are not going to haunt you!"); //personalMessage.setIsTurn(true);
-            game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
-
+        else  {
             context.previousPhase();
-        }
+            handleTie( game, player);
 
+        }
+//(smugglerFirePower > playerFirePower) ||(smugglerFirePower == playerFirePower)
         if(context.currentPlayerIsLast()){
             //Execute CommonEffects::end
             context.goToEndPhase();
         }
+        else {
+            context.nextPlayer();
+        }
 
-        context.nextPlayer();
         context.executePhase();
     }
 
+    private static void handleSmugglersWin(CardContext context, LobbyManager game, Player player, Smugglers smugglers) {
+        game.getPlayerHandlers().get(player.getNickName())
+                .sendMessage(new GameMessage("The Smugglers are going to haunt you!"));
+
+        GameMessage broadcast = new GameMessage(player.getNickName() + " has less FirePower than the Smugglers!");
+        broadcastExcept(context, broadcast, player);
+
+        ArrayList<Good> removedGoods = Util.getAndRemoveMostValuableGoods(player.getShip(), smugglers.getPenalty());
+        int goodsCount = removedGoods.size();
+        int batteryToDiscard = smugglers.getPenalty() - goodsCount;
+
+        String message;
+        if (goodsCount == smugglers.getPenalty()) {
+            message = "[Smugglers] Ha ha! We'll steal your " + goodsCount + " most valuable goods!";
+        } else if (goodsCount > 0) {
+            Util.removeBatteries(player.getShip(), batteryToDiscard);
+            message = "[Smugglers] We'll steal your " + goodsCount + " most valuable good(s) and " + batteryToDiscard + " battery(ies), if you have them.";
+        } else {
+            Util.removeBatteries(player.getShip(), batteryToDiscard);
+            message = "[Smugglers] You don't have any goods, so we'll steal " + batteryToDiscard + " of your batteries! Well, if you have any, poor fella.";
+        }
+
+        GameMessage personalInfo = new GameMessage(message);
+        game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalInfo);
+    }
+
+    private static void handlePlayerWin(CardContext context, LobbyManager game, Player player) {
+        game.getPlayerHandlers().get(player.getNickName())
+                .sendMessage(new GameMessage("You won against the Smugglers!"));
+
+        GameMessage broadcast = new GameMessage(player.getNickName() + " has defeated the Smugglers!");
+        broadcastExcept(context, broadcast, player);
+
+        CollectRewardsRequest rewardRequest = new CollectRewardsRequest();
+        sendMessage(context, player, rewardRequest);
+    }
+
+    private static void handleTie( LobbyManager game, Player player) {
+        game.getPlayerHandlers().get(player.getNickName())
+                .sendMessage(new GameMessage("The Smugglers are not going to haunt you!"));
+    }
     public static void receivedRewardsCollectionResponse(CardContext context){
 
         CollectRewardsResponse collectRewardsResponse = (CollectRewardsResponse) context.getIncomingNetworkMessage();
         Player player = context.getCurrentPlayer();
-
         System.out.println(player.getNickName() + "  Debug: Received rewards collection response");
+
         if(collectRewardsResponse.doesWantToCollect()) {
-            context.incrementExpectedNumberOfNetworkMessages(NetworkMessageType.ShipUpdate);
             broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " chose to collect the rewards!"), player);
             context.nextPhase();
+            sendMessage(context, player, new ShipUpdate(player.getShip(), player.getNickName()));
+
         }
         else{
             broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " chose NOT to collect the rewards!"), player);
 
+            if(context.currentPlayerIsLast()){
+                //Execute CommonEffects::end
+                context.goToEndPhase();
+            }
+            else {
+                context.nextPlayer();
+                context.previousPhase(1);
+            }
             //Execute CommonEffects::end
-            context.goToEndPhase();
             context.executePhase();
         }
     }

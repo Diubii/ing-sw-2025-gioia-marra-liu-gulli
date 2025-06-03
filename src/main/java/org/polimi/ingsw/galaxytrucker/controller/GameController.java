@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.controller;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.*;
@@ -344,8 +345,9 @@ public class GameController {
 
         if (aTileHasBeenDestroyed) {
             game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
-
             //TODO: tronc
+
+
         }
 
         return destroyedTile;
@@ -360,6 +362,7 @@ public class GameController {
      * @author Alessandro Giuseppe Gioia
      */
     private boolean protectWithFirstAvailableCannon(Ship ship, ProjectileDirection direction,int diceRoll) {
+
 
         for (Position cannonPos : ship.getComponentPositionsFromName("Cannon")) {
             Cannon cannon = (Cannon) ship.getComponentFromPosition(cannonPos);
