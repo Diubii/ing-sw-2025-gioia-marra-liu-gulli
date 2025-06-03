@@ -202,7 +202,7 @@ public class Tui implements View, Observable {
         try {
             String nickname = readLine("Enter your nickname: ");
             clientController.handleNicknameInput(nickname);
-        } catch (Exception e) {
+        } catch (InterruptedException | ExecutionException | IOException e) {
             System.err.println("Error reading nickname: " + e.getMessage());
         }
     }
@@ -279,7 +279,7 @@ public class Tui implements View, Observable {
             } catch (NumberFormatException e) {
                 out.println("Invalid Lobby ID. Please enter a number.");
                 askRoomCode();
-            } catch (Exception e) {
+            } catch (InterruptedException | ExecutionException e) {
                 out.println("Error while joining room: " + e.getMessage());
             }
         }
@@ -404,8 +404,8 @@ public class Tui implements View, Observable {
 
             clientController.handleBuildingMenuChoice(input);
 
-        } catch (Exception e) {
-            out.println(" Error: " + e.getMessage());
+        } catch (InterruptedException | ExecutionException e) {
+            out.println("Error: " + e.getMessage());
         }
     }
 
@@ -783,7 +783,7 @@ public class Tui implements View, Observable {
         try {
             String input = readLine("\nChoose an option (a–c) or menu: ").trim().toLowerCase();
             clientController.handleCheckShipChoice(input);
-        } catch (Exception e) {
+        } catch (InterruptedException | ExecutionException e) {
             out.println(" Error: " + e.getMessage());
         }
     }
@@ -794,7 +794,7 @@ public class Tui implements View, Observable {
         try {
             String input = readLine("\nChoose an option (a–b) or menu: ").trim().toLowerCase();
             clientController.handleEmbarkCrewMenu(Character.toString(input.charAt(input.length() - 1)));
-        } catch (Exception e) {
+        } catch (InterruptedException | ExecutionException e) {
             out.println(" Error: " + e.getMessage());
         }
     }

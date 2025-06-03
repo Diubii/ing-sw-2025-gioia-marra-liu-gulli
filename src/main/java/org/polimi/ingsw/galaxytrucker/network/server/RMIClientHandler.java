@@ -13,26 +13,33 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class RMIClientHandler implements ClientHandler {
+public class RMIClientHandler implements ClientHandler, Serializable {
 
+    private final UUID clientID;
     private final ClientInterfaceRMI remoteClient;
 
     public RMIClientHandler(ClientInterfaceRMI remoteClient, ServerController serverController) {
+        clientID = UUID.randomUUID();
         this.remoteClient = remoteClient;
         serverController.startNewHeartbeat(this);
     }
 
-    NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
+    @Override
+    public UUID getClientID() {
+        return clientID;
+    }
 
     @Override
     public void sendMessage(NetworkMessage message) {
         try {
             remoteClient.receiveMessage(message);
 
-            NetworkMessageType type = message.accept(nmnv);
+            NetworkMessageType type = message.accept(new NetworkMessageNameVisitor());
             if (type != NetworkMessageType.HeartbeatRequest) {
                 System.out.println(TuiColor.BG_BLUE.toString() + TuiColor.BLACK + "RESPONSE SENT " + type + TuiColor.RESET);
             }
@@ -44,11 +51,7 @@ public class RMIClientHandler implements ClientHandler {
                 AskPositionUpdate mess = (AskPositionUpdate) message;
                 System.out.println("ASKING TO " + mess.nickname);
             }
-        } catch (RemoteException e) {
-            //System.err.println("Errore nella comunicazione con il client RMI: " + e.getMessage());
-        } catch (IOException | ExecutionException | InvalidTilePosition e) {
-            throw new RuntimeException(e);
-        } catch (PlayerAlreadyExistsException | TooManyPlayersException e) {
+        } catch (PlayerAlreadyExistsException | TooManyPlayersException | IOException | ExecutionException | InvalidTilePosition e) {
             System.err.println(e.getMessage());
         }
     }

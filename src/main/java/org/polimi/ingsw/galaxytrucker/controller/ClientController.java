@@ -120,14 +120,7 @@ public class ClientController implements Observer {
 
     @Override
     public void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException {
-        try {
-
-            message.accept(messageVisitor);
-        } catch (Exception e) {
-            //TODO: gestire crash server
-            System.err.println("[Error] The message was not processed correctly: " + e.getMessage());
-            //e.printStackTrace();
-        }
+        message.accept(messageVisitor);
     }
 
 
@@ -171,7 +164,7 @@ public class ClientController implements Observer {
         new Thread(() -> {
             try {
                 view.askNickname();
-            } catch (Exception e) {
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 System.err.println("Errore nell'invio del nickname: " + e.getMessage());
             }
         }).start();
@@ -316,7 +309,7 @@ public class ClientController implements Observer {
 
 
                 }
-            } catch (Exception e) {
+            } catch (InterruptedException | ExecutionException e) {
                 view.showGenericMessage("Error receiving room options: " + e.getMessage());
             }
         }).start();
@@ -349,6 +342,11 @@ public class ClientController implements Observer {
                 myModel.getMyInfo().setShip(response.getMyShip());
                 myModel.getMyInfo().setNickName(getNickname());
                 myModel.setLearningMatch(response.getIsLearningMatch());
+
+                synchronized (myModel.getPlayerInfos()) {
+                    myModel.setPlayerInfos(response.getPlayerInfos());
+                }
+
                 MenuManager.learningMatch = response.getIsLearningMatch();
 
 
@@ -359,7 +357,7 @@ public class ClientController implements Observer {
                 view.askRoomCode();
             }
         } catch (Exception e) {
-            view.showGenericMessage("Error while waiting for join room response: " + e.getStackTrace());
+            view.showGenericMessage("Error while waiting for join room response: " + e.getMessage());
         }
 
     }
@@ -374,8 +372,6 @@ public class ClientController implements Observer {
 
         view.showPlayerJoined(playerJoinedUpdate.getPlayerInfo());
         view.showPlayersLobby(myModel.getMyInfo(), myModel.getPlayerInfos());
-
-
     }
 
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
@@ -573,7 +569,7 @@ public class ClientController implements Observer {
 
     public void handleShipUpdate(ShipUpdate update) {
 
-        System.out.println("Debug: handleShipUpdate");
+        //System.out.println("Debug: handleShipUpdate");
 
         String owner = update.getNickName();
         Ship ship = update.getShipView();

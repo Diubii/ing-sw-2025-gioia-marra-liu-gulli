@@ -1,11 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
 import org.junit.jupiter.api.Test;
-import org.polimi.ingsw.galaxytrucker.controller.ServerController;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
-import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
-import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
@@ -15,21 +11,12 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskPositionResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.SelectPlanetResponse;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.CrewInitUpdate;
-import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
-import java.io.IOException;
-import java.io.SyncFailedException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -97,10 +84,14 @@ class CardEffectTest {
         Player second = ctx.lobby.getGameController().getRankedPlayers().get(1);
         Player third = ctx.lobby.getGameController().getRankedPlayers().get(2);
         System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(first.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
 
@@ -149,10 +140,14 @@ class CardEffectTest {
         Player second = ctx.lobby.getGameController().getRankedPlayers().get(1);
         Player third = ctx.lobby.getGameController().getRankedPlayers().get(2);
         System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(first.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
 
@@ -214,10 +209,14 @@ class CardEffectTest {
 
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(first.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         positionFirstPlayer = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(first.getColor());
         Ship newShipA = first.getShip();
@@ -275,10 +274,14 @@ class CardEffectTest {
 
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(first.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
 
 //        AbandonedStationTest a: Tutti i giocatori non hanno abbastanza crew, si salta la Stazione Abbandonata.
@@ -341,10 +344,14 @@ class CardEffectTest {
         System.out.println("PlayerA's previous position : "  + positionFirstPlayer);
         System.out.println("PlayerB's previous position : "  + positionSecondPlayer);
 
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(first.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
         first = rankedPlayers.getFirst();
         second =  rankedPlayers.get(1);
@@ -417,10 +424,14 @@ class CardEffectTest {
         Ship shipA = first.getShip();
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(first.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         first = ctx.lobby.getGameController().getRankedPlayers().getFirst();
         shipA = first.getShip();
@@ -480,10 +491,14 @@ class CardEffectTest {
 
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(first.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         first = ctx.lobby.getGameController().getRankedPlayers().getFirst();
         shipA = first.getShip();
@@ -552,10 +567,14 @@ class CardEffectTest {
         System.out.println("PlayerB's previous position : "  + positionSecondPlayer);
         System.out.println("PlayerC's previous position : "  + positionThirdPlayer);
 
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(first.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
         first = rankedPlayers.getFirst();
         second =  rankedPlayers.get(1);
@@ -642,10 +661,14 @@ class CardEffectTest {
 
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(playerA.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(playerA.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         Ship updatedShipA = playerA.getShip();
         assertNotNull(updatedShipA);
@@ -688,10 +711,14 @@ class CardEffectTest {
 
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(playerA.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(playerA.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         Ship updatedShipA = playerA.getShip();
         assertNotNull(updatedShipA);
@@ -734,10 +761,14 @@ class CardEffectTest {
 
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(playerA.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(playerA.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         int posA = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(playerA.getColor());
         int creditA = playerA.getNCredits();
@@ -781,10 +812,14 @@ class CardEffectTest {
         System.out.println("nCrewB: "+ nCrewB);
         System.out.println("nCrewC: "+ nCrewC);
         System.out.println();
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(playerA.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(playerA.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
         nCrewA = playerA.getShip().getnCrew();
         nCrewB = playerB.getShip().getnCrew();
         nCrewC = playerC.getShip().getnCrew();
@@ -875,10 +910,14 @@ class CardEffectTest {
         System.out.println("Position B  :" +flightBoard.getPlayerPosition(playerB.getColor()));
         System.out.println("Position C  :" + flightBoard.getPlayerPosition(playerC.getColor()));
         System.out.println();
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(playerA.getNickName())
-        );
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(playerA.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
         nCrewA = playerA.getShip().getnCrew();
         nCrewB = playerB.getShip().getnCrew();
         nCrewC = playerC.getShip().getnCrew();

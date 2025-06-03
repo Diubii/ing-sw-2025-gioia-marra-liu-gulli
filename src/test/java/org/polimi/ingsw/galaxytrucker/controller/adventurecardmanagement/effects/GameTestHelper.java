@@ -12,6 +12,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Cre
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,7 +25,14 @@ public class GameTestHelper {
     }
 
     public static GameTestContext setupGame(Map<String, ArrayList<NetworkMessage>> responses, ArrayList<Player> players) {
-        ServerController serverController = new ServerController();
+        final ServerController serverController;
+        try {
+            serverController = new ServerController();
+        } catch (RemoteException e) {
+            System.err.println("Couldn't export ServerController: " + e.getMessage() + ".");
+            return null;
+        }
+
         HashMap<String, ClientHandler> nicknameToHandlerMap = new HashMap<>();
 
         players.forEach(p -> {
@@ -32,7 +40,7 @@ public class GameTestHelper {
             NicknameRequest nicknameRequest = new NicknameRequest(p.getNickName());
             try {
                 serverController.handleNicknameRequest(nicknameRequest, fakeClientHandler);
-            } catch (TooManyPlayersException | PlayerAlreadyExistsException e) {
+            } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
 
@@ -40,14 +48,14 @@ public class GameTestHelper {
                 CreateRoomRequest createRoomRequest = new CreateRoomRequest(players.size(), false, p.getNickName());
                 try {
                     serverController.handleCreateRoomRequest(createRoomRequest, fakeClientHandler);
-                } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition e) {
+                } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
             } else {
                 JoinRoomRequest joinRoomRequest = new JoinRoomRequest(serverController.getLobbyInfos().size() - 1, p.getNickName());
                 try {
                     serverController.handleJoinRoomRequest(joinRoomRequest, fakeClientHandler);
-                } catch (TooManyPlayersException | PlayerAlreadyExistsException | IOException | InvalidTilePosition e) {
+                } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -58,11 +66,15 @@ public class GameTestHelper {
         AtomicInteger position = new AtomicInteger();
         AtomicInteger id = new AtomicInteger(17);
         players.forEach(p -> {
-            serverController.handleFinishBuildingRequest(new FinishBuildingRequest(p.getShip(), null), nicknameToHandlerMap.get(p.getNickName()));
-            serverController.handleAskPositionResponse(new AskPositionResponse(id.incrementAndGet(), position.incrementAndGet()), nicknameToHandlerMap.get(p.getNickName()));
-            serverController.handleCheckShipStatusRequest(new CheckShipStatusRequest(), nicknameToHandlerMap.get(p.getNickName()));
-            serverController.handleCrewInitUpdate(new CrewInitUpdate(), nicknameToHandlerMap.get(p.getNickName()));
-            serverController.handleReadyTurnRequest(new ReadyTurnRequest(), nicknameToHandlerMap.get(p.getNickName()));
+            try {
+                serverController.handleFinishBuildingRequest(new FinishBuildingRequest(p.getShip(), null), nicknameToHandlerMap.get(p.getNickName()));
+                serverController.handleAskPositionResponse(new AskPositionResponse(id.incrementAndGet(), position.incrementAndGet()), nicknameToHandlerMap.get(p.getNickName()));
+                serverController.handleCheckShipStatusRequest(new CheckShipStatusRequest(), nicknameToHandlerMap.get(p.getNickName()));
+                serverController.handleCrewInitUpdate(new CrewInitUpdate(), nicknameToHandlerMap.get(p.getNickName()));
+                serverController.handleReadyTurnRequest(new ReadyTurnRequest(), nicknameToHandlerMap.get(p.getNickName()));
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         LobbyManager lobby = serverController.getLobbyFromHandler(nicknameToHandlerMap.get(players.getFirst().getNickName()));

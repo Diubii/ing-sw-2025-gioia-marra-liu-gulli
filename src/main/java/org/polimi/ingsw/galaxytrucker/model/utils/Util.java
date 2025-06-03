@@ -28,39 +28,53 @@ import java.util.*;
  */
 public class Util {
 
-    public static CardDeck createLvl1Deck() throws IOException {
+    public static CardDeck createLvl1Deck() {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
-        }).stream().filter(card -> card.getLevel() == 1).toList());
+        CardDeck cardDeck = null;
+        try {
+            ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+            }).stream().filter(card -> card.getLevel() == 1).toList());
+            cardDeck = new CardDeck(list, true);
+        }catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
 
+        return cardDeck;
+    }
 
-        return new CardDeck(list, true);
+    public static CardDeck createLvl2Deck() {
+        File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
+        ObjectMapper mapper = new ObjectMapper();
+
+        CardDeck cardDeck = null;
+        try {
+            ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+            }).stream().filter(card -> card.getLevel() == 2).toList());
+            cardDeck = new CardDeck(list, true);
+        }catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return cardDeck;
 
     }
 
-    public static CardDeck createLvl2Deck() throws IOException {
+    public static CardDeck createLearningDeck() {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
-        }).stream().filter(card -> card.getLevel() == 2).toList());
+        CardDeck cardDeck = null;
+        try {
+            ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+            }).stream().filter(AdventureCard::isLearningFlight).toList());
+            cardDeck = new CardDeck(list, true);
+        }catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
 
-        //System.out.println("LVL2: ");
-
-        return new CardDeck(list, true);
-
-    }
-
-    public static CardDeck createLearningDeck() throws IOException {
-        File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
-        ObjectMapper mapper = new ObjectMapper();
-
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
-        }).stream().filter(AdventureCard::isLearningFlight).toList());
-
-        return new CardDeck(list, true);
+        return cardDeck;
 
     }
 
@@ -71,10 +85,10 @@ public class Util {
         }).stream().toList());
         ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
         //cardsToTest.add(list.get(3));
-        cardsToTest.add(list.get(4)); //Open Space
-        cardsToTest.add(list.get(16)); //AbandonedShip
+        //cardsToTest.add(list.get(4)); //Open Space
+        //cardsToTest.add(list.get(16)); //AbandonedShip
 
-        //cardsToTest.add(list.get(31)); //Planets
+        cardsToTest.add(list.get(31)); //Planets
         //cardsToTest.add(list.get(3)); //Stardust
         //cardsToTest.add(list.get(24)); //Epidemic
 

@@ -15,6 +15,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor
 
 import java.io.*;
 import java.net.Socket;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,8 +30,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
     private final ServerController serverController;
     NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
 
-
-    private String testSignal;
+    private final UUID clientID;
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -40,6 +40,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
         inputLock = new Object();
         outputLock = new Object();
         serverController = controller;
+        clientID = UUID.randomUUID();
 
         try {
             this.output = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -96,6 +97,11 @@ public class SocketClientHandler implements Runnable, ClientHandler {
         clientSocket.close();
     }
 
+
+    @Override
+    public UUID getClientID() {
+        return clientID;
+    }
 
     public synchronized void sendMessage(NetworkMessage message) {
         try {

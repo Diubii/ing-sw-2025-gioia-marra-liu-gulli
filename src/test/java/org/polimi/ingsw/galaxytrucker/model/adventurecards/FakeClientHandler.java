@@ -13,6 +13,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitor;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 public class FakeClientHandler implements ClientHandler {
     private final ServerController controller;
@@ -21,8 +22,11 @@ public class FakeClientHandler implements ClientHandler {
     private final NetworkMessageCouplingVisitor serverControllerNetworkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
     private final NetworkMessageNameVisitor serverControllerNetworkMessageNameVisitor = new NetworkMessageNameVisitor();
     private final ArrayList<NetworkMessage> sentMessages = new ArrayList<>();
+    private final UUID clientID;
+
 
     public FakeClientHandler(ServerController controller, ArrayList<NetworkMessage> mockResponses) {
+        clientID = UUID.randomUUID();
         this.controller = controller;
         serverControllerNetworkMessageVisitor = new NetworkMessageVisitor(controller, this);
         this.mockResponses = new ArrayList<>(mockResponses);
@@ -33,6 +37,12 @@ public class FakeClientHandler implements ClientHandler {
         this.mockResponses.clear();
         this.mockResponses.addAll(responses);
     }
+
+    @Override
+    public UUID getClientID() {
+        return clientID;
+    }
+
     @Override
     public void sendMessage(NetworkMessage message) {
         sentMessages.add(message);
