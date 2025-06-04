@@ -463,7 +463,11 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
 
     @Override
     public Void visit(AskTrunkResponse askTrunkResponse) {
-      serverController.handleAskTrunkResponse(askTrunkResponse, clientHandler);
+        try {
+            serverControllerHandles.handleAskTrunkResponse(askTrunkResponse, clientHandler);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 

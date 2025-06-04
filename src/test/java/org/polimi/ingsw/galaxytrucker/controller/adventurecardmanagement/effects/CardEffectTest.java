@@ -14,6 +14,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHo
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -737,7 +738,7 @@ class CardEffectTest {
 
     }
     @Test
-    void testPirates_AllPlayerLost() {
+    void testPirates_AllPlayerLost() throws RemoteException {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Pirati", 1);
         AdventureCard card = cards.getFirst();
         assertNotNull(card);
@@ -992,7 +993,7 @@ class CardEffectTest {
     }
 
     @Test
-    void testSmugglers_PlayerA_DefeatedEnemy() {
+    void testSmugglers_PlayerA_DefeatedEnemy() throws RemoteException {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Contrabbandieri", 1);
         AdventureCard card = cards.getFirst();
         assertNotNull(card);
@@ -1031,7 +1032,7 @@ class CardEffectTest {
 
     }
     @Test
-    void testSmugglers_PlayerA_TieCondition() {
+    void testSmugglers_PlayerA_TieCondition() throws RemoteException {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Contrabbandieri", 1);
         AdventureCard card = cards.getFirst();
         assertNotNull(card);
@@ -1071,7 +1072,7 @@ class CardEffectTest {
         assertEquals(2,posB);
     }
     @Test
-    void testSmugglers_PlayerA_SmugglersWin() {
+    void testSmugglers_PlayerA_SmugglersWin() throws RemoteException {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Contrabbandieri", 1);
         AdventureCard card = cards.getFirst();
         assertNotNull(card);
@@ -1113,7 +1114,7 @@ class CardEffectTest {
     }
 
     @Test
-    void testMeteorSwarm( ){
+    void testMeteorSwarm( ) throws RemoteException {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Meteoriti", 1);
         AdventureCard card = cards.getFirst();
         assertNotNull(card);

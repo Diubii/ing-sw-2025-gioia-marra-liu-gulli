@@ -36,4 +36,5 @@ public interface ServerControllerHandles extends Remote {
     void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) throws RemoteException;
     void handleAskTimerInfoRequest(AskTimerInfoRequest askTimerInfoRequest, ClientHandler clientHandler) throws RemoteException;
     void handleFlipTimerRequest(FlipTimerRequest flipTimerRequest, ClientHandler clientHandler) throws RemoteException;
+    void handleAskTrunkResponse(AskTrunkResponse askTrunkResponse,ClientHandler clientHandler) throws RemoteException;
 }
