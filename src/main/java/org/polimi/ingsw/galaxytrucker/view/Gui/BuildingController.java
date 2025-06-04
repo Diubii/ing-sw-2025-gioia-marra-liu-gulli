@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -33,10 +34,7 @@ import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
-import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SMCheckShipController;
-import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SMSpiedCardsController;
-import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SingleLobbyInfoController;
-import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SingleShipController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.*;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 
 
@@ -73,6 +71,8 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private HBox learningMatchOverlay;
     @FXML private ImageView inHandTileImage;
     @FXML private Pane overlayPane;
+    @FXML private ImageView asideTile1;
+    @FXML private ImageView asideTile2;
 
     private ArrayList<SingleShipController> shipControllers;
 
@@ -164,6 +164,17 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     @Override
     public void ShowGenericMessage(String message) {
+        if(clientController.getPhase() == GameState.SHIP_CHECK || clientController.getPhase() == GameState.CREW_INIT) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Comunicazione di servizio");
+                alert.setHeaderText("Sig. " + clientController.getMyModel().getMyInfo().getNickName() + ":");
+                alert.setContentText(message);
+
+                // Mostra l'alert e aspetta che venga chiuso
+                alert.showAndWait();
+            });
+        }
 
     }
 
@@ -206,8 +217,17 @@ public class BuildingController extends GenericGamePhaseSceneController {
     }
 
 
+    /**
+     * Shows the ship in the correct "slot" of the page based on the Nickname
+     * @param ship
+     * @param Nickname
+     */
     @Override
     public void showShip(Ship ship, String Nickname) {
+        Boolean details =false;
+        if(clientController.getPhase() == GameState.CREW_INIT){
+            details = true;
+        }
 
         for( int i = 0; i<shipControllers.size(); i++){
 
@@ -215,65 +235,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
                 if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
 
-                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController,true,false);
-
-                    /*//TEST STAMPA DA TOGLIERE
-                    Ship testShip = new Ship(false);
-
-                    //Prendo lista tiles e metto in ship per testare
-                    ObjectMapper mapper = new ObjectMapper();
-                    ArrayList<Tile> tiles = new ArrayList<>();
-                    try {
-                        FileInputStream fis = new FileInputStream("src/main/resources/tiledata.json");
-                        tiles = mapper.readValue(fis, new TypeReference<ArrayList<Tile>>() {
-                        });
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    Good exGood = new Good(Color.BLUE);
-                    ((GenericCargoHolds) tiles.get(18).getMyComponent()).loadGood(exGood);
-                    ((GenericCargoHolds) tiles.get(18).getMyComponent()).loadGood(exGood);
-                    ((GenericCargoHolds) tiles.get(18).getMyComponent()).loadGood(exGood);
-
-
-                    try {
-                        for (int h = 0; h < 7; h++) {
-                            for (int j = 0; j < 5; j++) {
-                                if (j != 3) {
-                                    testShip.putTile(tiles.get(h * 5 * j), new Position(j, h));
-                                }
-                            }
-                        }
-
-                        testShip.putTile(tiles.get(18), new Position(3, 0));
-                        testShip.putTile(tiles.get(54), new Position(3, 1));
-                        testShip.putTile(tiles.get(64), new Position(3, 2));
-                        testShip.putTile(tiles.get(93), new Position(3, 3));
-                        testShip.putTile(tiles.get(152), new Position(4, 3));
-                        testShip.putTile(tiles.get(136), new Position(5, 3));
-                        testShip.putTile(tiles.get(137), new Position(6, 3));
-
-                        testShip.getShipBoard()[0][3].getTile().rotate(90);
-                        testShip.getShipBoard()[1][3].getTile().rotate(270);
-                        testShip.getShipBoard()[4][2].getTile().rotate(270);
-                        ((CentralHousingUnit)testShip.getShipBoard()[4][3].getTile().getMyComponent()).setHumanCrewNumber(2);
-                        ((ModularHousingUnit)testShip.getShipBoard()[4][2].getTile().getMyComponent()).addPurpleAlien();
-                        ((GenericCargoHolds)testShip.getShipBoard()[2][3].getTile().getMyComponent()).playerLoadGood(exGood);
-                        ((GenericCargoHolds)testShip.getShipBoard()[2][3].getTile().getMyComponent()).playerLoadGood(exGood);
-                        exGood = new Good(Color.GREEN);
-                        testShip.getShipBoard()[2][2].getTile().rotate(90);
-                        ((GenericCargoHolds)testShip.getShipBoard()[2][2].getTile().getMyComponent()).playerLoadGood(exGood);
-                        ((GenericCargoHolds)testShip.getShipBoard()[2][2].getTile().getMyComponent()).playerLoadGood(exGood);
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    zUtils.showShipInGrid(testShip, shipControllers.get(i).getShipGrid(),clientController,true,true);*/
-
+                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController,true,details);
 
                 } else {
-                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,false);
+                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details);
                 }
             }
         }
@@ -291,6 +256,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
         switch(state){
             case SHIP_CHECK:
                 Platform.runLater(() -> {
+                    if(StackCenterMenu.getChildren().size() > 1 ){
+                        StackCenterMenu.getChildren().removeLast();
+                    }
                     VBox root;
                     FXMLLoader loader;
                     try {
@@ -309,6 +277,30 @@ public class BuildingController extends GenericGamePhaseSceneController {
                     }
                 });
             break;
+            case CREW_INIT:
+                Platform.runLater(() -> {
+                    if(StackCenterMenu.getChildren().size() > 1 ){
+                        StackCenterMenu.getChildren().removeLast();
+                    }
+                    VBox root;
+                    FXMLLoader loader;
+                    try {
+                        //1-Prima caricare FXML
+                        loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMLoadCrew.fxml"));
+                        root = loader.load();
+                        //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                        SMLoadCrewController pageController = loader.getController();
+                        pageController.initialize(clientController,mainViewController);
+                        root.setMaxWidth(Double.MAX_VALUE);
+                        root.setMaxHeight(Double.MAX_VALUE);
+                        //3-impostare la nuova root alla scena principale
+                        StackCenterMenu.getChildren().add(root);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            break;
+
             case null, default:
                 break;
         }
@@ -365,6 +357,55 @@ public class BuildingController extends GenericGamePhaseSceneController {
         inHandTileImage.setVisible(true);
         inHandTileImage.setFitHeight(100.00);
         inHandTileImage.setFitWidth(100.00);
+
+    }
+
+    public void pickedAside1(){
+        handlePickedAsideTile(0);
+    }
+
+    public void pickedAside2(){
+        handlePickedAsideTile(1);
+    }
+
+    public void handlePickedAsideTile(int pos){
+        if(clientController.getCurrentTileInHand() != null){
+            //Se ho in mano ed è vuota metto li
+            if(clientController.getReservedTiles()[pos] == null){
+                clientController.handlePickReservedTile(pos, false);
+                updateSetAsideTiles();
+                hideZonaPescata();
+            }
+        }
+        else {
+            //Se ho mano vuota e li c'è qualcosa la prendo
+            if (clientController.getReservedTiles()[pos] != null) {
+                clientController.handlePickReservedTile(pos, true);
+                updateSetAsideTiles();
+                showDrawnTile(clientController.getCurrentTileInHand());
+            }
+        }
+    }
+
+    public void updateSetAsideTiles(){
+        List<ImageView> imageViews = List.of(asideTile1,asideTile2);
+        for(int i =0; i< clientController.getReservedTiles().length; i++){
+            if(clientController.getReservedTiles()[i] != null){
+                String tileIdVal = String.valueOf(clientController.getReservedTiles()[i].getId());
+                String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+                Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+                imageViews.get(i).setImage(img);
+                imageViews.get(i).setRotate(clientController.getReservedTiles()[i].getRotation());
+            }
+            else{
+                String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/empty.jpg";
+                Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+                imageViews.get(i).setImage(img);
+            }
+
+
+        }
+
 
     }
 

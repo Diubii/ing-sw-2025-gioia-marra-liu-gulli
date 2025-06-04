@@ -21,6 +21,7 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
     ImageView imageView;
     int rotation;
 
+
     public ComponentGuiDetailsRotationVisitor(StackPane stackPane, ImageView imageView, int rotation) {
         this.stackPane = stackPane;
         this.imageView = imageView;

@@ -14,12 +14,12 @@
             <Image url="@../../galaxy_trucker_imgs/Seduto.png" />
          </image>
       </ImageView>
-      <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="250.0" text="Non sai neanche costruire una nave valida.... cancella le tile posizionate in modo scorretto cliccandoci sopra " textFill="WHITE" wrapText="true">
+      <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="250.0" text="Bella nave!! Puoi cancellare cliccandole le tile non valide, sempre che tu sappia individuarle." textFill="WHITE" wrapText="true">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Button mnemonicParsing="false" onAction="#checkShip" styleClass="semitransparent-button" stylesheets="@../style.css" text="Verifica di nuovo">
+      <Button mnemonicParsing="false" onAction="#checkShip" styleClass="semitransparent-button" stylesheets="@../style.css" text="Verifica la nave">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>

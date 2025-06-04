@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.network.client.rmi;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -11,12 +12,15 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import org.polimi.ingsw.galaxytrucker.network.server.RMIClientHandler;
 import org.polimi.ingsw.galaxytrucker.network.server.ServerRMIInterface;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterLabels;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitor;
 
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -28,6 +32,8 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
     Registry registry;
     ServerRMIInterface server;
     ClientInterfaceRMI stub;
+
+    NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
 
     public ClientRMI(int port, ClientController controller) throws RemoteException {
         super();
@@ -47,10 +53,19 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
     @Override
     public void sendMessage(NetworkMessage message) {
+        //NetworkMessageType type = message.accept(nmnv);
+
+//        if (type != NetworkMessageType.HeartbeatRequest) {
+//            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + type));
+//        }
+
         try {
-            server.receiveMessage(message, stub);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            System.err.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.BRIGHT_YELLOW, "Couldn't send message: " + e.getMessage()));
+            RMIClientHandler handler = server.getClientHandler(this);
+
+            NetworkMessageVisitor nmv = new NetworkMessageVisitor(server.getControllerHandles(), handler);
+            message.accept(nmv);
+        }catch (RemoteException e){
+            System.err.println("Couldn't send message via RMI: " + e.getMessage());
         }
     }
 
