@@ -18,10 +18,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Interface for all types of view to implement.
+ * Must be implemented so that the ClientController can interact with a view.
+ */
 public interface View {
 
-    //La view deve avere il riferimento al clientController e anche al Model
+    //Every view must have the reference to the Model and ClientController to implement MVC
 
+    /**
+     * Describes if the view is "concurrent" and always shows  everithing or not.
+     * For example a Grafical interface is concurrent, a text interface can depend on implementation,
+     * If everithing is redrawn on every update even a text interface can "always show updates"
+     * @return
+     */
     Boolean autoShowUpdates();
 
     void forceReset();

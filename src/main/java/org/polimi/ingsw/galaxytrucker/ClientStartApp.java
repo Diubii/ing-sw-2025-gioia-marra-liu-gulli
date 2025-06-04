@@ -15,6 +15,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
+//Todo: da cancellare e avere direttamente le 2 classi eseguibili, GUI e TUI
+//Fare richiesta Socket o RMI direttamente in ciascuna delle interfacce
+
 public class ClientStartApp {
 
     public static void main(String[] args) throws ExecutionException, IOException, InterruptedException {

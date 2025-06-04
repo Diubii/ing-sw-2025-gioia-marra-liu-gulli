@@ -15,7 +15,14 @@
    <children>
       <VBox prefHeight="400.0" prefWidth="85.0" style="-fx-background-color: GREEN;" HBox.hgrow="ALWAYS">
          <children>
-            <HBox prefHeight="144.0" prefWidth="245.0" style="-fx-background-color: DARKGREEN;" />
+            <HBox alignment="CENTER" prefHeight="156.0" prefWidth="97.0" style="-fx-background-color: DARKGREEN;">
+               <children>
+                  <ImageView fx:id="cardView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../galaxy_trucker_imgs/cards/GT-cards_15.jpg" />
+                     </image>
+                  </ImageView>
+               </children></HBox>
          </children>
       </VBox>
       <VBox prefHeight="400.0" prefWidth="371.0" HBox.hgrow="ALWAYS">
@@ -41,24 +48,19 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="93.0" prefWidth="208.0" spacing="10.0">
                      <children>
-                        <RadioButton mnemonicParsing="false" onAction="#selected0" prefHeight="18.0" prefWidth="27.0" stylesheets="@style.css">
+                        <RadioButton fx:id="radio1" mnemonicParsing="false" onAction="#selected0" prefHeight="18.0" prefWidth="27.0" stylesheets="@style.css">
                            <toggleGroup>
                               <ToggleGroup fx:id="shownPlayer" />
                            </toggleGroup>
                         </RadioButton>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="avatar1" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                            </image>
                         </ImageView>
                      </children>
                   </HBox>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="23.0" prefWidth="138.0" text="0₵" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="56.0" prefHeight="27.0" prefWidth="314.0" text="Paolo" wrapText="true">
+                  <Label fx:id="name1" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="56.0" prefHeight="27.0" prefWidth="314.0" text="Paolo" wrapText="true">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -69,20 +71,15 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="93.0" prefWidth="208.0" spacing="10.0">
                      <children>
-                        <RadioButton mnemonicParsing="false" onAction="#selected1" stylesheets="@style.css" toggleGroup="$shownPlayer" />
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                        <RadioButton fx:id="radio2" mnemonicParsing="false" onAction="#selected1" stylesheets="@style.css" toggleGroup="$shownPlayer" />
+                        <ImageView fx:id="avatar2" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                            </image>
                         </ImageView>
                      </children>
                   </HBox>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="23.0" prefWidth="138.0" text="₵" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" text="Paolo" wrapText="true">
+                  <Label fx:id="name2" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" text="Paolo" wrapText="true">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -93,20 +90,11 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="93.0" prefWidth="208.0" spacing="10.0">
                      <children>
-                        <RadioButton mnemonicParsing="false" onAction="#selected2" stylesheets="@style.css" toggleGroup="$shownPlayer" />
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
-                           </image>
-                        </ImageView>
+                        <RadioButton fx:id="radio3" mnemonicParsing="false" onAction="#selected2" stylesheets="@style.css" toggleGroup="$shownPlayer" visible="false" />
+                        <ImageView fx:id="avatar3" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </HBox>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="23.0" prefWidth="138.0" text="₵" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" text="Paolo" wrapText="true">
+                  <Label fx:id="name3" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" wrapText="true">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -117,20 +105,11 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="93.0" prefWidth="208.0" spacing="10.0">
                      <children>
-                        <RadioButton mnemonicParsing="false" onAction="#selected3" stylesheets="@style.css" toggleGroup="$shownPlayer" />
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
-                           </image>
-                        </ImageView>
+                        <RadioButton fx:id="radio4" mnemonicParsing="false" onAction="#selected3" stylesheets="@style.css" toggleGroup="$shownPlayer" visible="false" />
+                        <ImageView fx:id="avatar4" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </HBox>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="23.0" prefWidth="138.0" text="₵" wrapText="true">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" text="Paolo" wrapText="true">
+                  <Label fx:id="name4" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" wrapText="true">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

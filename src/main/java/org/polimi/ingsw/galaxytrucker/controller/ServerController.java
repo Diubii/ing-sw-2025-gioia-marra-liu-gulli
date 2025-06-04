@@ -572,6 +572,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             clientHandler.sendMessage(shipUpdate);
             clientHandler.sendMessage(response);
 
+            //Broadcast a tutti ShipUpdate di quel giocatore.
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+            broadCast(playerHandlers,shipUpdate);
 
             if (result) {
                 synchronized (myGame.checkShipLock) {
@@ -579,7 +582,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     if (myGame.getRealGame().getNumPlayers() == myGame.getGameController().getnCompletedShips() && !myGame.getGameController().getGameState().equals(GameState.CREW_INIT)) {
                         myGame.getGameController().nextState();
 
-                        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
 
                         PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.CREW_INIT);
                         broadCast(playerHandlers, phaseUpdate);

@@ -127,25 +127,17 @@ public class zUtils {
                             case SHIP_CHECK:
                                 //RIMOZIONE DI QUALUNQUE TILE
 
+                                //Todo: fatto lato client e poi solo al checkship server viene avvisato, ci potrebbe anche stare eh
+                                //Edito una copia locale , poi dico quali ho cancellato e server mi ridà. (in teoria)
                                 clientController.getMyModel().addTileToRemove(tile.getId());
-                                //Todo deve comunicarlo al server e mandare uno ship Update
-                                try {
-                                    //Todo: non così perchè modifico il modello locale...
-                                    clientController.sendShipUpdate();
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                } catch (ExecutionException e) {
-                                    throw new RuntimeException(e);
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
-
                                 ship.removeTile(pos, true);
-
+                                showShipInGrid(ship,griglia,clientController,editable,viewDetails);
 
                                 break;
                             case CREW_INIT:
                                 break;
+                            //FLIGHT sacrificare Crew, caricare merci quindi qualcosa per indicare quello.
+
                             case null, default:
                                 if(clientController.getCurrentTileInHand() != null) {
                                     try {
@@ -164,7 +156,7 @@ public class zUtils {
                                     }
                                 }
                                 break;
-                            //FLIGHT sacrificare Crew, caricare merci quindi qualcosa per indicare quello.
+
                         }
 
                         event.consume();

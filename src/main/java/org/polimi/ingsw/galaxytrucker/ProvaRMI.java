@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+
+//Todo da cancellare?
 public class ProvaRMI implements Remote, Serializable {
     //RMI -> esegui direttamente
     //Socket -> esegue il metodo, ma poi deve inviare

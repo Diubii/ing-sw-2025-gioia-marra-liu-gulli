@@ -178,6 +178,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
+    /**
+     * Takes faceUp tiles from model and redraws them
+     */
     public void updateFaceUpTiles(){
         listaTiles.getChildren().clear();
         System.out.println("Building controller DEBUG: showFaceUpTiles");
@@ -201,6 +204,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
+
     public void pescaRandom(ActionEvent actionEvent){
         if(clientController.getCurrentTileInHand() != null){
             //Suono di errore
@@ -212,6 +216,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
         }
     }
 
+    /**
+     * Hides the overlay with the current inHand tile
+     */
     public void hideZonaPescata(){
         inHandTileImage.setVisible(false);
     }
@@ -225,6 +232,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @Override
     public void showShip(Ship ship, String Nickname) {
         Boolean details =false;
+
         if(clientController.getPhase() == GameState.CREW_INIT){
             details = true;
         }
@@ -251,6 +259,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
         clientController.handleBuildingMenuChoice("j");
     }
 
+    /**
+     * Updates the secondary menus based on the current Game phase
+     * @param state
+     */
     public void updateBuildingPageInterface(GameState state){
         //Todo: magari rivedere con visitor, però sono solo 3 o 4 combinazioni
         switch(state){
@@ -298,6 +310,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
                 });
             break;
 
@@ -319,6 +332,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
         viewMazzo(2);
     }
 
+    /**
+     * Shows the corresponding deck in an overlay
+     * @param num
+     */
     public void viewMazzo(int num){
         //Non fa un tubo, va bene per la Tui ma qui no
         if(clientController.viewAdventureCardDeck(num)){
@@ -347,6 +364,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
         }
     }
 
+    /**
+     * Shows the tile in the "inHand" slot that follows the cursor
+     * @param tile
+     */
     public void showDrawnTile(Tile tile){
         String tileIdVal = String.valueOf(tile.getId());
         String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
@@ -368,6 +389,12 @@ public class BuildingController extends GenericGamePhaseSceneController {
         handlePickedAsideTile(1);
     }
 
+    /**
+     * Handles interaction with pickAside slots for tiles,
+     * based on their content and what is inHand decides if clicking means
+     * drawing or placing.
+     * @param pos
+     */
     public void handlePickedAsideTile(int pos){
         if(clientController.getCurrentTileInHand() != null){
             //Se ho in mano ed è vuota metto li
@@ -387,6 +414,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
         }
     }
 
+    /**
+     * Redraws setAside tiles slots
+     */
     public void updateSetAsideTiles(){
         List<ImageView> imageViews = List.of(asideTile1,asideTile2);
         for(int i =0; i< clientController.getReservedTiles().length; i++){
