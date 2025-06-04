@@ -1110,6 +1110,7 @@ public class ServerController {
             if(networkMessage.accept(visitor).equals(NetworkMessageType.ShipUpdate))
             {
                 game.getGameController().getCurrentCardContext().executePhase();
+                return;
             }
         }
 

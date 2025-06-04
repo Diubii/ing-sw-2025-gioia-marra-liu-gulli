@@ -573,7 +573,7 @@ public class ClientController implements Observer {
 
     public void handleShipUpdate(ShipUpdate update) {
 
-        System.out.println("Debug: handleShipUpdate");
+//        System.out.println("Debug: handleShipUpdate");
 
         String owner = update.getNickName();
         Ship ship = update.getShipView();

@@ -98,7 +98,7 @@ public abstract class PlanetsEffect {
         ShipUpdate shipUpdate = (ShipUpdate) context.getIncomingNetworkMessage();
 
         System.out.println(shipUpdate.getNickName() + " DEBUG: PlanetsEffect receiveShipUpdate");
-        System.out.println("received ShipUpdate");
+
         LobbyManager game = context.getCurrentGame();
 
         finishedPlayer.putIfAbsent(context.getCurrentGame(),0);
@@ -108,6 +108,7 @@ public abstract class PlanetsEffect {
         broadcast(context,shipUpdate);
 
         if(landedPlayers.get(game).size() == finishedPlayer.get(game)){
+
             context.nextPhase();
             context.executePhase();
         }
@@ -117,7 +118,7 @@ public abstract class PlanetsEffect {
 
 
     public static void movePlayers(CardContext context) {
-        System.out.println(context.getCurrentPlayer().getNickName() + " DEBUG: PlanetsEffect movePlayers");
+        System.out.println( " DEBUG: PlanetsEffect movePlayers");
         ArrayList<Player> currentGameLandedPlayers = landedPlayers.get(context.getCurrentGame());
         if(currentGameLandedPlayers != null) {
             Planets planets = (Planets) context.getAdventureCard();
