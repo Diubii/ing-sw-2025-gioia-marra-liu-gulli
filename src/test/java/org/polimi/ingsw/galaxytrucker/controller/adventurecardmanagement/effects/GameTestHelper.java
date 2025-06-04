@@ -28,6 +28,7 @@ public class GameTestHelper {
         final ServerController serverController;
         try {
             serverController = new ServerController();
+            serverController.setSynchronousExecution(true);
         } catch (RemoteException e) {
             System.err.println("Couldn't export ServerController: " + e.getMessage() + ".");
             return null;

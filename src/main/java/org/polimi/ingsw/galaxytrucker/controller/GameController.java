@@ -16,6 +16,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.AskTrunkRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
 import java.io.IOException;
@@ -344,8 +345,22 @@ public class GameController {
         }
 
         if (aTileHasBeenDestroyed) {
+            CardContext cardContext = game.getGameController().getCurrentCardContext();
+
             game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
             //TODO: tronc
+            ArrayList<Ship> tronconi = new ArrayList<>();
+            tronconi.addAll(targetPlayer.getShip().getTronc() );
+//            if(tronconi.size()>1) {
+//                AskTrunkRequest askTrunkRequest = new AskTrunkRequest(tronconi);
+//                cardContext.nextPhase();
+//                game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(askTrunkRequest);
+//            }
+//            else{
+//                cardContext.previousPhase();
+//                cardContext.executePhase();
+//            }
+
 
 
         }

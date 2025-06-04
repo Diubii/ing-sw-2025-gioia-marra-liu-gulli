@@ -58,6 +58,20 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
     private static final ExecutorService executor = Executors.newCachedThreadPool();
 
+    private boolean synchronousExecution = false;
+
+    public void setSynchronousExecution(boolean sync) {
+        this.synchronousExecution = sync;
+    }
+
+    public void execute(Runnable task) {
+        if (synchronousExecution) {
+            task.run(); //per test
+        } else {
+            executor.submit(task);
+        }
+    }
+
     public ServerController() throws RemoteException {
         super();
 
@@ -176,7 +190,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      */
 
     public void handleNicknameRequest(NicknameRequest message, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
                     Boolean result = false;
                     boolean flag = false;
 
@@ -204,7 +218,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             //get nickname & check
             String tempNick = message.getNickName();
 
@@ -274,7 +288,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(null, message.getID());
             synchronized (lobbyInfos) {
                 joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos, message.getID());
@@ -284,7 +298,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             String mess = "";
             LobbyInfo myLobbyInfo;
 
@@ -472,7 +486,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleDrawTileRequest(DrawTileRequest message, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             //il client mi chiede una Tile, e devo restituirla
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             Tile myTile = null;
@@ -529,7 +543,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     @NeedsToBeCompleted
     //Se player inserisce un Nickname non esiste? cosa ricevo
     public void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
 
             Player targetPlayer = myGame.getRealGame().getPlayer(message.getTargetNickname());
@@ -545,7 +559,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleCheckShipStatusRequest(CheckShipStatusRequest message, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             //devo controllare se la nave è corretta
 
             //prima di tutto la salvo come nuova nave
@@ -593,7 +607,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleAskPositionResponse(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             try {
                 handleFinishBuildingRequest2(askPositionResponse, clientHandler);
             } catch (RemoteException e) {
@@ -603,7 +617,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleSelectPlanetResponse(SelectPlanetResponse selectPlanetResponse, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
             game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(selectPlanetResponse);
             tryExecutePhaseAfterMessage(game, NetworkMessageType.SelectPlanetResponse);
@@ -616,7 +630,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleFinishBuildingRequest(FinishBuildingRequest finishBuildingRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
             AskPositionUpdate askPositionUpdate;
@@ -671,7 +685,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleFinishBuildingRequest2(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             Boolean flag = false;
 
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -747,7 +761,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handlePlaceTileRequest(PlaceTileRequest placeTileRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             PlaceTileResponse placeTileResponse = new PlaceTileResponse(null, placeTileRequest.getID());
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
@@ -827,7 +841,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
     @NeedsToBeCompleted
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             //myGame.getTileBunch().getFaceUpTiles();
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
@@ -849,7 +863,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             Player myPlayer = getPlayerFromClientHandler(clientHandler, myGame);
             Ship myShip = myPlayer.getShip();
@@ -914,7 +928,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleActivateAdventureCardResponse(ActivateAdventureCardResponse activateAdventureCardResponse, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
             synchronized (game.getGameController()) {
                 game.getGameController().notify();
@@ -925,7 +939,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleActivateComponentResponse(ActivateComponentResponse activateComponentResponse, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
             Player player = getPlayerFromClientHandler(clientHandler);
             Ship ship = player.getShip();
@@ -964,7 +978,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleHeartbeatRequest(HeartbeatRequest ignoredHeartbeatRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED, "Received heartbeat from " + clientHandler.toString() + "."));
             heartbeats.stream().filter(h -> h.getClientHandler().getClientID().equals(clientHandler.getClientID())).findFirst().ifPresent(h -> {
                 heartbeats.remove(h);
@@ -974,7 +988,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
             if (shipUpdate.getOnlyFix()) {
                 String nickname = getNicknameFromClientHandler(clientHandler);
@@ -1020,7 +1034,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleDiscardCrewMembersResponse(DiscardCrewMembersResponse discardCrewMembersResponse, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
             game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(discardCrewMembersResponse);
             tryExecutePhaseAfterMessage(game, discardCrewMembersResponse.accept(networkMessageNameVisitor));
@@ -1028,7 +1042,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleCollectRewardsResponse(CollectRewardsResponse collectRewardsResponse, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
             game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(collectRewardsResponse);
             tryExecutePhaseAfterMessage(game, collectRewardsResponse.accept(networkMessageNameVisitor));
@@ -1036,7 +1050,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             GameController gameController = myGame.getGameController();
 
@@ -1050,7 +1064,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleReadyTurnRequest(ReadyTurnRequest readyTurnRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
             GameController gameController = myGame.getGameController();
@@ -1069,7 +1083,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
             GameController gameController = myGame.getGameController();
@@ -1086,7 +1100,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleAskTimerInfoRequest(AskTimerInfoRequest askTimerInfoRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
 //        myGame.completePendingResponse(askTimerInfoRequest.getID());
             TimerInfoResponse timerInfoResponse = new TimerInfoResponse(askTimerInfoRequest.getID());
@@ -1100,7 +1114,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void handleFlipTimerRequest(FlipTimerRequest flipTimerRequest, ClientHandler clientHandler) throws RemoteException {
-        executor.submit(() -> {
+       this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
 
             ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();

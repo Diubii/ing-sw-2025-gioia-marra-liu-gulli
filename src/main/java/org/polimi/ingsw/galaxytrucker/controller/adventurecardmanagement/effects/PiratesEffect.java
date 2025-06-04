@@ -248,7 +248,7 @@ public class PiratesEffect {
         if (destroyedTile != null) {
             ArrayList<Ship> tronconi;
 
-            //se ho eliminato una tile vedo se ho creato dei tronconi
+//            se ho eliminato una tile vedo se ho creato dei tronconi
 //            tronconi = player.getShip().getTronc();
 
             tronconi = new ArrayList<Ship>();
