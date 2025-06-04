@@ -3,6 +3,10 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
@@ -14,6 +18,8 @@ import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.SingleShipController;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlightController extends GenericGamePhaseSceneController {
 
@@ -24,7 +30,23 @@ public class FlightController extends GenericGamePhaseSceneController {
     private MusicManager musicManager;
 
     private SingleShipController shipController;
+
+    @FXML private ImageView cardView;
     @FXML private StackPane shipZone;
+    @FXML private ImageView avatar1;
+    @FXML private ImageView avatar2;
+    @FXML private ImageView avatar3;
+    @FXML private ImageView avatar4;
+    @FXML private Label name1;
+    @FXML private Label name2;
+    @FXML private Label name3;
+    @FXML private Label name4;
+    //Todo: aggiungere crediti a player info e mostrarli di lato?
+    @FXML private RadioButton radio1;
+    @FXML private RadioButton radio2;
+    @FXML private RadioButton radio3;
+    @FXML private RadioButton radio4;
+
 
 
     @Override
@@ -35,9 +57,25 @@ public class FlightController extends GenericGamePhaseSceneController {
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
 
-        //Inizializzazione di tutta lista di player e di default mia ship, unico ship controller con griglia unica.
-        //Poi arriveranno show ship diversi cambiando il radio button
-        //TODO in config iniziale di lista player metti selected te stesso controllando nick e oridine in playerinfos
+        //Inizializzazione di tutta lista di player e di default mia ship,a.
+        List<RadioButton> radioButtons = List.of(radio1, radio2, radio3 , radio4);
+        List<Label> names = List.of(name1,name2, name3, name4);
+        List<ImageView> avatars = List.of(avatar1,avatar2, avatar3 , avatar4);
+
+        for(int i =0 ; i< mymodel.getPlayerInfos().size(); i++){
+            names.get(i).setText(mymodel.getPlayerInfos().get(i).getNickName());
+            radioButtons.get(i).visibleProperty().set(true);
+            if(mymodel.getPlayerInfos().get(i).getNickName().equals(mymodel.getMyInfo().getNickName())){
+                radioButtons.get(i).selectedProperty().set(true);
+            }
+            switch (mymodel.getPlayerInfos().get(i).getColor()){
+                case RED ->  avatars.get(i).setImage(new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarRosso.png").toExternalForm()));
+                case YELLOW ->  avatars.get(i).setImage(new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarGiallo.png").toExternalForm()));
+                case BLUE ->  avatars.get(i).setImage(new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png").toExternalForm()));
+                case GREEN ->  avatars.get(i).setImage(new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarVerde.png").toExternalForm()));
+            }
+        }
+
 
         //CONFIGURAZIONE SHIP, con DEFAULT MIA
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SingleShip.fxml"));
@@ -81,11 +119,16 @@ public class FlightController extends GenericGamePhaseSceneController {
     }
 
     public void updateShownShip(int i){
-        System.out.println("updateshipdi: "+i);
+
 
         if(mymodel.getPlayerInfos().size() > i && mymodel.getPlayerInfos().get(i) != null) {
-            System.out.println("Nickname di updateShip: "+mymodel.getPlayerInfos().get(i).getNickName());
-            showShip(mymodel.getPlayerInfos().get(i).getShip(), mymodel.getPlayerInfos().get(i).getNickName());
+            if(mymodel.getMyInfo().getNickName().equals(mymodel.getPlayerInfos().get(i).getNickName())){
+                showShip(mymodel.getMyInfo().getShip(),mymodel.getMyInfo().getNickName());
+            }
+            else{
+                showShip(mymodel.getPlayerInfos().get(i).getShip(), mymodel.getPlayerInfos().get(i).getNickName());
+            }
+
         }
     }
 
@@ -96,6 +139,7 @@ public class FlightController extends GenericGamePhaseSceneController {
         if(Nickname.equals(mymodel.getMyInfo().getNickName())){
             editable = true;
         }
+
 
         zUtils.showShipInGrid(ship, shipController.getShipGrid(), clientController,editable,true);
 

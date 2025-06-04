@@ -43,6 +43,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * MAIN "View controller" for the GUI, handles page switching and all interaction between different pages.
+ */
 public class GuiJavaFx implements View {
 
     private final Stage primaryStage;
@@ -593,7 +596,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void showcheckShipMenu() {
-        showGenericMessage("Not yet implemented");
+        //Nulla semplicemente rimane con il menu di checkship
     }
 
     @Override
@@ -603,7 +606,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void askRemoveTile(Ship ship) {
-
+        //Not implemented, used click event on tile
     }
 
     @Override
@@ -626,7 +629,6 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
         //Inizializza il crew init update
         crewInitUpdate = new CrewInitUpdate();
-        System.out.println("ChooseCrewinvocato");
     }
 
     public void editPositionCrew(int x,int y){

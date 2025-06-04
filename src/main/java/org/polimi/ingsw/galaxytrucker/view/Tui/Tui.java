@@ -42,7 +42,9 @@ import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.printT
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.RESET;
 
-
+/**
+ * Implements the Textual user interface.
+ */
 public class Tui implements View, Observable {
 
 

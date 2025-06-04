@@ -106,7 +106,7 @@
 
 
 .radio-button:selected > .radio > .dot {
-    -fx-shape: "M0 8 L12 18 L22 6 L12 13";
+    -fx-shape: "M0.0 8.0 L12.0 18.0 L22.0 6.0 L12.0 13.0";
     -fx-background-color: yellow;
     -fx-scale-shape: false;
 }
