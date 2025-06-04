@@ -715,7 +715,7 @@ class CardEffectTest {
         AdventureCard card = cards.getFirst();
         assertNotNull(card);
         assertTrue(card instanceof Pirates);
-        Pirates planetCard = (Pirates) card;
+        Pirates piratesCard = (Pirates) card;
 
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
 

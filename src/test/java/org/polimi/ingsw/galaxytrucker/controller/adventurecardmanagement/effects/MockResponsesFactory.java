@@ -177,7 +177,7 @@ public class MockResponsesFactory {
         responses.put(playerC.getNickName(), new ArrayList<>(
                 List.of(
                         new SelectPlanetResponse(planetsToLoad.get(2),2 ),
-                        new ShipUpdate(playerA.getShip(), playerA.getNickName())
+                        new ShipUpdate(playerC.getShip(), playerC.getNickName())
 
                 )));
      return responses;

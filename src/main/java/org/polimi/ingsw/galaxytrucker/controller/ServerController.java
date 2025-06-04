@@ -962,7 +962,11 @@ public class ServerController {
 
         if (game.getGameController().getGameState() == GameState.FLIGHT) {
             game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(shipUpdate);
+//            ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
+//            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(game.getPlayerHandlers().values());
+//            broadCast(playerHandlers, update);
             tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
+            return;
         }
 
         ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
@@ -1095,8 +1099,20 @@ public class ServerController {
 
     private void tryExecutePhaseAfterMessage(LobbyManager game, NetworkMessageType type) {
         CardContext cardContext =game.getGameController().getCurrentCardContext();
+
         cardContext.decrementExpectedNumberOfNetworkMessages(type);
         int expectedNetworkMessages = cardContext.getExpectedNumberOfNetworkMessagesPerType().get(type);
+        NetworkMessage networkMessage = cardContext.getIncomingNetworkMessage();
+        NetworkMessageNameVisitor visitor = new NetworkMessageNameVisitor();
+
+
+        if(Objects.equals(cardContext.getAdventureCard().getName(), "Pianeti")){
+            if(networkMessage.accept(visitor).equals(NetworkMessageType.ShipUpdate))
+            {
+                game.getGameController().getCurrentCardContext().executePhase();
+            }
+        }
+
         if (expectedNetworkMessages == 0) {
             game.getGameController().getCurrentCardContext().executePhase();
         } else if (expectedNetworkMessages == -1) {

@@ -73,9 +73,9 @@ public class Util {
         //cardsToTest.add(list.get(3));
 //        cardsToTest.add(list.get(4)); //Open Space
 //        cardsToTest.add(list.get(16)); //AbandonedShip
-        cardsToTest.add(list.get(8));
+//        cardsToTest.add(list.get(8));
 
-        //cardsToTest.add(list.get(31)); //Planets
+        cardsToTest.add(list.get(31)); //Planets
         //cardsToTest.add(list.get(3)); //Stardust
         //cardsToTest.add(list.get(24)); //Epidemic
 

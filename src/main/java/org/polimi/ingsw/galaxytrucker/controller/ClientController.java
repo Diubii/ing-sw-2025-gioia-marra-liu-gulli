@@ -577,6 +577,13 @@ public class ClientController implements Observer {
 
         String owner = update.getNickName();
         Ship ship = update.getShipView();
+        if(phase == GameState.FLIGHT ){
+            if(update.getLoadMerci()== true){
+                view.askLoadGoodChoice();
+            }
+//
+//
+        }
 
         if (owner != null) {
 
@@ -1266,7 +1273,8 @@ public class ClientController implements Observer {
             Planet selectedPlanet = update.getSelectedPlanet();
             myModel.setSelectedPlanet(selectedPlanet);
             myModel.setUnplacedGoods(selectedPlanet.getGoods());
-            view.askLoadGoodChoice();
+//            view.askLoadGoodChoice();
+
         }
     }
 

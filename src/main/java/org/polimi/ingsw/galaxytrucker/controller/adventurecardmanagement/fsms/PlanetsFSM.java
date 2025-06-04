@@ -14,6 +14,8 @@ public class PlanetsFSM extends CardFSM {
                 Arrays.asList(
                         PlanetsEffect::sendSelectPlanetRequest,
                         PlanetsEffect::receivedSelectPlanetResponse,
+                        PlanetsEffect::sendShipupdate,
+                        PlanetsEffect::receiveShipUpdate,
                         PlanetsEffect::movePlayers
                 )
         );
