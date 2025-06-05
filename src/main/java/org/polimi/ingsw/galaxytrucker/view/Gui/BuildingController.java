@@ -213,6 +213,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         }
         else{
             clientController.handleDrawFaceDownTile();
+            GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         }
     }
 
@@ -257,6 +258,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     public void finishBuilding(ActionEvent e){
         //Disable di tutto ciò che è interagibile aparte la clessidra in teoria
         clientController.handleBuildingMenuChoice("j");
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
     }
 
     /**

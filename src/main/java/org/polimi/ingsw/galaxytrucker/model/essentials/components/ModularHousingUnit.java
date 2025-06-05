@@ -10,6 +10,11 @@ public class ModularHousingUnit extends CentralHousingUnit {
 
     private int nBrownAlien = 0;
     private int nPurpleAlien = 0;
+
+    public void setAlienColor(AlienColor alienColor) {
+        this.alienColor = alienColor;
+    }
+
     private AlienColor alienColor;
 
     @JsonCreator

@@ -17,13 +17,18 @@ import javafx.scene.input.TransferMode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
+import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.CrewInitUpdate;
@@ -100,7 +105,7 @@ public class GuiJavaFx implements View {
         return true;
     }
 
-    static void playWavSoundEffect(String sound){
+    public static void playWavSoundEffect(String sound){
         try {
             InputStream raw = MainMenuController.class.getResourceAsStream("/org/polimi/ingsw/galaxytrucker/Sounds/SoundEffects/"+sound);
             if (raw == null) {
@@ -607,21 +612,22 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void askRemoveTile(Ship ship) {
         //Not implemented, used click event on tile
+        System.out.println("Debug: askRemoveTile");
     }
 
     @Override
     public void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException {
-
+        System.out.println("Debug: chooseComponent");
     }
 
     @Override
     public void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) throws ExecutionException, InterruptedException {
-
+        System.out.println("Debug: chooseDiscardCrew");
     }
 
     @Override
     public void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException {
-
+        System.out.println("Debug: chooseTroncone");
     }
 
     private CrewInitUpdate crewInitUpdate;
@@ -632,10 +638,77 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     }
 
     public void editPositionCrew(int x,int y){
-        //Verificare che sia una cabina
-        //Verificare se ha un colore o un supporto vitale vicino mi sa con utils .checknearlfs
-        //prendere se c'è già nell'update e scambiare tra umani e alieni
-        //modificare nella SHIP Locale e farla ridisegnare
+        ModularHousingUnit currentHousingUnit = ((ModularHousingUnit) mymodel.getMyInfo().getShip().getShipBoard()[x][y].getTile().getMyComponent());
+        //modificare nella SHIP Locale
+        if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()) && Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
+            //Vicino a entrambi
+            if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0){
+                //Ci sono umani vado a viola
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.addPurpleAlien();
+                currentHousingUnit.setAlienColor(AlienColor.PURPLE);
+            }
+            else if(currentHousingUnit.getNPurpleAlien() == 1){
+                //C'è viola vado a marrone
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.addBrownAlien();
+                currentHousingUnit.setAlienColor(AlienColor.BROWN);
+            }
+            else{
+                //C'è marrone vado a umani
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.addHumanCrew();
+                currentHousingUnit.addHumanCrew();
+                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
+            }
+        }
+        else if(Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
+            //Vicino a viola
+            if(currentHousingUnit.getNPurpleAlien() == 0){
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.addPurpleAlien();
+                currentHousingUnit.setAlienColor(AlienColor.PURPLE);
+            }
+            else{
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.addHumanCrew();
+                currentHousingUnit.addHumanCrew();
+                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
+            }
+
+        }
+        else{
+            //Vicino a marrone
+            if(currentHousingUnit.getNBrownAlien() == 0){
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.addBrownAlien();
+                currentHousingUnit.setAlienColor(AlienColor.BROWN);
+            }
+            else{
+                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.addHumanCrew();
+                currentHousingUnit.addHumanCrew();
+                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
+            }
+
+        }
+
+
+
+
+        Position position = new Position(x,y);
+        for(int i=0; i< crewInitUpdate.getCrewPos().size() ; i++){
+            if(crewInitUpdate.getCrewPos().get(i).getKey().equals(position)){
+                crewInitUpdate.getCrewPos().remove(i);
+            }
+        }
+        crewInitUpdate.addCrewPos( new Pair<>(position,currentHousingUnit.getAlienColor()));
+
+
+
     }
 
     public void confirmCrew(){
@@ -654,21 +727,26 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void askDrawCard() {
-
+        //Mostra il deck girato con l'evento di click
+        System.out.println("Debug: askDrawCard");
+        ((FlightController)actualPageController).askDrawCard();
     }
 
     @Override
     public void askActivateAdventureCard() {
-
+        System.out.println("Debug: askActivateAdventureCard");
     }
 
     @Override
     public void showFlightBoard(FlightBoard flightBoard,ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
-
+        ((FlightController)actualPageController).updateBoard();
     }
 
     @Override
     public void showCurrentAdventureCard() {
+        //Mostra la carta
+        System.out.println("Debug: showCurrentAdventureCard");
+        ((FlightController)actualPageController).showCurrentAdventureCard();
 
     }
 
@@ -733,7 +811,8 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
-
+        System.out.println("Debug: askSelectPlanetChoice");
+        ((FlightController)actualPageController).handlePlanetChoice(planetChoices);
     }
 
     @Override
@@ -746,18 +825,22 @@ public void showLobbies(List<LobbyInfo> lobbies) {
         });
     }
 
+    //Questi metodi direttamente con click e Drag vediamo
     @Override
     public void askLoadGoodChoice() {
+        System.out.println("Debug: askLoadGoodChoice");
 
     }
 
     @Override
     public void askSelectGoodToLoad(ArrayList<Good> goods, Ship myShip) {
+        System.out.println("Debug: askSelectGoodToLoad");
 
     }
 
     @Override
     public void askSelectGoodToDiscard(Ship myShip) {
+        System.out.println("Debug: askSelectGoodToDiscard");
 
     }
 
@@ -766,9 +849,10 @@ public void showLobbies(List<LobbyInfo> lobbies) {
         //simile a lobby ma con gli scores quindi ok
     }
 
+
     @Override
     public void askCollectRewards() {
-
+        System.out.println("Debug: askCollectRewards");
     }
 
 

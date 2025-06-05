@@ -5,13 +5,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentGuiDetailsRotationVisitor;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -135,8 +138,23 @@ public class zUtils {
 
                                 break;
                             case CREW_INIT:
+
+                                ComponentNameVisitor visitor = new ComponentNameVisitor();
+                                //Solo se cabina con supporto vitale vicino
+                                if(tile.getMyComponent().accept(visitor) == "ModularHousingUnit" &&
+                                    (Util.checkNearLFS(new Position(fX,fY), AlienColor.BROWN,ship) ||
+                                    Util.checkNearLFS(new Position(fX,fY), AlienColor.PURPLE,ship))){
+
+                                    //Editare a giro Crew tra varie possibilità e tenere aggiornato CrewInitUpdate
+                                    ((GuiJavaFx)clientController.getView()).editPositionCrew(fX,fY);
+                                    //Redraw
+                                    showShipInGrid(ship,griglia,clientController,editable,viewDetails);
+                                }
+
                                 break;
+
                             //FLIGHT sacrificare Crew, caricare merci quindi qualcosa per indicare quello.
+
 
                             case null, default:
                                 if(clientController.getCurrentTileInHand() != null) {
@@ -153,6 +171,7 @@ public class zUtils {
                                 }else{
                                     if(clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
                                         //Todo: rimozione tile già piazzata
+
                                     }
                                 }
                                 break;

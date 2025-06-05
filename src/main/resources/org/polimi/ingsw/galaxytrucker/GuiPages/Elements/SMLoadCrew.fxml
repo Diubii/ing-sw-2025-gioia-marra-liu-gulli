@@ -12,6 +12,6 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Button mnemonicParsing="false" onAction="#confermaCrew" prefHeight="40.0" prefWidth="180.0" styleClass="semitransparent-button" stylesheets="@../style.css" text="CONFERMA" />
+      <Button mnemonicParsing="false" onAction="#confermaCrew" prefHeight="40.0" prefWidth="180.0" styleClass="transparent-button" stylesheets="@../style.css" text="CONFERMA" />
    </children>
 </VBox>

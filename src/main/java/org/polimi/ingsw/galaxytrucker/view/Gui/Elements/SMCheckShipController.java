@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.view.Gui.Elements;
 import javafx.event.ActionEvent;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.network.client.Client;
+import org.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 
 public class SMCheckShipController {
 
@@ -13,8 +14,8 @@ public class SMCheckShipController {
     }
 
     public void checkShip(ActionEvent actionEvent) {
-        //Todo Non va bene che siano hardcodate nel ClientController le scelte della Tui e la gui simuli una Tui praticametne
         clientController.handleCheckShipChoice("c");
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
     }
 
 }

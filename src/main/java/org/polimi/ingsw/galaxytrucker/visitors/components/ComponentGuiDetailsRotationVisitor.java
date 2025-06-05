@@ -322,16 +322,20 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
                 break;
         }
 
-        //VBOX per gli indicatori batteria
+        //HBOX per gli indicatori Crew
         HBox hBox = new HBox();
         hBox.setSpacing(5);
         hBox.setAlignment(Pos.CENTER);
         stackPane.getChildren().add(hBox);
         HBox.setHgrow(hBox, Priority.ALWAYS);
 
+
         for(int i=1; i< component.getNCrewMembers()+1;i++){
             ImageView viewSegnalino = new ImageView(segnalino);
-            //Binding delle dimensioni e posizione
+            viewSegnalino.setPreserveRatio(true);
+            viewSegnalino.setSmooth(true);
+            viewSegnalino.setCache(true);
+            //Binding delle dimensioni
             viewSegnalino.fitWidthProperty().bind(stackPane.widthProperty().divide(3));
             viewSegnalino.fitHeightProperty().bind(stackPane.heightProperty().divide(4));
             //Aggiunta a anchor pane

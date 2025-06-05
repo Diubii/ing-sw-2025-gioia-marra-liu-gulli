@@ -17,6 +17,7 @@ public class SMLoadCrewController {
     //Solo pulsante che manda a controller della view principale
     public void confermaCrew(){
         guiJavaFx.confirmCrew();
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
     }
 
 }
