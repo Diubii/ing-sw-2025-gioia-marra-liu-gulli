@@ -27,6 +27,7 @@ import org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardPrintUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -171,7 +172,7 @@ public class FlightController extends GenericGamePhaseSceneController {
 
     }
 
-    public void handlePlanetChoice(ArrayList<Planet> planetChoices){
+    public void handlePlanetChoice(HashMap<Integer, Planet> landablePlanets){
         //Qui mostra sotto menu
         Platform.runLater(() -> {
             //C'è altro oltre al layout di default (Altri menu left aperti)
@@ -186,7 +187,7 @@ public class FlightController extends GenericGamePhaseSceneController {
                 root = secondloader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 SMplanetChoiceController pageController = secondloader.getController();
-                pageController.initialize(clientController,subMenu,planetChoices);
+                pageController.initialize(clientController,subMenu, landablePlanets);
                 root.setMaxWidth(Double.MAX_VALUE);
                 root.setMaxHeight(Double.MAX_VALUE);
                 //3-impostare la nuova root alla scena principale

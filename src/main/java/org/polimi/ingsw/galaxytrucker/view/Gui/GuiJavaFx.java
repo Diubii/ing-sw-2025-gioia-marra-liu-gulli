@@ -45,6 +45,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -810,9 +811,9 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
 
     @Override
-    public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
+    public void askSelectPlanetChoice(HashMap<Integer, Planet> landablePlanets) {
         System.out.println("Debug: askSelectPlanetChoice");
-        ((FlightController)actualPageController).handlePlanetChoice(planetChoices);
+        ((FlightController)actualPageController).handlePlanetChoice(landablePlanets);
     }
 
     @Override

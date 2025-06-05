@@ -633,7 +633,7 @@ class CardEffectTest {
                 .filter(p -> !p.isOccupied()).toList();
 
         assertEquals(expectedAvailablePlanets.size(), request.getLandablePlanets().size());
-        assertTrue(request.getLandablePlanets().containsAll(expectedAvailablePlanets));
+        assertTrue(request.getLandablePlanets().values().containsAll(expectedAvailablePlanets));
 
     }
     @Test

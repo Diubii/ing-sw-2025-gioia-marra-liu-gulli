@@ -15,6 +15,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Pha
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -125,7 +126,7 @@ public interface View {
 
     void askActivateAdventureCard();
 
-    void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
+    void askSelectPlanetChoice(HashMap<Integer, Planet> landablePlanets);
 
 
 

@@ -1305,8 +1305,8 @@ public class Tui implements View, Observable {
 
     // chiedere di selezionare uno dei pianeti disponibili
     @Override
-    public void askSelectPlanetChoice(ArrayList<Planet> planetChoices) {
-        int size = planetChoices.size();
+    public void askSelectPlanetChoice(HashMap<Integer, Planet> landablePlanets) {
+        int size = landablePlanets.size();
 
         boolean validInput = false;
         enableInput();
@@ -1315,23 +1315,31 @@ public class Tui implements View, Observable {
                 try {
                     out.println();
                     out.println("List Planet choices: ");
-                    CardPrintUtils.printPlanetList(planetChoices);
-                    String input = readLine("Scegli un pianeta (1-" + size + "), oppure '0' per non scegliere: ").trim();
+                    CardPrintUtils.printPlanetList(landablePlanets);
+                    String input = readLine("Scegli un pianeta, oppure '0' per non scegliere: ").trim();
 
+                    int choice;
 
-                    if (!isValidNumberInRange(input, 0, size)) {
-                        System.out.println("Input non valido. Inserisci un numero tra 0 e " + size + ".");
+                    try{
+                        choice = Integer.parseInt(input);
+                    }
+                    catch (NumberFormatException e) {
+                        choice = -1;
+                    }
+
+                    if (!landablePlanets.containsKey(choice)) {
+                        System.out.println("Input non valido.");
                         continue;
                     }
 
-                    int choice = Integer.parseInt(input);
+
 
                     if (choice == 0) {
                         clientController.sendSelectPlanetResponse(null, -1);
                         showGenericMessage("Hai scelto di non scegliere un pianeta. Devi aspettare la scelta degli altri giocatori.");
                     } else {
-                        Planet selected = planetChoices.get(choice - 1);
-                        clientController.sendSelectPlanetResponse(selected, choice - 1);
+                        Planet selected = landablePlanets.get(choice);
+                        clientController.sendSelectPlanetResponse(selected, choice);
                     }
 
                     validInput = true;

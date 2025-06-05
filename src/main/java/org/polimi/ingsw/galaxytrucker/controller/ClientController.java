@@ -45,6 +45,7 @@ import java.rmi.RemoteException;
 import java.time.Duration;
 import java.util.ArrayList;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -1194,7 +1195,7 @@ public class ClientController implements Observer {
         if (amLeader) {
             view.askDrawCard();
         } else {
-            view.showGenericMessage("No sei il leader a questo turno. Dovresti aspettare il leader pesca la carta.");
+            view.showGenericMessage("Non sei leader per questo turno. Devi aspettare che il leader peschi la carta.");
 
         }
 
@@ -1241,8 +1242,8 @@ public class ClientController implements Observer {
     //planet
     //Select Planet
     public void handleSelectPlanetRequest(SelectPlanetRequest request) {
-        ArrayList<Planet> landablePlanet = request.getLandablePlanets();
-        view.askSelectPlanetChoice(landablePlanet);
+        HashMap<Integer, Planet> landablePlanets = request.getLandablePlanets();
+        view.askSelectPlanetChoice(landablePlanets);
     }
 // Dopo aver ricevuto una SelectPlanetRequest, chiedo al giocatore quale pianeta vuole scegliere.
 // Quando il giocatore ha fatto la sua scelta, devo inviare sia il pianeta selezionato sia l'indice corrispondente,
@@ -1263,8 +1264,7 @@ public class ClientController implements Observer {
     // vuole mettere i goods nella sua ship
     public void handleSelectPlanetUpdate(SelectedPlanetUpdate update) {
         String selectingPlayerNickname = update.getSelectingPlayerNickname();
-        int fakeplanetIndex = update.getPlanetIndex()+1;
-        view.showGenericMessage("Player " + selectingPlayerNickname + " ha selezionato il pianeta " + fakeplanetIndex);
+        view.showGenericMessage("Player " + selectingPlayerNickname + " ha selezionato il pianeta " + update.getPlanetIndex());
         if (selectingPlayerNickname.equals(getNickname())) {
             Planet selectedPlanet = update.getSelectedPlanet();
             myModel.setSelectedPlanet(selectedPlanet);

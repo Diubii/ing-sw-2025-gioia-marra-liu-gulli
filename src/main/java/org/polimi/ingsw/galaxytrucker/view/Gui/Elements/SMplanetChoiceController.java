@@ -10,6 +10,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.Dr
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class SMplanetChoiceController {
@@ -19,13 +20,13 @@ public class SMplanetChoiceController {
 
     @FXML private VBox buttonsContainer;
 
-    public void initialize(ClientController clientController, HBox container, ArrayList<Planet> planetChoices){
+    public void initialize(ClientController clientController, HBox container, HashMap<Integer, Planet> planetChoices){
         this.container = container;
         this.clientController = clientController;
 
-        int i = 0;
-        for (Planet planet : planetChoices) {
-            Button planetChoiceButton = new Button("Pianeta " + (i + 1));
+        for (Integer i : planetChoices.keySet()) {
+            Planet planet = planetChoices.get(i);
+            Button planetChoiceButton = new Button("Pianeta " + (i));
 
             // Azione al click: invia il pianeta selezionato
             int finalIndex = i;
@@ -35,8 +36,6 @@ public class SMplanetChoiceController {
             });
 
             buttonsContainer.getChildren().add(planetChoiceButton);
-
-            i++;
         }
     }
 

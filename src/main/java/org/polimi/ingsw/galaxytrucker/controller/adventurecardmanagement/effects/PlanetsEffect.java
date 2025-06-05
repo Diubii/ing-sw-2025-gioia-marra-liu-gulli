@@ -27,12 +27,17 @@ public abstract class PlanetsEffect {
         Player player =context.getCurrentPlayer();
         System.out.println(player.getNickName() + " DEBUG: PlanetsEffect sendSelectPlanetRequest");
         Planets planets = (Planets) context.getAdventureCard();
-            ArrayList<Planet> notOccupiedPlanets = new ArrayList<>(planets.getPlanets().stream().filter(planet -> !planet.isOccupied()).toList());
+            HashMap<Integer, Planet> notOccupiedPlanets = new HashMap<>();
+
+            int i=1;
+            for(Planet planet : planets.getPlanets()) {
+                if(!planet.isOccupied()) notOccupiedPlanets.put(i, planet);
+                i++;
+            }
+
             SelectPlanetRequest selectPlanetRequest = new SelectPlanetRequest(notOccupiedPlanets);
             context.nextPhase();
             sendMessage(context, context.getCurrentPlayer(), selectPlanetRequest);
-
-
     }
 
     public static void receivedSelectPlanetResponse(CardContext context) {
@@ -43,7 +48,7 @@ public abstract class PlanetsEffect {
         SelectPlanetResponse selectPlanetResponse = (SelectPlanetResponse) context.getIncomingNetworkMessage();
         Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
         if (selectedPlanet != null) {
-            planets.getPlanets().get(selectPlanetResponse.getPlanetIndex()).setOccupied(true);
+            planets.getPlanets().get(selectPlanetResponse.getPlanetIndex() - 1).setOccupied(true);
             SelectedPlanetUpdate selectedPlanetUpdate = new SelectedPlanetUpdate(context.getCurrentPlayer().getNickName(), selectedPlanet, selectPlanetResponse.getPlanetIndex());
             broadcast(context, selectedPlanetUpdate);
 
