@@ -428,13 +428,17 @@ public class ClientController implements Observer {
             case "b" -> {
                 if (!myModel.isLearningMatch()) {
 
-                    if(isPlaced || currentTileInHand == null) {
-                        try {
-                            view.askViewAdventureDecks();
+                    if(isPlaced==true || currentTileInHand == null) {
+                        if(isPlaced){
+                            try {
                             sendShipUpdate();
+                            //Impostare solo fix su true e
+                                // rimuovere tutte le informazioni relative a currentTile.
                         } catch (IOException | ExecutionException | InterruptedException e) {
                             throw new RuntimeException(e);
-                        }
+                        }  }
+                            view.askViewAdventureDecks();
+
                     }
                     else{
                         view.showGenericMessage("Hai un tile  in mano, per favore posizionala prima.");
@@ -455,18 +459,19 @@ public class ClientController implements Observer {
                 break;
             }
             case "d" -> {
-                if (currentTileInHand != null) {
+                if (currentTileInHand != null && isPlaced ==false) {
                     view.showGenericMessage("You already have a tile in hand! Place it or discard it before drawing a new one.");
                     view.showBuildingMenu();
 
                 } else {
-                    isPlaced = false;
-                    view.askDrawTile();
-                    try {
-                        sendShipUpdate();
-                    } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                    if(isPlaced) {
+                        try {
+                            sendShipUpdate();
+                        } catch (IOException | ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
+                    view.askDrawTile();
                 }
 
                 break;
@@ -539,6 +544,7 @@ public class ClientController implements Observer {
     //case(a)
     public void sendShipUpdate() throws IOException, ExecutionException, InterruptedException {
         ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
+        isPlaced = false;
         currentPosition = null;
         currentTileInHand = null;
         update.setOnlyFix(true);
@@ -578,7 +584,6 @@ public class ClientController implements Observer {
             if(update.getLoadMerci()== true){
                 view.askLoadGoodChoice();
             }
-//
 //
         }
 
@@ -839,8 +844,8 @@ public class ClientController implements Observer {
             return;
         }
         //Todo Cambiare non deve fare modifica diretta e show diretto
-        myModel.getMyInfo().getShip().putTile(currentTileInHand, currentPosition);   //ship.putTile(tileInHand)
-        myModel.getMyInfo().getShip().setLastTile(currentTileInHand);               //ship.setLastTile
+//        myModel.getMyInfo().getShip().putTile(currentTileInHand, currentPosition);   //ship.putTile(tileInHand)
+//        myModel.getMyInfo().getShip().setLastTile(currentTileInHand);               //ship.setLastTile
         //view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
 
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
@@ -860,9 +865,20 @@ public class ClientController implements Observer {
             try {
                 PlaceTileResponse response = (PlaceTileResponse) future.get();
                 view.showGenericMessage(response.getMessage());
+                if(response.getMessage().equals("INVALID_STATE")){
+                    view.showGenericMessage("You cannot place a tile right now.");
+                }
+                if(response.getMessage().equals("INVALID_POS")){
+                    view.showGenericMessage("You cannot place a tile in that position. invalid pos");
+
+                }
+                if(response.getMessage().equals("OCCUPIED_POS")){
+                    view.showGenericMessage("You cannot place a tile in that position. occupied pos");
+
+                }
                 if (response.getMessage().equals("VALID")) {
-                    resetCurrentPos();
-                    currentTileInHand = null;
+//                    resetCurrentPos();
+//                    currentTileInHand = null;
                     isPlaced = true;
                     view.showTile(currentTileInHand);
                 }
@@ -871,6 +887,7 @@ public class ClientController implements Observer {
             } catch (Exception e) {
                 view.showGenericMessage("Error during tile placement: " + e.getMessage());
             } finally {
+                view.showShip(myModel.getMyInfo().getShip(),getNickname());
 
                 view.showBuildingMenu();
             }

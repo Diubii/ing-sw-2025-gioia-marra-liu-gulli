@@ -783,10 +783,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                 Position myPos = placeTileRequest.getPos();
                 Tile myTile = placeTileRequest.getTile();
-                List<Slot> Slots = Arrays.stream(myShip.getShipBoard())
-                        .flatMap(Arrays::stream)
-                        .filter(Objects::nonNull)
-                        .toList();
+
 
                 //controllo la posizione
 
@@ -795,23 +792,36 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 if (!myShip.getInvalidPositions().contains(myPos)) {
 
                     //controllo se la posizione non è occupata
-                    for (Slot slot : Slots) {
-                        Tile tempTile = slot.getTile();
-                        if (tempTile != null && tempTile.getId() == myTile.getId()) {
 
+                        if (myShip.getTileFromPosition(myPos) != null) {
                             //esiste gia la tile
-                            placeTileResponse.setMessage("INVALID_POS");
+                            placeTileResponse.setMessage("OCCUPIED_POS");
                             clientHandler.sendMessage(placeTileResponse);
                             return;
                         }
-                    }
+
 
                     //non esiste, allora la inserisco
 
 //            myTile.setFixed(true);
+                    if(myShip.getLastTile() != null) {
+
+                        //Se il tile che voglio spostare è la stessa che ho appena posizionato,
+                        // devo prima rimuoverla dalla nave e poi riposizionarla
+                        if (myTile.getId() == myShip.getLastTile().getId()) {
+                            myShip.removeTile(myShip.getLastTilePosition(),true);
+
+                        }
+
+                    }
+
                     myShip.putTile(myTile, myPos);
                     //resetto lastTile
+
                     myShip.setLastTile(myTile);
+                    myShip.setLastTilePosition(myPos);
+
+
 //            //la ship e' aggiornata
 //            myShip.setSynch(true);
                     //setto il messaggio
@@ -842,9 +852,19 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     @NeedsToBeCompleted
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
+            Tile tileToDiscard = discardTileRequest.getTile();
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             //myGame.getTileBunch().getFaceUpTiles();
+            String nickname = getNicknameFromClientHandler(clientHandler);
+            Player myPlayer = myGame.getRealGame().getPlayer(nickname);
+            Ship myShip = myPlayer.getShip();
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+            if(tileToDiscard.getId() == myShip.getLastTile().getId()) {
+                myShip.removeTile(myShip.getLastTilePosition(),true);
+                ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
+                broadCast(playerHandlers, shipUpdate);
+            }
+
             myGame.getTileBunch().returnTile(discardTileRequest.getTile());
 
 

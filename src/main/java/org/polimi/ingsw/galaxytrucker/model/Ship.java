@@ -40,6 +40,7 @@ public class Ship implements Serializable {
     private ArrayList<Pair<Good, Pair<Position, Slot>>> listOfGoods;
     private ArrayList<Good> listNotLoadedGoods;
     private Tile lastTile;
+    private Position lastTilePosition;
     private Boolean synch;
 
 
@@ -371,11 +372,12 @@ public class Ship implements Serializable {
             brokenPositions.add(pos);
         }
 
-        Tile tileNeedToRemove = getTileFromPosition(pos);
-
-        destroyedTiles++;
-        shipBoard[pos.getX()][pos.getY()].removeTile();
-
+        Slot slot = shipBoard[pos.getX()][pos.getY()];
+        if (slot != null) {
+            slot.removeTile();
+        } else {
+            System.out.println("WARN: Tried to remove tile from null slot at " + pos);
+        }
     }
 
     //}
@@ -1000,6 +1002,14 @@ public class Ship implements Serializable {
 
     public void setLastTile(Tile tile) {
         lastTile = tile;
+    }
+
+    public Position getLastTilePosition() {
+        return lastTilePosition;
+    }
+
+    public void setLastTilePosition(Position lastTilePosition) {
+        this.lastTilePosition = lastTilePosition;
     }
 
     /**

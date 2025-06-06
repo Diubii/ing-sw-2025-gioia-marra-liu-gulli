@@ -831,12 +831,14 @@ public class Tui implements View, Observable {
             printTile(clientController.getCurrentTileInHand());
 
             if (clientController.getCurrentPosition() != null) {
-                out.println("Current position:  X: " + clientController.getCurrentPosition().getX() + ",  Y:" + clientController.getCurrentPosition().getY());
+                out.println("Current position:  X: " + (clientController.getCurrentPosition().getX()+4) + ",  Y:" + (clientController.getCurrentPosition().getY()+5));
+                askPosition();
             } else {
                 out.println("Current position: null");
                 askPosition();
             }
             out.println("Do you want to place this tile at the current position and rotation? (y/n)");
+            enableInput();
             String input = readLine("> ").trim().toLowerCase();
             if (checkReset(input)) return;
 
