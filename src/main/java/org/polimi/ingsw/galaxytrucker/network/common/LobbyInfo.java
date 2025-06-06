@@ -38,8 +38,7 @@ public class LobbyInfo implements Serializable {
     }
 
     public synchronized void removeConnectedPlayer() {
-
-        connectedPlayers--;
+        if(connectedPlayers > 0) connectedPlayers--;
     }
 
     public int getLobbyID() {

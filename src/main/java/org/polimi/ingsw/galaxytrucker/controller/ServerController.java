@@ -44,7 +44,7 @@ import java.util.concurrent.*;
 
 public class ServerController extends UnicastRemoteObject implements ServerControllerHandles {
 
-    private final ArrayList<LobbyManager> lobbyManagers;
+    private final HashMap<Integer, LobbyManager> lobbyManagers;
     private final MessageManager messageManager;
     private final ArrayList<ClientHandler> clients = new ArrayList<>();
     private final HashMap<UUID, String> clientNicknameMap = new HashMap<>();
@@ -59,6 +59,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     private static final ExecutorService executor = Executors.newCachedThreadPool();
 
     private boolean synchronousExecution = false;
+
+    private static Integer nextLobbyIndex = 0;
 
     public void setSynchronousExecution(boolean sync) {
         this.synchronousExecution = sync;
@@ -75,7 +77,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     public ServerController() throws RemoteException {
         super();
 
-        this.lobbyManagers = new ArrayList<>();
+        this.lobbyManagers = new HashMap<>();
         messageManager = new MessageManager(this);
         initActionsAllowed();
 //        model.setRealGame(new Game(4, false));
@@ -111,10 +113,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         }
     }
 
-    public void addLobbyManager(LobbyManager game) {
-        lobbyManagers.add(game);
-    }
-
     /**
      * Safely removes a client, freeing its nickname if it exists, and kicking it from an eventual game it's in.
      *
@@ -129,16 +127,16 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             game.getGameController().kickPlayerFromGame(nickname);
 
             synchronized (lobbyInfos) {
-                lobbyInfos.get(lobbyManagers.indexOf(game)).removeConnectedPlayer();
+                lobbyInfos.stream().filter(l -> l.getLobbyID() == game.getGameID()).findFirst().ifPresent(LobbyInfo::removeConnectedPlayer);
             }
 
             if (game.getPlayerHandlers().isEmpty()) {
                 synchronized (lobbyInfos) {
-                    lobbyInfos.removeIf(info -> info.getLobbyID() == lobbyManagers.indexOf(game));
+                    lobbyInfos.removeIf(info -> info.getLobbyID() == game.getGameID());
                 }
                 //System.out.println("A game was empty. Cleared from the list of games.");
                 synchronized (lobbyManagers) {
-                    lobbyManagers.remove(game);
+                    lobbyManagers.remove(game.getGameID());
                 }
             }
         }
@@ -169,7 +167,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
         LobbyManager lobbyManager;
         synchronized (lobbyManagers) {
-            lobbyManager = lobbyManagers.stream().filter(gameModel ->
+            lobbyManager = lobbyManagers.values().stream().filter(gameModel ->
                     gameModel.getPlayerHandlers().values().stream().anyMatch(h -> h.getClientID().equals(clientHandler.getClientID()))).findFirst().orElse(null);
         }
 
@@ -222,7 +220,13 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             //get nickname & check
             String tempNick = message.getNickName();
 
-            LobbyManager newGame = new LobbyManager();
+            LobbyManager newGame;
+            synchronized (lobbyManagers) {
+                newGame = new LobbyManager(nextLobbyIndex);
+                lobbyManagers.put(newGame.getGameID(), newGame);
+                nextLobbyIndex++;
+            }
+
             Player myPlayer = new Player(message.getNickName(), 0, 0, message.getIsLearningMatch());
 
             Color myColor = newGame.useNextAvailableColor();
@@ -259,15 +263,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             myPlayer.getShip().putTile(centralTile, new Position(3, 2));
 
-
-            synchronized (lobbyManagers) {
-                lobbyManagers.add(newGame);
-            }
-
-            int index = lobbyManagers.indexOf(newGame);
             synchronized (lobbyInfos) {
-                lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, index, message.getIsLearningMatch()));
-
+                lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, newGame.getGameID(), message.getIsLearningMatch()));
             }
 
             JoinRoomResponse joinRoomResponse = new JoinRoomResponse(message.getID());
@@ -306,10 +303,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             ArrayList<ClientHandler> playerHandlers;
             boolean result = false;
             PlayerJoinedUpdate playerJoinedUpdate;
-            LobbyManager myGame = null;
 
-
-            if (message.getRoomId() < lobbyManagers.size()) myGame = lobbyManagers.get(message.getRoomId());
+            LobbyManager myGame = lobbyManagers.get(message.getRoomId());
 
             if (myGame == null) {
                 mess = "Lobby number " + message.getRoomId() + " doesn't exist. Try again.";
