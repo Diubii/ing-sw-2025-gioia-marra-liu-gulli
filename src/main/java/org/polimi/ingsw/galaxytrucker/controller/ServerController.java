@@ -271,6 +271,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             joinRoomResponse.setOperationSuccess(true);
             joinRoomResponse.setColor(myColor);
             joinRoomResponse.setMyShip(myPlayer.getShip());
+            joinRoomResponse.setIsLearningMatch(newGame.getRealGame().getIsLearningMatch());
 
             PlayerInfo playerInfo1 = new PlayerInfo();
             playerInfo1.setShip(myPlayer.getShip());
@@ -401,7 +402,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     joinRoomResponse.setOperationSuccess(true);
                     joinRoomResponse.setColor(myColor);
                     joinRoomResponse.setMyShip(myPlayer.getShip());
-//                joinRoomResponse.setIsLearningMatch(myGame.getRealGame().getIsLearningMatch());
                     myGame.addPlayerInfo(playerInfo1);
 
                     if (myLobbyInfo != null) {

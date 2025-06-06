@@ -269,6 +269,7 @@ public class ClientController implements Observer {
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
+                    myModel.setLearningMatch(response.getIsLearningMatch());
                     MenuManager.learningMatch = isLearningMatch;
 
 
