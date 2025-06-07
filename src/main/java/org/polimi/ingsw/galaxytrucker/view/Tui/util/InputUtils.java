@@ -32,14 +32,14 @@ public class InputUtils {
         }
     }
 
-    private static final List<Integer> VALID_ROTATIONS = Arrays.asList(90, 180, 270, 360);
+    private static final List<Integer> VALID_ROTATIONS = Arrays.asList(90, 180, 270,0);
 
     public static int parseRotation(String input) throws IllegalArgumentException {
         try {
             int rotation = Integer.parseInt(input.trim());
 
             if (!VALID_ROTATIONS.contains(rotation)) {
-                throw new IllegalArgumentException("Invalid rotation. Please enter 90, 180, 270, or 360.");
+                throw new IllegalArgumentException("Invalid rotation. Please enter 90, 180, 270, or 0.");
             }
 
             return rotation;

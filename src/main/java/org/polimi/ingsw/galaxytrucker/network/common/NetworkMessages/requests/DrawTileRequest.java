@@ -14,18 +14,26 @@ public class DrawTileRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 533L;
     private Tile tile;
+    private boolean needLastTile;
 
 
     public DrawTileRequest() {
-
+        this.tile = null;
+        this.needLastTile = false;
     }
 
 
     public DrawTileRequest(Tile tile) {
         //pesco da faceup tiles
         this.tile = tile;
+        this.needLastTile = false;
     }
 
+    public static DrawTileRequest reclaimLastTileRequest() {
+        DrawTileRequest req = new DrawTileRequest();
+        req.needLastTile = true;
+        return req;
+    }
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
@@ -35,5 +43,8 @@ public class DrawTileRequest extends NetworkMessage implements Serializable {
 
     public Tile getTile() {
         return tile;
+    }
+    public boolean isNeedLastTile() {
+        return needLastTile;
     }
 }

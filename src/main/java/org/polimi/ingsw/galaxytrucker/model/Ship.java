@@ -370,7 +370,9 @@ public class Ship implements Serializable {
         //se sto distruggendo e non semplicemente eliminando le aggiungo alle broken
         if (!isNormalRemove) {
             brokenPositions.add(pos);
+            destroyedTiles++;
         }
+
 
         Slot slot = shipBoard[pos.getX()][pos.getY()];
         if (slot != null) {
@@ -1212,4 +1214,5 @@ public class Ship implements Serializable {
     public void setLearningMatch(Boolean isLearningMatch) {
         this.learningMatch = isLearningMatch;
     }
+
 }

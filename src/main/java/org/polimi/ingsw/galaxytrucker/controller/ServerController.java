@@ -487,6 +487,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             Tile myTile = null;
             DrawTileResponse drawTileResponse;
             Boolean flag = false;
+            Player player = getPlayerFromClientHandler(clientHandler);
+            Ship targetShip = player.getShip();
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
 
 
             if (!isActionAllowed(myGame, GameAction.DRAW_TILE)) {
@@ -514,10 +517,32 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                     FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
                     faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
-                    ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+
                     broadCast(playerHandlers, faceUpTileUpdate);
 
                 } else {
+                  if(message.isNeedLastTile()){
+                       Tile lastTile =  targetShip.getLastTile();
+                      if (lastTile == null) {
+                          drawTileResponse = new DrawTileResponse(null, message.getID());
+                          drawTileResponse.setErrorMessage("NO_TILE");
+                      }
+                       else if (lastTile.getFixed()) {
+                           drawTileResponse = new DrawTileResponse(null, message.getID());
+                           drawTileResponse.setErrorMessage("FIXED");
+                       }
+                       else{
+                           targetShip.removeTile(targetShip.getLastTilePosition(),true);
+                           ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
+
+                           broadCast(playerHandlers, shipUpdate);
+
+                           drawTileResponse = new DrawTileResponse(lastTile, message.getID());
+                           drawTileResponse.setErrorMessage("VALID");
+                       }
+                  }
+                  else {
+
 
                     myTile = myGame.getTileBunch().drawTile();
                     if (myTile == null) {
@@ -527,7 +552,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                         drawTileResponse = new DrawTileResponse(myTile, message.getID());
                         drawTileResponse.setErrorMessage("VALID");
                     }
-
+                }
                 }
 
             }
@@ -799,16 +824,16 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     //non esiste, allora la inserisco
 
 //            myTile.setFixed(true);
-                    if(myShip.getLastTile() != null) {
-
-                        //Se il tile che voglio spostare è la stessa che ho appena posizionato,
-                        // devo prima rimuoverla dalla nave e poi riposizionarla
-                        if (myTile.getId() == myShip.getLastTile().getId()) {
-                            myShip.removeTile(myShip.getLastTilePosition(),true);
-
-                        }
-
-                    }
+//                    if(myShip.getLastTile() != null) {
+//
+//                        //Se il tile che voglio spostare è la stessa che ho appena posizionato,
+//                        // devo prima rimuoverla dalla nave e poi riposizionarla
+//                        if (myTile.getId() == myShip.getLastTile().getId()) {
+//                            myShip.removeTile(myShip.getLastTilePosition(),true);
+//
+//                        }
+//
+//                    }
 
                     myShip.putTile(myTile, myPos);
                     //resetto lastTile
@@ -849,26 +874,29 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         this.execute(() -> {
             Tile tileToDiscard = discardTileRequest.getTile();
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
+
             //myGame.getTileBunch().getFaceUpTiles();
+
             String nickname = getNicknameFromClientHandler(clientHandler);
             Player myPlayer = myGame.getRealGame().getPlayer(nickname);
             Ship myShip = myPlayer.getShip();
-            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-            if(tileToDiscard.getId() == myShip.getLastTile().getId()) {
-                myShip.removeTile(myShip.getLastTilePosition(),true);
-                ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-                broadCast(playerHandlers, shipUpdate);
-            }
-
             myGame.getTileBunch().returnTile(discardTileRequest.getTile());
 
-
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
             broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
 
 //
             FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
             faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
             broadCast(playerHandlers, faceUpTileUpdate);
+
+//            if(tileToDiscard.getId() == myShip.getLastTile().getId()) {
+//                myShip.removeTile(myShip.getLastTilePosition(),true);
+//                ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
+//                broadCast(playerHandlers, shipUpdate);
+//            }
+
+
         });
     }
 
@@ -1234,6 +1262,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
     public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {
         for (ClientHandler clientHandler : clients) {
+            String nickname = getNicknameFromClientHandler(clientHandler);
+            NetworkMessageType networkMessageType = message.accept(networkMessageNameVisitor);
+
+            System.out.println("[DEBUG] Sending"+ message +"to: " +   nickname);
             clientHandler.sendMessage(message);
         }
     }

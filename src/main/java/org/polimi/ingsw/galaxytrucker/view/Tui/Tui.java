@@ -121,6 +121,8 @@ public class Tui implements View, Observable {
     }
     public void disableInput() {
         inputEnabled = false;
+//        System.out.println("[DEBUG] disableInput() called.");
+//        Thread.dumpStack();
     }
     public void startInputListener() {
         new Thread(() -> {
@@ -128,33 +130,65 @@ public class Tui implements View, Observable {
             while (true) {
                 if (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
-
                     if ("RESET".equalsIgnoreCase(line)) {
                         flag = true;
+                        continue;
                     }
 
-                    if (inputEnabled && currentInputFuture != null && !currentInputFuture.isDone()) {
-                        currentInputFuture.complete(line);
-                    } else {
+//                    if ("RESET".equalsIgnoreCase(line)) {
+//                        flag = true;
+//                    }
+                    CompletableFuture<String> future = currentInputFuture;
+                    if (!inputEnabled) {
                         System.out.println("Non è il tuo turno.");
+                        continue;
                     }
+
+                    if (future == null) {
+                        System.out.println("Input future non inizializzato.");
+                        continue;
+                    }
+                    if (future.isDone()) {
+                        System.out.println("Input già completato.");
+                        continue;
+                    }
+
+                        future.complete(line);
+
+
+//                        if (!line.equalsIgnoreCase("RESET")) {
+//                            System.out.println("Non è il tuo turno.");
+//                        }
+
                 }
             }
         }, "ConsoleInputListener").start();
     }
-    public String readLine(String prompt) throws InterruptedException, ExecutionException {
-        System.out.print(prompt);
-        flag = false;
-        currentInputFuture = new CompletableFuture<>();
-        String input = currentInputFuture.get();
+//    public String readLine(String prompt) throws InterruptedException, ExecutionException {
+//        System.out.print(prompt);
+//        flag = false;
+//        currentInputFuture = new CompletableFuture<>();
+//        String input = currentInputFuture.get();
+//
+//
+////        if (input.contains("RESET")) {
+////            flag = true;
+////            return "RESET";
+////        }
+//
+//        return input.trim();
+//    }
+public String readLine(String prompt) throws InterruptedException, ExecutionException {
+    inputEnabled = true;
+    currentInputFuture = new CompletableFuture<>();
 
-        if (input.contains("RESET")) {
-            flag = true;
-            return "RESET";
-        }
+    System.out.print(prompt + " ");
 
-        return input;
-    }
+    String input = currentInputFuture.get().trim();
+    inputEnabled = false;
+
+    return input;
+}
 
     @Override
     public void forceReset() {
@@ -194,7 +228,6 @@ public class Tui implements View, Observable {
 
             enableInput();
 
-            try {
 
                 String address = readLine("Enter the server address [" + defaultAddress + "]: ").trim();
                 serverInfo.put("address", address.isEmpty() ? defaultAddress : address);
@@ -205,20 +238,15 @@ public class Tui implements View, Observable {
                         disableInput();
                         return;
                     }
-                    if (port.isEmpty()) {
-                        portNumber = defaultPort;
-                        break;
-                    }
                     try {
-                        portNumber = Integer.parseInt(port);
+                        portNumber = port.isEmpty() ? defaultPort : Integer.parseInt(port);;
                     } catch (NumberFormatException e) {
                         out.println("Errore: la porta deve essere un numero intero.");
+                        portNumber = -1;
                     }
                 } while (portNumber == -1);
 
-            } finally {
-                disableInput();
-            }
+
         }
 
         SERVER_INFO message = new SERVER_INFO(serverInfo.get("address"), portNumber);
@@ -227,14 +255,12 @@ public class Tui implements View, Observable {
 
 
     public void askNickname() {
-        enableInput();
+
         try {
             String nickname = readLine("Enter your nickname: ");
             clientController.handleNicknameInput(nickname);
         } catch (InterruptedException | ExecutionException | IOException e) {
             System.err.println("Error reading nickname: " + e.getMessage());
-        }finally {
-            disableInput();
         }
     }
 
@@ -449,9 +475,7 @@ public class Tui implements View, Observable {
         } catch (InterruptedException | ExecutionException e) {
             out.println("Error: " + e.getMessage());
         }
-        finally{
-            disableInput();
-        }
+
     }
 
     @Override
@@ -540,10 +564,10 @@ public class Tui implements View, Observable {
         try {
             do {
                 try {
-                    out.println("Enter rotation degree (90, 180, 270, or 360): ");
+                    out.println("Enter rotation degree (0,90, 180, 270): ");
                     String input = readLine("> ").trim();
                     if (checkReset(input)) return;
-                    ;
+
 
                     int rotation = InputUtils.parseRotation(input);
                     clientController.rotateCurrentTile(rotation);
@@ -563,14 +587,14 @@ public class Tui implements View, Observable {
     public void askPosition() throws ExecutionException {
         boolean valid = false;
         Position pos = null;
-        enableInput();
-        try {
+
             do {
                 try {
                     String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
-                    if (checkReset(input)) return;
                     pos = parseCoordinate(input);
-                    clientController.setCurrentPos(pos.getX() - 4, pos.getY() - 5);
+                    clientController.setTmpCurrentPosition(clientController.getCurrentPosition());
+                    clientController.setCurrentPos(pos.getX()-4,pos.getY()-5);
+
                     valid = true;
                 } catch (IllegalArgumentException e) {
                     out.println(e.getMessage());
@@ -580,9 +604,7 @@ public class Tui implements View, Observable {
                     out.println("Unexpected error: " + e.getMessage());
                 }
             } while (!valid);
-        }finally {
-            disableInput();
-        }
+
     }
 
     @NeedsToBeCompleted
@@ -627,10 +649,14 @@ public class Tui implements View, Observable {
                 out.println("1) draw a random tile(face down)");
                 out.println("2) choose a face up tile");
                 out.println("3) choose from your reserved tiles");
-                String choice = readLine("Choose(1/2/3) > ");
+                out.println("4) Reclaim the tile that is still movable.");
+                out.println();
+
+
+                String choice = readLine("Choose(1/2/3/4) > ");
 
                 if (checkReset(choice)) return;
-                ;
+
 
                 switch (choice) {
                     case "1": {
@@ -649,7 +675,17 @@ public class Tui implements View, Observable {
                         validInput = true;
                         break;
                     }
+                    case"4":{
+                        System.out.println("[DEBUG] You selected option 4: reclaimTile() will be called");
+                        clientController.reclaimTile();
+                        validInput = true;
+                        break;
+                    }
 
+                    default: {
+                        out.println("Invalid input. Please enter 1, 2, 3, or 4.");
+                        break;
+                    }
                 }
 
             } while (!validInput);
@@ -832,11 +868,12 @@ public class Tui implements View, Observable {
 
             if (clientController.getCurrentPosition() != null) {
                 out.println("Current position:  X: " + (clientController.getCurrentPosition().getX()+4) + ",  Y:" + (clientController.getCurrentPosition().getY()+5));
-                askPosition();
             } else {
                 out.println("Current position: null");
-                askPosition();
             }
+
+            out.println("Current rotation: " + clientController.getCurrentTileInHand().getRotation());
+            askPosition();
             out.println("Do you want to place this tile at the current position and rotation? (y/n)");
             enableInput();
             String input = readLine("> ").trim().toLowerCase();
@@ -854,7 +891,6 @@ public class Tui implements View, Observable {
         } catch (Exception e) {
             out.println(" Error during tile placement ");
             e.printStackTrace();
-            ;
         }
         finally {
             disableInput();
