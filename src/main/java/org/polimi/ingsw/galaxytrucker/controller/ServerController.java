@@ -542,16 +542,37 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                        }
                   }
                   else {
+                      if (message.isFromReserved()) {
+
+                          Tile[] reserverd = targetShip.getAsideTiles();
+                          int index = message.getReservedSlotIndex();
+                          Tile removedTile = reserverd[index];
+                          if (removedTile == null) {
+                              drawTileResponse = new DrawTileResponse(null, message.getID());
+                              drawTileResponse.setErrorMessage("NO_TILE_AT_INDEX");
+                          } else {
+                              reserverd[index] = null;
+                              drawTileResponse = new DrawTileResponse(removedTile, message.getID());
+                              drawTileResponse.setErrorMessage("VALID");
+
+                              ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
+                              broadCast(playerHandlers, shipUpdate);
+                          }
+
+                      }
+
+                      else{
 
 
-                    myTile = myGame.getTileBunch().drawTile();
-                    if (myTile == null) {
-                        drawTileResponse = new DrawTileResponse(null, message.getID());
-                        drawTileResponse.setErrorMessage("EMPTY");
-                    } else {
-                        drawTileResponse = new DrawTileResponse(myTile, message.getID());
-                        drawTileResponse.setErrorMessage("VALID");
-                    }
+                            myTile = myGame.getTileBunch().drawTile();
+                            if (myTile == null) {
+                                drawTileResponse = new DrawTileResponse(null, message.getID());
+                                drawTileResponse.setErrorMessage("EMPTY");
+                            } else {
+                                drawTileResponse = new DrawTileResponse(myTile, message.getID());
+                                drawTileResponse.setErrorMessage("VALID");
+                            }
+                      }
                 }
                 }
 
@@ -800,55 +821,34 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             //dopo che ho tutto devo semplicemente inserire la Tile
 
             synchronized (myShip) {
-
-                Position myPos = placeTileRequest.getPos();
                 Tile myTile = placeTileRequest.getTile();
+                if(placeTileRequest.isToReserved()){
+                    int index = placeTileRequest.getReservedSlotIndex();
 
+                    myShip.getAsideTiles()[index] = myTile;
+                    placeTileResponse.setMessage("VALID");
+                }
+                else{
+                    Position myPos = placeTileRequest.getPos();
 
-                //controllo la posizione
+                    if (myShip.getInvalidPositions().contains(myPos)) {
+                        placeTileResponse.setMessage("INVALID_POS");
+                        clientHandler.sendMessage(placeTileResponse);
+                        return;
+                    }
 
-
-                //se e' valida
-                if (!myShip.getInvalidPositions().contains(myPos)) {
-
-                    //controllo se la posizione non è occupata
-
-                        if (myShip.getTileFromPosition(myPos) != null) {
-                            //esiste gia la tile
-                            placeTileResponse.setMessage("OCCUPIED_POS");
-                            clientHandler.sendMessage(placeTileResponse);
-                            return;
-                        }
-
-
-                    //non esiste, allora la inserisco
-
-//            myTile.setFixed(true);
-//                    if(myShip.getLastTile() != null) {
-//
-//                        //Se il tile che voglio spostare è la stessa che ho appena posizionato,
-//                        // devo prima rimuoverla dalla nave e poi riposizionarla
-//                        if (myTile.getId() == myShip.getLastTile().getId()) {
-//                            myShip.removeTile(myShip.getLastTilePosition(),true);
-//
-//                        }
-//
-//                    }
+                    if (myShip.getTileFromPosition(myPos) != null) {
+                        placeTileResponse.setMessage("OCCUPIED_POS");
+                        clientHandler.sendMessage(placeTileResponse);
+                        return;
+                    }
 
                     myShip.putTile(myTile, myPos);
-                    //resetto lastTile
-
                     myShip.setLastTile(myTile);
                     myShip.setLastTilePosition(myPos);
-
-
-//            //la ship e' aggiornata
-//            myShip.setSynch(true);
-                    //setto il messaggio
                     placeTileResponse.setMessage("VALID");
 
-                    //da capire se ha senso creare una PlaceTileResponse
-
+                }
 
                     //broadCasto la nuova nave a tutti
                     ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
@@ -857,11 +857,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     clientHandler.sendMessage(placeTileResponse);
 
 
-                } else {
-                    PlaceTileResponse resp = new PlaceTileResponse(null, placeTileRequest.getID());
-                    resp.setMessage("INVALID_POS");
-                    clientHandler.sendMessage(resp);
-                }
+//                } else {
+//                    PlaceTileResponse resp = new PlaceTileResponse(null, placeTileRequest.getID());
+//                    resp.setMessage("INVALID_POS");
+//                    clientHandler.sendMessage(resp);
+//                }
 
 
             }

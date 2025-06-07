@@ -15,6 +15,8 @@ public class DrawTileRequest extends NetworkMessage implements Serializable {
     private static final long serialVersionUID = 533L;
     private Tile tile;
     private boolean needLastTile;
+    private boolean fromReserved;
+    private int reservedSlotIndex = -1;
 
 
     public DrawTileRequest() {
@@ -34,6 +36,12 @@ public class DrawTileRequest extends NetworkMessage implements Serializable {
         req.needLastTile = true;
         return req;
     }
+    public static DrawTileRequest fromReservedSlot(int index) {
+        DrawTileRequest req = new DrawTileRequest();
+        req.fromReserved = true;
+        req.reservedSlotIndex = index;
+        return req;
+    }
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
@@ -46,5 +54,13 @@ public class DrawTileRequest extends NetworkMessage implements Serializable {
     }
     public boolean isNeedLastTile() {
         return needLastTile;
+    }
+
+    public boolean isFromReserved() {
+        return fromReserved;
+    }
+
+    public int getReservedSlotIndex() {
+        return reservedSlotIndex;
     }
 }

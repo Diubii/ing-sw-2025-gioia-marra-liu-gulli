@@ -492,12 +492,8 @@ public class ClientController implements Observer {
                 sendDiscardRequest();
 
             }
+
             case "i" -> {
-                view.askPickOrPlaceReservedTile(false);
-
-            }
-
-            case "j" -> {
                 try {
                     clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
 
@@ -512,7 +508,7 @@ public class ClientController implements Observer {
                 break;
             }
 
-            case "k" -> {
+            case "j" -> {
                 //devo far vedere i risultati dei TimerInfo e far appararire un menu
 //                if (!myModel.isLearningMatch())
 //                {
@@ -845,6 +841,45 @@ public class ClientController implements Observer {
 
     }
 
+public void handleDrawReservedTile (int slotIndex){
+    DrawTileRequest request = DrawTileRequest.fromReservedSlot(slotIndex);
+    CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+    setCompletableFuture(future, request.getID());
+    try {
+        client.sendMessage(request);
+    } catch (IOException | ExecutionException | InterruptedException e) {
+        throw new RuntimeException(e);
+    }
+    new Thread(() -> {
+
+        try {
+            DrawTileResponse response = (DrawTileResponse) future.get();
+            String error = response.getErrorMessage();
+
+            switch (error) {
+                case "VALID":
+                    Tile drawnTile = response.getTile();
+                    if (drawnTile != null) {
+                        view.showTile(drawnTile);
+                        currentTileInHand = drawnTile;
+                        currentPosition = null;
+                    }
+                    break;
+                case "NO_TILE_AT_INDEX":
+                    view.showGenericMessage("no tile at index");
+                    break;
+            }
+        } catch (Exception e) {
+            view.showGenericMessage("An error occurred while processing the response: " + e.getMessage());
+
+        }
+        view.showBuildingMenu();
+    }).start();
+
+
+
+}
+
 
     public void showTileInHand() {
 
@@ -959,6 +994,51 @@ public class ClientController implements Observer {
         }).start();
 
     }
+    private void handlePlaceReservedTile(int slotIndex){
+        if ( currentTileInHand == null) {
+            view.showGenericMessage("No tile selected.");
+            view.showBuildingMenu();
+            return;
+        }
+
+        PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, slotIndex);
+        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+        setCompletableFuture(future, request.getID());
+
+        try {
+            client.sendMessage(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            view.showGenericMessage("Failed to send tile placement: " + e.getMessage());
+            view.showBuildingMenu();
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                PlaceTileResponse response = (PlaceTileResponse) future.get();
+                view.showGenericMessage(response.getMessage());
+
+                if (response.getMessage().equals("VALID")) {
+
+                    resetCurrentPos();
+                    currentTileInHand = null;
+                    isPlaced = true;
+                    view.showTile(currentTileInHand);
+                }
+                else{
+                    view.showGenericMessage("err PlaceReservedTile");
+                }
+
+
+            } catch (Exception e) {
+                view.showGenericMessage("Error during tile placement: " + e.getMessage());
+            } finally {
+
+                view.showBuildingMenu();
+            }
+
+        }).start();
+    }
 
 
     //i
@@ -993,30 +1073,39 @@ public class ClientController implements Observer {
 //        }).start();
     }
 
+
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {
 
-        Tile[] reservedTiles = myModel.getReservedTiles();
+//        Tile[] reservedTiles = myModel.getReservedTiles();
+        Tile[] reservedTiles = getReservedTiles();
+
         Tile tile = reservedTiles[slotIndex];
+
         if (isPicking) {
             if (tile == null) {
-                view.showGenericMessage("No reserved tile at slot " + slotIndex + ".");
+                int toShowIndex =slotIndex+1;
+                view.showGenericMessage("No reserved tile at slot " + toShowIndex + ".");
                 view.showBuildingMenu();
 
 
             } else {
-                currentTileInHand = tile;
-                myModel.getReservedTiles()[slotIndex] = null;
-                view.showGenericMessage("Tile picked successfully.");
-                view.showBuildingMenu();
+                handleDrawReservedTile (slotIndex);
+//                currentTileInHand = tile;
+//                myModel.getReservedTiles()[slotIndex] = null;
+//                view.showGenericMessage("Tile picked successfully.");
+//                view.showBuildingMenu();
+
             }
         }
         //placing
         else {
             if (tile == null) {
-                myModel.getReservedTiles()[slotIndex] = currentTileInHand;
-                currentTileInHand = null;
-                view.showGenericMessage("Tile reserved successfully.");
-                view.showBuildingMenu();
+//                myModel.getReservedTiles()[slotIndex] = currentTileInHand;
+//                currentTileInHand = null;
+//                view.showGenericMessage("Tile reserved successfully.");
+//                view.showBuildingMenu();
+                handlePlaceReservedTile(slotIndex);
+
             } else {
                 view.showGenericMessage("A tile is already reserved at slot " + slotIndex + ".");
                 view.showBuildingMenu();
@@ -1025,6 +1114,7 @@ public class ClientController implements Observer {
 
 
     }
+
 
 
 

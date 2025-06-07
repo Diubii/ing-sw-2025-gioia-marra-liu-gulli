@@ -18,20 +18,38 @@ public class PlaceTileRequest extends NetworkMessage implements Serializable {
 
     private final Tile tile;
     private final Position pos;
+    private final boolean toReserved;
+    private final int reservedSlotIndex;
+
 
     public PlaceTileRequest(Tile tile, Position pos) {
-
         super();
-
         this.tile = tile;
-
         this.pos = pos;
+        this.toReserved = false;
+        this.reservedSlotIndex = -1;
     }
+
+    public PlaceTileRequest(Tile tile, int reservedSlotIndex) {
+        super();
+        this.tile = tile;
+        this.pos = null;
+        this.toReserved = true;
+        this.reservedSlotIndex = reservedSlotIndex;
+    }
+
 
     public Position getPos() {
         return pos;
     }
 
+    public boolean isToReserved() {
+        return toReserved;
+    }
+
+    public int getReservedSlotIndex() {
+        return reservedSlotIndex;
+    }
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);

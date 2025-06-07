@@ -466,7 +466,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
             while (input.equals("m") || input.equals("menu") || input.equals("?")) {
                 menuManager.showCurrentMenu();
-                input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
+                input = readLine("\nChoose an option (a–j) or menu: ").trim().toLowerCase();
 
             }
 
@@ -676,7 +676,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                         break;
                     }
                     case"4":{
-                        System.out.println("[DEBUG] You selected option 4: reclaimTile() will be called");
+//                        System.out.println("[DEBUG] You selected option 4: reclaimTile() will be called");
                         clientController.reclaimTile();
                         validInput = true;
                         break;
@@ -715,7 +715,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
                 String input = readLine("Enter the Tile ID to draw, or use R to refresh: ").trim().toLowerCase();
                 if (checkReset(input)) return;
-                ;
+
 
                 if (input.equalsIgnoreCase("R")) {
                     out.println("Refreshing tile list");
@@ -811,7 +811,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
             }
         }
         if (!isPicking) {
-            if (clientController.hasTileInHand() && !isPicking) {
+            if (clientController.hasTileInHand()) {
                 if ((reservedTiles[0] == null || reservedTiles[1] == null)) {
                     showTileSlots();
                     enableInput();
@@ -856,12 +856,49 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
     public void askTilePlacement() {
         enableInput();
         try {
-
             if (!clientController.hasTileInHand()) {
-                out.println(" No tile in hand to place.");
+                out.println("No tile in hand to place.");
                 showBuildingMenu();
                 return;
             }
+
+            out.println("Current tile info:");
+            printTile(clientController.getCurrentTileInHand());
+
+            String input;
+            do {
+                out.println("Where do you want to place this tile?");
+                out.println("1) Place on ship");
+                out.println("2) Place in reserved slot");
+
+                input = readLine("Choose (1/2): ").trim().toLowerCase();
+                if (checkReset(input)) return;
+
+                switch (input) {
+                    case "1":
+                        choosePlaceTileInShip();
+                        return;
+                    case "2":
+                        askPickOrPlaceReservedTile(false);
+                        return;
+                    default:
+                        out.println("Invalid input. Please choose 1 or 2.");
+                }
+            } while (true);
+
+        } catch (Exception e) {
+            out.println("Error during tile placement.");
+            e.printStackTrace();
+        } finally {
+            disableInput();
+        }
+
+
+    }
+
+    private void choosePlaceTileInShip(){
+        enableInput();
+        try {
 
             out.println(" Current tile info:");
             printTile(clientController.getCurrentTileInHand());

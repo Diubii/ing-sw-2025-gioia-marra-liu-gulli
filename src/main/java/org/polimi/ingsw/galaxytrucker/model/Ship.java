@@ -29,7 +29,7 @@ public class Ship implements Serializable {
     private final int shipboardMaxY=5;
 
     private Slot[][] shipBoard = new Slot[shipboardMaxX][shipboardMaxY];
-    private final Slot[] setAsideTiles = new Slot[2];
+    private  Tile[] asideTiles = new Tile[2];
     private int nExposedConnector;
     private int destroyedTiles;
     private int nBatterieLeft;
@@ -941,9 +941,11 @@ public class Ship implements Serializable {
         return 0;
     }
 
-    public Slot[] getSetAsideTiles() {
-        return setAsideTiles;
+    public Tile[] getAsideTiles() {
+        return asideTiles;
     }
+
+
 
     public int calculateEnginePower() {
 

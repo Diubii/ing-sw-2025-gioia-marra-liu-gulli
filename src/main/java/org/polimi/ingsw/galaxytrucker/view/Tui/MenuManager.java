@@ -57,10 +57,9 @@ public class MenuManager {
         out.println("f. Rotate tile in hand ");
         out.println("g. Place tile");
         out.println("h. Discard tile");
-        out.println("i. Reserve a tile in one of the slot(1 o 2)");
-        out.println("j. Finish building");
+        out.println("i. Finish building");
         if (!learningMatch) {
-            out.println("k. See Timers Status/ Flip Timer");
+            out.println("j. See Timers Status/ Flip Timer");
         }
         out.println("menu. show menu");
         out.println("reset. reset ");
