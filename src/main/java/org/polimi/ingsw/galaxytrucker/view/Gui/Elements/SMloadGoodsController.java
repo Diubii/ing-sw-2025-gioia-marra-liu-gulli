@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.view.Gui.FlightController;
@@ -18,14 +19,16 @@ public class SMloadGoodsController {
 
     private ClientController clientController;
     private FlightController flightController;
+    private HBox container;
 
     private ArrayList<Good> goods;
     @FXML private FlowPane listaGoods;
 
-    public void initialize(ClientController clientController, FlightController flightController, ArrayList<Good> goods) {
+    public void initialize(ClientController clientController, FlightController flightController, ArrayList<Good> goods, HBox container) {
         this.clientController = clientController;
         this.flightController = flightController;
         this.goods = goods;
+        this.container = container;
 
         //Disegnare goods in lista
         updateGoodView();
@@ -34,15 +37,9 @@ public class SMloadGoodsController {
     }
 
     public void fineLoad(){
-        try {
-            clientController.sendShipForGoodUpdate();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        clientController.handleLoadGoodChoice("f");
+        container.getChildren().clear();
+
     }
 
     public void dropGood() {

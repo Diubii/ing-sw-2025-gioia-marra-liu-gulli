@@ -854,6 +854,25 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void showEndGame(ArrayList<PlayerScore> scores) {
         //simile a lobby ma con gli scores quindi ok
+        System.out.println("Debug: showEndGame");
+        Platform.runLater(() -> {
+            Parent root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Scores.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                ScoresController pageController = loader.getController();
+                pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
+                pageController.updateScores(scores);
+                actualPageController = pageController;
+                //3-impostare la nuova root alla scena principale
+                primaryScene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 

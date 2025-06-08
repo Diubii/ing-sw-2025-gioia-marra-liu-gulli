@@ -206,7 +206,7 @@ public class FlightController extends GenericGamePhaseSceneController {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 SMloadGoodsController pageController = loader.getController();
-                pageController.initialize(clientController, this,goods );
+                pageController.initialize(clientController, this,goods ,subMenu);
                 root.setMaxWidth(Double.MAX_VALUE);
                 root.setMaxHeight(Double.MAX_VALUE);
                 //3-impostare la nuova root alla scena principale
