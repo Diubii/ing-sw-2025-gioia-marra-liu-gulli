@@ -10,6 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -42,6 +43,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class BuildingController extends GenericGamePhaseSceneController {
 
@@ -73,6 +75,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private Pane overlayPane;
     @FXML private ImageView asideTile1;
     @FXML private ImageView asideTile2;
+    @FXML private Button BtnFinishBuilding;
 
     private ArrayList<SingleShipController> shipControllers;
 
@@ -206,12 +209,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
 
     public void pescaRandom(ActionEvent actionEvent){
-        if(clientController.getCurrentTileInHand() != null){
-            //Suono di errore
-            //Flicker o animazione di tile inhand
-
-        }
-        else{
+        if(clientController.getCurrentTileInHand() == null){
             clientController.handleDrawFaceDownTile();
             GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         }
@@ -244,21 +242,25 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
                 if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
 
-                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController,true,details);
+                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController,true,details,null);
 
                 } else {
-                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details);
+                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null);
                 }
             }
         }
+
+        //potrebbe essere uno ship update con questa modifica
+        updateSetAsideTiles();
 
     }
 
 
     public void finishBuilding(ActionEvent e){
         //Disable di tutto ciò che è interagibile aparte la clessidra in teoria
-        clientController.handleBuildingMenuChoice("j");
+        clientController.handleBuildingMenuChoice("i");
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
+        BtnFinishBuilding.setDisable(true);
     }
 
     /**
@@ -402,16 +404,12 @@ public class BuildingController extends GenericGamePhaseSceneController {
             //Se ho in mano ed è vuota metto li
             if(clientController.getReservedTiles()[pos] == null){
                 clientController.handlePickReservedTile(pos, false);
-                updateSetAsideTiles();
-                hideZonaPescata();
             }
         }
         else {
             //Se ho mano vuota e li c'è qualcosa la prendo
             if (clientController.getReservedTiles()[pos] != null) {
                 clientController.handlePickReservedTile(pos, true);
-                updateSetAsideTiles();
-                showDrawnTile(clientController.getCurrentTileInHand());
             }
         }
     }
@@ -421,13 +419,13 @@ public class BuildingController extends GenericGamePhaseSceneController {
      */
     public void updateSetAsideTiles(){
         List<ImageView> imageViews = List.of(asideTile1,asideTile2);
-        for(int i =0; i< clientController.getReservedTiles().length; i++){
-            if(clientController.getReservedTiles()[i] != null){
-                String tileIdVal = String.valueOf(clientController.getReservedTiles()[i].getId());
+        for(int i =0; i< clientController.getMyShip().getAsideTiles().length; i++){
+            if(clientController.getMyShip().getAsideTiles()[i] != null){
+                String tileIdVal = String.valueOf(clientController.getMyShip().getAsideTiles()[i].getId());
                 String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
                 Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
                 imageViews.get(i).setImage(img);
-                imageViews.get(i).setRotate(clientController.getReservedTiles()[i].getRotation());
+                imageViews.get(i).setRotate(clientController.getMyShip().getAsideTiles()[i].getRotation());
             }
             else{
                 String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/empty.jpg";

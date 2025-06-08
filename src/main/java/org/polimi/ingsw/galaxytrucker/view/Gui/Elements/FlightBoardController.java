@@ -54,7 +54,6 @@ public class FlightBoardController {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 StackPane cell = new StackPane();
-                cell.setStyle("-fx-border-color: red"); // utile se vuoi aggiungere stile
                 grid.add(cell, col, row);
             }
         }
@@ -97,16 +96,16 @@ public class FlightBoardController {
     private void compileBoardCell(int x, int y,int position,FlightBoard flightBoard) {
         clearStack(x,y);
         //Immagine vuota
-        String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/empty.jpg";
+        String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/emptyBoardSlot.png";
         Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
         String pathSegnalino = "";
         addImageAt(x,y,img);
         if(flightBoard.getFlightBoardMap().getFlightBoardMapSlots().get(position).getPlayerToken() != Color.EMPTY){
             switch (flightBoard.getFlightBoardMap().getFlightBoardMapSlots().get(position).getPlayerToken()) {
-                case RED -> pathSegnalino = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarRosso.png";
-                case BLUE -> pathSegnalino = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png";
-                case GREEN -> pathSegnalino = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarVerde.png";
-                case YELLOW -> pathSegnalino = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarGiallo.png";
+                case RED -> pathSegnalino = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/razzoRosso.png";
+                case BLUE -> pathSegnalino = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/razzoBlu.png";
+                case GREEN -> pathSegnalino = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/razzoVerde.png";
+                case YELLOW -> pathSegnalino = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/razzoGiallo.png";
             }
             Image segnalino = new Image(zUtils.class.getResource(pathSegnalino).toExternalForm());
             addImageAt(x,y,segnalino);

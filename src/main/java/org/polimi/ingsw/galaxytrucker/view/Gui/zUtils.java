@@ -3,21 +3,28 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentGuiDetailsRotationVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
+import static org.polimi.ingsw.galaxytrucker.view.Tui.util.InputUtils.parseCoordinate;
 
 public class zUtils {
 
@@ -35,7 +42,7 @@ public class zUtils {
      */
     //TODO magari aggiungere action o altri parametri per indicare nella fase di volo cosa si può fare:
     //TODO ad esempio un tipo di componente da selezionare oppure che tipi di interazioni, sacrifica crew o altro...
-    public static void showShipInGrid(Ship ship, GridPane griglia, ClientController clientController,Boolean editable,Boolean viewDetails) {
+    public static void showShipInGrid(Ship ship, GridPane griglia, ClientController clientController,Boolean editable,Boolean viewDetails,FlightController flightController) {
 
         //Empty the grid from previous configuration
         griglia.getChildren().clear();
@@ -71,7 +78,7 @@ public class zUtils {
                     imageView.fitHeightProperty().bind(griglia.prefHeightProperty().divide(5));
 
                     if(viewDetails) {
-                        ComponentGuiDetailsRotationVisitor visitor = new ComponentGuiDetailsRotationVisitor(stackPane,imageView,rotation);
+                        ComponentGuiDetailsRotationVisitor visitor = new ComponentGuiDetailsRotationVisitor(clientController,flightController,stackPane,imageView,rotation);
                         tile.getMyComponent().accept(visitor);
                     }
                     stackPane.setRotate(rotation);
@@ -121,64 +128,75 @@ public class zUtils {
                 GridPane.setFillHeight(stackPane, true);
 
 
-
+                ComponentNameVisitor namevisitor = new ComponentNameVisitor();
                 if(editable){
                     //Tutto fatto con click ma dipende dalla fase:
                     stackPane.setOnMouseClicked(event -> {
+                        if(event.getButton() == MouseButton.PRIMARY) {
 
-                        switch (clientController.getPhase()){
-                            case SHIP_CHECK:
-                                //RIMOZIONE DI QUALUNQUE TILE
+                            switch (clientController.getPhase()) {
+                                case SHIP_CHECK:
+                                    //RIMOZIONE DI QUALUNQUE TILE
 
-                                //Todo: fatto lato client e poi solo al checkship server viene avvisato, ci potrebbe anche stare eh
-                                //Edito una copia locale , poi dico quali ho cancellato e server mi ridà. (in teoria)
-                                clientController.getMyModel().addTileToRemove(tile.getId());
-                                ship.removeTile(pos, true);
-                                showShipInGrid(ship,griglia,clientController,editable,viewDetails);
+                                    //Todo: fatto lato client e poi solo al checkship server viene avvisato, ci potrebbe anche stare eh
+                                    //Edito una copia locale , poi dico quali ho cancellato e server mi ridà. (in teoria)
+                                    clientController.getMyModel().addTileToRemove(tile.getId());
+                                    ship.removeTile(pos, true);
+                                    showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController);
 
-                                break;
-                            case CREW_INIT:
-
-                                ComponentNameVisitor visitor = new ComponentNameVisitor();
-                                //Solo se cabina con supporto vitale vicino
-                                if(tile.getMyComponent().accept(visitor) == "ModularHousingUnit" &&
-                                    (Util.checkNearLFS(new Position(fX,fY), AlienColor.BROWN,ship) ||
-                                    Util.checkNearLFS(new Position(fX,fY), AlienColor.PURPLE,ship))){
-
-                                    //Editare a giro Crew tra varie possibilità e tenere aggiornato CrewInitUpdate
-                                    ((GuiJavaFx)clientController.getView()).editPositionCrew(fX,fY);
-                                    //Redraw
-                                    showShipInGrid(ship,griglia,clientController,editable,viewDetails);
-                                }
-
-                                break;
-
-                            //FLIGHT sacrificare Crew, caricare merci quindi qualcosa per indicare quello.
+                                    break;
+                                case CREW_INIT:
 
 
-                            case null, default:
-                                if(clientController.getCurrentTileInHand() != null) {
-                                    try {
-                                        if(clientController.getMyShip().getShipBoard()[fX][fY].getTile() == null) {
-                                            clientController.setCurrentPos(fX, fY);
-                                            clientController.handleTilePlacement(true);
+                                    //Solo se cabina con supporto vitale vicino
+                                    if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" &&
+                                            (Util.checkNearLFS(new Position(fX, fY), AlienColor.BROWN, ship) ||
+                                                    Util.checkNearLFS(new Position(fX, fY), AlienColor.PURPLE, ship))) {
+
+                                        //Editare a giro Crew tra varie possibilità e tenere aggiornato CrewInitUpdate
+                                        ((GuiJavaFx) clientController.getView()).editPositionCrew(fX, fY);
+                                        //Redraw
+                                        showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController);
+                                    }
+
+                                    break;
+
+                                //FLIGHT sacrificare Crew, caricare merci quindi qualcosa per indicare quello.
+                                case FLIGHT:
+                                    //per batterie fa togliere batteria
+
+                                    //per magazzino controlla la inHandGood,
+                                    //ma su ogni singolo slot, eventi in ComponentGuiDetailsRotation
+
+
+                                    //per cabine fa scartare uno di crew
+                                    break;
+
+
+                                case null, default:
+                                    if (clientController.getCurrentTileInHand() != null) {
+                                        try {
+                                            if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() == null) {
+                                                clientController.setCurrentPos(fX, fY);
+                                                clientController.handleTilePlacement(true);
+                                            }
+                                        } catch (ExecutionException e) {
+                                            throw new RuntimeException(e);
+                                        } catch (InvalidTilePosition e) {
+                                            throw new RuntimeException(e);
                                         }
-                                    } catch (ExecutionException e) {
-                                        throw new RuntimeException(e);
-                                    } catch (InvalidTilePosition e) {
-                                        throw new RuntimeException(e);
+                                    } else {
+                                        if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
+                                            //Todo: rimozione tile già piazzata
+                                            clientController.reclaimTile();
+                                        }
                                     }
-                                }else{
-                                    if(clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
-                                        //Todo: rimozione tile già piazzata
+                                    break;
 
-                                    }
-                                }
-                                break;
-
+                            }
+                            event.consume();
                         }
 
-                        event.consume();
                     });
                 }
 

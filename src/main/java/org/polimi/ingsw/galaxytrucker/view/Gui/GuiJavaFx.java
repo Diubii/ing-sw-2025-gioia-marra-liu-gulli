@@ -10,10 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -86,13 +83,19 @@ public class GuiJavaFx implements View {
 
         primaryScene.setOnKeyPressed(event -> {
             if(controller.getCurrentTileInHand() != null) {
-                if (event.getCode() == KeyCode.Q) {
+                if (event.getCode() == KeyCode.Q || event.getCode() == KeyCode.LEFT) {
                     controller.rotateCurrentTile(-90);
 
-                } else if (event.getCode() == KeyCode.E) {
+                } else if (event.getCode() == KeyCode.E || event.getCode() == KeyCode.RIGHT) {
                     controller.rotateCurrentTile(+90);
 
                 }
+            }
+        });
+
+        primaryScene.setOnMouseClicked(event -> {
+            if(event.getButton() == MouseButton.SECONDARY){
+                controller.rotateCurrentTile(+90);
             }
         });
 
@@ -830,13 +833,16 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void askLoadGoodChoice() {
         System.out.println("Debug: askLoadGoodChoice");
+        //Sempre come se accettasse. massimo poi decide subito di fare termina e scartare tutto
+
+        askSelectGoodToLoad( controller.getMyModel().getUnplacedGoods(), controller.getMyModel().getMyInfo().getShip());
 
     }
 
     @Override
     public void askSelectGoodToLoad(ArrayList<Good> goods, Ship myShip) {
         System.out.println("Debug: askSelectGoodToLoad");
-
+        ((FlightController)actualPageController).handleGoodsLoading(goods);
     }
 
     @Override

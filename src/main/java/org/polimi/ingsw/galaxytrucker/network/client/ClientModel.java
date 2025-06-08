@@ -99,6 +99,7 @@ public class ClientModel {
         this.faceUpTiles = faceUpTiles;
     }
 
+    //Todo: eliminare si usano quelle in myship che sono aggiornate lato server
     public Tile[] getReservedTiles() {
         if (myInfo != null && myInfo.getShip() != null) {
             return myInfo.getShip().getAsideTiles();

@@ -14,14 +14,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
-import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.adventurecards.Planets;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DrawAdventureCardRequest;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
-import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.*;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardPrintUtils;
 
@@ -42,6 +40,8 @@ public class FlightController extends GenericGamePhaseSceneController {
     private SingleShipController shipController;
     private FlightBoardController flightBoardController;
 
+    private Good inHandGood;
+
     @FXML private ImageView cardView;
     @FXML private HBox imageBox;
     @FXML private HBox subMenu;
@@ -60,6 +60,9 @@ public class FlightController extends GenericGamePhaseSceneController {
     @FXML private RadioButton radio2;
     @FXML private RadioButton radio3;
     @FXML private RadioButton radio4;
+
+    @FXML private StackPane  mainStackPane;
+    @FXML private ImageView inHandGoodImg;
 
 
 
@@ -141,9 +144,79 @@ public class FlightController extends GenericGamePhaseSceneController {
             }
         });
 
+        mainStackPane.setOnMouseMoved(event -> {
+            inHandGoodImg.setLayoutX(event.getX() - inHandGoodImg.getFitWidth() / 2);
+            inHandGoodImg.setLayoutY(event.getY() - inHandGoodImg.getFitHeight() / 2);
+
+        });
 
     }
 
+    public void showPickedGood(){
+        //Mostra il good attualmente in mano
+        //Switch solito e bona
+         String pathMerce = null;
+
+        switch (inHandGood.getColor()) {
+            case YELLOW ->
+                    pathMerce = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/merceGialla.png";
+            case RED ->
+                    pathMerce = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/merceRossa.png";
+            case GREEN ->
+                    pathMerce = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/merceVerde.png";
+            case BLUE ->
+                    pathMerce = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/merceBlu.png";
+        }
+
+        Image img = new Image(zUtils.class.getResource(pathMerce).toExternalForm());
+
+        inHandGoodImg.setImage(img);
+        inHandGoodImg.setVisible(true);
+        inHandGoodImg.setFitHeight(80.00);
+        inHandGoodImg.setFitWidth(80.00);
+    }
+
+    /**
+     * Hides the overlay with the current inHandGood
+     */
+    public void hideHand(){
+        inHandGoodImg.visibleProperty().set(false);
+    }
+
+    public Good getCurrentInHandGood(){
+        return inHandGood;
+    }
+
+    public void setCurrentInHandGood(Good inHandGood){
+        this.inHandGood = inHandGood;
+    }
+
+    public void handleGoodsLoading(ArrayList<Good> goods) {
+        //Mostrare sotto menù e config tutto
+        Platform.runLater(() -> {
+            //C'è altro oltre al layout di default (Altri menu left aperti)
+            if(subMenu.getChildren().size() > 0 ){
+                subMenu.getChildren().removeLast();
+            }
+            VBox root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMloadGoods.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                SMloadGoodsController pageController = loader.getController();
+                pageController.initialize(clientController, this,goods );
+                root.setMaxWidth(Double.MAX_VALUE);
+                root.setMaxHeight(Double.MAX_VALUE);
+                //3-impostare la nuova root alla scena principale
+                HBox.setHgrow(root, Priority.ALWAYS);
+                subMenu.getChildren().add(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
     @Override
     public void ShowGenericMessage(String message) {
@@ -236,8 +309,18 @@ public class FlightController extends GenericGamePhaseSceneController {
             editable = true;
         }
 
+        //Allineare selected in menu laterale
+        List<RadioButton> radioButtons = List.of(radio1, radio2, radio3 , radio4);
+        for(int i = 0 ; i< mymodel.getPlayerInfos().size(); i++){
+            if(Nickname.equals(mymodel.getPlayerInfos().get(i).getNickName())){
+                radioButtons.get(i).selectedProperty().set(true);
+            }
+            else{
+                radioButtons.get(i).selectedProperty().set(false);
+            }
+        }
 
-        zUtils.showShipInGrid(ship, shipController.getShipGrid(), clientController,editable,true);
+        zUtils.showShipInGrid(ship, shipController.getShipGrid(), clientController,editable,true,this);
 
     }
 

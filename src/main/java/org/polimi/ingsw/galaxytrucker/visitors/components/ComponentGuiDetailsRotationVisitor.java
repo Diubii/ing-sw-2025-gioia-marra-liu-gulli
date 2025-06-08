@@ -5,9 +5,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
+import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
+import org.polimi.ingsw.galaxytrucker.view.Gui.FlightController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.zUtils;
 
 import java.util.ArrayList;
@@ -17,15 +22,19 @@ import java.util.List;
 public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInterface<StackPane>{
 
 
-    StackPane stackPane;
-    ImageView imageView;
-    int rotation;
+    private StackPane stackPane;
+    private ImageView imageView;
+    private int rotation;
+    private FlightController flightController;
+    private ClientController clientController;
 
 
-    public ComponentGuiDetailsRotationVisitor(StackPane stackPane, ImageView imageView, int rotation) {
+    public ComponentGuiDetailsRotationVisitor(ClientController clientController,FlightController flightController, StackPane stackPane, ImageView imageView, int rotation) {
         this.stackPane = stackPane;
         this.imageView = imageView;
         this.rotation = rotation;
+        this.flightController = flightController;
+        this.clientController = clientController;
     }
 
     @Override
@@ -232,18 +241,18 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
                 group.getChildren().add(due);
                 due.layoutXProperty().bind(
                         Bindings.createDoubleBinding(() ->
-                                        imageView.getBoundsInParent().getWidth() * normalizedX2,
+                                imageView.getBoundsInParent().getWidth() * normalizedX2,
                                 imageView.boundsInParentProperty())
                 );
                 due.layoutYProperty().bind(
                         Bindings.createDoubleBinding(() ->
-                                        imageView.getBoundsInParent().getHeight() * normalizedY2,
+                                imageView.getBoundsInParent().getHeight() * normalizedY2,
                                 imageView.boundsInParentProperty())
                 );
                 // Binding larghezza (scalata con il magazzino)
                 due.fitWidthProperty().bind(
                         Bindings.createDoubleBinding(() ->
-                                        imageView.getBoundsInParent().getWidth() * relativeWidth,
+                                imageView.getBoundsInParent().getWidth() * relativeWidth,
                                 imageView.boundsInParentProperty())
                 );
                 //TERZA
@@ -254,24 +263,51 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
                 group.getChildren().add(tre);
                 tre.layoutXProperty().bind(
                         Bindings.createDoubleBinding(() ->
-                                        imageView.getBoundsInParent().getWidth() * normalizedX2,
+                                imageView.getBoundsInParent().getWidth() * normalizedX2,
                                 imageView.boundsInParentProperty())
                 );
                 tre.layoutYProperty().bind(
                         Bindings.createDoubleBinding(() ->
-                                        imageView.getBoundsInParent().getHeight() * normalizedY3,
+                                imageView.getBoundsInParent().getHeight() * normalizedY3,
                                 imageView.boundsInParentProperty())
                 );
                 // Binding larghezza (scalata con il magazzino)
                 tre.fitWidthProperty().bind(
                         Bindings.createDoubleBinding(() ->
-                                        imageView.getBoundsInParent().getWidth() * relativeWidth,
+                                imageView.getBoundsInParent().getWidth() * relativeWidth,
                                 imageView.boundsInParentProperty())
                 );
                 break;
         }
 
         String pathMerce = null;
+
+        for(int k = 0; k < slots.size(); k++){
+            int finalK = k;
+            slots.get(k).setOnMouseClicked(event -> {
+                if(event.getButton() == MouseButton.PRIMARY){
+                    //Posiziono
+                    if (flightController.getCurrentInHandGood() != null) {
+                        if (flightController.getCurrentInHandGood().getColor() != Color.RED ||
+                                (flightController.getCurrentInHandGood().getColor() == Color.RED && component.isSpecial())) {
+                            if (!component.isFull()) {
+                                component.playerLoadGood(flightController.getCurrentInHandGood());
+                                flightController.setCurrentInHandGood(null);
+                                flightController.hideHand();
+                                flightController.showShip(clientController.getMyModel().getMyInfo().getShip(),clientController.getMyModel().getMyInfo().getNickName());
+                            }
+                        }
+                    }
+                    else if(flightController.getCurrentInHandGood() == null && component.getGoods().size() > finalK && component.getGoods().get(finalK) != null){
+                        //Riprendo
+                        flightController.setCurrentInHandGood(component.getGoods().get(finalK));
+                        flightController.showPickedGood();
+                        component.removeGood(component.getGoods().get(finalK));
+                        flightController.showShip(clientController.getMyModel().getMyInfo().getShip(),clientController.getMyModel().getMyInfo().getNickName());
+                    }
+                }
+            });
+        }
 
         for(int i=0; i< component.getnMaxContainers();i++){
             System.out.println("Dimensione goods: "+component.getGoods().size());

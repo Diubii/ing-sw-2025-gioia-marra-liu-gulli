@@ -119,6 +119,13 @@ public class ClientController implements Observer {
         });
     }
 
+    public void setIsPlaced(Boolean isPlaced) {
+        this.isPlaced = isPlaced;
+    }
+
+    public Boolean getIsPlaced() {
+        return isPlaced;
+    }
 
     @Override
     public void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException {
@@ -1440,7 +1447,7 @@ public void handleDrawReservedTile (int slotIndex){
             Planet selectedPlanet = update.getSelectedPlanet();
             myModel.setSelectedPlanet(selectedPlanet);
             myModel.setUnplacedGoods(selectedPlanet.getGoods());
-//            view.askLoadGoodChoice();
+            view.askLoadGoodChoice();
 
         }
     }
@@ -1731,6 +1738,8 @@ public void handleDrawReservedTile (int slotIndex){
     public void setCurrentTileInHand(Tile currentTileInHand) {
         this.currentTileInHand = currentTileInHand;
     }
+
+    //Todo : eliminare
     public Tile[] getReservedTiles() {
         return myModel.getReservedTiles();
     }
