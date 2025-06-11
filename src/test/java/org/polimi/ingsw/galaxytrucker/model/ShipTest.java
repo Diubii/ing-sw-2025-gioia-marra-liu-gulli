@@ -153,7 +153,7 @@ class ShipTest {
         ship.putTile(engineT1, pos1);
         ship.putTile(engineT2, pos2);
         ship.putTile(doubleET1, pos3);
-        ArrayList<Position>  enginePos = ship.getEnginePos();
+
         int power = ship.calculateEnginePower();
 
         assertEquals(3, power);

@@ -163,20 +163,20 @@ public class MockResponsesFactory {
         ArrayList<Planet> planetsToLoad = planets.getPlanets();
         responses.put(playerA.getNickName(), new ArrayList<>(
                 List.of(
-                        new SelectPlanetResponse(planetsToLoad.get(0),0 ),
+                        new SelectPlanetResponse(planetsToLoad.get(0),1 ),
                         new ShipUpdate(playerA.getShip(), playerA.getNickName())
 
                 )));
         responses.put(playerB.getNickName(), new ArrayList<>(
                 List.of(
-                        new SelectPlanetResponse(planetsToLoad.get(1),1 ),
+                        new SelectPlanetResponse(planetsToLoad.get(1),2 ),
                         new ShipUpdate(playerB.getShip(), playerB.getNickName())
 
                 )
                 ));
         responses.put(playerC.getNickName(), new ArrayList<>(
                 List.of(
-                        new SelectPlanetResponse(planetsToLoad.get(2),2 ),
+                        new SelectPlanetResponse(planetsToLoad.get(2),3 ),
                         new ShipUpdate(playerC.getShip(), playerC.getNickName())
 
                 )));

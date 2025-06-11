@@ -950,7 +950,7 @@ public class Ship implements Serializable {
     public int calculateEnginePower() {
 
         ArrayList<Position> enginePos = getComponentPositionsFromName("Engine");
-        ArrayList<Position> doubleEnginePos = getComponentPositionsFromName("doubleEngine");
+        ArrayList<Position> doubleEnginePos = getComponentPositionsFromName("DoubleEngine");
 
         ArrayList<Position> allEnginePos = new ArrayList<>();
         allEnginePos.addAll(enginePos);

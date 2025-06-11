@@ -1261,11 +1261,12 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
     public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {
-        for (ClientHandler clientHandler : clients) {
-            String nickname = getNicknameFromClientHandler(clientHandler);
-            NetworkMessageType networkMessageType = message.accept(networkMessageNameVisitor);
+        NetworkMessageType networkMessageType = message.accept(networkMessageNameVisitor);
 
-            System.out.println("[DEBUG] Sending"+ message +"to: " +   nickname);
+//        System.out.println("[DEBUG] Broadcasting"+ message );
+        for (ClientHandler clientHandler : clients) {
+//            String nickname = getNicknameFromClientHandler(clientHandler);
+
             clientHandler.sendMessage(message);
         }
     }
