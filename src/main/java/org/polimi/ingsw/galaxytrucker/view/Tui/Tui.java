@@ -1402,7 +1402,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                         choice = -1;
                     }
 
-                    if (!landablePlanets.containsKey(choice)) {
+                    if (!landablePlanets.containsKey(choice) && choice != 0 ) {
                         System.out.println("Input non valido.");
                         continue;
                     }
