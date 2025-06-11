@@ -66,6 +66,7 @@ public class GuiJavaFx implements View {
 
 
 
+
     public GuiJavaFx(Stage primaryStage,Scene primaryScene, ClientController controller, ClientModel mymodel) {
         this.primaryStage = primaryStage;
         this.controller = controller;
@@ -215,7 +216,7 @@ public class GuiJavaFx implements View {
 
     @Override
     public void forceReset() {
-
+        //Not used for GUI
     }
 
 
@@ -248,27 +249,6 @@ public class GuiJavaFx implements View {
             //Todo Riattivare musica
            // musicManager.playBackgroundMusic("CRMIntroMenu.wav",true);
         });
-        /*Platform.runLater(() -> {
-            VBox layout = new VBox(10);
-            Button create = new Button("Create Room");
-            Button join = new Button("Join Room");
-            create.setOnAction(e -> {
-                try {
-                    controller.handleCreateOrJoinChoice("a");
-                } catch (ExecutionException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-            join.setOnAction(e -> {
-                try {
-                    controller.handleCreateOrJoinChoice("b");
-                } catch (ExecutionException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-            layout.getChildren().addAll(new Label("Choose an option:"), create, join);
-            primaryStage.setScene(new Scene(layout, 300, 150));
-        });*/
     }
 
     @Override
@@ -291,92 +271,41 @@ public class GuiJavaFx implements View {
                 e.printStackTrace();
             }
         });
-
-            /*VBox layout = new VBox(10);
-            TextField players = new TextField();
-            players.setPromptText("Max Players (2-4)");
-            CheckBox learning = new CheckBox("Learning Match");
-            Button create = new Button("Create");
-            create.setOnAction(e -> {
-                try {
-                    int max = Integer.parseInt(players.getText());
-                    controller.handleCreateChoice(max, learning.isSelected());
-                } catch (Exception ex) {
-                    showGenericMessage("Invalid input: " + ex.getMessage());
-                }
-            });
-            layout.getChildren().addAll(players, learning, create);
-            primaryStage.setScene(new Scene(layout, 300, 200));*/
-
     }
 
     @Override
     public void askRoomCode() {
         // now embedded inside showLobbies scene, this method can be left empty or removed
         // kept for interface compliance
-
     }
 
 
-@Override
-public void showLobbies(List<LobbyInfo> lobbies) {
-    System.out.println("DEBUG: showLobbies");
-    Platform.runLater(() -> {
-        Parent root;
-        FXMLLoader loader;
-        try {
-            //1-Prima caricare FXML
-            loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/ListLobby.fxml"));
-            root = loader.load();
-            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-            ListLobbyController pageController = loader.getController();
-            pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
-            pageController.UpdateLobbyList(lobbies);
-            actualPageController = pageController;
-            //3-impostare la nuova root alla scena principale
-            primaryScene.setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    });
-    /*
-    Platform.runLater(() -> {
-        //Può passare lista lobby a controller pagina da metodo inizializzazione
-        VBox layout = new VBox(10);
-
-        Label instruction = new Label("Click on a lobby to join it, or enter an ID manually:");
-        layout.getChildren().add(instruction);
-
-        for (LobbyInfo info : lobbies) {
-            Button b = new Button("Lobby " + info.getLobbyID() + ": " + info.getHost());
-            b.setOnAction(e -> controller.handleJoinChoice(info.getLobbyID()));
-            layout.getChildren().add(b);
-        }
-
-        HBox manualJoin = new HBox(10);
-        TextField roomIdField = new TextField();
-        roomIdField.setPromptText("Enter Room ID");
-        Button joinBtn = new Button("Join");
-        joinBtn.setOnAction(e -> {
+    @Override
+    public void showLobbies(List<LobbyInfo> lobbies) {
+        System.out.println("DEBUG: showLobbies");
+        Platform.runLater(() -> {
+            Parent root;
+            FXMLLoader loader;
             try {
-                int id = Integer.parseInt(roomIdField.getText().trim());
-                controller.handleJoinChoice(id);
-            } catch (NumberFormatException ex) {
-                showGenericMessage("Invalid room ID format.");
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/ListLobby.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                ListLobbyController pageController = loader.getController();
+                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.UpdateLobbyList(lobbies);
+                actualPageController = pageController;
+                //3-impostare la nuova root alla scena principale
+                primaryScene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
-        manualJoin.getChildren().addAll(roomIdField, joinBtn);
-        layout.getChildren().add(manualJoin);
-
-        primaryStage.setScene(new Scene(layout, 400, 400));
-    });
-    */
-
-}
+    }
 
     @Override
     public void toShowCurrentMenu() {
-
+        //Non utilizzato perchè sono sempre visibili i menu della Gui
     }
 
 
@@ -436,13 +365,13 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void handleChoiceForPhase(GameState phase) {
-
+        //Gestite con sottomenu prefatti e controller di quelle pagine specifici
     }
 
     @Override
     public void handlePhaseUpdate(PhaseUpdate update) {
         System.out.println("DEBUG: handlePhaseUpdate "+update.getState().name());
-        //Fare rendering totali per tutto quel che serve di preparare quando carichi nuove pagine
+        //Useful if the ClientController does not invoke directly a showSomething method specific for menu
         switch (update.getState()){
             case BUILDING_START:
                 showBuildingMenu();
@@ -465,9 +394,6 @@ public void showLobbies(List<LobbyInfo> lobbies) {
             case FLIGHT:
                 showFlightMenu();
             break;
-            case END:
-               // showEndGame();
-            break;
             case null, default: showGenericMessage("Phase changed: " + update.getState().name());
             break;
         }
@@ -475,7 +401,6 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void showBuildingMenu() {
-
         System.out.println("DEBUG: showBuildingMenu");
         if(!actualPageController.pageName().equals("BuildingPage")){
             Platform.runLater(() -> {
@@ -500,19 +425,6 @@ public void showLobbies(List<LobbyInfo> lobbies) {
                 }
             });
         }
-
-
-        /*
-        Platform.runLater(() -> {
-            VBox layout = new VBox(10);
-            String[] options = {"a) Fetch Ship", "d) Draw Tile", "e) Show Tile", "f) Rotate", "g) Move", "h) Place", "j) Finish"};
-            for (String op : options) {
-                Button b = new Button(op);
-                b.setOnAction(e -> controller.handleBuildingMenuChoice(op.substring(0, 1)));
-                layout.getChildren().add(b);
-            }
-            primaryStage.setScene(new Scene(layout, 400, 300));
-        });*/
     }
 
     @Override
@@ -530,32 +442,32 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void FetchMyShip() {
-        return;
+        //Automaticamente fatto a ogni ship update, non si può fare manualmente
     }
 
     @Override
     public void askShowFaceUpTiles()  {
-
+        //Automaticamente fatto a ogni update, non si fa a mano
     }
 
     @Override
     public void askFetchShip() {
-        showGenericMessage("Not yet implemented");
+        //Automaticamente fatto a ogni ship update, non si può fare manualmente
     }
 
     @Override
     public void askRotation() {
-        showGenericMessage("Not yet implemented");
+        //Gestito con eventi di click
     }
 
     @Override
     public void askPosition() {
-        showGenericMessage("Not yet implemented");
+        //Gesito con eventi di click
     }
 
     @Override
     public void askViewAdventureDecks() {
-
+        //Gestito con eventi di click
     }
 
     @Override
@@ -580,12 +492,12 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void askChooseTile() {
-
+        //Gestito con Eventi di click e Drag/Drop
     }
 
     @Override
     public void askPickOrPlaceReservedTile(boolean isPicking) {
-
+        //Gestito con eventi di click e Drag/Drop
     }
 
     @Override
@@ -605,12 +517,12 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void showcheckShipMenu() {
-        //Nulla semplicemente rimane con il menu di checkship
+        //Gestita internamente a BuildingController in base a gamePhase
     }
 
     @Override
     public void showembarkCrewMenu() {
-        showGenericMessage("Not yet implemented");
+        //Gestita internamente a BuildingController in base a gamePhase
     }
 
     @Override
@@ -622,16 +534,21 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException {
         System.out.println("Debug: chooseComponent");
+        ((FlightController)actualPageController).handleChooseComponent( component);
     }
 
     @Override
     public void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) throws ExecutionException, InterruptedException {
         System.out.println("Debug: chooseDiscardCrew");
+        //invoco metodo di FlightController
+        ((FlightController) actualPageController).handleDiscradCrew(nCrewToDiscard);
     }
 
     @Override
     public void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException {
         System.out.println("Debug: chooseTroncone");
+        //Todo
+        //Accade in fase di Building e Flight quindi metti in Abstract e casta con quello.
     }
 
     private CrewInitUpdate crewInitUpdate;
@@ -683,7 +600,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
             }
 
         }
-        else{
+        else if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip())){
             //Vicino a marrone
             if(currentHousingUnit.getNBrownAlien() == 0){
                 currentHousingUnit.removeCrewMember();
@@ -697,11 +614,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
                 currentHousingUnit.addHumanCrew();
                 currentHousingUnit.setAlienColor(AlienColor.EMPTY);
             }
-
         }
-
-
-
 
         Position position = new Position(x,y);
         for(int i=0; i< crewInitUpdate.getCrewPos().size() ; i++){
@@ -711,8 +624,6 @@ public void showLobbies(List<LobbyInfo> lobbies) {
         }
         crewInitUpdate.addCrewPos( new Pair<>(position,currentHousingUnit.getAlienColor()));
 
-
-
     }
 
     public void confirmCrew(){
@@ -721,11 +632,11 @@ public void showLobbies(List<LobbyInfo> lobbies) {
             controller.handleCrewInitUpdate(crewInitUpdate);
             System.out.println("CrewInitSent");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -738,22 +649,37 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
     @Override
     public void askActivateAdventureCard() {
+        //Todo
+        //Chiamata a flight controller che tira fuori sottomenu
         System.out.println("Debug: askActivateAdventureCard");
+        ((FlightController)actualPageController).handleAskActivateCard();
     }
 
+    /**
+     * Updates the flightboard
+     * @param flightBoard
+     * @param infoPlayers
+     * @param myinfo
+     */
     @Override
     public void showFlightBoard(FlightBoard flightBoard,ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
+        System.out.println("Debug: showFlightboard");
         ((FlightController)actualPageController).updateBoard();
     }
 
+    /**
+     * SelfExpl
+     */
     @Override
     public void showCurrentAdventureCard() {
-        //Mostra la carta
         System.out.println("Debug: showCurrentAdventureCard");
         ((FlightController)actualPageController).showCurrentAdventureCard();
 
     }
 
+    /**
+     *  Changes the root of the scene with the flightMenu nodeTree
+     */
     @Override
     public void showFlightMenu() {
         System.out.println("DEBUG: showFlightMenu");
@@ -769,10 +695,6 @@ public void showLobbies(List<LobbyInfo> lobbies) {
                     FlightController pageController = loader.getController();
                     pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
                     actualPageController = pageController;
-                    //Impostare tutto il rendering iniziale
-                   /* for (PlayerInfo playerInfo : mymodel.getPlayerInfos()) {
-                        showShip(playerInfo.getShip(), playerInfo.getNickName());
-                    }*/
                     //3-impostare la nuova root alla scena principale
                     primaryScene.setRoot(root);
                 } catch (IOException e) {
@@ -780,13 +702,19 @@ public void showLobbies(List<LobbyInfo> lobbies) {
                 }
             });
         }
+        else{
+            //Richiamato a ogni fine turno dal controller
+            ((FlightController)actualPageController).showEndTurnMenu();
+        }
     }
 
 
+    /**
+     * SelfExpl
+     */
     @Override
     public void showShip(Ship targetShipView, String Nickname) {
         System.out.println("DEBUG: showShip ");
-
         //showShip exists only in the pages of Building and Flight so it's possible to Cast the actualPage in the
         //GenericGamePhaseSceneController designed for those phases of actual gameplay
         Platform.runLater(() -> {
@@ -796,6 +724,7 @@ public void showLobbies(List<LobbyInfo> lobbies) {
 
 
 
+    //NON DOVREBBE ESSERE MAI UTILIZZATO IN TEORIA
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
         Platform.runLater(() -> {
@@ -823,18 +752,14 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     public void showGenericMessage(String message) {
         Platform.runLater(() -> {
             actualPageController.ShowGenericMessage(message);
-            //Ogni page controller gestisce come mostrare
-            // Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
-           // alert.showAndWait();
+            //Ogni singolo page controller gestisce come mostrare
         });
     }
 
-    //Questi metodi direttamente con click e Drag vediamo
     @Override
     public void askLoadGoodChoice() {
         System.out.println("Debug: askLoadGoodChoice");
         //Sempre come se accettasse. massimo poi decide subito di fare termina e scartare tutto
-
         askSelectGoodToLoad( controller.getMyModel().getUnplacedGoods(), controller.getMyModel().getMyInfo().getShip());
 
     }
@@ -848,14 +773,36 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void askSelectGoodToDiscard(Ship myShip) {
         System.out.println("Debug: askSelectGoodToDiscard");
-
+        //Realizzata in altro modo, i goods lasciati li semplicemente non appaiono nello shipupdateforgoods
+        //quindi spariscono, e in ogni fase di caricamento posso scambiare i good come voglio.
     }
 
     @Override
     public void showEndGame(ArrayList<PlayerScore> scores) {
         //simile a lobby ma con gli scores quindi ok
         System.out.println("Debug: showEndGame");
+
         Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
+                Parent page = loader.load();
+
+                Stage dialogStage = new Stage();
+                dialogStage.setTitle("ATTENZIONE");
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.initStyle(StageStyle.UTILITY);
+                dialogStage.setResizable(false);
+                dialogStage.setScene(new Scene(page));
+
+                ConfirmDialogController controller = loader.getController();
+                controller.setDialogStage(dialogStage);
+                controller.setMessage("Che tu lo voglia o no la partita è terminata");
+
+                dialogStage.showAndWait();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Parent root;
             FXMLLoader loader;
             try {
@@ -879,12 +826,38 @@ public void showLobbies(List<LobbyInfo> lobbies) {
     @Override
     public void askCollectRewards() {
         System.out.println("Debug: askCollectRewards");
+        //Accetta sempre... massimo poi scarta tutte le merci e via
+        controller.sendCollectRewardsResponse(true);
     }
 
 
     @NeedsToBeChecked
     @Override
     public void showTimerInfos() {
+        //Todo
+    }
 
+    @Override
+    public void showYouAreNowSpectating() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
+            Parent page = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("ATTENZIONE");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.initStyle(StageStyle.UTILITY);
+            dialogStage.setResizable(false);
+            dialogStage.setScene(new Scene(page));
+
+            ConfirmDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setMessage("Che tu lo voglia o no ora sei uno spettatore");
+
+            dialogStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

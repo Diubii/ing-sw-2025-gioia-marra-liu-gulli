@@ -102,13 +102,29 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
 
     @Override
     public StackPane visit(DoubleCannon component) {
-        //Se attivo mettere l'overlay
+        if(component.isCharged()){
+            String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/activeOverlay.png";
+            ImageView imgCharged = new ImageView( new Image(zUtils.class.getResource(imagePath).toExternalForm()));
+            imgCharged.setPreserveRatio(true);
+            imgCharged.setSmooth(true);
+            imgCharged.fitWidthProperty().bind(imageView.fitWidthProperty());
+            imgCharged.fitHeightProperty().bind(imageView.fitHeightProperty());
+            stackPane.getChildren().add(imgCharged);
+        }
         return null;
     }
 
     @Override
     public StackPane visit(DoubleEngine component) {
-        //Se attivo mettere overlay
+        if(component.isCharged()){
+            String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/activeOverlay.png";
+            ImageView imgCharged = new ImageView( new Image(zUtils.class.getResource(imagePath).toExternalForm()));
+            imgCharged.setPreserveRatio(true);
+            imgCharged.setSmooth(true);
+            imgCharged.fitWidthProperty().bind(imageView.fitWidthProperty());
+            imgCharged.fitHeightProperty().bind(imageView.fitHeightProperty());
+            stackPane.getChildren().add(imgCharged);
+        }
         return null;
     }
 
@@ -282,32 +298,35 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
 
         String pathMerce = null;
 
-        for(int k = 0; k < slots.size(); k++){
-            int finalK = k;
-            slots.get(k).setOnMouseClicked(event -> {
-                if(event.getButton() == MouseButton.PRIMARY){
-                    //Posiziono
-                    if (flightController.getCurrentInHandGood() != null) {
-                        if (flightController.getCurrentInHandGood().getColor() != Color.RED ||
-                                (flightController.getCurrentInHandGood().getColor() == Color.RED && component.isSpecial())) {
-                            if (!component.isFull()) {
-                                component.playerLoadGood(flightController.getCurrentInHandGood());
-                                flightController.setCurrentInHandGood(null);
-                                flightController.hideHand();
-                                flightController.showShip(clientController.getMyModel().getMyInfo().getShip(),clientController.getMyModel().getMyInfo().getNickName());
+        if(flightController.getIsManagingGoodTime() == true){
+            for(int k = 0; k < slots.size(); k++){
+                int finalK = k;
+                slots.get(k).setOnMouseClicked(event -> {
+                    if(event.getButton() == MouseButton.PRIMARY){
+                        //Posiziono
+                        if (flightController.getCurrentInHandGood() != null) {
+                            if (flightController.getCurrentInHandGood().getColor() != Color.RED ||
+                                    (flightController.getCurrentInHandGood().getColor() == Color.RED && component.isSpecial())) {
+                                if (!component.isFull()) {
+                                    component.playerLoadGood(flightController.getCurrentInHandGood());
+                                    flightController.setCurrentInHandGood(null);
+                                    flightController.hideHand();
+                                    flightController.showShip(clientController.getMyModel().getMyInfo().getShip(),clientController.getMyModel().getMyInfo().getNickName());
+                                }
                             }
                         }
+                        else if(flightController.getCurrentInHandGood() == null && component.getGoods().size() > finalK && component.getGoods().get(finalK) != null){
+                            //Riprendo
+                            flightController.setCurrentInHandGood(component.getGoods().get(finalK));
+                            flightController.showPickedGood();
+                            component.removeGood(component.getGoods().get(finalK));
+                            flightController.showShip(clientController.getMyModel().getMyInfo().getShip(),clientController.getMyModel().getMyInfo().getNickName());
+                        }
                     }
-                    else if(flightController.getCurrentInHandGood() == null && component.getGoods().size() > finalK && component.getGoods().get(finalK) != null){
-                        //Riprendo
-                        flightController.setCurrentInHandGood(component.getGoods().get(finalK));
-                        flightController.showPickedGood();
-                        component.removeGood(component.getGoods().get(finalK));
-                        flightController.showShip(clientController.getMyModel().getMyInfo().getShip(),clientController.getMyModel().getMyInfo().getNickName());
-                    }
-                }
-            });
+                });
+            }
         }
+
 
         for(int i=0; i< component.getnMaxContainers();i++){
             System.out.println("Dimensione goods: "+component.getGoods().size());
@@ -385,7 +404,15 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
 
     @Override
     public StackPane visit(Shield component) {
-        //Se attivo mettere l'overlay
+        if(component.isCharged()){
+            String imagePath = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/activeOverlay.png";
+            ImageView imgCharged = new ImageView( new Image(zUtils.class.getResource(imagePath).toExternalForm()));
+            imgCharged.setPreserveRatio(true);
+            imgCharged.setSmooth(true);
+            imgCharged.fitWidthProperty().bind(imageView.fitWidthProperty());
+            imgCharged.fitHeightProperty().bind(imageView.fitHeightProperty());
+            stackPane.getChildren().add(imgCharged);
+        }
         return null;
     }
 }

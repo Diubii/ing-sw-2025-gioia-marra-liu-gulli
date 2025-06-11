@@ -27,7 +27,7 @@ public class SMplanetChoiceController {
         for (Integer i : planetChoices.keySet()) {
             Planet planet = planetChoices.get(i);
             Button planetChoiceButton = new Button("Pianeta " + (i));
-
+            planetChoiceButton.getStyleClass().add("transparent-button");
             // Azione al click: invia il pianeta selezionato
             int finalIndex = i;
             planetChoiceButton.setOnMouseClicked(event -> {

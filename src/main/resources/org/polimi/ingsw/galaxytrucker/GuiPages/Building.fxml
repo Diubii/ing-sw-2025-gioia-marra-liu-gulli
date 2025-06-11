@@ -17,7 +17,7 @@
 
 <StackPane fx:id="mainStackPane" prefHeight="400.0" prefWidth="623.0" style="-fx-background-color: #00f7ff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.polimi.ingsw.galaxytrucker.view.Gui.BuildingController">
    <children>
-      <HBox style="-fx-background-color: RED;">
+      <HBox style="-fx-background-color: ORANGE;">
          <children>
             <VBox prefHeight="400.0" prefWidth="6.0" HBox.hgrow="ALWAYS">
                <children>
@@ -88,9 +88,9 @@
                               </VBox>
                               <StackPane fx:id="StackCenterMenu" prefHeight="363.0" prefWidth="194.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                                    <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                                        <children>
-                                          <Button fx:id="BtnPescaRandom" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#pescaRandom" prefHeight="52.0" prefWidth="130.0" styleClass="semitransparent-button" stylesheets="@style.css" text="PESCA TILE" wrapText="true" />
+                                          <Button fx:id="BtnPescaRandom" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#pescaRandom" prefHeight="52.0" prefWidth="130.0" styleClass="semitransparent-button" stylesheets="@style.css" text="PESCA TESSERA" wrapText="true" />
                                           <ScrollPane fx:id="scrollListaTiles" fitToWidth="true" hbarPolicy="NEVER" prefHeight="324.0" prefWidth="177.0" stylesheets="@style.css" VBox.vgrow="ALWAYS">
                                              <content>
                                                 <FlowPane fx:id="listaTiles" hgap="5.0" prefHeight="206.0" prefWidth="130.0" style="-fx-background-color: transparent;" vgap="5.0">
@@ -101,6 +101,9 @@
                                              </content>
                                           </ScrollPane>
                                        </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
                                     </VBox>
                                  </children>
                               </StackPane>
@@ -118,7 +121,7 @@
                            <children>
                               <HBox alignment="CENTER" prefHeight="77.0" prefWidth="154.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Button fx:id="BtnFinishBuilding" mnemonicParsing="false" onAction="#finishBuilding" prefHeight="4.0" prefWidth="97.0" styleClass="semitransparent-button" stylesheets="@style.css" text="FINISH" />
+                                    <Button fx:id="BtnFinishBuilding" mnemonicParsing="false" onAction="#finishBuilding" prefHeight="41.0" prefWidth="127.0" styleClass="semitransparent-button" stylesheets="@style.css" text="Pronto al decollo" />
                                  </children>
                               </HBox>
                            </children></VBox>

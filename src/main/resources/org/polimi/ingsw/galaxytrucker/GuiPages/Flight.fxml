@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -29,9 +30,17 @@
       </rowConstraints>
 
       <!-- COLONNA 1 - Verde -->
-      <VBox prefHeight="400.0" prefWidth="111.0" style="-fx-background-color: GREEN;" GridPane.columnIndex="0">
+      <VBox prefHeight="400.0" prefWidth="111.0" style="-fx-background-color: Navy;" GridPane.columnIndex="0">
          <children>
-            <HBox fx:id="imageBox" alignment="CENTER" prefHeight="188.0" prefWidth="200.0" style="-fx-background-color: DARKGREEN;" VBox.vgrow="ALWAYS">
+               <HBox prefHeight="84.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+                  <children>
+                     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" stylesheets="@style.css" HBox.hgrow="ALWAYS">
+                        <content>
+                           <VBox fx:id="logContainer" alignment="CENTER" prefHeight="36.0" prefWidth="200.0" spacing="5.0" />
+                        </content>
+                     </ScrollPane>
+                  </children></HBox>
+            <HBox fx:id="imageBox" alignment="CENTER" prefHeight="172.0" prefWidth="200.0" style="-fx-background-color: Navy;" VBox.vgrow="ALWAYS">
                <children>
                   <ImageView fx:id="cardView" fitHeight="155.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -64,7 +73,7 @@
       </VBox>
 
       <!-- COLONNA 3 - A destra (100px fissa) -->
-      <VBox prefHeight="400.0" prefWidth="242.0" spacing="10.0" style="-fx-background-color: green;" GridPane.columnIndex="2">
+      <VBox prefHeight="400.0" prefWidth="242.0" spacing="10.0" style="-fx-background-color: linear-gradient(to right, #5225e6, #182ff5);;" GridPane.columnIndex="2">
          <children>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
                <children>
@@ -82,9 +91,9 @@
                         </ImageView>
                      </children>
                   </HBox>
-                  <Label fx:id="name1" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="56.0" prefHeight="27.0" prefWidth="314.0" text="Paolo" wrapText="true">
+                  <Label fx:id="name1" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="56.0" prefHeight="27.0" prefWidth="314.0" text="Paolo" textFill="WHITE" wrapText="true">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
                </children>
@@ -101,9 +110,9 @@
                         </ImageView>
                      </children>
                   </HBox>
-                  <Label fx:id="name2" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" text="Paolo" wrapText="true">
+                  <Label fx:id="name2" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" text="Paolo" textFill="WHITE" wrapText="true">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
                </children>
@@ -116,9 +125,9 @@
                         <ImageView fx:id="avatar3" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </HBox>
-                  <Label fx:id="name3" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" wrapText="true">
+                  <Label fx:id="name3" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" textFill="WHITE" wrapText="true">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
                </children>
@@ -131,9 +140,9 @@
                         <ImageView fx:id="avatar4" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </HBox>
-                  <Label fx:id="name4" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" wrapText="true">
+                  <Label fx:id="name4" alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="314.0" textFill="WHITE" wrapText="true">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
                </children>
@@ -147,7 +156,7 @@
    </GridPane>
    <Pane fx:id="overlayPane" pickOnBounds="false">
       <children>
-         <ImageView fx:id="inHandGoodImg" fitHeight="50.0" fitWidth="50.0" layoutX="89.0" layoutY="175.0" mouseTransparent="true" opacity="0.76" preserveRatio="true" visible="false">
+         <ImageView fx:id="handImage" fitHeight="50.0" fitWidth="50.0" layoutX="89.0" layoutY="175.0" mouseTransparent="true" opacity="0.76" preserveRatio="true" visible="false">
          </ImageView>
       </children></Pane>
    </children>

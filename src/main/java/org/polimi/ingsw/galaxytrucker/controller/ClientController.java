@@ -1144,12 +1144,10 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void handleFlightBoardUpdate(FlightBoardUpdate flightBoardUpdate) {
 
-
         myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
-
-//        if(phase == GameState.FLIGHT){
-//            view.showFlightBoard(myModel.getFlightBoard());
-//        }
+        if(phase == GameState.FLIGHT && view.autoShowUpdates() == true){
+            view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos(),myModel.getMyInfo());
+        }
 
     }
 
@@ -1341,6 +1339,7 @@ public void handleDrawReservedTile (int slotIndex){
             throw new RuntimeException(e);
         }
         view.showGenericMessage("Hai scelto l’atterraggio anticipato, ora guarda gli altri giocatori.");
+        view.showYouAreNowSpectating();
 
     }
     public void handleReadyTurnRequest()  {
@@ -1447,11 +1446,13 @@ public void handleDrawReservedTile (int slotIndex){
             Planet selectedPlanet = update.getSelectedPlanet();
             myModel.setSelectedPlanet(selectedPlanet);
             myModel.setUnplacedGoods(selectedPlanet.getGoods());
-            view.askLoadGoodChoice();
-
         }
     }
 
+    /**
+     * Handles the choice for the loading goods phase, and tells the View what to show
+     * @param input
+     */
     public void handleLoadGoodChoice(String input) {
         if (input == null) return;
 
@@ -1575,6 +1576,7 @@ public void handleDrawReservedTile (int slotIndex){
             //TODO: Torna alla scelta dei menù
             //Questo perché magari la connessione del client potrebbe cadere per più di 5 secondi, ma nel caso in cui tornasse su potrebbe ricevere tutti i messaggi arretrati.
             //Quindi dato che il PlayerKickedUpdate viene mandato anche a chi sta per essere kickato, questo è un caso da gestire
+            view.showGenericMessage("SEI STATO KIKKATO");
         } else {
             view.showGenericMessage("Player " + playerKickedUpdate.getNickname() + " got kicked out of the game!");
         }
@@ -1660,6 +1662,8 @@ public void handleDrawReservedTile (int slotIndex){
 
         if (nickname.equals(getNickname())) {
             myModel.setPlayerState(PlayerState.Spectating);
+            //Todo comunicare bene a giocatore che rimosso
+            view.showYouAreNowSpectating();
         }
         if (isLandingEarly) {
             view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.");

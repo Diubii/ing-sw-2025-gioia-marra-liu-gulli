@@ -70,6 +70,7 @@ public class FlightBoardController {
     }
 
     public void updateBoard(FlightBoard flightBoard) {
+        System.out.println("Debug: FlightBoardController.updateBoard");
         int x=0;
         int y=0;
         int position=0;

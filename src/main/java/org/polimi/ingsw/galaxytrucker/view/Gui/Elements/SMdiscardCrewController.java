@@ -1,0 +1,45 @@
+package org.polimi.ingsw.galaxytrucker.view.Gui.Elements;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.view.Gui.FlightController;
+
+import java.util.ArrayList;
+
+public class SMdiscardCrewController {
+
+    private int total;
+    private int selNumber;
+    private ClientController clientController;
+    private FlightController flightController;
+    private HBox container;
+    ArrayList<Position> housingPositions;
+
+    @FXML private Label lblConteggio;
+
+
+    public void initialize(ClientController clientController, FlightController flightController, HBox container, int total) {
+        this.clientController = clientController;
+        this.container = container;
+        this.total = total;
+        this.flightController = flightController;
+        housingPositions = new ArrayList<>();
+        lblConteggio.setText("0/"+Integer.toString(total));
+    }
+
+    public void add(Position position) {
+        //se uguali termina e manda update
+        housingPositions.add(position);
+        selNumber++;
+        lblConteggio.setText(Integer.toString(selNumber)+"/"+Integer.toString(total));
+        if(housingPositions.size() == total){
+            //flightcontroller finisce fase e manda l'update qui
+            flightController.endDiscardCrew();
+            clientController.handleDiscardCrewMembersResponse(housingPositions);
+            container.getChildren().clear();
+        }
+    }
+}

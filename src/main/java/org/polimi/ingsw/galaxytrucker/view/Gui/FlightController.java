@@ -14,9 +14,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DrawAdventureCardRequest;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
@@ -62,7 +65,18 @@ public class FlightController extends GenericGamePhaseSceneController {
     @FXML private RadioButton radio4;
 
     @FXML private StackPane  mainStackPane;
-    @FXML private ImageView inHandGoodImg;
+    @FXML private ImageView handImage;
+    @FXML private VBox logContainer;
+
+
+    private Boolean isDiscardingCrewTime=false;
+    private Boolean isManagingGoodsTime=false;
+    private Boolean battInHand =false;
+    private Position inHandBatteryPosition;
+
+
+    SMdiscardCrewController discardCrewController;
+    SMactivateComponentController activateComponentController;
 
 
 
@@ -73,7 +87,6 @@ public class FlightController extends GenericGamePhaseSceneController {
         this.mymodel = mymodel;
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
-
         //Inizializzazione di tutta lista di player e di default mia ship,a.
         List<RadioButton> radioButtons = List.of(radio1, radio2, radio3 , radio4);
         List<Label> names = List.of(name1,name2, name3, name4);
@@ -119,6 +132,19 @@ public class FlightController extends GenericGamePhaseSceneController {
         flightBoardController.initialize(boardZone,clientController.getMyModel().getFlightBoard());
         FlightBoardPrintUtils.printFlightBoard(mymodel.getFlightBoard(),mymodel.getPlayerInfos(),mymodel.getMyInfo());
 
+       showEndTurnMenu();
+
+        mainStackPane.setOnMouseMoved(event -> {
+            handImage.setLayoutX(event.getX() - handImage.getFitWidth() / 2);
+            handImage.setLayoutY(event.getY() - handImage.getFitHeight() / 2);
+
+        });
+
+        ShowGenericMessage("In una galassia lontana i nostri eroi si stanno preparando ad iniziare la loro avventura, sono quasi pronti al decollo.");
+
+    }
+
+    public void showEndTurnMenu(){
         //Inizializza il menu di inizio/Fine Turno
         Platform.runLater(() -> {
             //C'è altro oltre al layout di default (Altri menu left aperti)
@@ -143,14 +169,8 @@ public class FlightController extends GenericGamePhaseSceneController {
                 e.printStackTrace();
             }
         });
-
-        mainStackPane.setOnMouseMoved(event -> {
-            inHandGoodImg.setLayoutX(event.getX() - inHandGoodImg.getFitWidth() / 2);
-            inHandGoodImg.setLayoutY(event.getY() - inHandGoodImg.getFitHeight() / 2);
-
-        });
-
     }
+
 
     public void showPickedGood(){
         //Mostra il good attualmente in mano
@@ -167,20 +187,44 @@ public class FlightController extends GenericGamePhaseSceneController {
             case BLUE ->
                     pathMerce = "/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/merceBlu.png";
         }
-
         Image img = new Image(zUtils.class.getResource(pathMerce).toExternalForm());
 
-        inHandGoodImg.setImage(img);
-        inHandGoodImg.setVisible(true);
-        inHandGoodImg.setFitHeight(80.00);
-        inHandGoodImg.setFitWidth(80.00);
+        handImage.setImage(img);
+        handImage.setVisible(true);
+        handImage.setFitHeight(80.00);
+        handImage.setFitWidth(80.00);
+    }
+
+    public void showBattery(Position position){
+        battInHand = true;
+        inHandBatteryPosition = position;
+        //Carica immagine batteria in mano
+        String path ="/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/batteryCharge.png";
+        Image img = new Image(zUtils.class.getResource(path).toExternalForm());
+
+
+
+        handImage.setImage(img);
+        handImage.setVisible(true);
+        handImage.setFitHeight(80.00);
+        handImage.setFitWidth(80.00);
+    }
+
+    public Boolean getInHandBattery(){
+        return battInHand;
+    }
+
+    public void useInHandBattery(){
+        battInHand = false;
+        hideHand();
+        activateComponentController.addBatteryPosition(inHandBatteryPosition);
     }
 
     /**
      * Hides the overlay with the current inHandGood
      */
     public void hideHand(){
-        inHandGoodImg.visibleProperty().set(false);
+        handImage.visibleProperty().set(false);
     }
 
     public Good getCurrentInHandGood(){
@@ -193,6 +237,7 @@ public class FlightController extends GenericGamePhaseSceneController {
 
     public void handleGoodsLoading(ArrayList<Good> goods) {
         //Mostrare sotto menù e config tutto
+        isManagingGoodsTime = true;
         Platform.runLater(() -> {
             //C'è altro oltre al layout di default (Altri menu left aperti)
             if(subMenu.getChildren().size() > 0 ){
@@ -218,9 +263,130 @@ public class FlightController extends GenericGamePhaseSceneController {
         });
     }
 
+    public Boolean getIsManagingGoodTime(){
+        return isManagingGoodsTime;
+    }
+
+    public void endManagingGoodTime(){
+        isManagingGoodsTime = false;
+    }
+
+    public void handleAskActivateCard(){
+        //Fa sottomenu
+        Platform.runLater(() -> {
+            //C'è altro oltre al layout di default (Altri menu left aperti)
+            if(subMenu.getChildren().size() > 0 ){
+                subMenu.getChildren().removeLast();
+            }
+            VBox root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMactivateCard.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                SMactivateCardController pageController = loader.getController();
+                pageController.initialize(clientController,subMenu);
+                root.setMaxWidth(Double.MAX_VALUE);
+                root.setMaxHeight(Double.MAX_VALUE);
+                //3-impostare la nuova root alla scena principale
+                HBox.setHgrow(root, Priority.ALWAYS);
+                subMenu.getChildren().add(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void handleDiscradCrew(int total){
+       // System.out.println("DEBUG: discradCrew");
+        isDiscardingCrewTime= true;
+        Platform.runLater(() -> {
+            //C'è altro oltre al layout di default (Altri menu left aperti)
+            if(subMenu.getChildren().size() > 0 ){
+                subMenu.getChildren().removeLast();
+            }
+            VBox root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMdiscardCrew.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                discardCrewController  = loader.getController();
+                discardCrewController.initialize(clientController,this, subMenu ,total);
+                root.setMaxWidth(Double.MAX_VALUE);
+                root.setMaxHeight(Double.MAX_VALUE);
+                //3-impostare la nuova root alla scena principale
+                HBox.setHgrow(root, Priority.ALWAYS);
+                subMenu.getChildren().add(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    public void addHousingPosition(Position position){
+        //System.out.println("DEBUG: addHousingPosition");
+        //Posizione già verificata da zUtils
+        discardCrewController.add(position);
+    }
+
+    public void endDiscardCrew(){
+        isDiscardingCrewTime= false;
+    }
+
+    public Boolean getIsDiscardingCrewTime(){
+        return isDiscardingCrewTime;
+    }
+
+    public void handleChooseComponent(ActivatableComponent component){
+        System.out.println("Debug: handleChooseComponent");
+        Platform.runLater(() -> {
+            //C'è altro oltre al layout di default (Altri menu left aperti)
+            if(subMenu.getChildren().size() > 0 ){
+                subMenu.getChildren().removeLast();
+            }
+            VBox root;
+            FXMLLoader secondloader;
+            try {
+                //1-Prima caricare FXML
+                secondloader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMactivateComponent.fxml"));
+                root = secondloader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                activateComponentController = secondloader.getController();
+                activateComponentController.initialize(component,subMenu,clientController);
+                root.setMaxWidth(Double.MAX_VALUE);
+                root.setMaxHeight(Double.MAX_VALUE);
+                //3-impostare la nuova root alla scena principale
+                HBox.setHgrow(root, Priority.ALWAYS);
+                subMenu.getChildren().add(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Debug: stampo con component attivabile");
+            zUtils.showShipInGrid(clientController.getMyModel().getMyInfo().getShip(), shipController.getShipGrid(), clientController,true,true,this,component);
+
+        });
+      }
+
+    public void addActivatedPosition(Position position){
+        activateComponentController.addComponentPosition(position);
+    }
+
+
     @Override
     public void ShowGenericMessage(String message) {
-
+        Label logEntry = new Label("Narratore: "+message);
+        logEntry.setStyle("-fx-text-fill: white;");
+        logEntry.setWrapText(true);
+        logEntry.setMaxWidth(Double.MAX_VALUE);
+        logEntry.setMaxHeight(Double.MAX_VALUE);
+        logContainer.getChildren().add(logEntry);
+        if(logContainer.getChildren().size() > 3){
+            logContainer.getChildren().removeFirst();
+        }
     }
 
     public void askDrawCard(){
@@ -289,7 +455,6 @@ public class FlightController extends GenericGamePhaseSceneController {
 
     public void updateShownShip(int i){
 
-
         if(mymodel.getPlayerInfos().size() > i && mymodel.getPlayerInfos().get(i) != null) {
             if(mymodel.getMyInfo().getNickName().equals(mymodel.getPlayerInfos().get(i).getNickName())){
                 showShip(mymodel.getMyInfo().getShip(),mymodel.getMyInfo().getNickName());
@@ -304,10 +469,13 @@ public class FlightController extends GenericGamePhaseSceneController {
     @Override
     public void showShip(Ship ship, String Nickname) {
 
-        boolean editable = false;
+
+       Boolean editable = false;
         if(Nickname.equals(mymodel.getMyInfo().getNickName())){
             editable = true;
         }
+
+
 
         //Allineare selected in menu laterale
         List<RadioButton> radioButtons = List.of(radio1, radio2, radio3 , radio4);
@@ -320,7 +488,7 @@ public class FlightController extends GenericGamePhaseSceneController {
             }
         }
 
-        zUtils.showShipInGrid(ship, shipController.getShipGrid(), clientController,editable,true,this);
+        zUtils.showShipInGrid(ship, shipController.getShipGrid(), clientController,editable,true,this,null);
 
     }
 

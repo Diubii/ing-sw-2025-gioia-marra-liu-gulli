@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.view.Gui.FlightController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 import org.polimi.ingsw.galaxytrucker.view.Gui.zUtils;
 
 import java.io.IOException;
@@ -38,6 +39,8 @@ public class SMloadGoodsController {
 
     public void fineLoad(){
         clientController.handleLoadGoodChoice("f");
+        flightController.endManagingGoodTime();
+        GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         container.getChildren().clear();
 
     }

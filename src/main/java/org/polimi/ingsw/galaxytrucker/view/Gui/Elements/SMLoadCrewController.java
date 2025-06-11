@@ -1,6 +1,9 @@
 package org.polimi.ingsw.galaxytrucker.view.Gui.Elements;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 
 public class SMLoadCrewController {
@@ -11,6 +14,8 @@ public class SMLoadCrewController {
     public void initialize(ClientController clientController , GuiJavaFx guiJavaFx) {
         this.guiJavaFx = guiJavaFx;
         this.clientController = clientController;
+
+
     }
 
 

@@ -78,6 +78,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private Button BtnFinishBuilding;
 
     private ArrayList<SingleShipController> shipControllers;
+    private Boolean finishedBuilding;
 
     public void initialSetup(GuiJavaFx mainViewController, ClientController clientController,ClientModel mymodel, Stage primaryStage, MusicManager musicManager) {
         this.mainViewController = mainViewController;
@@ -85,6 +86,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         this.mymodel = mymodel;
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
+        finishedBuilding = false;
 
         listaTiles.prefWidthProperty().bind(scrollListaTiles.widthProperty());
 
@@ -231,6 +233,11 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @Override
     public void showShip(Ship ship, String Nickname) {
         Boolean details =false;
+        Boolean editable = true;
+        //Se ho finito e non sono oltre la fase di building non più editabile
+        if(finishedBuilding && clientController.getPhase() != GameState.CREW_INIT && clientController.getPhase() != GameState.SHIP_CHECK) {
+            editable= false;
+        }
 
         if(clientController.getPhase() == GameState.CREW_INIT){
             details = true;
@@ -242,10 +249,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
                 if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
 
-                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController,true,details,null);
+                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController,editable,details,null,null);
 
                 } else {
-                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null);
+                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null,null);
                 }
             }
         }
@@ -261,6 +268,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
         clientController.handleBuildingMenuChoice("i");
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         BtnFinishBuilding.setDisable(true);
+        finishedBuilding = true;
+        HBox overlay = new HBox();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3);");
+        StackCenterMenu.getChildren().add(overlay);
     }
 
     /**
@@ -288,6 +299,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         root.setMaxHeight(Double.MAX_VALUE);
                         //3-impostare la nuova root alla scena principale
                         StackCenterMenu.getChildren().add(root);
+                        showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -400,18 +412,20 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * @param pos
      */
     public void handlePickedAsideTile(int pos){
-        if(clientController.getCurrentTileInHand() != null){
-            //Se ho in mano ed è vuota metto li
-            if(clientController.getReservedTiles()[pos] == null){
-                clientController.handlePickReservedTile(pos, false);
-            }
-        }
-        else {
-            //Se ho mano vuota e li c'è qualcosa la prendo
-            if (clientController.getReservedTiles()[pos] != null) {
-                clientController.handlePickReservedTile(pos, true);
-            }
-        }
+       //Se ho già finito di costruire non tocco più
+        if(finishedBuilding == false) {
+           if (clientController.getCurrentTileInHand() != null) {
+               //Se ho in mano ed è vuota metto li
+               if (clientController.getReservedTiles()[pos] == null) {
+                   clientController.handlePickReservedTile(pos, false);
+               }
+           } else {
+               //Se ho mano vuota e li c'è qualcosa la prendo
+               if (clientController.getReservedTiles()[pos] != null) {
+                   clientController.handlePickReservedTile(pos, true);
+               }
+           }
+       }
     }
 
     /**

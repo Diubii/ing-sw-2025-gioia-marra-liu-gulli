@@ -142,5 +142,7 @@ public interface View {
 
     void showTimerInfos();
 
+    void showYouAreNowSpectating();
+
 
 }
