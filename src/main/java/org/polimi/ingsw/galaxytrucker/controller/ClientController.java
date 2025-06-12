@@ -1057,6 +1057,7 @@ public void handleDrawReservedTile (int slotIndex){
             return;
         }
 
+        currentTileInHand.setRotation(0);
         DiscardTileRequest request = new DiscardTileRequest(currentTileInHand);
 
         try {

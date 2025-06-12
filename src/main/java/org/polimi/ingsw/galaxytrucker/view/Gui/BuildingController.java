@@ -11,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
@@ -128,12 +130,14 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
 
         scrollListaTiles.setOnMouseClicked(event -> {
-            if (clientController.getCurrentTileInHand() != null) {
-                // esegui le tue istruzioni qui
-                clientController.handleBuildingMenuChoice("h");
-                inHandTileImage.visibleProperty().set(false);
+            if(event.getButton() == MouseButton.PRIMARY){
+                if (clientController.getCurrentTileInHand() != null) {
+                    // esegui le tue istruzioni qui
+                    clientController.handleBuildingMenuChoice("h");
+                    inHandTileImage.visibleProperty().set(false);
+                }
+                event.consume();
             }
-            event.consume();
         });
 
         mainStackPane.setOnMouseMoved(event -> {
@@ -301,7 +305,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         root = loader.load();
                         //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                         SMCheckShipController pageController = loader.getController();
-                        pageController.initialize(clientController);
+                        pageController.initialize(clientController, StackCenterMenu);
                         root.setMaxWidth(Double.MAX_VALUE);
                         root.setMaxHeight(Double.MAX_VALUE);
                         //3-impostare la nuova root alla scena principale
@@ -325,7 +329,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         root = loader.load();
                         //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                         SMLoadCrewController pageController = loader.getController();
-                        pageController.initialize(clientController,mainViewController);
+                        pageController.initialize(clientController,mainViewController,StackCenterMenu);
                         root.setMaxWidth(Double.MAX_VALUE);
                         root.setMaxHeight(Double.MAX_VALUE);
                         //3-impostare la nuova root alla scena principale
@@ -404,12 +408,17 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
-    public void pickedAside1(){
-        handlePickedAsideTile(0);
+    public void pickedAside1(MouseEvent event){
+        if(event.getButton() == MouseButton.PRIMARY){
+            handlePickedAsideTile(0);
+        }
+
     }
 
-    public void pickedAside2(){
-        handlePickedAsideTile(1);
+    public void pickedAside2(MouseEvent event){
+        if(event.getButton() == MouseButton.PRIMARY){
+            handlePickedAsideTile(1);
+        }
     }
 
     /**

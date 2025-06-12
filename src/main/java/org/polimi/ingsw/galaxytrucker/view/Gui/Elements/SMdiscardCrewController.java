@@ -39,7 +39,7 @@ public class SMdiscardCrewController {
         }
         selNumber++;
         lblConteggio.setText(Integer.toString(selNumber)+"/"+Integer.toString(total));
-        if(housingPositions.size() == total+2){
+        if(housingPositions.size() == total){
             //flightcontroller finisce fase e manda l'update qui
             flightController.endDiscardCrew();
             clientController.handleDiscardCrewMembersResponse(housingPositions);
