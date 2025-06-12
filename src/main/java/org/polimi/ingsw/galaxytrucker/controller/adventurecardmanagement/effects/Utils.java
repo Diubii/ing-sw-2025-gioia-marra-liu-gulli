@@ -51,7 +51,7 @@ public abstract class Utils {
             Component housingUnit = player.getShip().getComponentFromPosition(position); //Prendo la housingUnit dalla position data
 
             CentralHousingUnit centralHousingUnit = (CentralHousingUnit) housingUnit;
-            while(centralHousingUnit.getNCrewMembers() > 0 && numberOfCrewMembersToBeDiscarded > 0) {
+            if(centralHousingUnit.getNCrewMembers() > 0 && numberOfCrewMembersToBeDiscarded > 0) {
                 centralHousingUnit.removeCrewMember();
                 numberOfCrewMembersToBeDiscarded--;
             }

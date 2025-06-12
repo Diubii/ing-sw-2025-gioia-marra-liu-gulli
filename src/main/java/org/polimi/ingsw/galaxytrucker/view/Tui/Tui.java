@@ -1178,7 +1178,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
                 housingPos = parseCoordinate(input);
                 housingPos.setPos(housingPos.getX() - 4, housingPos.getY() - 5);
-                System.out.println(housingPos.getY() + " " + housingPos.getX());
+                System.out.println(housingPos.getX() + " " + housingPos.getY());
 
                 if (!Util.inBoundaries(housingPos.getX(), housingPos.getY()) || myShip.getInvalidPositions().contains(housingPos)) {
                     System.out.println("Wrong Coordinates, out of bounds ");
@@ -1295,9 +1295,10 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
                             }
                         }
-
-                        CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
-                        choiches.add("human");
+                        else {
+                            CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
+                            choiches.add("human");
+                        }
 
 
                         boolean correct = false;
@@ -1782,6 +1783,10 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         }
     }
 
+    @Override
+    public void showYouAreNowSpectating() {
+
+    }
 
     @Override
     public void notifyObservers(String message) throws IOException, ExecutionException {

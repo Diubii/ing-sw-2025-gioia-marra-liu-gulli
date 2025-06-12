@@ -47,6 +47,7 @@ public abstract class PlanetsEffect {
         Planets planets = (Planets) context.getAdventureCard();
         SelectPlanetResponse selectPlanetResponse = (SelectPlanetResponse) context.getIncomingNetworkMessage();
         Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
+        landedPlayers.putIfAbsent(context.getCurrentGame(), new ArrayList<>());
         if (selectedPlanet != null) {
             planets.getPlanets().get(selectPlanetResponse.getPlanetIndex() - 1).setOccupied(true);
             SelectedPlanetUpdate selectedPlanetUpdate = new SelectedPlanetUpdate(context.getCurrentPlayer().getNickName(), selectedPlanet, selectPlanetResponse.getPlanetIndex());
@@ -56,7 +57,7 @@ public abstract class PlanetsEffect {
 //            ShipUpdate shipUpdate =new ShipUpdate(player.getShip(),player.getNickName());
 //            sendMessage(context,player,shipUpdate);
 
-            landedPlayers.putIfAbsent(context.getCurrentGame(), new ArrayList<>());
+
             landedPlayers.get(context.getCurrentGame()).add(context.getCurrentPlayer());
         }
 
@@ -70,6 +71,11 @@ public abstract class PlanetsEffect {
             context.executePhase();
         }
         else{ //Se tutti hanno scelto o i pianeti sono tutti occupati
+            if(landedPlayers.get(game).size() == 0){
+                context.goToEndPhase();
+                context.executePhase();
+                return;
+            }
 
             context.nextPhase();
 

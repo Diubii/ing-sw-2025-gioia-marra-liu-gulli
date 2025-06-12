@@ -85,9 +85,9 @@ public class Util {
         }).stream().toList());
         ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
         //cardsToTest.add(list.get(3));
-         cardsToTest.add(list.get(31)); //Planets
-         cardsToTest.add(list.get(4)); //Open Space
-         cardsToTest.add(list.get(19)); //AbandonedStation
+//         cardsToTest.add(list.get(31)); //Planets
+//         cardsToTest.add(list.get(4)); //Open Space
+//         cardsToTest.add(list.get(19)); //AbandonedStation
          cardsToTest.add(list.get(16)); //AbandonedShip
 
 
