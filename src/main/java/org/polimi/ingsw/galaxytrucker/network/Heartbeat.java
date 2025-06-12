@@ -19,6 +19,7 @@ public class Heartbeat extends Thread {
     //Se non ricevo il ping, killo il thread che sta dormendo aspettando che riceva il ping
 
     public Heartbeat(ServerController serverController, ClientHandler clientHandler) {
+        this.setPriority(Thread.MAX_PRIORITY);
         this.serverController = serverController;
         this.clientHandler = clientHandler;
     }

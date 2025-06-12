@@ -45,6 +45,8 @@ public interface View {
 
     void showGenericMessage(String s);
 
+    void showWaitOtherPlayers();
+
     void askJoinOrCreateRoom();
 
     void askRoomCode();

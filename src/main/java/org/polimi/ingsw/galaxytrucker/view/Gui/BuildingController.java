@@ -273,6 +273,28 @@ public class BuildingController extends GenericGamePhaseSceneController {
         });
     }
 
+    @Override
+    public void showWaitOtherPlayers() {
+        System.out.println("debug: showWaitOtherPlayers");
+
+        StackCenterMenu.getChildren().removeLast();
+        VBox root = null;
+        FXMLLoader loader;
+        try {
+            //1-Prima caricare FXML
+            loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/WaitOverlay.fxml"));
+            root = loader.load();
+
+            root.setMaxWidth(Double.MAX_VALUE);
+            root.setMaxHeight(Double.MAX_VALUE);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        StackCenterMenu.getChildren().add(root);
+
+    }
+
 
     public void finishBuilding(ActionEvent e){
         //Disable di tutto ciò che è interagibile aparte la clessidra in teoria
@@ -290,7 +312,6 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * @param state
      */
     public void updateBuildingPageInterface(GameState state){
-        //Todo: magari rivedere con visitor, però sono solo 3 o 4 combinazioni
         switch(state){
             case SHIP_CHECK:
                 Platform.runLater(() -> {
@@ -305,7 +326,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         root = loader.load();
                         //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                         SMCheckShipController pageController = loader.getController();
-                        pageController.initialize(clientController, StackCenterMenu);
+                        pageController.initialize(clientController);
                         root.setMaxWidth(Double.MAX_VALUE);
                         root.setMaxHeight(Double.MAX_VALUE);
                         //3-impostare la nuova root alla scena principale

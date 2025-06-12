@@ -526,6 +526,11 @@ public class FlightController extends GenericGamePhaseSceneController {
     }
 
     @Override
+    public void showWaitOtherPlayers() {
+        ShowGenericMessage("Aspetta gli altri giocatori");
+    }
+
+    @Override
     public String pageName() {
         return "Flight";
     }

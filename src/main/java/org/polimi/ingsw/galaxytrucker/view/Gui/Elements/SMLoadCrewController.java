@@ -20,8 +20,7 @@ public class SMLoadCrewController {
     public void initialize(ClientController clientController , GuiJavaFx guiJavaFx, StackPane container) {
         this.guiJavaFx = guiJavaFx;
         this.clientController = clientController;
-        this.container = container;
-
+        this.container=container;
 
     }
 
