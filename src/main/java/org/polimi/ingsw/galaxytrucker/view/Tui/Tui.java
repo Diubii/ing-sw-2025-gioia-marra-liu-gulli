@@ -1674,6 +1674,11 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
     }
 
+    @Override
+    public void showYouAreNowSpectating() {
+        System.out.println("Ora sei uno spettatore");
+    }
+
     private void showTimerMenu(ArrayList<TimerInfo> timerInfos) throws IOException, ExecutionException, InterruptedException {
         String input;
         boolean valid = false;

@@ -26,6 +26,8 @@ public class FlightBoardController {
     private GridPane grid;
 
     public void initialize(StackPane boardContainer , FlightBoard flightBoard) {
+        this.boardContainer = boardContainer;
+
         size = flightBoard.getFlightBoardMap().getFlightBoardMapSlots().size();
         if (size == 18) {
             width = 8;
@@ -58,7 +60,7 @@ public class FlightBoardController {
             }
         }
 
-        this.boardContainer = boardContainer;
+
         this.boardContainer.widthProperty().addListener((obs, oldVal, newVal) -> adjustGridPaneSize(aspectRatio));
         this.boardContainer.heightProperty().addListener((obs, oldVal, newVal) -> adjustGridPaneSize(aspectRatio));
 
@@ -70,6 +72,7 @@ public class FlightBoardController {
     }
 
     public void updateBoard(FlightBoard flightBoard) {
+
         System.out.println("Debug: FlightBoardController.updateBoard");
         int x=0;
         int y=0;

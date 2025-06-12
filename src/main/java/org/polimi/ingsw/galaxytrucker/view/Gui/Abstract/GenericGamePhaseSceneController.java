@@ -6,6 +6,8 @@ import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 import org.polimi.ingsw.galaxytrucker.view.Gui.MusicManager;
 
+import java.util.ArrayList;
+
 /**
  * Abstract class for all the scenes that make up the GamePhases, essentially Building and Flight
  * that need more standardized method than a normal page.
@@ -19,4 +21,5 @@ public abstract class GenericGamePhaseSceneController extends GenericSceneContro
      */
     public abstract void showShip(Ship targetShipView, String Nickname);
 
+    public abstract void chooseTroncone(ArrayList<Ship> tronconi);
 }

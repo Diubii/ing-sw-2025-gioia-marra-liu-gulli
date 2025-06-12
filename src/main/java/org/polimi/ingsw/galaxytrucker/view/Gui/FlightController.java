@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -65,6 +66,7 @@ public class FlightController extends GenericGamePhaseSceneController {
     @FXML private RadioButton radio4;
 
     @FXML private StackPane  mainStackPane;
+    @FXML private StackPane StackCenterMenu;
     @FXML private ImageView handImage;
     @FXML private VBox logContainer;
 
@@ -151,6 +153,8 @@ public class FlightController extends GenericGamePhaseSceneController {
             if(subMenu.getChildren().size() > 0 ){
                 subMenu.getChildren().removeLast();
             }
+            //Imposta carta vuota
+            cardView.setImage(new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/cards/empty.png").toExternalForm()));
             VBox root;
             FXMLLoader secondloader;
             try {
@@ -402,7 +406,8 @@ public class FlightController extends GenericGamePhaseSceneController {
     }
 
     public void updateBoard(){
-        flightBoardController.updateBoard(mymodel.getFlightBoard());
+        System.out.println("Flight controller: UpdateBoard");
+        flightBoardController.updateBoard(clientController.getMyModel().getFlightBoard());
     }
 
     public void showCurrentAdventureCard(){
@@ -490,6 +495,30 @@ public class FlightController extends GenericGamePhaseSceneController {
 
         zUtils.showShipInGrid(ship, shipController.getShipGrid(), clientController,editable,true,this,null);
 
+    }
+
+    @Override
+    public void chooseTroncone(ArrayList<Ship> tronconi) {
+        //Fa uscire sotto menu in cui creo una shipView con radioButton per ogni ship
+        Platform.runLater(() -> {
+            ScrollPane root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMtronconi.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                SMtronconiController pageController = loader.getController();
+                pageController.initialize(clientController,tronconi,StackCenterMenu);
+                root.setMaxWidth(Double.MAX_VALUE);
+                root.setMaxHeight(Double.MAX_VALUE);
+                //3-impostare la nuova root alla scena principale
+                StackCenterMenu.getChildren().add(root);
+                showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override

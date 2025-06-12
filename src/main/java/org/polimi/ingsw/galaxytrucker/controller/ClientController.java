@@ -1224,19 +1224,19 @@ public void handleDrawReservedTile (int slotIndex){
                 CheckShipStatusResponse response = (CheckShipStatusResponse) future.get();
                 boolean isValid = response.getIsValid();
                 if (isValid) {
-                    view.showGenericMessage("Your ship is immaculate!");
-                    view.showGenericMessage("Wait to start choosing your crew...");
+                    view.showGenericMessage("Aspetta gli altri giocatori per scegliere l'equipaggio...");
+                    view.showGenericMessage("Nave immacolata!");
                     return;
 
                 } else {
-                    view.showGenericMessage("Ship need to be re-check");
+                    view.showGenericMessage("La nave va ricontrollata");
                     myModel.getMyInfo().setShip(response.getShip());
 
                 }
                 view.showcheckShipMenu();
 
             } catch (ExecutionException | InterruptedException e) {
-                view.showGenericMessage("Check Ship err");
+                view.showGenericMessage("Errore durante il controllo della nave");
                 throw new RuntimeException(e);
             }
 

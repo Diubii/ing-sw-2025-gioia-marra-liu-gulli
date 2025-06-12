@@ -298,7 +298,7 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
 
         String pathMerce = null;
 
-        if(flightController.getIsManagingGoodTime() == true){
+        if( flightController != null && flightController.getIsManagingGoodTime() == true){
             for(int k = 0; k < slots.size(); k++){
                 int finalK = k;
                 slots.get(k).setOnMouseClicked(event -> {
