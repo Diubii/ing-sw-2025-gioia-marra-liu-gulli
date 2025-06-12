@@ -533,6 +533,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                        }
                        else{
                            targetShip.removeTile(targetShip.getLastTilePosition(),true);
+                           targetShip.setLastTile(null);
                            ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
 
                            broadCast(playerHandlers, shipUpdate);

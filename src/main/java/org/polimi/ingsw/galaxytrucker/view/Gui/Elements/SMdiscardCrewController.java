@@ -33,9 +33,13 @@ public class SMdiscardCrewController {
     public void add(Position position) {
         //se uguali termina e manda update
         housingPositions.add(position);
+        System.out.println("StampoLista");
+        for(Position p : housingPositions){
+            System.out.println("Posizione: "+p.getX()+" "+p.getY());
+        }
         selNumber++;
         lblConteggio.setText(Integer.toString(selNumber)+"/"+Integer.toString(total));
-        if(housingPositions.size() == total){
+        if(housingPositions.size() == total+2){
             //flightcontroller finisce fase e manda l'update qui
             flightController.endDiscardCrew();
             clientController.handleDiscardCrewMembersResponse(housingPositions);

@@ -1,49 +1,30 @@
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point2D;
 import javafx.scene.Parent;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
-import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
-import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
-import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
-import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.*;
-import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class BuildingController extends GenericGamePhaseSceneController {
 
@@ -71,6 +52,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private StackPane StackLeftMenu;
     @FXML private StackPane  mainStackPane;
     @FXML private HBox learningMatchOverlay;
+    @FXML private HBox learningMatchOverlay2;
     @FXML private ImageView inHandTileImage;
     @FXML private Pane overlayPane;
     @FXML private ImageView asideTile1;
@@ -98,6 +80,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         //Se learning match niente deck da spiare
         if(mymodel.isLearningMatch()){
             learningMatchOverlay.visibleProperty().set(true);
+            learningMatchOverlay2.visibleProperty().set(true);
         }
         //MyShip e anche altre poi in loop
         int j = 0;
@@ -260,6 +243,30 @@ public class BuildingController extends GenericGamePhaseSceneController {
         //potrebbe essere uno ship update con questa modifica
         updateSetAsideTiles();
 
+    }
+
+    @Override
+    public void chooseTroncone(ArrayList<Ship> tronconi) {
+        //Fa uscire sotto menu in cui creo una shipView con radioButton per ogni ship
+        Platform.runLater(() -> {
+            ScrollPane root;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/SMtronconi.fxml"));
+                root = loader.load();
+                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                SMtronconiController pageController = loader.getController();
+                pageController.initialize(clientController,tronconi,StackCenterMenu);
+                root.setMaxWidth(Double.MAX_VALUE);
+                root.setMaxHeight(Double.MAX_VALUE);
+                //3-impostare la nuova root alla scena principale
+                StackCenterMenu.getChildren().add(root);
+                showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 

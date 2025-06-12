@@ -23,6 +23,7 @@ import org.polimi.ingsw.galaxytrucker.enums.GameState;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
@@ -33,7 +34,9 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Pha
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Dialogs.ConfirmDialogController;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.FlightBoardPrintUtils;
 import org.polimi.ingsw.galaxytrucker.view.View;
+import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -486,8 +489,6 @@ public class GuiJavaFx implements View {
         else{
             ((BuildingController) actualPageController).hideZonaPescata();
         }
-
-
     }
 
     @Override
@@ -547,8 +548,8 @@ public class GuiJavaFx implements View {
     @Override
     public void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException {
         System.out.println("Debug: chooseTroncone");
-        //Todo
         //Accade in fase di Building e Flight quindi metti in Abstract e casta con quello.
+        ((GenericGamePhaseSceneController)actualPageController).chooseTroncone(tronconi);
     }
 
     private CrewInitUpdate crewInitUpdate;
@@ -556,6 +557,30 @@ public class GuiJavaFx implements View {
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
         //Inizializza il crew init update
         crewInitUpdate = new CrewInitUpdate();
+        //metti già 2 umani a tutte le posizioni non vicine a LFS
+        ComponentNameVisitor namevisitor = new ComponentNameVisitor();
+        Slot[][] shipboard =  mymodel.getMyInfo().getShip().getShipBoard();
+
+        //Go over each Slot of the grid
+        for (int x = 0; x < shipboard.length; x++) {
+            for (int y = 0; y < shipboard[x].length; y++) {
+
+                Tile tile = shipboard[x][y].getTile();
+
+                if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" &&
+                        ( !Util.checkNearLFS(new Position(x, y), AlienColor.BROWN, mymodel.getMyInfo().getShip()) &&
+                                !Util.checkNearLFS(new Position(x, y), AlienColor.PURPLE, mymodel.getMyInfo().getShip()))) {
+
+                    //Editare a giro Crew tra varie possibilità e tenere aggiornato CrewInitUpdate
+                    ((GuiJavaFx) controller.getView()).editPositionCrew(x, y);
+                    //Redraw
+
+                }
+            }
+        }
+
+        showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+
     }
 
     public void editPositionCrew(int x,int y){
@@ -572,13 +597,13 @@ public class GuiJavaFx implements View {
             }
             else if(currentHousingUnit.getNPurpleAlien() == 1){
                 //C'è viola vado a marrone
-                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removePurpleAlien();
                 currentHousingUnit.addBrownAlien();
                 currentHousingUnit.setAlienColor(AlienColor.BROWN);
             }
             else{
                 //C'è marrone vado a umani
-                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeBrownAlien();
                 currentHousingUnit.addHumanCrew();
                 currentHousingUnit.addHumanCrew();
                 currentHousingUnit.setAlienColor(AlienColor.EMPTY);
@@ -593,7 +618,7 @@ public class GuiJavaFx implements View {
                 currentHousingUnit.setAlienColor(AlienColor.PURPLE);
             }
             else{
-                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removePurpleAlien();
                 currentHousingUnit.addHumanCrew();
                 currentHousingUnit.addHumanCrew();
                 currentHousingUnit.setAlienColor(AlienColor.EMPTY);
@@ -609,11 +634,15 @@ public class GuiJavaFx implements View {
                 currentHousingUnit.setAlienColor(AlienColor.BROWN);
             }
             else{
-                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeBrownAlien();
                 currentHousingUnit.addHumanCrew();
                 currentHousingUnit.addHumanCrew();
                 currentHousingUnit.setAlienColor(AlienColor.EMPTY);
             }
+        }
+        else{
+            currentHousingUnit.addHumanCrew();
+            currentHousingUnit.addHumanCrew();
         }
 
         Position position = new Position(x,y);
@@ -664,7 +693,9 @@ public class GuiJavaFx implements View {
     @Override
     public void showFlightBoard(FlightBoard flightBoard,ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
         System.out.println("Debug: showFlightboard");
-        ((FlightController)actualPageController).updateBoard();
+        Platform.runLater(() -> {
+            ((FlightController) actualPageController).updateBoard();
+        });
     }
 
     /**
@@ -673,7 +704,9 @@ public class GuiJavaFx implements View {
     @Override
     public void showCurrentAdventureCard() {
         System.out.println("Debug: showCurrentAdventureCard");
-        ((FlightController)actualPageController).showCurrentAdventureCard();
+        Platform.runLater(() -> {
+            ((FlightController) actualPageController).showCurrentAdventureCard();
+        });
 
     }
 
@@ -729,13 +762,13 @@ public class GuiJavaFx implements View {
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
         Platform.runLater(() -> {
             ChoiceDialog<Integer> dialog = new ChoiceDialog<>(validPositions.get(0), validPositions);
-            dialog.setTitle("Select Position");
-            dialog.setHeaderText("Choose your flight board position");
+            dialog.setTitle("Scegli la posizione");
+            dialog.setHeaderText("Scegli la posizione di partenza al decollo");
             dialog.showAndWait().ifPresent(pos -> {
                 try {
                     controller.getClient().sendMessage(new org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskPositionResponse(id, pos));
                 } catch (Exception e) {
-                    showGenericMessage("Error sending position: " + e.getMessage());
+                    showGenericMessage("Errore nell'inviare la posizione: " + e.getMessage());
                 }
             });
         });

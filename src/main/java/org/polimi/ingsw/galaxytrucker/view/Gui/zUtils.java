@@ -40,8 +40,6 @@ public class zUtils {
      * @param ship
      * @param griglia
      */
-    //TODO magari aggiungere action o altri parametri per indicare nella fase di volo cosa si può fare:
-    //TODO ad esempio un tipo di componente da selezionare oppure che tipi di interazioni, sacrifica crew o altro...
     public static void showShipInGrid(Ship ship, GridPane griglia, ClientController clientController, Boolean editable, Boolean viewDetails, FlightController flightController, ActivatableComponent activatableComponent) {
 
         //Empty the grid from previous configuration
@@ -72,19 +70,16 @@ public class zUtils {
 
                     stackPane.getChildren().add(imageView);
 
-
-                    // Dopo aver aggiunto l’immagine alla griglia, lega dinamicamente la dimensione
                     imageView.fitWidthProperty().bind(griglia.prefWidthProperty().divide(7));
                     imageView.fitHeightProperty().bind(griglia.prefHeightProperty().divide(5));
 
+                    //DetailRotationVisitor handles all of the "pieces" on the tiles, all the indicators
                     if(viewDetails) {
                         ComponentGuiDetailsRotationVisitor visitor = new ComponentGuiDetailsRotationVisitor(clientController,flightController,stackPane,imageView,rotation);
                         tile.getMyComponent().accept(visitor);
                     }
                     stackPane.setRotate(rotation);
 
-                    //Visitor a cui passi tutto e in base al tipo di componente decide se ruotare tutto, ruotare solo immagine, ruotare con counterrotazioni
-                    //e aggiunge i vari sottoelementi
                 }
                 else if(clientController.getMyShip().getInvalidPositions().contains(new Position(x,y))){
                     //INVALID POSIITON
@@ -93,12 +88,9 @@ public class zUtils {
                     ImageView imageView = new ImageView(img);
 
                     stackPane.getChildren().add(imageView);
-                    // Fa sì che l'immagine si adatti alle dimensioni
-                    imageView.setPreserveRatio(false); // oppure true, se vuoi mantenerle
+                    imageView.setPreserveRatio(false);
                     imageView.setSmooth(true);
 
-
-                    // Dopo aver aggiunto l’immagine alla griglia, lega dinamicamente la dimensione
                     imageView.fitWidthProperty().bind(griglia.prefWidthProperty().divide(7));
                     imageView.fitHeightProperty().bind(griglia.prefHeightProperty().divide(5));
 
@@ -111,35 +103,29 @@ public class zUtils {
                     ImageView imageView = new ImageView(img);
 
                     stackPane.getChildren().add(imageView);
-                    // Fa sì che l'immagine si adatti alle dimensioni
-                    imageView.setPreserveRatio(false); // oppure true, se vuoi mantenerle
+                    imageView.setPreserveRatio(false);
                     imageView.setSmooth(true);
 
-
-                    // Dopo aver aggiunto l’immagine alla griglia, lega dinamicamente la dimensione
                     imageView.fitWidthProperty().bind(griglia.prefWidthProperty().divide(7));
                     imageView.fitHeightProperty().bind(griglia.prefHeightProperty().divide(5));
                 }
 
-                // Permetti alla cella di espandersi
                 GridPane.setHgrow(stackPane, Priority.ALWAYS);
                 GridPane.setVgrow(stackPane, Priority.ALWAYS);
                 GridPane.setFillWidth(stackPane, true);
                 GridPane.setFillHeight(stackPane, true);
 
 
+                //Handling of click event for various functions of the game
                 ComponentNameVisitor namevisitor = new ComponentNameVisitor();
                 if(editable){
-                    //Tutto fatto con click ma dipende dalla fase:
+                    //Click on whole tile has different effect depending on phase and other settings
                     stackPane.setOnMouseClicked(event -> {
                         if(event.getButton() == MouseButton.PRIMARY) {
 
                             switch (clientController.getPhase()) {
                                 case SHIP_CHECK:
-                                    //RIMOZIONE DI QUALUNQUE TILE
 
-                                    //Todo: fatto lato client e poi solo al checkship server viene avvisato, ci potrebbe anche stare eh
-                                    //Edito una copia locale , poi dico quali ho cancellato e server mi ridà. (in teoria)
                                     clientController.getMyModel().addTileToRemove(tile.getId());
                                     ship.removeTile(pos, true);
                                     showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController,activatableComponent);
@@ -147,8 +133,7 @@ public class zUtils {
                                     break;
                                 case CREW_INIT:
 
-
-                                    //Solo se cabina con supporto vitale vicino
+                                    //Only if a cab has a Life support system connected
                                     if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" &&
                                             (Util.checkNearLFS(new Position(fX, fY), AlienColor.BROWN, ship) ||
                                                     Util.checkNearLFS(new Position(fX, fY), AlienColor.PURPLE, ship))) {
@@ -158,16 +143,13 @@ public class zUtils {
                                         //Redraw
                                         showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController,activatableComponent);
                                     }
-                                    else if(tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit"){
-                                        ((GuiJavaFx) clientController.getView()).editPositionCrew(fX, fY);
-                                    }
 
                                     break;
 
-                                //FLIGHT sacrificare Crew, caricare merci quindi qualcosa per indicare quello.
+                                //FLIGHT activating component and discard crew, goods handled at 2nd layer of the stack not whole tile
                                 case FLIGHT:
 
-                                    //Componenti Attivabili
+                                    //For activating component
                                     if(activatableComponent != null) {
                                         if(tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((DoubleEngine)tile.getMyComponent()).setCharged(true);
@@ -200,17 +182,8 @@ public class zUtils {
                                     }
 
 
+                                    //CABS: for discarding crew
 
-
-                                    //per magazzino controlla la inHandGood,
-                                    //ma su ogni singolo slot, eventi in ComponentGuiDetailsRotation
-
-
-                                    //per cabine fa scartare uno di crew
-                                    //Controlla se flightController.isDiscardingCrewTime;
-                                    //Modifica model locale e chiama redraw. poi sono mandate solo le posizioni e viene mandato
-                                    //uno shipUpdate con le pos verificate dal server quindi ok.
-                                    //Metto evento soltanto se la cabina ha ancora crew tanto richiamo il draw con la ship locale modificata e controllo
                                     if(flightController.getIsDiscardingCrewTime()){
                                         if(tile.getMyComponent().accept(namevisitor).equals("ModularHousingUnit")){
                                             ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tile.getMyComponent();
@@ -218,11 +191,11 @@ public class zUtils {
                                                 //Aggiorno model locale
                                                 modularHousingUnit.removeCrewMember();
                                                 flightController.addHousingPosition(new Position(fX, fY));
+                                                System.out.println("Ultima inserita Posizione: "+fX+" "+fY);
                                                 showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController,activatableComponent);
 
                                             }
-                                        }
-                                        if(tile.getMyComponent().accept(namevisitor).equals("CentralHousingUnit")){
+                                        } else if(tile.getMyComponent().accept(namevisitor).equals("CentralHousingUnit")){
                                             CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
                                             if(centralHousingUnit.getNCrewMembers() > 0){
                                                 //Aggiorno model locale
@@ -250,7 +223,6 @@ public class zUtils {
                                         }
                                     } else {
                                         if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
-                                            //Todo: rimozione tile già piazzata
                                             clientController.reclaimTile();
                                         }
                                     }
@@ -262,7 +234,6 @@ public class zUtils {
 
                     });
                 }
-
 
                 griglia.add(stackPane, x, y);
 
