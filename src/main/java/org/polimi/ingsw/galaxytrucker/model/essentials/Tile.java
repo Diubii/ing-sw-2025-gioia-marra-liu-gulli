@@ -123,6 +123,10 @@ public class Tile implements Serializable,Cloneable {
         return Rotation;
     }
 
+    public void setRotation(int rotation){
+        Rotation = rotation;
+    }
+
     public void rotate(int addRotation) {
 
         Rotation = (Rotation + addRotation) % 360;

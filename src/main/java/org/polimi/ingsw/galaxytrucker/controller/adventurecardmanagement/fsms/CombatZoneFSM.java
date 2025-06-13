@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms;
 
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.CombatZoneEffect;
+import org.polimi.ingsw.galaxytrucker.model.adventurecards.CombatZone;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ public class CombatZoneFSM extends CardFSM {
     public ArrayList<Consumer<CardContext>> initPhases() {
         return new ArrayList<>(
                 Arrays.asList(
+                        CombatZoneEffect::checkLevel,
                         CombatZoneEffect::minCrewMembersCheck,
                         CombatZoneEffect::sendDoubleEnginesActivationRequest,
                         CombatZoneEffect::minEnginePowerCheck,

@@ -11,15 +11,16 @@ import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class SelectPlanetRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 98769876L;
 
-    private final ArrayList<Planet> landablePlanets;
+    private final HashMap<Integer, Planet> landablePlanets;
 
-    public SelectPlanetRequest(ArrayList<Planet> landablePlanets) {
+    public SelectPlanetRequest(HashMap<Integer, Planet> landablePlanets) {
         this.landablePlanets = landablePlanets;
     }
 
@@ -28,7 +29,7 @@ public class SelectPlanetRequest extends NetworkMessage implements Serializable 
         return visitor.visit(this);
     }
 
-    public ArrayList<Planet> getLandablePlanets() {
+    public HashMap<Integer, Planet> getLandablePlanets() {
         return landablePlanets;
     }
 }

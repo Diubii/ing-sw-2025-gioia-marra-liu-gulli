@@ -20,7 +20,7 @@ public class FakeLobbyManager extends LobbyManager {
     private final HashMap<String, ArrayList<NetworkMessage>> mockResponses;
 
     public FakeLobbyManager(ArrayList<Player> players, ServerController controller, HashMap<String, ArrayList<NetworkMessage>> mockResponses) {
-        super();
+        super(0);
         this.mockResponses = mockResponses;
 
 //        FlightBoard flightBoard = new FlightBoard(false);

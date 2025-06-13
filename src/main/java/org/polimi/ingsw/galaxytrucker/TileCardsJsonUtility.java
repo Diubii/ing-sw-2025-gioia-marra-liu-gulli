@@ -31,6 +31,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Utility used during development to configure the Json for all the Tiles
+ */
 public class TileCardsJsonUtility extends Application {
 
     //Condivisi

@@ -2,6 +2,7 @@ package org.polimi.ingsw.galaxytrucker.controller;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.*;
@@ -15,6 +16,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.AskTrunkRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
 import java.io.IOException;
@@ -125,11 +127,11 @@ public class GameController {
     public void handleTurn() {
         AdventureCard drawnAdventureCard = getCardDeckTest().pop();
 
-        if(getPlayingPlayers().size() == 1){
-            while(drawnAdventureCard.getName().equals("Zona Guerra")){
-                drawnAdventureCard = getCardDeckTest().pop();
-            }
-        }
+//        if(getPlayingPlayers().size() == 1){
+//            while(drawnAdventureCard.getName().equals("Zona Guerra")){
+//                drawnAdventureCard = getCardDeckTest().pop();
+//            }
+//        }
 
         DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(drawnAdventureCard);
         game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(drawnAdventureCardUpdate)); //Mando drawnAdventureCardUpdate a tutti i player
@@ -315,13 +317,13 @@ public class GameController {
             }
         } else if (projectile.getType() == ProjectileType.Meteor) {
             if (projectile.getSize() == ProjectileSize.Big) {
-                if (!protectWithFirstAvailableCannon(ship, projectile.getDirection())) {
+                if (!protectWithFirstAvailableCannon(ship, projectile.getDirection(),diceRoll)) {
                     destroyedTile = ship.getTileFromPosition(pos);
                     ship.removeTile(pos, false);
                     aTileHasBeenDestroyed = true;
                 }
             } else if (projectile.getSize() == ProjectileSize.Little) {
-                ArrayList<Connector> tileConnectors = ship.getShipBoard()[pos.getY()][pos.getX()].getTile().getSides();
+                ArrayList<Connector> tileConnectors = ship.getShipBoard()[pos.getX()][pos.getY()].getTile().getSides();
                 int index = -1;
 
                 switch (projectile.getDirection()) {
@@ -343,9 +345,24 @@ public class GameController {
         }
 
         if (aTileHasBeenDestroyed) {
-            game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
+            CardContext cardContext = game.getGameController().getCurrentCardContext();
 
+            game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
             //TODO: tronc
+            ArrayList<Ship> tronconi = new ArrayList<>();
+            tronconi.addAll(targetPlayer.getShip().getTronc() );
+//            if(tronconi.size()>1) {
+//                AskTrunkRequest askTrunkRequest = new AskTrunkRequest(tronconi);
+//                cardContext.nextPhase();
+//                game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(askTrunkRequest);
+//            }
+//            else{
+//                cardContext.previousPhase();
+//                cardContext.executePhase();
+//            }
+
+
+
         }
 
         return destroyedTile;
@@ -359,19 +376,51 @@ public class GameController {
      * @return {@code true} if the ship is protected, {@code false} if it is not.
      * @author Alessandro Giuseppe Gioia
      */
-    private boolean protectWithFirstAvailableCannon(Ship ship, ProjectileDirection direction) {
+    private boolean protectWithFirstAvailableCannon(Ship ship, ProjectileDirection direction,int diceRoll) {
+
+
         for (Position cannonPos : ship.getComponentPositionsFromName("Cannon")) {
             Cannon cannon = (Cannon) ship.getComponentFromPosition(cannonPos);
-            if (cannon.getRotation() == direction.ordinal()) {
-                return true;
+            ProjectileDirection directionCannon = ProjectileDirection.fromRotation(cannon.getRotation());
+
+            if (direction.equals(ProjectileDirection.UP)) {
+                if (directionCannon.equals(ProjectileDirection.UP) && diceRoll == cannonPos.getX()) {
+                    return true;
+                }
+            }
+            else if(direction.equals(ProjectileDirection.DOWN)){
+               if(directionCannon.equals(ProjectileDirection.DOWN) && (Math.abs(cannonPos.getX() - diceRoll) <= 1)) {
+                   return true;
+               }
+            }
+            else{
+                if(directionCannon.equals(direction) && (Math.abs(cannonPos.getY() - diceRoll) <= 1)) {
+                    return true;
+                }
             }
         }
 
         for (Position cannonPos : ship.getComponentPositionsFromName("DoubleCannon")) {
             DoubleCannon doubleCannon = (DoubleCannon) ship.getComponentFromPosition(cannonPos);
-            if (doubleCannon.getRotation() == direction.ordinal() && doubleCannon.isCharged()) {
-                doubleCannon.setCharged(false);
-                return true;
+            ProjectileDirection directionDoubleCannon = ProjectileDirection.fromRotation(doubleCannon.getRotation());
+
+            if(doubleCannon.isCharged()) {
+                if (direction.equals(ProjectileDirection.UP)) {
+                    if (directionDoubleCannon.equals(ProjectileDirection.UP) && diceRoll == cannonPos.getX()) {
+                        doubleCannon.setCharged(false);
+                        return true;
+                    }
+                } else if (direction.equals(ProjectileDirection.DOWN)) {
+                    if (directionDoubleCannon.equals(ProjectileDirection.DOWN) && (Math.abs(cannonPos.getX() - diceRoll) <= 1)) {
+                        doubleCannon.setCharged(false);
+                        return true;
+                    }
+                } else {
+                    if (directionDoubleCannon.equals(direction) && (Math.abs(cannonPos.getY() - diceRoll) <= 1)) {
+                       doubleCannon.setCharged(false);
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -410,7 +459,11 @@ public class GameController {
 
     public void clearPlayersWithNoCrew(){
         for(Player player : getPlayingPlayers()) {
-            if(player.getShip().getnCrew() == 0){
+            Ship ship = player.getShip();
+            int nCrewAndAlien = ship.getnCrew();
+            int nCrew = 0;
+            nCrew = nCrewAndAlien - ship.getNBrownAlien()-ship.getNPurpleAlien();
+            if( nCrew== 0){
                 removePlayerFromGame(player.getNickName(), false);
             }
         }

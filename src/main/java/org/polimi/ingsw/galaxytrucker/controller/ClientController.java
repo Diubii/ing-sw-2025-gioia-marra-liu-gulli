@@ -45,6 +45,7 @@ import java.rmi.RemoteException;
 import java.time.Duration;
 import java.util.ArrayList;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -67,6 +68,7 @@ public class ClientController implements Observer {
     private final NetworkMessageVisitorsInterface<Void> messageVisitor = new ClientNetworkMessageVisitor(this);
     private Tile currentTileInHand = null;
     private Position currentPosition;
+    private Position tmpCurrentPosition;
     private ClientPhaseController clientPhaseController = new ClientPhaseController(this);
 
     public GameState getPhase() {
@@ -117,17 +119,17 @@ public class ClientController implements Observer {
         });
     }
 
+    public void setIsPlaced(Boolean isPlaced) {
+        this.isPlaced = isPlaced;
+    }
+
+    public Boolean getIsPlaced() {
+        return isPlaced;
+    }
 
     @Override
     public void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException {
-        try {
-
-            message.accept(messageVisitor);
-        } catch (Exception e) {
-            //TODO: gestire crash server
-            System.err.println("[Error] The message was not processed correctly: " + e.getMessage());
-            //e.printStackTrace();
-        }
+        message.accept(messageVisitor);
     }
 
 
@@ -155,7 +157,7 @@ public class ClientController implements Observer {
         }
 
         //HEARTBEAT
-        new Thread(() -> {
+        Thread heartbeat = new Thread(() -> {
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
             while (true) {
                 try {
@@ -166,12 +168,14 @@ public class ClientController implements Observer {
                     throw new RuntimeException(e);
                 }
             }
-        }).start();
+        });
+        heartbeat.setPriority(Thread.MAX_PRIORITY);
+        heartbeat.start();
 
         new Thread(() -> {
             try {
                 view.askNickname();
-            } catch (Exception e) {
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 System.err.println("Errore nell'invio del nickname: " + e.getMessage());
             }
         }).start();
@@ -275,6 +279,7 @@ public class ClientController implements Observer {
                     myModel.getMyInfo().setColor(response.getColor());
                     myModel.getMyInfo().setShip(response.getMyShip());
                     myModel.getMyInfo().setNickName(getNickname());
+                    myModel.setLearningMatch(response.getIsLearningMatch());
                     MenuManager.learningMatch = isLearningMatch;
 
 
@@ -316,7 +321,7 @@ public class ClientController implements Observer {
 
 
                 }
-            } catch (Exception e) {
+            } catch (InterruptedException | ExecutionException e) {
                 view.showGenericMessage("Error receiving room options: " + e.getMessage());
             }
         }).start();
@@ -349,6 +354,11 @@ public class ClientController implements Observer {
                 myModel.getMyInfo().setShip(response.getMyShip());
                 myModel.getMyInfo().setNickName(getNickname());
                 myModel.setLearningMatch(response.getIsLearningMatch());
+
+                synchronized (myModel.getPlayerInfos()) {
+                    myModel.setPlayerInfos(response.getPlayerInfos());
+                }
+
                 MenuManager.learningMatch = response.getIsLearningMatch();
 
 
@@ -359,7 +369,7 @@ public class ClientController implements Observer {
                 view.askRoomCode();
             }
         } catch (Exception e) {
-            view.showGenericMessage("Error while waiting for join room response: " + e.getStackTrace());
+            view.showGenericMessage("Error while waiting for join room response: " + e.getMessage());
         }
 
     }
@@ -374,8 +384,6 @@ public class ClientController implements Observer {
 
         view.showPlayerJoined(playerJoinedUpdate.getPlayerInfo());
         view.showPlayersLobby(myModel.getMyInfo(), myModel.getPlayerInfos());
-
-
     }
 
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
@@ -438,6 +446,7 @@ public class ClientController implements Observer {
                         } catch (IOException | ExecutionException | InterruptedException e) {
                             throw new RuntimeException(e);
                         }
+
                     }
                     else{
                         view.showGenericMessage("Hai un tile  in mano, per favore posizionala prima.");
@@ -458,46 +467,42 @@ public class ClientController implements Observer {
                 break;
             }
             case "d" -> {
-                if (currentTileInHand != null) {
+                if (currentTileInHand != null ) {
                     view.showGenericMessage("You already have a tile in hand! Place it or discard it before drawing a new one.");
                     view.showBuildingMenu();
 
                 } else {
                     isPlaced = false;
                     view.askDrawTile();
-                    try {
-                        sendShipUpdate();
-                    } catch (IOException | ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
 
-                break;
+                }
 
             }
             case "e" -> {
                 showTileInHand();
-                break;
+
             }
             case "f" -> {
-                view.askRotation();
-                break;
+                if(currentTileInHand ==null){
+                    view.showGenericMessage("Before set rotation, you need to draw a tile ");
+                    view.showBuildingMenu();
+                }
+                else{
+                    view.askRotation();
+                }
+
             }
 
             case "g" -> {
                 view.askTilePlacement();
-                break;
+
             }
             case "h" -> {
                 sendDiscardRequest();
-                break;
-            }
-            case "i" -> {
-                view.askPickOrPlaceReservedTile(false);
-                break;
+
             }
 
-            case "j" -> {
+            case "i" -> {
                 try {
                     clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
 
@@ -512,7 +517,7 @@ public class ClientController implements Observer {
                 break;
             }
 
-            case "k" -> {
+            case "j" -> {
                 //devo far vedere i risultati dei TimerInfo e far appararire un menu
 //                if (!myModel.isLearningMatch())
 //                {
@@ -573,10 +578,16 @@ public class ClientController implements Observer {
 
     public void handleShipUpdate(ShipUpdate update) {
 
-        System.out.println("Debug: handleShipUpdate");
+//        System.out.println("Debug: handleShipUpdate");
 
         String owner = update.getNickName();
         Ship ship = update.getShipView();
+        if(phase == GameState.FLIGHT ){
+            if(update.getLoadMerci()== true){
+                view.askLoadGoodChoice();
+            }
+//
+        }
 
         if (owner != null) {
 
@@ -688,6 +699,13 @@ public class ClientController implements Observer {
 
     //case(d) draw tile
     public void handleDrawFaceDownTile() {
+        if(currentTileInHand!=null&&currentPosition!=null) {
+            try {
+                sendShipUpdate();
+            } catch (IOException | ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         DrawTileRequest request = new DrawTileRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
@@ -702,6 +720,7 @@ public class ClientController implements Observer {
                 String error = response.getErrorMessage();
 
                 if ("VALID".equals(error)) {
+
                     view.showTile(response.getTile());
                     ComponentNameVisitor visitor = new ComponentNameVisitor();
                     Component c = response.getTile().getMyComponent();
@@ -761,6 +780,11 @@ public class ClientController implements Observer {
 
                 switch (error) {
                     case "VALID":
+                        try {
+                            sendShipUpdate();
+                        } catch (IOException | ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                         Tile drawnTile = response.getTile();
                         if (drawnTile != null) {
                             view.showTile(drawnTile);
@@ -787,6 +811,84 @@ public class ClientController implements Observer {
 
     }
 
+    public void reclaimTile(){
+        DrawTileRequest request = DrawTileRequest.reclaimLastTileRequest();
+        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+        setCompletableFuture(future, request.getID());
+        try {
+            client.sendMessage(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        new Thread(() -> {
+
+            try {
+                DrawTileResponse response = (DrawTileResponse) future.get();
+                String error = response.getErrorMessage();
+
+                switch (error) {
+                    case "VALID":
+                        Tile drawnTile = response.getTile();
+                        if (drawnTile != null) {
+                            view.showTile(drawnTile);
+                            currentTileInHand = drawnTile;
+                            currentPosition = null;
+                        }
+                        break;
+                    case "FIXED":
+                        view.showGenericMessage("The tile is fixed.");
+                        break;
+                    case "NO_TILE":
+                        view.showGenericMessage("You don't have any reclaimable tile  ");
+                }
+            } catch (Exception e) {
+                view.showGenericMessage("An error occurred while processing the response: " + e.getMessage());
+
+            }
+            view.showBuildingMenu();
+        }).start();
+
+    }
+
+public void handleDrawReservedTile (int slotIndex){
+    DrawTileRequest request = DrawTileRequest.fromReservedSlot(slotIndex);
+    CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+    setCompletableFuture(future, request.getID());
+    try {
+        client.sendMessage(request);
+    } catch (IOException | ExecutionException | InterruptedException e) {
+        throw new RuntimeException(e);
+    }
+    new Thread(() -> {
+
+        try {
+            DrawTileResponse response = (DrawTileResponse) future.get();
+            String error = response.getErrorMessage();
+
+            switch (error) {
+                case "VALID":
+                    Tile drawnTile = response.getTile();
+                    if (drawnTile != null) {
+                        view.showTile(drawnTile);
+                        currentTileInHand = drawnTile;
+                        currentPosition = null;
+                    }
+                    break;
+                case "NO_TILE_AT_INDEX":
+                    view.showGenericMessage("no tile at index");
+                    break;
+            }
+        } catch (Exception e) {
+            view.showGenericMessage("An error occurred while processing the response: " + e.getMessage());
+
+        }
+        view.showBuildingMenu();
+    }).start();
+
+
+
+}
+
 
     public void showTileInHand() {
 
@@ -806,16 +908,23 @@ public class ClientController implements Observer {
 
 //
 
+
+    public void setTmpCurrentPosition(Position tmpCurrentPosition1) {
+        this.tmpCurrentPosition = tmpCurrentPosition1;
+    }
+
     public void resetCurrentPos() {
         currentPosition = null;
     }
+
 
     public void setCurrentPos(int x, int y) throws ExecutionException {
         Position pos = new Position(x, y);
         Ship ship = myModel.getMyInfo().getShip();
 
         if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos)) {
-            throw new IllegalArgumentException("Invalid Position" + pos.getY() + pos.getX());
+            Position toShowPosition = new Position(pos.getX()+4, pos.getY()+5);
+            throw new IllegalArgumentException("Invalid Position" + toShowPosition);
         }
 
 //    if (ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
@@ -829,15 +938,15 @@ public class ClientController implements Observer {
 
     // h
     public void handleTilePlacement(Boolean confirm) throws InvalidTilePosition {
-        if (currentPosition == null || currentTileInHand == null) {
-            view.showGenericMessage("No tile or position selected.");
+        if ( currentTileInHand == null) {
+            view.showGenericMessage("No tile selected.");
             view.showBuildingMenu();
             return;
         }
         //Todo Cambiare non deve fare modifica diretta e show diretto
-        myModel.getMyInfo().getShip().putTile(currentTileInHand, currentPosition);   //ship.putTile(tileInHand)
-        myModel.getMyInfo().getShip().setLastTile(currentTileInHand);               //ship.setLastTile
-        //view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
+//        myModel.getMyInfo().getShip().putTile(currentTileInHand, currentPosition);   //ship.putTile(tileInHand)
+//        myModel.getMyInfo().getShip().setLastTile(currentTileInHand);               //ship.setLastTile
+//        view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
 
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -856,12 +965,34 @@ public class ClientController implements Observer {
             try {
                 PlaceTileResponse response = (PlaceTileResponse) future.get();
                 view.showGenericMessage(response.getMessage());
+                if(response.getMessage().equals("INVALID_STATE")){
+
+                        currentPosition = tmpCurrentPosition;
+                    view.showGenericMessage("You cannot place a tile right now.");
+                }
+                if(response.getMessage().equals("INVALID_POS")){
+
+                    currentPosition = tmpCurrentPosition;
+
+                    view.showGenericMessage("You cannot place a tile in that position. invalid pos");
+
+                }
+                if(response.getMessage().equals("OCCUPIED_POS")){
+
+                        currentPosition = tmpCurrentPosition;
+
+                    view.showGenericMessage("You cannot place a tile in that position. occupied pos");
+
+                }
                 if (response.getMessage().equals("VALID")) {
+
                     resetCurrentPos();
                     currentTileInHand = null;
                     isPlaced = true;
                     view.showTile(currentTileInHand);
                 }
+
+
             } catch (Exception e) {
                 view.showGenericMessage("Error during tile placement: " + e.getMessage());
             } finally {
@@ -871,6 +1002,51 @@ public class ClientController implements Observer {
 
         }).start();
 
+    }
+    private void handlePlaceReservedTile(int slotIndex){
+        if ( currentTileInHand == null) {
+            view.showGenericMessage("No tile selected.");
+            view.showBuildingMenu();
+            return;
+        }
+
+        PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, slotIndex);
+        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+        setCompletableFuture(future, request.getID());
+
+        try {
+            client.sendMessage(request);
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            view.showGenericMessage("Failed to send tile placement: " + e.getMessage());
+            view.showBuildingMenu();
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                PlaceTileResponse response = (PlaceTileResponse) future.get();
+                view.showGenericMessage(response.getMessage());
+
+                if (response.getMessage().equals("VALID")) {
+
+                    resetCurrentPos();
+                    currentTileInHand = null;
+                    isPlaced = true;
+                    view.showTile(currentTileInHand);
+                }
+                else{
+                    view.showGenericMessage("err PlaceReservedTile");
+                }
+
+
+            } catch (Exception e) {
+                view.showGenericMessage("Error during tile placement: " + e.getMessage());
+            } finally {
+
+                view.showBuildingMenu();
+            }
+
+        }).start();
     }
 
 
@@ -883,6 +1059,7 @@ public class ClientController implements Observer {
             return;
         }
 
+        currentTileInHand.setRotation(0);
         DiscardTileRequest request = new DiscardTileRequest(currentTileInHand);
 
         try {
@@ -906,30 +1083,39 @@ public class ClientController implements Observer {
 //        }).start();
     }
 
+
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {
 
-        Tile[] reservedTiles = myModel.getReservedTiles();
+//        Tile[] reservedTiles = myModel.getReservedTiles();
+        Tile[] reservedTiles = getReservedTiles();
+
         Tile tile = reservedTiles[slotIndex];
+
         if (isPicking) {
             if (tile == null) {
-                view.showGenericMessage("No reserved tile at slot " + slotIndex + ".");
+                int toShowIndex =slotIndex+1;
+                view.showGenericMessage("No reserved tile at slot " + toShowIndex + ".");
                 view.showBuildingMenu();
 
 
             } else {
-                currentTileInHand = tile;
-                myModel.getReservedTiles()[slotIndex] = null;
-                view.showGenericMessage("Tile picked successfully.");
-                view.showBuildingMenu();
+                handleDrawReservedTile (slotIndex);
+//                currentTileInHand = tile;
+//                myModel.getReservedTiles()[slotIndex] = null;
+//                view.showGenericMessage("Tile picked successfully.");
+//                view.showBuildingMenu();
+
             }
         }
         //placing
         else {
             if (tile == null) {
-                myModel.getReservedTiles()[slotIndex] = currentTileInHand;
-                currentTileInHand = null;
-                view.showGenericMessage("Tile reserved successfully.");
-                view.showBuildingMenu();
+//                myModel.getReservedTiles()[slotIndex] = currentTileInHand;
+//                currentTileInHand = null;
+//                view.showGenericMessage("Tile reserved successfully.");
+//                view.showBuildingMenu();
+                handlePlaceReservedTile(slotIndex);
+
             } else {
                 view.showGenericMessage("A tile is already reserved at slot " + slotIndex + ".");
                 view.showBuildingMenu();
@@ -938,6 +1124,7 @@ public class ClientController implements Observer {
 
 
     }
+
 
 
 
@@ -960,12 +1147,10 @@ public class ClientController implements Observer {
 
     public void handleFlightBoardUpdate(FlightBoardUpdate flightBoardUpdate) {
 
-
         myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
-
-//        if(phase == GameState.FLIGHT){
-//            view.showFlightBoard(myModel.getFlightBoard());
-//        }
+        if(phase == GameState.FLIGHT && view.autoShowUpdates() == true){
+            view.showFlightBoard(myModel.getFlightBoard(),myModel.getPlayerInfos(),myModel.getMyInfo());
+        }
 
     }
 
@@ -1042,19 +1227,19 @@ public class ClientController implements Observer {
                 CheckShipStatusResponse response = (CheckShipStatusResponse) future.get();
                 boolean isValid = response.getIsValid();
                 if (isValid) {
-                    view.showGenericMessage("Your ship is immaculate!");
-                    view.showGenericMessage("Wait to start choosing your crew...");
+                    view.showWaitOtherPlayers();
+                    view.showGenericMessage("Nave immacolata!");
                     return;
 
                 } else {
-                    view.showGenericMessage("Ship need to be re-check");
+                    view.showGenericMessage("La nave va ricontrollata");
                     myModel.getMyInfo().setShip(response.getShip());
 
                 }
                 view.showcheckShipMenu();
 
             } catch (ExecutionException | InterruptedException e) {
-                view.showGenericMessage("Check Ship err");
+                view.showGenericMessage("Errore durante il controllo della nave");
                 throw new RuntimeException(e);
             }
 
@@ -1114,37 +1299,37 @@ public class ClientController implements Observer {
 
     public void handleFlightMenuChoice(String input) throws RuntimeException {
         new Thread(() -> {
-            switch (input) {
-                case "RESET" -> {
-                    return;
+                switch (input) {
+                    case "RESET" -> {
+                        return;
 
+                    }
+                    case "a" -> {
+                        view.askFetchShip();
+
+                        break;
+                    }
+
+                    case "b" -> {
+                        view.showFlightBoard(myModel.getFlightBoard(), myModel.getPlayerInfos(), myModel.getMyInfo());
+                        view.handleChoiceForPhase(phase);
+                        break;
+                    }
+
+                    case "c" ->
+                            handleEarlyLandingRequest();
+
+                    case "d" ->
+                            handleReadyTurnRequest();
+
+                    case "menu", "m", "?" -> {
+                        view.handleChoiceForPhase(phase);
+                    }
+                    default -> {
+                        view.showGenericMessage("Invalid option. Please try again.");
+                        view.handleChoiceForPhase(phase);
+                    }
                 }
-                case "a" -> {
-                    view.askFetchShip();
-
-                    break;
-                }
-
-                case "b" -> {
-                    view.showFlightBoard(myModel.getFlightBoard(), myModel.getPlayerInfos(), myModel.getMyInfo());
-                    view.handleChoiceForPhase(phase);
-                    break;
-                }
-
-                case "c" ->
-                        handleEarlyLandingRequest();
-
-                case "d" ->
-                        handleReadyTurnRequest();
-
-                case "menu", "m", "?" -> {
-                    view.handleChoiceForPhase(phase);
-                }
-                default -> {
-                    view.showGenericMessage("Invalid option. Please try again.");
-                    view.handleChoiceForPhase(phase);
-                }
-            }
 
         }).start();
     }
@@ -1157,6 +1342,7 @@ public class ClientController implements Observer {
             throw new RuntimeException(e);
         }
         view.showGenericMessage("Hai scelto l’atterraggio anticipato, ora guarda gli altri giocatori.");
+        view.showYouAreNowSpectating();
 
     }
     public void handleReadyTurnRequest()  {
@@ -1189,7 +1375,7 @@ public class ClientController implements Observer {
         if (amLeader) {
             view.askDrawCard();
         } else {
-            view.showGenericMessage("No sei il leader a questo turno. Dovresti aspettare il leader pesca la carta.");
+            view.showGenericMessage("Non sei leader per questo turno. Devi aspettare che il leader peschi la carta.");
 
         }
 
@@ -1236,8 +1422,8 @@ public class ClientController implements Observer {
     //planet
     //Select Planet
     public void handleSelectPlanetRequest(SelectPlanetRequest request) {
-        ArrayList<Planet> landablePlanet = request.getLandablePlanets();
-        view.askSelectPlanetChoice(landablePlanet);
+        HashMap<Integer, Planet> landablePlanets = request.getLandablePlanets();
+        view.askSelectPlanetChoice(landablePlanets);
     }
 // Dopo aver ricevuto una SelectPlanetRequest, chiedo al giocatore quale pianeta vuole scegliere.
 // Quando il giocatore ha fatto la sua scelta, devo inviare sia il pianeta selezionato sia l'indice corrispondente,
@@ -1258,16 +1444,18 @@ public class ClientController implements Observer {
     // vuole mettere i goods nella sua ship
     public void handleSelectPlanetUpdate(SelectedPlanetUpdate update) {
         String selectingPlayerNickname = update.getSelectingPlayerNickname();
-        int fakeplanetIndex = update.getPlanetIndex()+1;
-        view.showGenericMessage("Player " + selectingPlayerNickname + " ha selezionato il pianeta " + fakeplanetIndex);
+        view.showGenericMessage("Player " + selectingPlayerNickname + " ha selezionato il pianeta " + update.getPlanetIndex());
         if (selectingPlayerNickname.equals(getNickname())) {
             Planet selectedPlanet = update.getSelectedPlanet();
             myModel.setSelectedPlanet(selectedPlanet);
             myModel.setUnplacedGoods(selectedPlanet.getGoods());
-            view.askLoadGoodChoice();
         }
     }
 
+    /**
+     * Handles the choice for the loading goods phase, and tells the View what to show
+     * @param input
+     */
     public void handleLoadGoodChoice(String input) {
         if (input == null) return;
 
@@ -1292,7 +1480,7 @@ public class ClientController implements Observer {
     @NeedsToBeChecked("non modificare model in locale, creare una TempShip ")
     public void placeMerci(int goodIndex, Good good, Position pos) {
         Ship ship = myModel.getMyInfo().getShip();
-        Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+        Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
         GenericCargoHolds hold = (GenericCargoHolds) slot.getTile().getMyComponent();
         hold.playerLoadGood(good);
         myModel.getSelectedPlanet().getGoods().remove(goodIndex);
@@ -1320,11 +1508,36 @@ public class ClientController implements Observer {
 
     public void handleActivateComponentRequest(ActivateComponentRequest request) {
         ActivatableComponent component = request.getActivatableComponentType();
-        //Invoca metodo della view fare scegliere al giocatore i componenti da attivare e le batterie da usare
-        try {
-            view.chooseComponent(myModel.getMyInfo().getShip(), component);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        String componentName;
+        switch (component) {
+            case ActivatableComponent.DoubleCannon:
+                componentName = "DoubleCannon";
+                break;
+            case ActivatableComponent.DoubleEngine:
+                componentName = "DoubleEngine";
+                break;
+            case ActivatableComponent.Shield:
+                componentName = "Shield";
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown component type: " + component);
+        }
+
+        Ship myShip = getMyShip();
+
+        ArrayList<Position> activateComponentPosition = myShip.getComponentPositionsFromName(componentName);
+        if (activateComponentPosition == null||activateComponentPosition.size()==0) {
+            handleActivateComponentResponse(component,null,null);
+            return;
+
+        }
+        else {
+            //Invoca metodo della view fare scegliere al giocatore i componenti da attivare e le batterie da usare
+            try {
+                view.chooseComponent(myModel.getMyInfo().getShip(), component);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -1366,6 +1579,7 @@ public class ClientController implements Observer {
             //TODO: Torna alla scelta dei menù
             //Questo perché magari la connessione del client potrebbe cadere per più di 5 secondi, ma nel caso in cui tornasse su potrebbe ricevere tutti i messaggi arretrati.
             //Quindi dato che il PlayerKickedUpdate viene mandato anche a chi sta per essere kickato, questo è un caso da gestire
+            view.showGenericMessage("SEI STATO KIKKATO");
         } else {
             view.showGenericMessage("Player " + playerKickedUpdate.getNickname() + " got kicked out of the game!");
         }
@@ -1392,7 +1606,7 @@ public class ClientController implements Observer {
     }
 
     public void sendCollectRewardsResponse(boolean confirm) {
-        CollectRewardsResponse response = new CollectRewardsResponse(confirm);
+       CollectRewardsResponse response = new CollectRewardsResponse(confirm);
         try {
             client.sendMessage(response);
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -1425,7 +1639,7 @@ public class ClientController implements Observer {
         ArrayList<Position> occupied = new ArrayList<>();
 
         for (Position pos : cargoHolds) {
-            Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+            Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
             if (slot != null && slot.getTile() != null) {
                 Component c = slot.getTile().getMyComponent();
                 if (c instanceof GenericCargoHolds hold && !hold.isEmpty()) {
@@ -1451,6 +1665,8 @@ public class ClientController implements Observer {
 
         if (nickname.equals(getNickname())) {
             myModel.setPlayerState(PlayerState.Spectating);
+            //Todo comunicare bene a giocatore che rimosso
+            view.showYouAreNowSpectating();
         }
         if (isLandingEarly) {
             view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.");
@@ -1464,7 +1680,7 @@ public class ClientController implements Observer {
     }
 
     private Slot getSlot(Ship ship, Position pos) {
-        Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+        Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
         return slot;
     }
 
@@ -1477,7 +1693,7 @@ public class ClientController implements Observer {
         ArrayList<Position> available = new ArrayList<>();
 
         for (Position pos : cargoHolds) {
-            Slot slot = ship.getShipBoard()[pos.getY()][pos.getX()];
+            Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
             if (slot != null && slot.getTile() != null) {
                 Component c = slot.getTile().getMyComponent();
                 if (c instanceof GenericCargoHolds hold && !hold.isFull()) {
@@ -1529,6 +1745,8 @@ public class ClientController implements Observer {
     public void setCurrentTileInHand(Tile currentTileInHand) {
         this.currentTileInHand = currentTileInHand;
     }
+
+    //Todo : eliminare
     public Tile[] getReservedTiles() {
         return myModel.getReservedTiles();
     }

@@ -21,14 +21,18 @@ public class DoubleCannon extends Cannon {
     }
 
     private void calculateFP() {
-        if (getRotation() != 0) {
-            if (charged) {
-                FirePower = FirePower * 2;
+        if (getRotation() == 0) {
+            //FirePower =2
+            if (charged == false) {
+                FirePower = FirePower / 2;
+            }
+            else{
                 charged = false;
             }
             //Altrimenti rimane uguale
         } else {
-            if (!charged) {
+            FirePower = FirePower / 2;
+            if (charged==false) {
                 FirePower = FirePower / 2;
             } else { //Altrimenti rimane uguale
                 charged = false;

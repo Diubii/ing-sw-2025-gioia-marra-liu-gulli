@@ -43,8 +43,8 @@ public class GUIStart extends Application {
         primaryStage.setTitle("Galaxy Trucker - GUI");
         Image icon = new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/Seduto.png").toString());
         primaryStage.getIcons().add(icon);
-        primaryStage.setMinHeight(600);
-        primaryStage.setMinWidth(500);
+        primaryStage.setMinHeight(800);
+        primaryStage.setMinWidth(900);
         //primaryStage.resizableProperty().setValue(Boolean.FALSE);
 
         gui.askServerInfo(); // Prima scena da mostrare

@@ -59,7 +59,7 @@ public class ListLobbyController extends GenericSceneController {
                 SingleLobbyInfoController controller = loader.getController();
                 controller.setData(info.getLobbyID(), info.getHost(), info.getConnectedPlayers(), info.getMaxPlayers(),info.isLearningMatch());
 
-                controller.getJoinButton().setOnAction(e -> clientController.handleJoinChoice(info.getLobbyID()));
+                controller.getJoinButton().setOnAction(e -> {clientController.handleJoinChoice(info.getLobbyID()); GuiJavaFx.playWavSoundEffect("ButtonClick.wav");});
 
                 PnlLobbies.getChildren().add(lobbyNode);
             } catch (IOException e) {

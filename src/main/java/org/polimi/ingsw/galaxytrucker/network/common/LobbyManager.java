@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 public class LobbyManager {
     private Game RealGame;
 
+    private final int gameID;
     private final HashMap<String, Color> PlayerColors;
     private Color nextAvailableColor;
     private final HashMap<String, ClientHandler> PlayerHandlers = new HashMap<>();
@@ -46,6 +47,9 @@ public class LobbyManager {
     final Object lock4 = new Object();
     final Object lock6 = new Object();
 
+    public int getGameID() {
+        return gameID;
+    }
 
     public ArrayList<PlayerInfo> getPlayerInfos() {
         synchronized (lock6) {
@@ -149,7 +153,8 @@ public class LobbyManager {
         return RealGame;
     }
 
-    public LobbyManager() {
+    public LobbyManager(int gameID) {
+        this.gameID = gameID;
         PlayerColors = new HashMap<>();
         RealGame = new Game();
         nextAvailableColor = Color.RED;

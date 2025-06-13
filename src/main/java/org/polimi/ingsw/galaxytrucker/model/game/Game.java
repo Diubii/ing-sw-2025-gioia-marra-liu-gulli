@@ -253,7 +253,7 @@ public class Game {
         return flightDeck;
     }
 
-    public void createDecks() throws IOException {
+    public void createDecks() {
 
         ArrayList<CardDeck> decks = new ArrayList<>();
 

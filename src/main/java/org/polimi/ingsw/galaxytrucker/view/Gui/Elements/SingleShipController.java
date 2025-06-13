@@ -36,9 +36,6 @@ public class SingleShipController {
 
     private void adjustGridPaneSize(double aspectRatio) {
 
-        System.out.println("AdjustSize Chiamata");
-
-
         double containerWidth = shipGridContainer.getWidth();
         double containerHeight = shipGridContainer.getHeight();
 

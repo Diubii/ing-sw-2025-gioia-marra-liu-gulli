@@ -20,6 +20,7 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
     private final String nickName;
     private Boolean onlyFix = false;
     private Boolean shouldDisplay = false;
+    private Boolean loadMerci = false;
 
     public ShipUpdate(Ship shipView, String nickName) {
         this.shipView = shipView;
@@ -49,6 +50,14 @@ public class ShipUpdate extends NetworkMessage implements Serializable {
 
     public Boolean getShouldDisplay() {
         return shouldDisplay;
+    }
+
+    public void setLoadMerci(Boolean loadMerci) {
+        this.loadMerci = loadMerci;
+    }
+
+    public Boolean getLoadMerci() {
+        return loadMerci;
     }
 
     public void setShouldDisplay(Boolean shouldDisplay) {

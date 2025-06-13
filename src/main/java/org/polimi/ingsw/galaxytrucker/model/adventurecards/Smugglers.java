@@ -60,6 +60,8 @@ public class Smugglers extends AdventureCard {
         return firePower;
     }
 
+
+
     @Override
     public <T> T accept(AdventureCardVisitorsInterface<T> visitor) {
         return visitor.visit(this);

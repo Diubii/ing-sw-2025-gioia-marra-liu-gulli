@@ -3,11 +3,11 @@ package org.polimi.ingsw.galaxytrucker.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
+import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.enums.*;
-import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
@@ -38,26 +38,47 @@ import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class ServerController {
+public class ServerController extends UnicastRemoteObject implements ServerControllerHandles {
 
-    private final ArrayList<LobbyManager> lobbyManagers;
+    private final HashMap<Integer, LobbyManager> lobbyManagers;
     private final MessageManager messageManager;
     private final ArrayList<ClientHandler> clients = new ArrayList<>();
-    private final HashMap<ClientHandler, String> clientNicknameMap = new HashMap<>();
+    private final HashMap<UUID, String> clientNicknameMap = new HashMap<>();
     //private final ArrayList<String> usedNicknames = new ArrayList<>();
     private final ArrayList<LobbyInfo> lobbyInfos = new ArrayList<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final ArrayList<Heartbeat> heartbeats = new ArrayList<>();
 
     private ArrayList<Tile> gameTiles;
 
     private static final NetworkMessageNameVisitor networkMessageNameVisitor = new NetworkMessageNameVisitor();
 
-    public ServerController() {
-        this.lobbyManagers = new ArrayList<>();
+    private static final ExecutorService executor = Executors.newCachedThreadPool();
+
+    private boolean synchronousExecution = false;
+
+    private static Integer nextLobbyIndex = 0;
+
+    public void setSynchronousExecution(boolean sync) {
+        this.synchronousExecution = sync;
+    }
+
+    public void execute(Runnable task) {
+        if (synchronousExecution) {
+            task.run(); //per test
+        } else {
+            executor.submit(task);
+        }
+    }
+
+    public ServerController() throws RemoteException {
+        super();
+
+        this.lobbyManagers = new HashMap<>();
         messageManager = new MessageManager(this);
         initActionsAllowed();
 //        model.setRealGame(new Game(4, false));
@@ -93,12 +114,8 @@ public class ServerController {
         }
     }
 
-    public void addLobbyManager(LobbyManager game) {
-        lobbyManagers.add(game);
-    }
-
     /**
-     * Safely removes a client, freeing its nickname, if it exists, and kicking it from an eventual game it's in.
+     * Safely removes a client, freeing its nickname if it exists, and kicking it from an eventual game it's in.
      *
      * @param client The client's {@link ClientHandler}
      * @author Alessandro Giuseppe Gioia
@@ -111,23 +128,23 @@ public class ServerController {
             game.getGameController().kickPlayerFromGame(nickname);
 
             synchronized (lobbyInfos) {
-                lobbyInfos.get(lobbyManagers.indexOf(game)).removeConnectedPlayer();
+                lobbyInfos.stream().filter(l -> l.getLobbyID() == game.getGameID()).findFirst().ifPresent(LobbyInfo::removeConnectedPlayer);
             }
 
             if (game.getPlayerHandlers().isEmpty()) {
                 synchronized (lobbyInfos) {
-                    lobbyInfos.removeIf(info -> info.getLobbyID() == lobbyManagers.indexOf(game));
+                    lobbyInfos.removeIf(info -> info.getLobbyID() == game.getGameID());
                 }
                 //System.out.println("A game was empty. Cleared from the list of games.");
                 synchronized (lobbyManagers) {
-                    lobbyManagers.remove(game);
+                    lobbyManagers.remove(game.getGameID());
                 }
             }
         }
 
         if (nickname != null && !nickname.isBlank()) {
             synchronized (clientNicknameMap) {
-                clientNicknameMap.remove(client);
+                clientNicknameMap.remove(client.getClientID());
             }
         }
 
@@ -146,12 +163,13 @@ public class ServerController {
         return messageManager;
     }
 
+    @NeedsToBeChecked("Un po' confusionaria la query, magari si può fare una Map<ClientHandler, LobbyManager> o Map<UUID, LobbyManager>")
     public LobbyManager getLobbyFromHandler(ClientHandler clientHandler) {
 
         LobbyManager lobbyManager;
         synchronized (lobbyManagers) {
-            lobbyManager = lobbyManagers.stream().filter(gameModel ->
-                    gameModel.getPlayerHandlers().containsValue(clientHandler)).findFirst().orElse(null);
+            lobbyManager = lobbyManagers.values().stream().filter(gameModel ->
+                    gameModel.getPlayerHandlers().values().stream().anyMatch(h -> h.getClientID().equals(clientHandler.getClientID()))).findFirst().orElse(null);
         }
 
         return lobbyManager;
@@ -166,813 +184,1009 @@ public class ServerController {
 
     /*
      *
-     * HANDLERS
+     * HANDLES
      *
-     * */
+     */
 
-    public void handleNicknameRequest(NicknameRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException {
-        Boolean result = false;
-        boolean flag = false;
+    public void handleNicknameRequest(NicknameRequest message, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+                    Boolean result = false;
+                    boolean flag = false;
 
-        //get nickname & check
-        String nickname = message.getNickname();
-        NicknameResponse nicknameResponse = new NicknameResponse(null, message.getID());
+                    //get nickname & check
+                    String nickname = message.getNickname();
+                    NicknameResponse nicknameResponse = new NicknameResponse(null, message.getID());
 
 
-        //System.out.println("REQ");
-        synchronized (clientNicknameMap) {
+                    //System.out.println("REQ");
+                    synchronized (clientNicknameMap) {
 
-            if (!clientNicknameMap.containsValue(nickname)) {
-                clientNicknameMap.put(clientHandler, nickname);
-                nicknameResponse.setResponse("VALID");
-            } else {
-                System.out.println("[+] NOT ADDED " + message.getNickname());
-                nicknameResponse.setResponse("INVALID");
-            }
+                        if (!clientNicknameMap.containsValue(nickname)) {
+                            clientNicknameMap.put(clientHandler.getClientID(), nickname);
+                            nicknameResponse.setResponse("VALID");
+                        } else {
+                            System.out.println("[+] NOT ADDED " + message.getNickname());
+                            nicknameResponse.setResponse("INVALID");
+                        }
 
-        }
+                    }
 
-        clientHandler.sendMessage(nicknameResponse);
+                    clientHandler.sendMessage(nicknameResponse);
+        });
         //System.out.println("SENDING RESPONSE\n");
     }
 
-    public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition {
+    public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            //get nickname & check
+            String tempNick = message.getNickName();
 
-        //get nickname & check
-        String tempNick = message.getNickName();
-
-        LobbyManager newGame = new LobbyManager();
-        Player myPlayer = new Player(message.getNickName(), 0, 0, message.getIsLearningMatch());
-
-        Color myColor = newGame.useNextAvailableColor();
-        myPlayer.setColor(myColor);
-
-        newGame.getPlayerColors().putIfAbsent(message.getNickName(), myColor);
-        newGame.getRealGame().setLearningMatch(message.getIsLearningMatch());
-        newGame.getRealGame().setnMaxPlayer(message.getMaxPlayers());
-        newGame.getRealGame().addPlayer(myPlayer);
-        newGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
-        newGame.getRealGame().initFlightBoard();
-
-        Tile centralTile = null;
-
-        for (Tile tile : gameTiles) {
-            if (tile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
-                //System.out.println(tile.getMyComponent().accept(new ComponentNameVisitor()));
-                CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
-                if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)) {
-                    centralTile = tile;
-//                    gameTiles.remove(tile);
-                }
-
+            LobbyManager newGame;
+            synchronized (lobbyManagers) {
+                newGame = new LobbyManager(nextLobbyIndex);
+                lobbyManagers.put(newGame.getGameID(), newGame);
+                nextLobbyIndex++;
             }
-        }
 
-        newGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
+            Player myPlayer = new Player(message.getNickName(), 0, 0, message.getIsLearningMatch());
 
+            Color myColor = newGame.useNextAvailableColor();
+            myPlayer.setColor(myColor);
 
-        myPlayer.getShip().putTile(centralTile, new Position(3, 2));
+            newGame.getPlayerColors().putIfAbsent(message.getNickName(), myColor);
+            newGame.getRealGame().setLearningMatch(message.getIsLearningMatch());
+            newGame.getRealGame().setnMaxPlayer(message.getMaxPlayers());
+            try {
+                newGame.getRealGame().addPlayer(myPlayer);
+            } catch (TooManyPlayersException | PlayerAlreadyExistsException e) {
+                System.err.println(e.getMessage());
+                return;
+            }
+            newGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
+            newGame.getRealGame().initFlightBoard();
 
+            Tile centralTile = null;
 
-        synchronized (lobbyManagers) {
-            lobbyManagers.add(newGame);
-        }
+            for (Tile tile : gameTiles) {
+                if (tile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
+                    //System.out.println(tile.getMyComponent().accept(new ComponentNameVisitor()));
+                    CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
+                    if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)) {
+                        centralTile = tile;
+//                    gameTiles.remove(tile);
+                    }
 
-        int index = lobbyManagers.indexOf(newGame);
-        synchronized (lobbyInfos) {
-            lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, index, message.getIsLearningMatch()));
+                }
+            }
 
-        }
-
-        JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, true, message.getID());
-        joinRoomResponse.setColor(myColor);
-        joinRoomResponse.setMyShip(myPlayer.getShip());
-
-        PlayerInfo playerInfo1 = new PlayerInfo();
-        playerInfo1.setShip(myPlayer.getShip());
-        playerInfo1.setNickName(myPlayer.getNickName());
-        playerInfo1.setColor(myColor);
-        newGame.addPlayerInfo(playerInfo1);
-
-
-        clientHandler.sendMessage(joinRoomResponse);
-        clientHandler.sendMessage(new FlightBoardUpdate(newGame.getRealGame().getFlightBoard()));
-    }
-
-    public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler) {
-
-        JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(null, message.getID());
-        synchronized (lobbyInfos) {
-            joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos, message.getID());
-        }
-        clientHandler.sendMessage(joinRoomOptionsResponse);
-    }
-
-    public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws TooManyPlayersException, PlayerAlreadyExistsException, IOException, InvalidTilePosition {
-        String mess = "";
-        LobbyInfo myLobbyInfo;
-
-        JoinRoomResponse joinRoomResponse = new JoinRoomResponse(null, null, message.getID());
-        ArrayList<ClientHandler> playerHandlers;
-        boolean result = false;
-        PlayerJoinedUpdate playerJoinedUpdate;
-        LobbyManager myGame = null;
+            newGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
 
 
-        if (message.getRoomId() < lobbyManagers.size()) myGame = lobbyManagers.get(message.getRoomId());
+            myPlayer.getShip().putTile(centralTile, new Position(3, 2));
 
-        if (myGame == null) {
-            mess = "Lobby number " + message.getRoomId() + " doesn't exist. Try again.";
-            joinRoomResponse.setErrMess(mess);
-            joinRoomResponse.setOperationSuccess(false);
-            joinRoomResponse.setColor(null);
+            synchronized (lobbyInfos) {
+                lobbyInfos.add(new LobbyInfo(message.getNickName(), message.getMaxPlayers(), 1, newGame.getGameID(), message.getIsLearningMatch()));
+            }
+
+            JoinRoomResponse joinRoomResponse = new JoinRoomResponse(message.getID());
+            joinRoomResponse.setOperationSuccess(true);
+            joinRoomResponse.setColor(myColor);
+            joinRoomResponse.setMyShip(myPlayer.getShip());
+            joinRoomResponse.setIsLearningMatch(newGame.getRealGame().getIsLearningMatch());
+
+            PlayerInfo playerInfo1 = new PlayerInfo();
+            playerInfo1.setShip(myPlayer.getShip());
+            playerInfo1.setNickName(myPlayer.getNickName());
+            playerInfo1.setColor(myColor);
+            newGame.addPlayerInfo(playerInfo1);
+
+
             clientHandler.sendMessage(joinRoomResponse);
-            return;
-        }
+            clientHandler.sendMessage(new FlightBoardUpdate(newGame.getRealGame().getFlightBoard()));
+        });
+    }
 
-        synchronized (myGame) {
+    public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(null, message.getID());
+            synchronized (lobbyInfos) {
+                joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos, message.getID());
+            }
+            clientHandler.sendMessage(joinRoomOptionsResponse);
+        });
+    }
 
-            //System.out.println("SIZE: " + myGame.getPlayerColors().size());
+    public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            String mess = "";
+            LobbyInfo myLobbyInfo;
 
-            if (myGame.getPlayerColors().size() == myGame.getRealGame().getMaxPlayers() || myGame.getGameController().getGameState() != GameState.LOBBY) {
-                //System.out.println("2");
+            JoinRoomResponse joinRoomResponse = new JoinRoomResponse(message.getID());
+            ArrayList<ClientHandler> playerHandlers;
+            boolean result = false;
+            PlayerJoinedUpdate playerJoinedUpdate;
 
+            LobbyManager myGame = lobbyManagers.get(message.getRoomId());
 
-                mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY" + message.getRoomId() + "DOESN'T MUNGI YOU");
+            if (myGame == null) {
+                mess = "Lobby number " + message.getRoomId() + " doesn't exist. Try again.";
                 joinRoomResponse.setErrMess(mess);
                 joinRoomResponse.setOperationSuccess(false);
                 joinRoomResponse.setColor(null);
                 clientHandler.sendMessage(joinRoomResponse);
                 return;
+            }
 
-            } else {
+            synchronized (myGame) {
 
-                //System.out.println("3");
+                //System.out.println("SIZE: " + myGame.getPlayerColors().size());
 
-                Player myPlayer = new Player(message.getNickName(), 0, 0, myGame.getRealGame().getIsLearningMatch());
+                if (myGame.getPlayerColors().size() == myGame.getRealGame().getMaxPlayers() || myGame.getGameController().getGameState() != GameState.LOBBY) {
+                    //System.out.println("2");
 
-                //trovo la cabina con il colore
 
-                mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
+                    mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY" + message.getRoomId() + "DOESN'T MUNGI YOU");
+                    joinRoomResponse.setErrMess(mess);
+                    joinRoomResponse.setOperationSuccess(false);
+                    joinRoomResponse.setColor(null);
+                    clientHandler.sendMessage(joinRoomResponse);
+                    return;
+
+                } else {
+
+                    //System.out.println("3");
+
+                    Player myPlayer = new Player(message.getNickName(), 0, 0, myGame.getRealGame().getIsLearningMatch());
+
+                    //trovo la cabina con il colore
+
+                    mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
 
 
 //                    lobbyInfos.get(0).addConnectedPlayer();
 
 
-                Color myColor = myGame.useNextAvailableColor();
-                myGame.getPlayerColors().putIfAbsent(message.getNickName(), myColor);
-                myPlayer.setColor(myColor);
+                    Color myColor = myGame.useNextAvailableColor();
+                    myGame.getPlayerColors().putIfAbsent(message.getNickName(), myColor);
+                    myPlayer.setColor(myColor);
 
-                //System.out.println("4");
+                    //System.out.println("4");
 
-                //trovo la cabina centrale del colore dell'utente
-                Tile centralTile = null;
+                    //trovo la cabina centrale del colore dell'utente
+                    Tile centralTile = null;
 
-                for (Tile tile : gameTiles) {
-                    if (tile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
-                        //System.out.println(tile.getMyComponent().accept(new ComponentNameVisitor()));
-                        CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
-                        if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)) {
-                            centralTile = tile;
+                    for (Tile tile : gameTiles) {
+                        if (tile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
+                            //System.out.println(tile.getMyComponent().accept(new ComponentNameVisitor()));
+                            CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
+                            if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)) {
+                                centralTile = tile;
+                                break;
+                            }
+
                         }
+                    }
+
+                    myGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
+
+
+                    myPlayer.getShip().putTile(centralTile, new Position(3, 2));
+
+
+                    try {
+                        myGame.getRealGame().addPlayer(myPlayer);
+                    } catch (TooManyPlayersException | PlayerAlreadyExistsException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    myGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
+
+                    playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+
+
+                    PlayerInfo playerInfo1 = new PlayerInfo();
+                    playerInfo1.setShip(myPlayer.getShip());
+                    playerInfo1.setNickName(myPlayer.getNickName());
+                    playerInfo1.setColor(myColor);
+                    //qua
+//                ArrayList<ClientHandler> PlayerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+
+                    playerJoinedUpdate = new PlayerJoinedUpdate(playerInfo1);
+
+
+                    synchronized (lobbyInfos) {
+                        myLobbyInfo = lobbyInfos.stream().filter(l -> l.getLobbyID() == message.getRoomId()).findFirst().orElse(null);
+                    }
+
+
+                    joinRoomResponse.setErrMess(mess);
+                    joinRoomResponse.setOperationSuccess(true);
+                    joinRoomResponse.setColor(myColor);
+                    joinRoomResponse.setMyShip(myPlayer.getShip());
+                    myGame.addPlayerInfo(playerInfo1);
+
+                    if (myLobbyInfo != null) {
+
+                        myLobbyInfo.addConnectedPlayer();
+                        result = true;
+                    } else {
+
+                        mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY NOT FOUND :) " + message.getRoomId());
+                        joinRoomResponse.setOperationSuccess(false);
+                        joinRoomResponse.setColor(null);
+                        joinRoomResponse.setMyShip(null);
+
 
                     }
                 }
 
-                myGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
+                //fine synchronized e
 
+                PlayerInfo hostPlayerInfo = new PlayerInfo();
+                hostPlayerInfo.setNickName(myLobbyInfo.getHost());
+                hostPlayerInfo.setShip(myGame.getRealGame().getPlayer(myLobbyInfo.getHost()).getShip());
+                hostPlayerInfo.setColor(myGame.getPlayerColors().get(myLobbyInfo.getHost()));
 
-                myPlayer.getShip().putTile(centralTile, new Position(3, 2));
-
-
-                myGame.getRealGame().addPlayer(myPlayer);
-
-                myGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
-
-                playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-
-
-                PlayerInfo playerInfo1 = new PlayerInfo();
-                playerInfo1.setShip(myPlayer.getShip());
-                playerInfo1.setNickName(myPlayer.getNickName());
-                playerInfo1.setColor(myColor);
-                //qua
-//                ArrayList<ClientHandler> PlayerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-
-                playerJoinedUpdate = new PlayerJoinedUpdate(playerInfo1);
-
-
-                synchronized (lobbyInfos) {
-                    myLobbyInfo = lobbyInfos.stream().filter(l -> l.getLobbyID() == message.getRoomId()).findFirst().orElse(null);
-                }
-
-
-                joinRoomResponse.setErrMess(mess);
-                joinRoomResponse.setOperationSuccess(true);
-                joinRoomResponse.setColor(myColor);
-                joinRoomResponse.setMyShip(myPlayer.getShip());
-//                joinRoomResponse.setIsLearningMatch(myGame.getRealGame().getIsLearningMatch());
-                myGame.addPlayerInfo(playerInfo1);
-
-                if (myLobbyInfo != null) {
-
-                    myLobbyInfo.addConnectedPlayer();
-                    result = true;
-                } else {
-
-                    mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.RED, "LOBBY NOT FOUND :) " + message.getRoomId());
-                    joinRoomResponse.setOperationSuccess(false);
-                    joinRoomResponse.setColor(null);
-                    joinRoomResponse.setMyShip(null);
-
-
-                }
-            }
-
-            //fine synchronized e
-
-            PlayerInfo hostPlayerInfo = new PlayerInfo();
-            hostPlayerInfo.setNickName(myLobbyInfo.getHost());
-            hostPlayerInfo.setShip(myGame.getRealGame().getPlayer(myLobbyInfo.getHost()).getShip());
-            hostPlayerInfo.setColor(myGame.getPlayerColors().get(myLobbyInfo.getHost()));
-
-            joinRoomResponse.setIsLearningMatch(myLobbyInfo.isLearningMatch());
+                joinRoomResponse.setIsLearningMatch(myLobbyInfo.isLearningMatch());
+                if (result) joinRoomResponse.setPlayerInfos(myGame.getPlayerInfos());
 
 //            clientHandler.sendMessage(new PlayerJoinedUpdate(hostPlayerInfo));
-            clientHandler.sendMessage(new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
-            clientHandler.sendMessage(joinRoomResponse);
-            //System.out.println("ID RESP: " + joinRoomResponse.getID());
+                clientHandler.sendMessage(new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
+                clientHandler.sendMessage(joinRoomResponse);
+                //System.out.println("ID RESP: " + joinRoomResponse.getID());
 
-            //se tutto è andato bene
-            if (result) {
+                //se tutto è andato bene
+                if (result) {
 
-                ArrayList<ClientHandler> original = new ArrayList<>(playerHandlers);
-                playerHandlers.remove(clientHandler);
+                    ArrayList<ClientHandler> original = new ArrayList<>(playerHandlers);
+                    playerHandlers.remove(clientHandler);
 
-                playerJoinedUpdate.setPlayersJoinedBefore(myGame.getPlayerInfos());
-                broadCast(original, playerJoinedUpdate);
+                    playerJoinedUpdate.setPlayersJoinedBefore(myGame.getPlayerInfos());
+                    broadCast(playerHandlers, playerJoinedUpdate);
 
-                //dopo aver mandato la notifica di connessione vedo se ho raggiunto il numero massimo di player per la lobby
-                //e starto il gioco automaticamente lato server
+                    //dopo aver mandato la notifica di connessione vedo se ho raggiunto il numero massimo di player per la lobby
+                    //e starto il gioco automaticamente lato server
 
-                if (myGame.getRealGame().getMaxPlayers() == myGame.getRealGame().getNumPlayers()) {
+                    if (myGame.getRealGame().getMaxPlayers() == myGame.getRealGame().getNumPlayers()) {
 
-                    //creo i deck
+                        //creo i deck
 
-                    //creo flightDeck
-                    myGame.getRealGame().createDecks();
-                    ArrayList<CardDeck> decks = myGame.getRealGame().getDecks();
+                        //creo flightDeck
+                        myGame.getRealGame().createDecks();
+                        ArrayList<CardDeck> decks = myGame.getRealGame().getDecks();
 
 
 //                    CardDeck flightDeck = myGame.getRealGame().createFlightDeck(decks);
 
 
-                    DecksUpdate decksUpdate = new DecksUpdate();
-                    decksUpdate.setDecks(decks);
-                    decksUpdate.setFlightDeck(null);
+                        DecksUpdate decksUpdate = new DecksUpdate();
+                        decksUpdate.setDecks(decks);
+                        decksUpdate.setFlightDeck(null);
 
 
-                    //broadcst tutte le player info
+                        //broadcst tutte le player info
 
-                    myGame.getGameController().nextState();
-                    broadCast(original, decksUpdate);
-                    broadCast(original, new PhaseUpdate(GameState.BUILDING_START));
-                    //MANDARE I DECK -> -> ->
+                        myGame.getGameController().nextState();
+                        broadCast(original, decksUpdate);
+                        broadCast(original, new PhaseUpdate(GameState.BUILDING_START));
+                        //MANDARE I DECK -> -> ->
 
-                    //dopo aver notificato tutti starto il gioco
+                        //dopo aver notificato tutti starto il gioco
 
+                    }
                 }
-            }
 
-        }
+            }
+        });
 
     }
 
-    public void handleDrawTileRequest(DrawTileRequest message, ClientHandler clientHandler) {
-        //il client mi chiede una Tile, e devo restituirla
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        Tile myTile = null;
-        DrawTileResponse drawTileResponse;
-        Boolean flag = false;
+    public void handleDrawTileRequest(DrawTileRequest message, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            //il client mi chiede una Tile, e devo restituirla
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            Tile myTile = null;
+            DrawTileResponse drawTileResponse;
+            Boolean flag = false;
+            Player player = getPlayerFromClientHandler(clientHandler);
+            Ship targetShip = player.getShip();
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
 
 
-        if (!isActionAllowed(myGame, GameAction.DRAW_TILE)) {
+            if (!isActionAllowed(myGame, GameAction.DRAW_TILE)) {
 
-            drawTileResponse = new DrawTileResponse(null, message.getID());
-            drawTileResponse.setErrorMessage("INVALID_STATE");
-            clientHandler.sendMessage(drawTileResponse);
+                drawTileResponse = new DrawTileResponse(null, message.getID());
+                drawTileResponse.setErrorMessage("INVALID_STATE");
+                clientHandler.sendMessage(drawTileResponse);
 
-            return;
-        }
+                return;
+            }
 
-        synchronized (myGame.getTileBunch()) {
+            synchronized (myGame.getTileBunch()) {
 
-            //null significa cge si pesca dal mazzo, invece se è presente un valore valido di Tile si prende da quelle face-up
-            if (message.getTile() != null) {
+                //null significa cge si pesca dal mazzo, invece se è presente un valore valido di Tile si prende da quelle face-up
+                if (message.getTile() != null) {
 
-                myTile = myGame.getTileBunch().drawFaceUpTile(message.getTile().getId());
-                if (myTile == null) {
-                    drawTileResponse = new DrawTileResponse(null, message.getID());
-                    drawTileResponse.setErrorMessage("TAKEN");
+                    myTile = myGame.getTileBunch().drawFaceUpTile(message.getTile().getId());
+                    if (myTile == null) {
+                        drawTileResponse = new DrawTileResponse(null, message.getID());
+                        drawTileResponse.setErrorMessage("TAKEN");
+                    } else {
+                        drawTileResponse = new DrawTileResponse(myTile, message.getID());
+                        drawTileResponse.setErrorMessage("VALID");
+                    }
+
+                    FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
+                    faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
+
+                    broadCast(playerHandlers, faceUpTileUpdate);
+
                 } else {
-                    drawTileResponse = new DrawTileResponse(myTile, message.getID());
-                    drawTileResponse.setErrorMessage("VALID");
+                  if(message.isNeedLastTile()){
+                       Tile lastTile =  targetShip.getLastTile();
+                      if (lastTile == null) {
+                          drawTileResponse = new DrawTileResponse(null, message.getID());
+                          drawTileResponse.setErrorMessage("NO_TILE");
+                      }
+                       else if (lastTile.getFixed()) {
+                           drawTileResponse = new DrawTileResponse(null, message.getID());
+                           drawTileResponse.setErrorMessage("FIXED");
+                       }
+                       else{
+                           targetShip.removeTile(targetShip.getLastTilePosition(),true);
+                           targetShip.setLastTile(null);
+                           ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
+
+                           broadCast(playerHandlers, shipUpdate);
+
+                           drawTileResponse = new DrawTileResponse(lastTile, message.getID());
+                           drawTileResponse.setErrorMessage("VALID");
+                       }
+                  }
+                  else {
+                      if (message.isFromReserved()) {
+
+                          Tile[] reserverd = targetShip.getAsideTiles();
+                          int index = message.getReservedSlotIndex();
+                          Tile removedTile = reserverd[index];
+                          if (removedTile == null) {
+                              drawTileResponse = new DrawTileResponse(null, message.getID());
+                              drawTileResponse.setErrorMessage("NO_TILE_AT_INDEX");
+                          } else {
+                              reserverd[index] = null;
+                              drawTileResponse = new DrawTileResponse(removedTile, message.getID());
+                              drawTileResponse.setErrorMessage("VALID");
+
+                              ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
+                              broadCast(playerHandlers, shipUpdate);
+                          }
+
+                      }
+
+                      else{
+
+
+                            myTile = myGame.getTileBunch().drawTile();
+                            if (myTile == null) {
+                                drawTileResponse = new DrawTileResponse(null, message.getID());
+                                drawTileResponse.setErrorMessage("EMPTY");
+                            } else {
+                                drawTileResponse = new DrawTileResponse(myTile, message.getID());
+                                drawTileResponse.setErrorMessage("VALID");
+                            }
+                      }
                 }
-
-                FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
-                faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
-                ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-                broadCast(playerHandlers, faceUpTileUpdate);
-
-            } else {
-
-                myTile = myGame.getTileBunch().drawTile();
-                if (myTile == null) {
-                    drawTileResponse = new DrawTileResponse(null, message.getID());
-                    drawTileResponse.setErrorMessage("EMPTY");
-                } else {
-                    drawTileResponse = new DrawTileResponse(myTile, message.getID());
-                    drawTileResponse.setErrorMessage("VALID");
                 }
 
             }
-
-        }
-        clientHandler.sendMessage(drawTileResponse);
+            clientHandler.sendMessage(drawTileResponse);
+        });
     }
 
     @NeedsToBeCompleted
     //Se player inserisce un Nickname non esiste? cosa ricevo
-    public void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
+    public void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
 
-        Player targetPlayer = myGame.getRealGame().getPlayer(message.getTargetNickname());
-        Ship targetShip;
-        ShipUpdate shipViewUpdate;
+            Player targetPlayer = myGame.getRealGame().getPlayer(message.getTargetNickname());
+            Ship targetShip;
+            ShipUpdate shipViewUpdate;
 
-        targetShip = targetPlayer.getShip();
-        shipViewUpdate = new ShipUpdate(targetShip, targetPlayer.getNickName());
-        shipViewUpdate.setShouldDisplay(true);
+            targetShip = targetPlayer.getShip();
+            shipViewUpdate = new ShipUpdate(targetShip, targetPlayer.getNickName());
+            shipViewUpdate.setShouldDisplay(true);
 
-        clientHandler.sendMessage(shipViewUpdate);
+            clientHandler.sendMessage(shipViewUpdate);
+        });
     }
 
-    public void handleCheckShipStatusRequest(CheckShipStatusRequest message, ClientHandler clientHandler) {
+    public void handleCheckShipStatusRequest(CheckShipStatusRequest message, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            //devo controllare se la nave è corretta
 
-        //devo controllare se la nave è corretta
+            //prima di tutto la salvo come nuova nave
 
-        //prima di tutto la salvo come nuova nave
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            Player player = getPlayerFromClientHandler(clientHandler);
+            Ship ship = player.getShip();
 
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        Player player = getPlayerFromClientHandler(clientHandler);
-        Ship ship = player.getShip();
+            //trovo tutte le Tiles da rimuovere
+            List<Slot> Slots = Arrays.stream(ship.getShipBoard())
+                    .flatMap(Arrays::stream)
+                    .filter(Objects::nonNull)
+                    .toList();
 
-        //trovo tutte le Tiles da rimuovere
-        List<Slot> Slots = Arrays.stream(ship.getShipBoard())
-                .flatMap(Arrays::stream)
-                .filter(Objects::nonNull)
-                .toList();
-
-        for (Slot slot : Slots) {
-            if (slot.getTile() != null && message.getRemovedTilesId().contains(slot.getTile().getId())) {
-                ship.removeTile(slot.getPosition(), true);
-            }
-        }
-
-
-        Boolean result;
-        //controllo se e' formata da tronconi separati
-
-        Position pos = Arrays.stream(ship.getShipBoard())
-                .flatMap(Arrays::stream)
-                .filter(Objects::nonNull).filter(slot -> slot.getTile() != null && slot.getTile().getMyComponent() != null).map(slot -> slot.getPosition()).toList().getFirst();
-
-
-        Boolean result1 = Util.checkShipStructure(ship, pos).getKey();
-
-        //se non lo e' allora controllo la ship
-        if (result1) {
-            result = ship.checkShip(Util.checkShipStructure(ship, new Position(3,2)).getValue());
-        } else result = false;
-
-        ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
-        CheckShipStatusResponse response = new CheckShipStatusResponse(ship, result, message.getID());
-        clientHandler.sendMessage(shipUpdate);
-        clientHandler.sendMessage(response);
-
-
-        if (result) {
-            synchronized (myGame.checkShipLock) {
-                myGame.getGameController().addCompletedShip();
-                if (myGame.getRealGame().getNumPlayers() == myGame.getGameController().getnCompletedShips() && !myGame.getGameController().getGameState().equals(GameState.CREW_INIT)) {
-                    myGame.getGameController().nextState();
-
-                    ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-
-                    PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.CREW_INIT);
-                    broadCast(playerHandlers, phaseUpdate);
+            for (Slot slot : Slots) {
+                if (slot.getTile() != null && message.getRemovedTilesId().contains(slot.getTile().getId())) {
+                    ship.removeTile(slot.getPosition(), true);
                 }
             }
-        }
 
 
+            Boolean result;
+            //controllo se e' formata da tronconi separati
+
+            Position pos = Arrays.stream(ship.getShipBoard())
+                    .flatMap(Arrays::stream)
+                    .filter(Objects::nonNull).filter(slot -> slot.getTile() != null && slot.getTile().getMyComponent() != null).map(slot -> slot.getPosition()).toList().getFirst();
+
+
+            Boolean result1 = Util.checkShipStructure(ship, pos).getKey();
+
+            //se non lo e' allora controllo la ship
+            if (result1) {
+                result = ship.checkShip(Util.checkShipStructure(ship, new Position(3,2)).getValue());
+            } else result = false;
+
+            ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
+            CheckShipStatusResponse response = new CheckShipStatusResponse(ship, result, message.getID());
+            clientHandler.sendMessage(shipUpdate);
+            clientHandler.sendMessage(response);
+
+            //Broadcast a tutti ShipUpdate di quel giocatore.
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+            broadCast(playerHandlers,shipUpdate);
+
+            if (result) {
+                synchronized (myGame.checkShipLock) {
+                    myGame.getGameController().addCompletedShip();
+                    if (myGame.getRealGame().getNumPlayers() == myGame.getGameController().getnCompletedShips() && !myGame.getGameController().getGameState().equals(GameState.CREW_INIT)) {
+                        myGame.getGameController().nextState();
+
+
+                        PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.CREW_INIT);
+                        broadCast(playerHandlers, phaseUpdate);
+                    }
+                }
+            }
+
+        });
     }
 
-    public void handleAskPositionResponse(AskPositionResponse askPositionResponse, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        handleFinishBuildingRequest2(askPositionResponse, clientHandler);
+    public void handleAskPositionResponse(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            try {
+                handleFinishBuildingRequest2(askPositionResponse, clientHandler);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    public void handleSelectPlanetResponse(SelectPlanetResponse selectPlanetResponse, ClientHandler clientHandler) {
+    public void handleSelectPlanetResponse(SelectPlanetResponse selectPlanetResponse, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager game = getLobbyFromHandler(clientHandler);
+            game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(selectPlanetResponse);
+            tryExecutePhaseAfterMessage(game, NetworkMessageType.SelectPlanetResponse);
+        });
+    }
+    public void handleAskTrunkResponse(AskTrunkResponse askTrunkResponse, ClientHandler clientHandler) {
         LobbyManager game = getLobbyFromHandler(clientHandler);
-        game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(selectPlanetResponse);
-        tryExecutePhaseAfterMessage(game, NetworkMessageType.SelectPlanetResponse);
+        game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(askTrunkResponse);
+        tryExecutePhaseAfterMessage(game, NetworkMessageType.AskTrunkResponse);
     }
 
-    public void handleFinishBuildingRequest(FinishBuildingRequest finishBuildingRequest, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        String nickname = myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
-        AskPositionUpdate askPositionUpdate;
-        ArrayList<Integer> validPos = new ArrayList<>();
+    public void handleFinishBuildingRequest(FinishBuildingRequest finishBuildingRequest, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            String nickname = getNicknameFromClientHandler(clientHandler);
+            AskPositionUpdate askPositionUpdate;
+            ArrayList<Integer> validPos = new ArrayList<>();
 
-        // [1] fisso l'ultima tile di Player
+            // [1] fisso l'ultima tile di Player
 
-        //devo chiedere in che posizione vuole essere
-                myGame.addPlayerShipFinished(nickname);
-
-
-        synchronized (myGame.positionLock) {
-            int maxPos = myGame.getRealGame().getNumPlayers();
-            int minPos = 1;
-            ArrayList<Integer> takenPos = myGame.getRealGame().getFlightBoard().getOccupiedPositions();
+            //devo chiedere in che posizione vuole essere
+            myGame.addPlayerShipFinished(nickname);
 
 
-            for (int i = 1; i <= maxPos; i++) {
+            synchronized (myGame.positionLock) {
+                int maxPos = myGame.getRealGame().getNumPlayers();
+                int minPos = 1;
+                ArrayList<Integer> takenPos = myGame.getRealGame().getFlightBoard().getOccupiedPositions();
 
-                int realPos = 0;
 
-                switch (i) {
+                for (int i = 1; i <= maxPos; i++) {
+
+                    int realPos = 0;
+
+                    switch (i) {
+                        case 1 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFirstPos();
+                        case 2 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getSecondPos();
+                        case 3 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getThirdPos();
+                        case 4 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFourthPos();
+                    }
+
+                    if (!takenPos.contains(realPos)) {
+                        validPos.add(i);
+                    }
+                }
+
+                //in occupied positions ho i valori interi che vanno tradotti nelle posizioni
+//            for (int pos: takenPos){
+//
+//            }
+
+                askPositionUpdate = new AskPositionUpdate(validPos);
+                askPositionUpdate.nickname = nickname;
+                CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
+
+                //aggiungo alle pending responses
+
+                myGame.addPendingResponse(future, askPositionUpdate.getID());
+                //System.out.println(askPositionUpdate.getID());
+
+                clientHandler.sendMessage(askPositionUpdate);
+                //ho la mia posizione scelta, e lo posiziono
+            }
+        });
+    }
+
+    public void handleFinishBuildingRequest2(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            Boolean flag = false;
+
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            String nickname = getNicknameFromClientHandler(clientHandler);
+
+            Color playerColor = myGame.getPlayerColors().get(nickname);
+
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+
+            int realPos = 0;
+            synchronized (myGame.positionLock) {
+                switch (askPositionResponse.getPosition()) {
                     case 1 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFirstPos();
                     case 2 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getSecondPos();
                     case 3 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getThirdPos();
                     case 4 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFourthPos();
                 }
-
-                if (!takenPos.contains(realPos)) {
-                    validPos.add(i);
-                }
+                myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos);
+                myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
             }
 
-            //in occupied positions ho i valori interi che vanno tradotti nelle posizioni
-//            for (int pos: takenPos){
-//
-//            }
 
-            askPositionUpdate = new AskPositionUpdate(validPos);
-            askPositionUpdate.nickname = nickname;
-            CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-
-            //aggiungo alle pending responses
-
-            myGame.addPendingResponse(future, askPositionUpdate.getID());
-            //System.out.println(askPositionUpdate.getID());
-
-            clientHandler.sendMessage(askPositionUpdate);
-            //ho la mia posizione scelta, e lo posiziono
-        }
-    }
-
-    public void handleFinishBuildingRequest2(AskPositionResponse askPositionResponse, ClientHandler clientHandler) {
-        Boolean flag = false;
-
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        String nickname = getNicknameFromClientHandler(clientHandler);
-
-        Color playerColor = myGame.getPlayerColors().get(nickname);
-
-        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-
-        int realPos = 0;
-        synchronized (myGame.positionLock) {
-            switch (askPositionResponse.getPosition()) {
-                case 1 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFirstPos();
-                case 2 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getSecondPos();
-                case 3 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getThirdPos();
-                case 4 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFourthPos();
-            }
-            myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos);
-            myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
-        }
-
-
-        broadCast(playerHandlers, new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
+            broadCast(playerHandlers, new FlightBoardUpdate(myGame.getRealGame().getFlightBoard()));
 
 //            myGame.getRealGame().getFlightBoard()
 
 
-        synchronized (myGame.getRealGame().getPlayer(nickname).getShip()) {
+            synchronized (myGame.getRealGame().getPlayer(nickname).getShip()) {
 
-            Ship myShip = myGame.getRealGame().getPlayer(nickname).getShip();
+                Ship myShip = myGame.getRealGame().getPlayer(nickname).getShip();
 
 
-            //se quando arriva building request il client e' aggiornato
-            Tile lastTile = myGame.getRealGame().getPlayer(nickname).getShip().getLastTile();
+                //se quando arriva building request il client e' aggiornato
+                Tile lastTile = myGame.getRealGame().getPlayer(nickname).getShip().getLastTile();
 
-            if (!(lastTile == null)) {
-                int lastTileId = lastTile.getId();
+                if (!(lastTile == null)) {
+                    int lastTileId = lastTile.getId();
 //                Ship myShip = myGame.getRealGame().getPlayer(nickname).getShip();
 
-                //prendo tutte le tile
-                List<Slot> slots = Arrays.stream(myShip.getShipBoard())
-                        .flatMap(Arrays::stream)
-                        .filter(Objects::nonNull)
-                        .toList();
+                    //prendo tutte le tile
+                    List<Slot> slots = Arrays.stream(myShip.getShipBoard())
+                            .flatMap(Arrays::stream)
+                            .filter(Objects::nonNull)
+                            .toList();
 
-                //trovo la tile e la fisso
-                for (Slot slot : slots) {
-                    if (slot.getTile() != null && slot.getTile().getId() == lastTileId) {
-                        myShip.getShipBoard()[slot.getPosition().getX()][slot.getPosition().getY()].getTile().setFixed(true);
-                        break;
+                    //trovo la tile e la fisso
+                    for (Slot slot : slots) {
+                        if (slot.getTile() != null && slot.getTile().getId() == lastTileId) {
+                            myShip.getShipBoard()[slot.getPosition().getX()][slot.getPosition().getY()].getTile().setFixed(true);
+                            break;
+                        }
                     }
+
+                }
+
+                broadCast(playerHandlers, new ShipUpdate(myShip, nickname));
+            }
+
+            //controllo se tutti hanno finito
+            if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
+
+                myGame.getGameController().nextState();
+                if (myGame.getGameController().getGameState().equals(GameState.BUILDING_END))
+                //se hanno finito tutti allora si passa alla fase di check_ship
+                {
+                    myGame.getGameController().nextState();
+                    //System.out.println("STATE: " + myGame.getGameController());
+                    broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
                 }
 
             }
-
-            broadCast(playerHandlers, new ShipUpdate(myShip, nickname));
-        }
-
-        //controllo se tutti hanno finito
-        if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
-
-            myGame.getGameController().nextState();
-            if (myGame.getGameController().getGameState().equals(GameState.BUILDING_END))
-            //se hanno finito tutti allora si passa alla fase di check_ship
-            {
-                myGame.getGameController().nextState();
-                //System.out.println("STATE: " + myGame.getGameController());
-                broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
-            }
-
-        }
+        });
     }
 
-    public void handlePlaceTileRequest(PlaceTileRequest placeTileRequest, ClientHandler clientHandler) throws InvalidTilePosition {
+    public void handlePlaceTileRequest(PlaceTileRequest placeTileRequest, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            PlaceTileResponse placeTileResponse = new PlaceTileResponse(null, placeTileRequest.getID());
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            String nickname = getNicknameFromClientHandler(clientHandler);
+            Player myPlayer = myGame.getRealGame().getPlayer(nickname);
+            Ship myShip = myPlayer.getShip();
 
-        PlaceTileResponse placeTileResponse = new PlaceTileResponse(null, placeTileRequest.getID());
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        String nickname = myGame.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
-        Player myPlayer = myGame.getRealGame().getPlayer(nickname);
-        Ship myShip = myPlayer.getShip();
+
+            //controllo se posso eseguirla
+
+            if (!isActionAllowed(myGame, GameAction.PLACE_TILE)) {
+                placeTileResponse.setMessage("INVALID_STATE");
+                clientHandler.sendMessage(placeTileResponse);
+                return;
+            }
+
+            //dopo che ho tutto devo semplicemente inserire la Tile
+
+            synchronized (myShip) {
+                Tile myTile = placeTileRequest.getTile();
+                if(placeTileRequest.isToReserved()){
+                    int index = placeTileRequest.getReservedSlotIndex();
+
+                    myShip.getAsideTiles()[index] = myTile;
+                    placeTileResponse.setMessage("VALID");
+                }
+                else{
+                    Position myPos = placeTileRequest.getPos();
+
+                    if (myShip.getInvalidPositions().contains(myPos)) {
+                        placeTileResponse.setMessage("INVALID_POS");
+                        clientHandler.sendMessage(placeTileResponse);
+                        return;
+                    }
+
+                    if (myShip.getTileFromPosition(myPos) != null) {
+                        placeTileResponse.setMessage("OCCUPIED_POS");
+                        clientHandler.sendMessage(placeTileResponse);
+                        return;
+                    }
+
+                    myShip.putTile(myTile, myPos);
+                    myShip.setLastTile(myTile);
+                    myShip.setLastTilePosition(myPos);
+                    placeTileResponse.setMessage("VALID");
+
+                }
+
+                    //broadCasto la nuova nave a tutti
+                    ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+                    ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
+                    broadCast(playerHandlers, shipUpdate);
+                    clientHandler.sendMessage(placeTileResponse);
 
 
-        //controllo se posso eseguirla
+//                } else {
+//                    PlaceTileResponse resp = new PlaceTileResponse(null, placeTileRequest.getID());
+//                    resp.setMessage("INVALID_POS");
+//                    clientHandler.sendMessage(resp);
+//                }
 
-        if (!isActionAllowed(myGame, GameAction.PLACE_TILE)) {
-            placeTileResponse.setMessage("INVALID_STATE");
-            clientHandler.sendMessage(placeTileResponse);
-            return;
-        }
 
-        //dopo che ho tutto devo semplicemente inserire la Tile
+            }
 
-        synchronized (myShip) {
+        });
+    }
 
-            Position myPos = placeTileRequest.getPos();
-            Tile myTile = placeTileRequest.getTile();
+    @NeedsToBeCompleted
+    public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            Tile tileToDiscard = discardTileRequest.getTile();
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+
+            //myGame.getTileBunch().getFaceUpTiles();
+
+            String nickname = getNicknameFromClientHandler(clientHandler);
+            Player myPlayer = myGame.getRealGame().getPlayer(nickname);
+            Ship myShip = myPlayer.getShip();
+            myGame.getTileBunch().returnTile(discardTileRequest.getTile());
+
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+            broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
+
+//
+            FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
+            faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
+            broadCast(playerHandlers, faceUpTileUpdate);
+
+//            if(tileToDiscard.getId() == myShip.getLastTile().getId()) {
+//                myShip.removeTile(myShip.getLastTilePosition(),true);
+//                ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
+//                broadCast(playerHandlers, shipUpdate);
+//            }
+
+
+        });
+    }
+
+    @NeedsToBeCompleted
+    public void handleViewAdventureDecksRequest(ViewAdventureDecksRequest viewAdventureDecksRequest, ClientHandler clientHandler) throws RemoteException {
+
+    }
+
+    public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            Player myPlayer = getPlayerFromClientHandler(clientHandler, myGame);
+            Ship myShip = myPlayer.getShip();
+
+            List<Position> positions = new ArrayList<>(crewInitUpdate.getCrewPos().stream().map(Pair::getKey).toList());
+
             List<Slot> Slots = Arrays.stream(myShip.getShipBoard())
                     .flatMap(Arrays::stream)
                     .filter(Objects::nonNull)
                     .toList();
 
-            //controllo la posizione
+            for (Slot s : Slots) {
 
+                Tile tempTile = s.getTile();
+                Position tempPos = s.getPosition();
 
-            //se e' valida
-            if (!myShip.getInvalidPositions().contains(myPos)) {
+                if (positions.contains(tempPos) && s.getTile() != null) {
 
-                //controllo se la posizione non è occupata
-                for (Slot slot : Slots) {
-                    Tile tempTile = slot.getTile();
-                    if (tempTile != null && tempTile.getId() == myTile.getId()) {
+                    AlienColor color = crewInitUpdate.getCrewPos().stream().filter(pair -> pair.getKey().equals(tempPos)).map(Pair::getValue).findFirst().orElse(null);
 
-                        //esiste gia la tile
-                        placeTileResponse.setMessage("INVALID_POS");
-                        clientHandler.sendMessage(placeTileResponse);
-                        return;
+                    if (color == null) return;
+
+                    if (color.equals(AlienColor.PURPLE)) {
+                        ModularHousingUnit purpleHousing = (ModularHousingUnit) tempTile.getMyComponent();
+                        purpleHousing.addPurpleAlien();
+                    }
+
+                    if (color.equals(AlienColor.BROWN)) {
+                        ModularHousingUnit brownHousing = (ModularHousingUnit) tempTile.getMyComponent();
+                        brownHousing.addBrownAlien();
+                    } else {
+                        ModularHousingUnit humanHousing = (ModularHousingUnit) tempTile.getMyComponent();
+                        humanHousing.addHumanCrew();
                     }
                 }
-
-                //non esiste, allora la inserisco
-
-//            myTile.setFixed(true);
-                myShip.putTile(myTile, myPos);
-                //resetto lastTile
-                myShip.setLastTile(myTile);
-//            //la ship e' aggiornata
-//            myShip.setSynch(true);
-                //setto il messaggio
-                placeTileResponse.setMessage("VALID");
-
-                //da capire se ha senso creare una PlaceTileResponse
-
-
-                //broadCasto la nuova nave a tutti
-                ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-                ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-                broadCast(playerHandlers, shipUpdate);
-                clientHandler.sendMessage(placeTileResponse);
-
-
-            } else {
-                PlaceTileResponse resp = new PlaceTileResponse(null, placeTileRequest.getID());
-                resp.setMessage("INVALID_POS");
-                clientHandler.sendMessage(resp);
             }
 
-
-        }
-
-
-    }
-
-    @NeedsToBeCompleted
-    public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) {
-
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        //myGame.getTileBunch().getFaceUpTiles();
-        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-        myGame.getTileBunch().returnTile(discardTileRequest.getTile());
+            //dopo aver implementato la lista di quelli che hanno finito e si broadcasta la fase nuova
 
 
-        broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
-
-//
-        FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
-        faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
-        broadCast(playerHandlers, faceUpTileUpdate);
-    }
-
-    @NeedsToBeCompleted
-    public void handleViewAdventureDecksRequest(ViewAdventureDecksRequest viewAdventureDecksRequest, ClientHandler clientHandler) {
-
-    }
-
-    public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        Player myPlayer = getPlayerFromClientHandler(clientHandler, myGame);
-        Ship myShip = myPlayer.getShip();
-
-        List<Position> positions = new ArrayList<>(crewInitUpdate.getCrewPos().stream().map(Pair::getKey).toList());
-
-        List<Slot> Slots = Arrays.stream(myShip.getShipBoard())
-                .flatMap(Arrays::stream)
-                .filter(Objects::nonNull)
-                .toList();
-
-        for (Slot s : Slots) {
-
-            Tile tempTile = s.getTile();
-            Position tempPos = s.getPosition();
-
-            if (positions.contains(tempPos) && s.getTile() != null) {
-
-                AlienColor color = crewInitUpdate.getCrewPos().stream().filter(pair -> pair.getKey().equals(tempPos)).map(Pair::getValue).findFirst().orElse(null);
-
-                if(color == null) return;
-
-                if (color.equals(AlienColor.PURPLE)) {
-                    ModularHousingUnit purpleHousing = (ModularHousingUnit) tempTile.getMyComponent();
-                    purpleHousing.addPurpleAlien();
-                }
-
-                if (color.equals(AlienColor.BROWN)) {
-                    ModularHousingUnit brownHousing = (ModularHousingUnit) tempTile.getMyComponent();
-                    brownHousing.addBrownAlien();
-                } else {
-                    ModularHousingUnit humanHousing = (ModularHousingUnit) tempTile.getMyComponent();
-                    humanHousing.addHumanCrew();
-                }
-            }
-        }
-
-        //dopo aver implementato la lista di quelli che hanno finito e si broadcasta la fase nuova
+            ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+            ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
+            broadCast(playerHandlers, shipUpdate);
 
 
-        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-        ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-        broadCast(playerHandlers, shipUpdate);
+            myGame.addPlayerCrewFinished(myPlayer.getNickName());
+            if (myGame.getPlayerCrewSize() == myGame.getRealGame().getNumPlayers()) {
 
+                myGame.getGameController().nextState();
+                PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.FLIGHT);
+                broadCast(playerHandlers, phaseUpdate);
 
-        myGame.addPlayerCrewFinished(myPlayer.getNickName());
-        if (myGame.getPlayerCrewSize() == myGame.getRealGame().getNumPlayers()) {
-
-            myGame.getGameController().nextState();
-            PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.FLIGHT);
-            broadCast(playerHandlers, phaseUpdate);
-
-            //new Thread(() -> {
+                //new Thread(() -> {
                 try {
                     myGame.getGameController().startFlight();
                 } catch (ExecutionException | InterruptedException | IOException e) {
                     throw new RuntimeException(e);
                 }
-            //}).start();
-        }
-    }
-
-    public void handleActivateAdventureCardResponse(ActivateAdventureCardResponse activateAdventureCardResponse, ClientHandler clientHandler) {
-        LobbyManager game = getLobbyFromHandler(clientHandler);
-        synchronized (game.getGameController()) {
-            game.getGameController().notify();
-        }
-        game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(activateAdventureCardResponse);
-        tryExecutePhaseAfterMessage(game, NetworkMessageType.ActivateAdventureCardResponse);
-    }
-
-    public void handleActivateComponentResponse(ActivateComponentResponse activateDoubleEnginesResponse, ClientHandler clientHandler) {
-        LobbyManager game = getLobbyFromHandler(clientHandler);
-        Player player = getPlayerFromClientHandler(clientHandler);
-        Ship ship = player.getShip();
-
-        ArrayList<Position> doubleEnginesPositions = activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions();
-        ArrayList<Position> batteriesPositions = activateDoubleEnginesResponse.getBatteriesPositions();
-
-        for (int i = 0; i < activateDoubleEnginesResponse.getActivatedDoubleEnginesPositions().size(); i++) {
-            //TODO FIX
-            ship.activateDoubleEngine(doubleEnginesPositions.get(i), batteriesPositions.get(i)); //Usare il bool ritornato? //Assumo che ci siano posizioni duplicate nella lista di quelle delle batterie
-        }
-
-        //Mando la shipUpdate
-        ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
-        ArrayList<ClientHandler> playerHandlers = new ArrayList<>(game.getPlayerHandlers().values());
-
-        broadCast(playerHandlers, shipUpdate);
-
-        tryExecutePhaseAfterMessage(game, NetworkMessageType.ActivateComponentResponse);
-
-    }
-
-    public void handleHeartbeatRequest(HeartbeatRequest ignoredHeartbeatRequest, ClientHandler clientHandler) {
-        //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED, "Received heartbeat from " + clientHandler.toString() + "."));
-
-        heartbeats.stream().filter(h -> h.getClientHandler() == clientHandler).findFirst().ifPresent(h -> {
-            heartbeats.remove(h);
-            h.regenerate();
+                //}).start();
+            }
         });
     }
 
-    public void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) {
-        LobbyManager game = getLobbyFromHandler(clientHandler);
-        if (shipUpdate.getOnlyFix()) {
-            String nickname = game.getPlayerHandlers().entrySet().stream().filter(entry -> entry.getValue().equals(clientHandler)).findFirst().get().getKey();
-            Player myPlayer = game.getRealGame().getPlayer(nickname);
-            Ship myShip = myPlayer.getShip();
+    public void handleActivateAdventureCardResponse(ActivateAdventureCardResponse activateAdventureCardResponse, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager game = getLobbyFromHandler(clientHandler);
+            synchronized (game.getGameController()) {
+                game.getGameController().notify();
+            }
+            game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(activateAdventureCardResponse);
+            tryExecutePhaseAfterMessage(game, NetworkMessageType.ActivateAdventureCardResponse);
+        });
+    }
 
-            synchronized (myShip) {
-                List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
-                        .flatMap(Arrays::stream)
-                        .filter(Objects::nonNull)
-                        .toList();
+    public void handleActivateComponentResponse(ActivateComponentResponse activateComponentResponse, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager game = getLobbyFromHandler(clientHandler);
+            Player player = getPlayerFromClientHandler(clientHandler);
+            Ship ship = player.getShip();
+            ActivatableComponent activatableComponent = activateComponentResponse.getActivatableComponentType();
 
-                //trovo la tile non fissata
-
-                for (Slot slot : Slots) {
-
-                    Tile tempTile = slot.getTile();
-
-                    if (tempTile != null) {
-
-                        if (!tempTile.getFixed()) {
-                            tempTile.setFixed(true);
-                            break;
-                        }
-                    }
-                }
+            ArrayList<Position> activatedComponentPositions = activateComponentResponse.getActivatedComponentPositions();
+            ArrayList<Position> batteriesPositions = activateComponentResponse.getBatteriesPositions();
 
 
+            if (activatedComponentPositions == null || batteriesPositions == null ||
+                    activatedComponentPositions.isEmpty() || batteriesPositions.isEmpty()) {
+                tryExecutePhaseAfterMessage(game, NetworkMessageType.ActivateComponentResponse);
+                return;
             }
 
-            ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
+            for (int i = 0; i < activateComponentResponse.getActivatedComponentPositions().size(); i++) {
+                //TODO FIX
+                Position componentPos = activatedComponentPositions.get(i);
+                Position batteryPos = batteriesPositions.get(i);
+
+                switch (activatableComponent) {
+                    case DoubleEngine -> ship.activateDoubleEngine(componentPos, batteryPos);
+                    case DoubleCannon -> ship.activateDoubleCannon(componentPos, batteryPos);
+                    case Shield -> ship.activateShield(componentPos, batteryPos);
+                }
+            }
+
+            //Mando la shipUpdate
+            ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(game.getPlayerHandlers().values());
 
-            broadCast(playerHandlers, update);
-        }
+            broadCast(playerHandlers, shipUpdate);
 
-        if (game.getGameController().getGameState() == GameState.FLIGHT) {
-            tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
-        }
+            tryExecutePhaseAfterMessage(game, NetworkMessageType.ActivateComponentResponse);
+        });
     }
 
-    public void handleDiscardCrewMembersResponse(DiscardCrewMembersResponse discardCrewMembersResponse, ClientHandler clientHandler) {
-        LobbyManager game = getLobbyFromHandler(clientHandler);
-        game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(discardCrewMembersResponse);
-        tryExecutePhaseAfterMessage(game, discardCrewMembersResponse.accept(networkMessageNameVisitor));
+    public void handleHeartbeatRequest(HeartbeatRequest ignoredHeartbeatRequest, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED, "Received heartbeat from " + clientHandler.toString() + "."));
+            heartbeats.stream().filter(h -> h.getClientHandler().getClientID().equals(clientHandler.getClientID())).findFirst().ifPresent(h -> {
+                heartbeats.remove(h);
+                h.regenerate();
+            });
+        });
     }
 
-    public void handleCollectRewardsResponse(CollectRewardsResponse collectRewardsResponse, ClientHandler clientHandler) {
-        LobbyManager game = getLobbyFromHandler(clientHandler);
-        game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(collectRewardsResponse);
-        tryExecutePhaseAfterMessage(game, collectRewardsResponse.accept(networkMessageNameVisitor));
+    public void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager game = getLobbyFromHandler(clientHandler);
+            if (shipUpdate.getOnlyFix()) {
+                String nickname = getNicknameFromClientHandler(clientHandler);
+                Player myPlayer = game.getRealGame().getPlayer(nickname);
+                Ship myShip = myPlayer.getShip();
+
+                synchronized (myShip) {
+                    List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
+                            .flatMap(Arrays::stream)
+                            .filter(Objects::nonNull)
+                            .toList();
+
+                    //trovo la tile non fissata
+
+                    for (Slot slot : Slots) {
+
+                        Tile tempTile = slot.getTile();
+
+                        if (tempTile != null) {
+
+                            if (!tempTile.getFixed()) {
+                                tempTile.setFixed(true);
+                                break;
+                            }
+                        }
+                    }
+
+
+                }
+
+                ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
+                ArrayList<ClientHandler> playerHandlers = new ArrayList<>(game.getPlayerHandlers().values());
+
+                broadCast(playerHandlers, update);
+            }
+
+            if (game.getGameController().getGameState() == GameState.FLIGHT) {
+                game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(shipUpdate);
+                tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
+
+            }
+        });
+    }
+
+    public void handleDiscardCrewMembersResponse(DiscardCrewMembersResponse discardCrewMembersResponse, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager game = getLobbyFromHandler(clientHandler);
+            game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(discardCrewMembersResponse);
+            tryExecutePhaseAfterMessage(game, discardCrewMembersResponse.accept(networkMessageNameVisitor));
+        });
+    }
+
+    public void handleCollectRewardsResponse(CollectRewardsResponse collectRewardsResponse, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager game = getLobbyFromHandler(clientHandler);
+            game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(collectRewardsResponse);
+            tryExecutePhaseAfterMessage(game, collectRewardsResponse.accept(networkMessageNameVisitor));
+        });
+    }
+
+    public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            GameController gameController = myGame.getGameController();
+
+            if (gameController.getCurrentCardContext() != null) {
+                clientHandler.sendMessage(new GameMessage("È già in corso una carta avventura."));
+                return;
+            }
+
+            gameController.handleTurn();
+        });
+    }
+
+    public void handleReadyTurnRequest(ReadyTurnRequest readyTurnRequest, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            String nickname = getNicknameFromClientHandler(clientHandler);
+            GameController gameController = myGame.getGameController();
+            try {
+
+                new Thread(() -> {
+                    myGame.addReadyPlayer(nickname);
+                    if (myGame.allActivePlayerReady()) {
+                        gameController.sendMatchInfoUpdate();
+                    }
+                }).start();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+            String nickname = getNicknameFromClientHandler(clientHandler);
+            GameController gameController = myGame.getGameController();
+
+            myGame.getGameController().removePlayerFromGame(nickname, true);
+            new Thread(() -> {
+//                myGame.getGameController().handleTurnBeforeDrawnCard();
+                myGame.addEarlyLandingPlayer(nickname);
+                if (myGame.allActivePlayerReady()) {
+                    gameController.sendMatchInfoUpdate();
+                }
+            }).start();
+        });
+    }
+
+    public void handleAskTimerInfoRequest(AskTimerInfoRequest askTimerInfoRequest, ClientHandler clientHandler) throws RemoteException {
+        this.execute(() -> {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+//        myGame.completePendingResponse(askTimerInfoRequest.getID());
+            TimerInfoResponse timerInfoResponse = new TimerInfoResponse(askTimerInfoRequest.getID());
+            //predo i timerInfo
+
+            ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
+
+            timerInfoResponse.setTimerInfoList(timerInfos);
+            clientHandler.sendMessage(timerInfoResponse);
+        });
+    }
+
+    public void handleFlipTimerRequest(FlipTimerRequest flipTimerRequest, ClientHandler clientHandler) throws RemoteException {
+       this.execute(() -> {
+            LobbyManager myGame = getLobbyFromHandler(clientHandler);
+
+            ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
+            TimerInfo timer = timerInfos.get(flipTimerRequest.getTimerIndex());
+
+//        timer.setTimerStatus(TimerStatus.STARTED);
+            timer.setFlipped(true);
+
+            boolean lastTimer = (flipTimerRequest.getTimerIndex() == myGame.getRealGame().getTimerInfos().size() - 1);
+
+            startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()), lastTimer, flipTimerRequest.getTimerIndex());
+        });
     }
 
     /*
@@ -989,9 +1203,14 @@ public class ServerController {
 
         new Thread(()->{
             LobbyManager game = getLobbyFromHandler(clients.getFirst());
-            TimerInfo timerinfo = game.getRealGame().getTimerInfos().stream().filter(t -> t.getIndex() == index).findFirst().get();
-            timerinfo.setTimerStatus(TimerStatus.STARTED);
+            TimerInfo timerinfo = game.getRealGame().getTimerInfos().stream().filter(t -> t.getIndex() == index).findFirst().orElse(null);
+            if(timerinfo == null)
+            {
+                System.err.println("TimerInfo null");
+                return;
+            }
 
+            timerinfo.setTimerStatus(TimerStatus.STARTED);
 
             int secondsIn = 0;
 
@@ -1034,61 +1253,23 @@ public class ServerController {
 //        }, seconds, TimeUnit.SECONDS);
     }
 
-    public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        GameController gameController = myGame.getGameController();
-
-        if (gameController.getCurrentCardContext() != null) {
-            clientHandler.sendMessage(new GameMessage("È già in corso una carta avventura."));
-            return;
-        }
-
-        try {
-            gameController.handleTurn();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void handleReadyTurnRequest(ReadyTurnRequest readyTurnRequest, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        String nickname = getNicknameFromClientHandler(clientHandler);
-        GameController gameController = myGame.getGameController();
-        try {
-
-            new Thread(() -> {
-                myGame.addReadyPlayer(nickname);
-                if (myGame.allActivePlayerReady()) {
-                    gameController.sendMatchInfoUpdate();
-                }
-            }).start();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    public void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-        String nickname = getNicknameFromClientHandler(clientHandler);
-        GameController gameController = myGame.getGameController();
-
-        myGame.getGameController().removePlayerFromGame(nickname, true);
-        new Thread(() -> {
-//                myGame.getGameController().handleTurnBeforeDrawnCard();
-            myGame.addEarlyLandingPlayer(nickname);
-            if (myGame.allActivePlayerReady()) {
-                gameController.sendMatchInfoUpdate();
-            }
-        }).start();
-
-    }
-
-
     private void tryExecutePhaseAfterMessage(LobbyManager game, NetworkMessageType type) {
-        game.getGameController().getCurrentCardContext().decrementExpectedNumberOfNetworkMessages(type);
-        int expectedNetworkMessages = game.getGameController().getCurrentCardContext().getExpectedNumberOfNetworkMessagesPerType().get(type);
+        CardContext cardContext =game.getGameController().getCurrentCardContext();
+
+        cardContext.decrementExpectedNumberOfNetworkMessages(type);
+        int expectedNetworkMessages = cardContext.getExpectedNumberOfNetworkMessagesPerType().get(type);
+        NetworkMessage networkMessage = cardContext.getIncomingNetworkMessage();
+        NetworkMessageNameVisitor visitor = new NetworkMessageNameVisitor();
+
+
+        if(Objects.equals(cardContext.getAdventureCard().getName(), "Pianeti")){
+            if(networkMessage.accept(visitor).equals(NetworkMessageType.ShipUpdate))
+            {
+                game.getGameController().getCurrentCardContext().executePhase();
+                return;
+            }
+        }
+
         if (expectedNetworkMessages == 0) {
             game.getGameController().getCurrentCardContext().executePhase();
         } else if (expectedNetworkMessages == -1) {
@@ -1097,7 +1278,12 @@ public class ServerController {
     }
 
     public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {
+        NetworkMessageType networkMessageType = message.accept(networkMessageNameVisitor);
+
+//        System.out.println("[DEBUG] Broadcasting"+ message );
         for (ClientHandler clientHandler : clients) {
+//            String nickname = getNicknameFromClientHandler(clientHandler);
+
             clientHandler.sendMessage(message);
         }
     }
@@ -1118,7 +1304,7 @@ public class ServerController {
     }
 
     public String getNicknameFromClientHandler(ClientHandler clientHandler) {
-        return clientNicknameMap.get(clientHandler);
+        return clientNicknameMap.get(clientHandler.getClientID());
     }
 
     private Player getPlayerFromClientHandler(ClientHandler clientHandler) {
@@ -1134,33 +1320,6 @@ public class ServerController {
         Heartbeat heartbeat = new Heartbeat(this, clientHandler);
         heartbeats.add(heartbeat);
         heartbeat.start();
-    }
-
-
-    public void handleAskTimerInfoRequest(AskTimerInfoRequest askTimerInfoRequest, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-//        myGame.completePendingResponse(askTimerInfoRequest.getID());
-        TimerInfoResponse timerInfoResponse = new TimerInfoResponse(askTimerInfoRequest.getID());
-        //predo i timerInfo
-
-        ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
-
-        timerInfoResponse.setTimerInfoList(timerInfos);
-        clientHandler.sendMessage(timerInfoResponse);
-    }
-
-    public void handleFlipTimerRequest(FlipTimerRequest flipTimerRequest, ClientHandler clientHandler) {
-        LobbyManager myGame = getLobbyFromHandler(clientHandler);
-
-        ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
-        TimerInfo timer = timerInfos.get(flipTimerRequest.getTimerIndex());
-
-//        timer.setTimerStatus(TimerStatus.STARTED);
-        timer.setFlipped(true);
-
-        boolean lastTimer = (flipTimerRequest.getTimerIndex() == myGame.getRealGame().getTimerInfos().size()-1);
-
-        startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()), lastTimer, flipTimerRequest.getTimerIndex());
     }
 }
 

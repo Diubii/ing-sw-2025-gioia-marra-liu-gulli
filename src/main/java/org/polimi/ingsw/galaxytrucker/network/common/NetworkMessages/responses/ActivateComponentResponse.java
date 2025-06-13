@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 public class ActivateComponentResponse extends NetworkMessage implements Serializable {
     private final ActivatableComponent activatableComponentType;
-    private final ArrayList<Position> activatedDoubleEnginesPositions;
+    private final ArrayList<Position> activatedComponentPositions;
     private final ArrayList<Position> batteriesPositions;
 
     @Serial
@@ -23,7 +23,7 @@ public class ActivateComponentResponse extends NetworkMessage implements Seriali
 
     public ActivateComponentResponse(ActivatableComponent activatableComponentType, ArrayList<Position> activatedComponentPositions, ArrayList<Position> batteriesPositions) {
         this.activatableComponentType = activatableComponentType;
-        this.activatedDoubleEnginesPositions = activatedComponentPositions;
+        this.activatedComponentPositions = activatedComponentPositions;
         this.batteriesPositions = batteriesPositions;
     }
 
@@ -36,8 +36,8 @@ public class ActivateComponentResponse extends NetworkMessage implements Seriali
         return activatableComponentType;
     }
 
-    public ArrayList<Position> getActivatedDoubleEnginesPositions() {
-        return activatedDoubleEnginesPositions;
+    public ArrayList<Position> getActivatedComponentPositions() {
+        return activatedComponentPositions;
     }
 
     public ArrayList<Position> getBatteriesPositions() {

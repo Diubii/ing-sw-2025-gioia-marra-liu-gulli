@@ -78,6 +78,7 @@ public class CreateLobbyController extends GenericSceneController {
                 break;
             }
             clientController.handleCreateChoice(max, learning);
+            GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         } else {
             ShowGenericMessage("Seleziona Numero Giocatori e tipo di match.");
         }

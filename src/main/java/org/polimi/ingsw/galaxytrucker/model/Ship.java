@@ -28,7 +28,7 @@ public class Ship implements Serializable {
     private final int shipboardMaxY=5;
 
     private Slot[][] shipBoard = new Slot[shipboardMaxX][shipboardMaxY];
-    private final Slot[] setAsideTiles = new Slot[2];
+    private  Tile[] asideTiles = new Tile[2];
     private int nExposedConnector;
     private int destroyedTiles;
     private int nBatterieLeft;
@@ -39,6 +39,7 @@ public class Ship implements Serializable {
     private ArrayList<Pair<Good, Pair<Position, Slot>>> listOfGoods;
     private ArrayList<Good> listNotLoadedGoods;
     private Tile lastTile;
+    private Position lastTilePosition;
     private Boolean synch;
 
 
@@ -368,13 +369,16 @@ public class Ship implements Serializable {
         //se sto distruggendo e non semplicemente eliminando le aggiungo alle broken
         if (!isNormalRemove) {
             brokenPositions.add(pos);
+            destroyedTiles++;
         }
 
-        Tile tileNeedToRemove = getTileFromPosition(pos);
 
-        destroyedTiles++;
-        shipBoard[pos.getX()][pos.getY()].removeTile();
-
+        Slot slot = shipBoard[pos.getX()][pos.getY()];
+        if (slot != null) {
+            slot.removeTile();
+        } else {
+            System.out.println("WARN: Tried to remove tile from null slot at " + pos);
+        }
     }
 
     //}
@@ -948,14 +952,16 @@ public class Ship implements Serializable {
         return 0;
     }
 
-    public Slot[] getSetAsideTiles() {
-        return setAsideTiles;
+    public Tile[] getAsideTiles() {
+        return asideTiles;
     }
+
+
 
     public int calculateEnginePower() {
 
         ArrayList<Position> enginePos = getComponentPositionsFromName("Engine");
-        ArrayList<Position> doubleEnginePos = getComponentPositionsFromName("doubleEngine");
+        ArrayList<Position> doubleEnginePos = getComponentPositionsFromName("DoubleEngine");
 
         ArrayList<Position> allEnginePos = new ArrayList<>();
         allEnginePos.addAll(enginePos);
@@ -1011,6 +1017,14 @@ public class Ship implements Serializable {
 
     public void setLastTile(Tile tile) {
         lastTile = tile;
+    }
+
+    public Position getLastTilePosition() {
+        return lastTilePosition;
+    }
+
+    public void setLastTilePosition(Position lastTilePosition) {
+        this.lastTilePosition = lastTilePosition;
     }
 
     /**
@@ -1150,13 +1164,24 @@ public class Ship implements Serializable {
     }
 
     public Float calculateFirePower() {
+
         ArrayList<Position> cannonPos = getComponentPositionsFromName("Cannon");
         ArrayList<Position> doubleCannonPos = getComponentPositionsFromName("DoubleCannon");
         ArrayList<Position> allCannons = new ArrayList<>();
-        allCannons.addAll(getComponentPositionsFromName("Cannon"));
-        allCannons.addAll(getComponentPositionsFromName("DoubleCannon"));
+        allCannons.addAll(cannonPos);
+        allCannons.addAll(doubleCannonPos);
 
-        return (float) allCannons.stream().mapToDouble(p -> ((Cannon) getComponentFromPosition(p)).getFirePower()).sum();
+
+        Float firePower = (float) allCannons
+                .stream()
+                .mapToDouble(p->
+                        ((Cannon)getComponentFromPosition(p)).getFirePower() )
+                .sum();
+        if (firePower != 0) {
+            firePower += getNPurpleAlien() * 2;
+        }
+
+        return firePower;
     }
 
     public int getHumanCrewNumber() {
@@ -1185,18 +1210,14 @@ public class Ship implements Serializable {
 
     public ArrayList<Good> getGoodsOnShipBoard() {
         ArrayList<Good> goods = new ArrayList<>();
-        ComponentNameVisitor visitor = new ComponentNameVisitor();
 
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 5; j++) {
-                Slot slot = shipBoard[i][j];
-                if (slot != null && slot.getTile() != null) {
-                    Component component = slot.getTile().getMyComponent();
-                    if (component.accept(visitor).equals("GenericCargoHolds")) {
-                        GenericCargoHolds hold = (GenericCargoHolds) component;
-                        goods.addAll(hold.getGoods());
-                    }
-                }
+        ArrayList<Position> genericCargoHoldsPos = getComponentPositionsFromName("GenericCargoHolds");
+
+        for (Position p : genericCargoHoldsPos) {
+            Component component = getComponentFromPosition(p);
+            if (component instanceof GenericCargoHolds) {
+                GenericCargoHolds hold = (GenericCargoHolds) component;
+                goods.addAll(hold.getGoods());
             }
         }
 
@@ -1206,4 +1227,5 @@ public class Ship implements Serializable {
     public void setLearningMatch(Boolean isLearningMatch) {
         this.learningMatch = isLearningMatch;
     }
+
 }

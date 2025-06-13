@@ -30,7 +30,6 @@ public class ClientModel {
     private FlightBoard flightBoard;
     private ArrayList<CardDeck> cardDecks = new ArrayList<>();
     private ArrayList<Tile> faceUpTiles = new ArrayList<>();
-    private Tile[] reservedTiles = new Tile[2];
     private boolean isLeader;
     private Planet selectedPlanet;
     private PlayerState playerState;
@@ -100,17 +99,16 @@ public class ClientModel {
         this.faceUpTiles = faceUpTiles;
     }
 
+    //Todo: eliminare si usano quelle in myship che sono aggiornate lato server
     public Tile[] getReservedTiles() {
-        return reservedTiles;
-    }
-
-    public void setReservedTile(int index, Tile tile) {
-        if (index >= 0 && index < 2) {
-            reservedTiles[index] = tile;
+        if (myInfo != null && myInfo.getShip() != null) {
+            return myInfo.getShip().getAsideTiles();
         } else {
-            throw new IllegalArgumentException("Reserved tile index must be 0 or 1.");
+            return new Tile[2];
         }
     }
+
+
 
     public PlayerInfo getPlayerInfoByNickname(String nickname) {
         if (myInfo != null && myInfo.getNickName().equals(nickname)) {

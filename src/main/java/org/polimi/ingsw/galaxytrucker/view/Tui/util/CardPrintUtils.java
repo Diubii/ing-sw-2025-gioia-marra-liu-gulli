@@ -8,6 +8,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardPrint
 import org.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisitorsInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
 import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.RESET;
@@ -18,25 +19,25 @@ import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.RESET;
  */
 public class CardPrintUtils {
 
-    public static void printPlanetList(ArrayList<Planet> planets) {
+    public static void printPlanetList(HashMap<Integer, Planet> planets) {
         StringBuilder sb;
-        for (int i = 0; i < planets.size(); i++) {
+        for (Integer i : planets.keySet()) {
             sb = new StringBuilder();
             if (planets.get(i).isOccupied()) {
                 sb.append("Occ");
             } else {
                 sb.append("   ");
             }
-            sb.append(" P").append(i + 1).append(": ");
+            sb.append(" P").append(i).append(": ");
 
             int j = 0;
             for (j = 0; j < planets.get(i).getGoods().size(); j++) {
                 switch (planets.get(i).getGoods().get(j).getColor()) {
-                    case RED -> sb.append(RED).append("█").append(RESET);
-                    case BLUE -> sb.append(BLUE).append("█").append(RESET);
-                    case GREEN -> sb.append(GREEN).append("█").append(RESET);
+                    case    RED -> sb.append(RED)          .append("█").append(RESET);
+                    case   BLUE -> sb.append(BLUE)         .append("█").append(RESET);
+                    case  GREEN -> sb.append(GREEN)        .append("█").append(RESET);
                     case YELLOW -> sb.append(BRIGHT_YELLOW).append("█").append(RESET);
-                    case EMPTY -> sb.append(" ");
+                    case  EMPTY -> sb.append(" ");
                 }
 
             }

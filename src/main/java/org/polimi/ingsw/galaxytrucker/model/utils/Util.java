@@ -28,39 +28,53 @@ import java.util.*;
  */
 public class Util {
 
-    public static CardDeck createLvl1Deck() throws IOException {
+    public static CardDeck createLvl1Deck() {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
-        }).stream().filter(card -> card.getLevel() == 1).toList());
+        CardDeck cardDeck = null;
+        try {
+            ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+            }).stream().filter(card -> card.getLevel() == 1).toList());
+            cardDeck = new CardDeck(list, true);
+        }catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
 
+        return cardDeck;
+    }
 
-        return new CardDeck(list, true);
+    public static CardDeck createLvl2Deck() {
+        File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
+        ObjectMapper mapper = new ObjectMapper();
+
+        CardDeck cardDeck = null;
+        try {
+            ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+            }).stream().filter(card -> card.getLevel() == 2).toList());
+            cardDeck = new CardDeck(list, true);
+        }catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return cardDeck;
 
     }
 
-    public static CardDeck createLvl2Deck() throws IOException {
+    public static CardDeck createLearningDeck() {
         File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
 
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
-        }).stream().filter(card -> card.getLevel() == 2).toList());
+        CardDeck cardDeck = null;
+        try {
+            ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
+            }).stream().filter(AdventureCard::isLearningFlight).toList());
+            cardDeck = new CardDeck(list, true);
+        }catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
 
-        //System.out.println("LVL2: ");
-
-        return new CardDeck(list, true);
-
-    }
-
-    public static CardDeck createLearningDeck() throws IOException {
-        File file = new File("src/main/resources/cardsdata.json"); // metti qui il percorso corretto
-        ObjectMapper mapper = new ObjectMapper();
-
-        ArrayList<AdventureCard> list = new ArrayList<AdventureCard>(mapper.readValue(file, new TypeReference<ArrayList<AdventureCard>>() {
-        }).stream().filter(AdventureCard::isLearningFlight).toList());
-
-        return new CardDeck(list, true);
+        return cardDeck;
 
     }
 
@@ -71,10 +85,18 @@ public class Util {
         }).stream().toList());
         ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
         //cardsToTest.add(list.get(3));
-        cardsToTest.add(list.get(4)); //Open Space
-        cardsToTest.add(list.get(16)); //AbandonedShip
+        //cardsToTest.add(list.get(3)); //Stardust
+        //cardsToTest.add(list.get(24)); //Epidemic
+         cardsToTest.add(list.get(16)); //AbandonedShip
+         cardsToTest.add(list.get(31)); //Planets
+         cardsToTest.add(list.get(4)); //Open Space
+         cardsToTest.add(list.get(19)); //AbandonedStation
 
-        //cardsToTest.add(list.get(31)); //Planets
+
+
+//        cardsToTest.add(list.get(8));
+
+
         //cardsToTest.add(list.get(3)); //Stardust
         //cardsToTest.add(list.get(24)); //Epidemic
 
@@ -361,7 +383,7 @@ public class Util {
      * @param myShip           La nave in cui si sta effettuando la verifica.
      */
     public  static Pair<Boolean, ArrayList<Integer>> checkShipStructure(Ship myShip, Position startingPos) {
-        
+
         ArrayList<Integer> visitedTilesId = new ArrayList<>();
         visitedTilesId.add(myShip.getTileFromPosition(startingPos).getId());
         checkShipStructureTileVisitor(startingPos, myShip, visitedTilesId);
@@ -378,7 +400,7 @@ public class Util {
         boolean same = visitedTilesId.equals(tilesId);
 
         return new Pair<>(same, visitedTilesId);
-        
+
     }
 
     private static void checkShipStructureTileVisitor(Position startingPos, Ship myShip, ArrayList<Integer> visitedTilesId) {
@@ -430,12 +452,9 @@ public class Util {
         return false;
     }
 
-    public static ArrayList<Good> getMostValuableGoods(Ship ship) {
+    public static ArrayList<Good> getAndRemoveMostValuableGoods(Ship ship, int penalty ) {
         //red, yellow, green, blue
-        Good firstGood = null;
-        Good secondGood = null;
-
-        ArrayList<Position> storagePos = ship.getComponentPositionsFromName("GenericCargoHolds");
+        ArrayList<Good> goodsToDiscard = new ArrayList<>();
         Map<Color, ArrayList<Position>> goodPositions = new HashMap<>();
 
         goodPositions.put(Color.RED, new ArrayList<>());
@@ -443,32 +462,17 @@ public class Util {
         goodPositions.put(Color.GREEN, new ArrayList<>());
         goodPositions.put(Color.YELLOW, new ArrayList<>());
 
+        ArrayList<Position> storagePos = ship.getComponentPositionsFromName("GenericCargoHolds");
 
-        //trovo tutte le Tiles da rimuovere
-        List<Slot> Slots = Arrays.stream(ship.getShipBoard())
-                .flatMap(Arrays::stream)
-                .filter(Objects::nonNull)
-                .toList();
+        for (Position pos : storagePos) {
+            GenericCargoHolds hold = (GenericCargoHolds) ship.getComponentFromPosition(pos);
+            if (hold.isEmpty()) {
+                continue;
+            }
 
-        for (Slot s : Slots) {
-            Tile tempTile = s.getTile();
-            if (tempTile != null) {
-                if (storagePos.contains(s.getPosition())) {
-                    //se la firstGood è null
-                    GenericCargoHolds genericCargoHolds = (GenericCargoHolds) tempTile.getMyComponent();
-                    if (genericCargoHolds.hasGood(Color.RED)) {
-                        goodPositions.get(Color.RED).add(s.getPosition());
-                    }
-                    if (genericCargoHolds.hasGood(Color.YELLOW)) {
-                        goodPositions.get(Color.YELLOW).add(s.getPosition());
-                    }
-                    if (genericCargoHolds.hasGood(Color.GREEN)) {
-                        goodPositions.get(Color.GREEN).add(s.getPosition());
-                    }
-                    if (genericCargoHolds.hasGood(Color.BLUE)) {
-                        goodPositions.get(Color.BLUE).add(s.getPosition());
-                    }
-                }
+            for (Good good : hold.getGoods()) {
+                Color color = good.getColor();
+                goodPositions.get(color).add(pos);
             }
         }
 
@@ -476,75 +480,53 @@ public class Util {
 
 
         List<Color> priority = List.of(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
+
         int index = 0;
 
-        while ((firstGood == null || secondGood == null) && index < priority.size()) {
-            int j = 0;
-            while (j < 2 && !goodPositions.get(priority.get(index)).isEmpty()) {
-                Tile tile = ship.getTileFromPosition(goodPositions.get(priority.get(index)).get(j));
-                GenericCargoHolds genericCargoHolds = (GenericCargoHolds) tile.getMyComponent();
+        while (goodsToDiscard.size() < penalty && index < priority.size()) {
+            Color currentColor = priority.get(index);
+            List<Position> positions = goodPositions.get(currentColor);
 
-                Color currentColor = priority.get(index);
-
-                if (firstGood == null) {
-
-                    //firstGood = priority.get(index);
-
-                    genericCargoHolds.removeGood(currentColor);
-                    firstGood = new Good(currentColor);
-                    goodPositions.get(currentColor).remove(j);
-                    j++;
-                    continue;
-                }
-                if (secondGood == null) {
-
-                    genericCargoHolds.removeGood(currentColor);
-                    secondGood = new Good(currentColor);
-                    goodPositions.get(currentColor).remove(j);
-                    j++;
-                }
+            if (positions.isEmpty()) {
+                index++;
+                continue;
             }
-            index++;
+
+            Position pos = positions.remove(0);
+            GenericCargoHolds hold = (GenericCargoHolds) ship.getComponentFromPosition(pos);
+
+            hold.removeGood(currentColor);
+
+            goodsToDiscard.add(new Good(currentColor));
+
         }
 
-        ArrayList<Good> goods = new ArrayList<>();
-        if(firstGood != null) goods.add(firstGood);
-        if(secondGood != null) goods.add(secondGood);
-
-        return goods;
+        return goodsToDiscard;
 
     }
 
-    public static void removeTwoBatteries(Ship ship, Boolean excludeSecond) {
-        boolean firstBattery = false;
-        boolean secondBattery = false;
+    public static void removeBatteries(Ship ship, int batteryToDiscard) {
+        if (batteryToDiscard <= 0) return;
 
         ArrayList<Position> storagePos = ship.getComponentPositionsFromName("BatterySlot");
 
-        int index = 0;
-        while ((!firstBattery || (!secondBattery && !excludeSecond)) && index < storagePos.size()) {
-            Tile tile = ship.getTileFromPosition(storagePos.get(index));
-            BatterySlot batterySlot = (BatterySlot) tile.getMyComponent();
+        int removed = 0;
 
-            while (batterySlot.getBatteriesLeft() > 0) {
-                if (!firstBattery) {
-                    if (batterySlot.removeBattery()) {
-                        firstBattery = true;
-                    }
-                }
+        for (Position pos : storagePos) {
+            BatterySlot batterySlot = (BatterySlot) ship.getComponentFromPosition(pos);
 
-                if (!secondBattery && !excludeSecond) {
-                    if (batterySlot.removeBattery()) {
-                        secondBattery = true;
-                    }
-                }
-
-                if (excludeSecond) {
+            while (batterySlot.getBatteriesLeft() > 0 && removed < batteryToDiscard) {
+                boolean success = batterySlot.removeBattery();
+                if (success) {
+                    removed++;
+                } else {
                     break;
                 }
             }
 
-            index++;
+            if (removed >= batteryToDiscard) {
+                break; //Done
+            }
         }
     }
 }

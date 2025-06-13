@@ -9,12 +9,17 @@ import org.polimi.ingsw.galaxytrucker.enums.ProjectileType;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CombatZone;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
+import org.polimi.ingsw.galaxytrucker.model.game.Game;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateComponentRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DiscardCrewMembersRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DiscardCrewMembersResponse;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -23,9 +28,30 @@ import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.
 public abstract class CombatZoneEffect {
     //PHASE 1
     private final static HashMap<LobbyManager, Pair<Integer, Player>> minCrewMembersCheckPairs = new HashMap<>();
+    private final static HashMap<LobbyManager,Integer> levelCombatZone = new HashMap<>();
 
+
+    public static void checkLevel(CardContext context) {
+        System.out.println("Checking level");
+        CombatZone combatZone = (CombatZone) context.getAdventureCard();
+        LobbyManager game = context.getCurrentGame();
+        int level = combatZone.getLevel();
+        levelCombatZone.putIfAbsent(game,level);
+
+        if(level == 1){
+            context.nextPhase();
+            context.executePhase();
+        }
+        else if(level == 2){
+            context.nextPhase(6);
+            context.executePhase();
+
+        }
+
+    }
     public static void minCrewMembersCheck(CardContext context) {
         CombatZone combatZone = (CombatZone) context.getAdventureCard();
+
         Player player = context.getCurrentPlayer();
 
         int playerCrewMembersNumber = player.getShip().getnCrew();
@@ -35,14 +61,21 @@ public abstract class CombatZoneEffect {
         Player minCrewMembersPlayer = pair.getValue();
 
         if (context.getCurrentPlayer() == context.getCurrentRankedPlayers().getLast()) {
-            broadcastGameMessage(context, minCrewMembersPlayer.getNickName() + " ha il minor numero di membri dell'equipaggio!");
-            movePlayer(context, minCrewMembersPlayer, -combatZone.getDaysLost());
+            if(combatZone.getLevel() ==1) {
 
-            //Passo subito alla prossima fase
-            context.nextPhase();
+                broadcastGameMessage(context, minCrewMembersPlayer.getNickName() + " ha il minor numero di membri dell'equipaggio!");
+                movePlayer(context, minCrewMembersPlayer, -combatZone.getDaysLost());
 
-            //Cleanup
-            minCrewMembersCheckPairs.remove(context.getCurrentGame());
+                //Passo subito alla prossima fase
+                context.nextPhase();
+
+                //Cleanup
+                minCrewMembersCheckPairs.remove(context.getCurrentGame());
+                return;
+            }
+            else{
+
+            }
         }
 
         context.nextPlayer();
@@ -55,9 +88,12 @@ public abstract class CombatZoneEffect {
 
     public static void sendDoubleEnginesActivationRequest(CardContext context) {
         Player player = context.getCurrentPlayer();
+        GameMessage gameInfo = new GameMessage(player.getNickName());
+        gameInfo.setMessage("Il giocatore con la minore potenza del motore deve ricevere una penalità" );
+        broadcast(context,gameInfo);
 
-        //Controllo se il player può attivare DoubleEngines
-        if (player.getShip().getComponentPositionsFromName("DoubleEngine").stream().anyMatch(p -> player.getShip().getComponentFromPosition(p).isCharged())) {
+        //Controllo se il player può attivare DoubleEngines  charged==false
+        if (player.getShip().getComponentPositionsFromName("DoubleEngine").stream().anyMatch(p -> !player.getShip().getComponentFromPosition(p).isCharged())) {
             ActivateComponentRequest activateDoubleEnginesRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
             sendMessage(context, player, activateDoubleEnginesRequest);
             context.nextPhase();
@@ -69,7 +105,8 @@ public abstract class CombatZoneEffect {
 
     public static void minEnginePowerCheck(CardContext context) {
         Player player = context.getCurrentPlayer();
-
+        CombatZone combatZone = (CombatZone) context.getAdventureCard();
+        LobbyManager game = context.getCurrentGame();
         int playerEnginePower = player.getShip().calculateEnginePower();
         combatZoneCompare(context, playerEnginePower, minEnginePowerCheckPairs);
 
@@ -77,10 +114,36 @@ public abstract class CombatZoneEffect {
         Player minEnginePowerPlayer = pair.getValue();
 
         if (context.getCurrentPlayer() == context.getCurrentRankedPlayers().getLast()) {
+            if(levelCombatZone.get(game)==1){
             broadcastGameMessage(context, minEnginePowerPlayer.getNickName() + " ha la minor potenza motrice, quindi perde equipaggio!");
-
             //Passo alla prossima fase
-            context.nextPhase();
+            context.nextPhase();}
+            else{
+                broadcastGameMessage(context, minEnginePowerPlayer.getNickName() + " ha la minor potenza motrice, quindi perde merci!");
+                //to do discard merci
+                ArrayList<Good> removedGoods = Util.getAndRemoveMostValuableGoods(player.getShip(), combatZone.getGoodsLost());
+                int goodsCount = removedGoods.size();
+                int batteryToDiscard = combatZone.getGoodsLost() - goodsCount;
+
+                String message;
+                if (goodsCount == combatZone.getGoodsLost()) {
+                    message = "[CombatZone] Ha ha! We'll steal your " + goodsCount + " most valuable goods!";
+                } else if (goodsCount > 0) {
+                    Util.removeBatteries(player.getShip(), batteryToDiscard);
+                    message = "[CombatZone] We'll steal your " + goodsCount + " most valuable good(s) and " + batteryToDiscard + " battery(ies), if you have them.";
+                } else {
+                    Util.removeBatteries(player.getShip(), batteryToDiscard);
+                    message = "[CombatZone] You don't have any goods, so we'll steal " + batteryToDiscard + " of your batteries! Well, if you have any, poor fella.";
+                }
+
+                GameMessage personalInfo = new GameMessage(message);
+                game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalInfo);
+
+                context.previousPhase(2);
+                context.setCurrentPlayer(context.getCurrentRankedPlayers().getFirst());
+                context.executePhase();
+                return;
+            }
         } else {
             //Torno indietro per inviare la ActivateComponentRequest al prossimo player
             context.previousPhase();
@@ -115,10 +178,13 @@ public abstract class CombatZoneEffect {
 
     public static void sendDoubleCannonsActivationRequest(CardContext context) {
         Player player = context.getCurrentPlayer();
+        GameMessage gameInfo = new GameMessage(player.getNickName());
+        gameInfo.setMessage("Il giocatore con la minore potenza del cannon deve ricevere una penalità" );
+        broadcast(context,gameInfo);
 
-        //Controllo se il player può attivare DoubleEngines
-        if (player.getShip().getComponentPositionsFromName("DoubleCannon").stream().anyMatch(p -> player.getShip().getComponentFromPosition(p).isCharged())) {
-            ActivateComponentRequest activateDoubleCannonsRequest = new ActivateComponentRequest(ActivatableComponent.DoubleEngine);
+        //Controllo se il player può attivare DoubleEngines  no charged
+        if (player.getShip().getComponentPositionsFromName("DoubleCannon").stream().anyMatch(p -> !player.getShip().getComponentFromPosition(p).isCharged())) {
+            ActivateComponentRequest activateDoubleCannonsRequest = new ActivateComponentRequest(ActivatableComponent.DoubleCannon);
             sendMessage(context, player, activateDoubleCannonsRequest);
             context.nextPhase();
         } else {
@@ -129,21 +195,30 @@ public abstract class CombatZoneEffect {
 
     public static void minFirePowerCheck(CardContext context) {
         Player player = context.getCurrentPlayer();
+        CombatZone combatZone = (CombatZone) context.getAdventureCard();
 
+        LobbyManager game = context.getCurrentGame();
         float playerFirePower = player.getShip().calculateFirePower();
         combatZoneCompare(context, playerFirePower, minFirePowerCheckPairs);
 
         Pair<Float, Player> pair = getNumberPlayerPairFromHashMap(context, minFirePowerCheckPairs);
         Player minFirePowerPlayer = pair.getValue();
+        if(levelCombatZone.get(game) == 1) {
 
-        if (context.getCurrentPlayer() == context.getCurrentRankedPlayers().getLast()) {
-            broadcastGameMessage(context, minFirePowerPlayer.getNickName() + " ha la minor potenza di fuoco, quindi subisce delle cannonate!");
+            if (context.getCurrentPlayer() == context.getCurrentRankedPlayers().getLast()) {
+                broadcastGameMessage(context, minFirePowerPlayer.getNickName() + " ha la minor potenza di fuoco, quindi subisce delle cannonate!");
 
-            //Passo alla prossima fase
-            context.nextPhase();
-        } else {
-            //Torno indietro per inviare la ActivateDoubleEnginesRequest al prossimo player
-            context.previousPhase();
+                //Passo alla prossima fase
+                context.nextPhase();
+            } else {
+                //Torno indietro per inviare la ActivateDoubleEnginesRequest al prossimo player
+                context.previousPhase();
+            }
+        }
+        else{
+            movePlayer(context, minFirePowerPlayer, -combatZone.getDaysLost());
+            context.previousPhase(5); //sendDoubleEngine
+            context.executePhase();
         }
     }
 
@@ -151,7 +226,12 @@ public abstract class CombatZoneEffect {
         LobbyManager lobbyManager = context.getCurrentGame();
         CombatZone combatZone = (CombatZone) context.getAdventureCard();
         Random rand = new Random();
-        final Player targetPlayer = getNumberPlayerPairFromHashMap(context, minFirePowerCheckPairs).getValue();
+        final Player targetPlayer;
+        if(combatZone.getLevel() ==1) {
+          targetPlayer  = getNumberPlayerPairFromHashMap(context, minFirePowerCheckPairs).getValue();
+        }else {
+            targetPlayer = getNumberPlayerPairFromHashMap(context, minCrewMembersCheckPairs).getValue();
+        }
         int diceRoll;
         String message;
         for (Projectile projectile : combatZone.getProjectiles()) {
@@ -182,9 +262,14 @@ public abstract class CombatZoneEffect {
             ShipUpdate shipUpdate = new ShipUpdate(targetPlayer.getShip(), targetPlayer.getNickName());
             broadcast(context, shipUpdate);
         }
-
         //Cleanup
-        minFirePowerCheckPairs.remove(context.getCurrentGame());
+
+        if(combatZone.getLevel() ==1) {
+            minFirePowerCheckPairs.remove(context.getCurrentGame());
+        }
+        else{
+            minCrewMembersCheckPairs.remove(context.getCurrentGame());
+        }
 
         //Execute CommonEffects::end
         context.nextPhase();

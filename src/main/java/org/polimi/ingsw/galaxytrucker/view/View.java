@@ -15,13 +15,24 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Pha
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Interface for all types of view to implement.
+ * Must be implemented so that the ClientController can interact with a view.
+ */
 public interface View {
 
-    //La view deve avere il riferimento al clientController e anche al Model
+    //Every view must have the reference to the Model and ClientController to implement MVC
 
+    /**
+     * Describes if the view is "concurrent" and always shows  everithing or not.
+     * For example a Grafical interface is concurrent, a text interface can depend on implementation,
+     * If everithing is redrawn on every update even a text interface can "always show updates"
+     * @return
+     */
     Boolean autoShowUpdates();
 
     void forceReset();
@@ -33,6 +44,8 @@ public interface View {
     void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException;
 
     void showGenericMessage(String s);
+
+    void showWaitOtherPlayers();
 
     void askJoinOrCreateRoom();
 
@@ -115,7 +128,7 @@ public interface View {
 
     void askActivateAdventureCard();
 
-    void askSelectPlanetChoice(ArrayList<Planet> planetChoices);
+    void askSelectPlanetChoice(HashMap<Integer, Planet> landablePlanets);
 
 
 
@@ -131,10 +144,7 @@ public interface View {
 
     void showTimerInfos();
 
+    void showYouAreNowSpectating();
 
 
-//    void askFlightMenuChoice();
-
-
-//    public void askNickname(Thread thread) throws IOException;
 }
