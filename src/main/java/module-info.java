@@ -59,4 +59,6 @@ module org.polimi.ingsw.galaxytrucker {
     opens org.polimi.ingsw.galaxytrucker.view.Gui.Dialogs to javafx.fxml;
     exports org.polimi.ingsw.galaxytrucker.view.Gui.Abstract;
     opens org.polimi.ingsw.galaxytrucker.view.Gui.Abstract to javafx.fxml;
+    exports org.polimi.ingsw.galaxytrucker.network.client;
+    exports org.polimi.ingsw.galaxytrucker.view;
 }

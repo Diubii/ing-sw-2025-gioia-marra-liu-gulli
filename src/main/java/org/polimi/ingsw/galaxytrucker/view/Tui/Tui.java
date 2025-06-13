@@ -48,8 +48,6 @@ import static org.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.RESET;
 public class Tui implements View, Observable {
 
 
-
-
     private static final String STR_INPUT_CANCELED = "CAXX";
     private static PrintStream out;
     private final Boolean isSocket;
@@ -71,8 +69,6 @@ public class Tui implements View, Observable {
     }
 
     private MenuManager menuManager = new MenuManager();
-
-
 
 
     private final Object panelLock = new Object();
@@ -119,11 +115,13 @@ public class Tui implements View, Observable {
     public void enableInput() {
         inputEnabled = true;
     }
+
     public void disableInput() {
         inputEnabled = false;
 //        System.out.println("[DEBUG] disableInput() called.");
 //        Thread.dumpStack();
     }
+
     public void startInputListener() {
         new Thread(() -> {
             Scanner scanner = new Scanner(System.in);
@@ -153,7 +151,7 @@ public class Tui implements View, Observable {
                         continue;
                     }
 
-                        future.complete(line);
+                    future.complete(line);
 
 
 //                        if (!line.equalsIgnoreCase("RESET")) {
@@ -171,36 +169,38 @@ public class Tui implements View, Observable {
 //        String input = currentInputFuture.get();
 //
 //
-////        if (input.contains("RESET")) {
-////            flag = true;
-////            return "RESET";
-////        }
+
+    /// /        if (input.contains("RESET")) {
+    /// /            flag = true;
+    /// /            return "RESET";
+    /// /        }
 //
 //        return input.trim();
 //    }
-public String readLine(String prompt) throws InterruptedException, ExecutionException {
-    inputEnabled = true;
-    currentInputFuture = new CompletableFuture<>();
+    public String readLine(String prompt) {
+        inputEnabled = true;
+        currentInputFuture = new CompletableFuture<>();
 
-    System.out.print(prompt + " ");
+        System.out.print(prompt + " ");
 
-    String input = currentInputFuture.get().trim();
-    inputEnabled = false;
-
-    return input;
-}
+        try {
+            String input = currentInputFuture.get().trim();
+            inputEnabled = false;
+            return input;
+        } catch (InterruptedException | ExecutionException e) {
+            return "";
+        }
+    }
 
     @Override
     public void forceReset() {
         System.out.println();
         if (currentInputFuture != null && !currentInputFuture.isDone()) {
             currentInputFuture.complete("RESET");
-
         }
     }
 
-
-    public void start() throws ExecutionException, IOException, InterruptedException {
+    public void start() {
 
         MenuManager.clearConsole();
         System.out.println("\r".repeat(100));
@@ -216,7 +216,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         askServerInfo();
     }
 
-    public void askServerInfo() throws ExecutionException, IOException, InterruptedException {
+    public void askServerInfo() {
         Map<String, String> serverInfo = new HashMap<>();
         String defaultAddress = "localhost";
 
@@ -227,26 +227,21 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
             out.println("Please specify the following settings. The default value is shown between brackets.");
 
             enableInput();
-
-
-                String address = readLine("Enter the server address [" + defaultAddress + "]: ").trim();
-                serverInfo.put("address", address.isEmpty() ? defaultAddress : address);
-                String port;
-                do {
-                    port = readLine("Enter the server port [" + defaultPort + "]: ").trim();
-                    if (port.equals("RESET")) {
-                        disableInput();
-                        return;
-                    }
-                    try {
-                        portNumber = port.isEmpty() ? defaultPort : Integer.parseInt(port);;
-                    } catch (NumberFormatException e) {
-                        out.println("Errore: la porta deve essere un numero intero.");
-                        portNumber = -1;
-                    }
-                } while (portNumber == -1);
-
-
+            String address = readLine("Enter the server address [" + defaultAddress + "]: ").trim();
+            serverInfo.put("address", address.isBlank() ? defaultAddress : address);
+            String port;
+            do {
+                port = readLine("Enter the server port [" + defaultPort + "]: ").trim();
+                if (port.equals("RESET")) {
+                    disableInput();
+                    return;
+                }
+                try {
+                    portNumber = port.isEmpty() ? defaultPort : Integer.parseInt(port);
+                } catch (NumberFormatException e) {
+                    out.println("Errore: la porta deve essere un numero intero.");
+                }
+            } while (portNumber == -1);
         }
 
         SERVER_INFO message = new SERVER_INFO(serverInfo.get("address"), portNumber);
@@ -270,6 +265,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
             String choice;
             do {
                 choice = readLine("Create Room (a) or Join Room (b): ").trim().toLowerCase();
+                if(choice.equals("reset")) break;
                 if (!choice.equals("a") && !choice.equals("b")) {
                     synchronized (outputLock) {
                         out.println("Invalid input. Please enter 'a' or 'b'.");
@@ -282,13 +278,12 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
         } catch (Exception e) {
             System.err.println("Error while choosing: " + e.getMessage());
-        }finally {
+        } finally {
             disableInput();
         }
     }
 
-    public void askCreateRoom() throws ExecutionException
-    {
+    public void askCreateRoom() throws ExecutionException {
         enableInput();
         try {
             String maxPlayersStr;
@@ -320,10 +315,10 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
             clientController.handleCreateChoice(maxPlayers, isLearningMatch);
 
-        } catch (NumberFormatException | InterruptedException e) {
+        } catch (NumberFormatException e) {
             out.println("Invalid number format.");
             askCreateRoom(); // Retry
-        }finally {
+        } finally {
             disableInput();
         }
     }
@@ -343,10 +338,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
             } catch (NumberFormatException e) {
                 out.println("Invalid Lobby ID. Please enter a number.");
                 askRoomCode();
-            } catch (InterruptedException | ExecutionException e) {
-                out.println("Error while joining room: " + e.getMessage());
-            }
-            finally{
+            } finally {
                 disableInput();
             }
         }
@@ -367,7 +359,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                 Boolean isLearningMatch = lobby.isLearningMatch();
                 String matchType = isLearningMatch ? "Learning" : "Normal";
 
-                out.printf("Lobby ID: %d | Host: %s | GameType: "+  matchType +" |Players: (%d/%d)  \n",
+                out.printf("Lobby ID: %d | Host: %s | GameType: " + matchType + " |Players: (%d/%d)  \n",
                         lobby.getLobbyID(),
                         lobby.getHost(),
 
@@ -431,7 +423,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
             return;
         } else {
             menuManager.setMenuText(phase);
-            if (phase.equals(GameState.BUILDING_START) || phase.equals(GameState.SHIP_CHECK) || phase.equals(GameState.CREW_INIT)|| phase.equals(GameState.FLIGHT)) {
+            if (phase.equals(GameState.BUILDING_START) || phase.equals(GameState.SHIP_CHECK) || phase.equals(GameState.CREW_INIT) || phase.equals(GameState.FLIGHT)) {
                 toShowCurrentMenu();
                 handleChoiceForPhase(phase);
             }
@@ -460,22 +452,16 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
     @Override
     public void showBuildingMenu() {
         enableInput();
-        try {
-            String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
-            if (checkReset(input)) return;
+        String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
+        if (checkReset(input)) return;
 
-            while (input.equals("m") || input.equals("menu") || input.equals("?")) {
-                menuManager.showCurrentMenu();
-                input = readLine("\nChoose an option (a–j) or menu: ").trim().toLowerCase();
+        while (input.equals("m") || input.equals("menu") || input.equals("?")) {
+            menuManager.showCurrentMenu();
+            input = readLine("\nChoose an option (a–j) or menu: ").trim().toLowerCase();
 
-            }
-
-            clientController.handleBuildingMenuChoice(input);
-
-        } catch (InterruptedException | ExecutionException e) {
-            out.println("Error: " + e.getMessage());
         }
 
+        clientController.handleBuildingMenuChoice(input);
     }
 
     @Override
@@ -522,7 +508,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                 }
             } catch (Exception e) {
                 out.println("Error during ask view adventure Decks: " + e.getMessage());
-            }finally{
+            } finally {
                 disableInput();
             }
         } while (!valid);
@@ -545,8 +531,6 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                     clientController.handleFetchShip(targetName);
                     success = true;
 
-                } catch (InterruptedException | ExecutionException e) {
-                    showGenericMessage("Error fetching ship: " + e.getMessage() + ", please try again");
                 } catch (Exception e) {
                     showGenericMessage("Unexpected error: " + e.getMessage());
                 }
@@ -578,7 +562,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                     out.println("Unexpected error: " + e.getMessage());
                 }
             } while (!valid);
-        }finally {
+        } finally {
             disableInput();
         }
     }
@@ -588,22 +572,20 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         boolean valid = false;
         Position pos = null;
 
-            do {
-                try {
-                    String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
-                    pos = parseCoordinate(input);
-                    clientController.setTmpCurrentPosition(clientController.getCurrentPosition());
-                    clientController.setCurrentPos(pos.getX()-4,pos.getY()-5);
+        do {
+            try {
+                String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
+                pos = parseCoordinate(input);
+                clientController.setTmpCurrentPosition(clientController.getCurrentPosition());
+                clientController.setCurrentPos(pos.getX() - 4, pos.getY() - 5);
 
-                    valid = true;
-                } catch (IllegalArgumentException e) {
-                    out.println(e.getMessage());
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (Exception e) {
-                    out.println("Unexpected error: " + e.getMessage());
-                }
-            } while (!valid);
+                valid = true;
+            } catch (IllegalArgumentException e) {
+                out.println(e.getMessage());
+            } catch (Exception e) {
+                out.println("Unexpected error: " + e.getMessage());
+            }
+        } while (!valid);
 
     }
 
@@ -611,13 +593,13 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 // TileView
     @Override
     public void showTile(Tile tile) {
-        if(tile != null){
+        if (tile != null) {
             printTile(tile);
         }
     }
 
     @Override
-    public void handleFaceUpTilesUpdate(){
+    public void handleFaceUpTilesUpdate() {
 
     }
 
@@ -675,7 +657,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                         validInput = true;
                         break;
                     }
-                    case"4":{
+                    case "4": {
 //                        System.out.println("[DEBUG] You selected option 4: reclaimTile() will be called");
                         clientController.reclaimTile();
                         validInput = true;
@@ -690,11 +672,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
             } while (!validInput);
 
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }finally{
+        } finally {
             disableInput();
         }
 
@@ -743,10 +721,9 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
             } while (!validInput);
 
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
             disableInput();
         }
 
@@ -796,9 +773,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                         } while (!validInput);
 
                         clientController.handlePickReservedTile(slotIndex - 1, true);
-                    } catch (ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }finally {
+                    } finally {
                         disableInput();
                     }
                 } else {
@@ -831,10 +806,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                         } while (!validInput);
 
                         clientController.handlePickReservedTile(slotIndex - 1, false);
-                    } catch (ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    finally{
+                    } finally {
                         disableInput();
                     }
                 } else {
@@ -896,7 +868,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
     }
 
-    private void choosePlaceTileInShip(){
+    private void choosePlaceTileInShip() {
         enableInput();
         try {
 
@@ -904,7 +876,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
             printTile(clientController.getCurrentTileInHand());
 
             if (clientController.getCurrentPosition() != null) {
-                out.println("Current position:  X: " + (clientController.getCurrentPosition().getX()+4) + ",  Y:" + (clientController.getCurrentPosition().getY()+5));
+                out.println("Current position:  X: " + (clientController.getCurrentPosition().getX() + 4) + ",  Y:" + (clientController.getCurrentPosition().getY() + 5));
             } else {
                 out.println("Current position: null");
             }
@@ -918,7 +890,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
             boolean confirm = input.equals("y");
             if (confirm) {
-                clientController.handleTilePlacement(true);
+                clientController.handleTilePlacement();
             } else {
                 clientController.resetCurrentPos();
                 out.println("Tile not placed. You can rotate or move it again.");
@@ -928,8 +900,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         } catch (Exception e) {
             out.println(" Error during tile placement ");
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             disableInput();
         }
 
@@ -946,9 +917,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         try {
             String input = readLine("\nChoose an option (a–c) or menu: ").trim().toLowerCase();
             clientController.handleCheckShipChoice(input);
-        } catch (InterruptedException | ExecutionException e) {
-            out.println(" Error: " + e.getMessage());
-        }finally{
+        } finally {
             disableInput();
         }
     }
@@ -960,9 +929,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         try {
             String input = readLine("\nChoose an option (a–b) or menu: ").trim().toLowerCase();
             clientController.handleEmbarkCrewMenu(Character.toString(input.charAt(input.length() - 1)));
-        } catch (InterruptedException | ExecutionException e) {
-            out.println(" Error: " + e.getMessage());
-        }finally{
+        } finally {
             disableInput();
         }
     }
@@ -1022,13 +989,11 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
                 } catch (IllegalArgumentException e) {
                     out.println(e.getMessage());
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
                 } catch (Exception e) {
                     out.println("Unexpected error: " + e.getMessage());
                 }
             } while (!valid);
-        }finally {
+        } finally {
             disableInput();
         }
 
@@ -1054,30 +1019,30 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
         boolean valid = false;
         enableInput();
-        try{
-         do {
-            inputStr = readLine("Choose one > ").trim();
-            if (inputStr.isEmpty()) {
-                System.out.println("Input vuoto, riprova.");
-                continue;
-            }
-
-            try {
-                chosenPos = Integer.parseInt(inputStr);
-                if (validPositions.contains(chosenPos)) {
-                    valid = true;
-                } else {
-                    System.out.println("Posizione non valida. Riprova.");
+        try {
+            do {
+                inputStr = readLine("Choose one > ").trim();
+                if (inputStr.isEmpty()) {
+                    System.out.println("Input vuoto, riprova.");
+                    continue;
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Inserisci un numero valido.");
-            }
 
-        } while (!valid);
+                try {
+                    chosenPos = Integer.parseInt(inputStr);
+                    if (validPositions.contains(chosenPos)) {
+                        valid = true;
+                    } else {
+                        System.out.println("Posizione non valida. Riprova.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Inserisci un numero valido.");
+                }
 
-        AskPositionResponse askPositionResponse = new AskPositionResponse(id, chosenPos);
-        clientController.getClient().sendMessage(askPositionResponse);
-    }finally {
+            } while (!valid);
+
+            AskPositionResponse askPositionResponse = new AskPositionResponse(id, chosenPos);
+            clientController.getClient().sendMessage(askPositionResponse);
+        } finally {
             disableInput();
         }
     }
@@ -1273,81 +1238,80 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
         if (!housinPos.isEmpty()) {
             enableInput();
-            try{
+            try {
 
 
-            for (Position pos : housinPos) {
+                for (Position pos : housinPos) {
 
-                Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
+                    Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
 
-                if (tempSlot != null) {
-                    if (tempSlot.getTile() != null) {
+                    if (tempSlot != null) {
+                        if (tempSlot.getTile() != null) {
 
-                        ArrayList<String> choiches = new ArrayList<>();
+                            ArrayList<String> choiches = new ArrayList<>();
 
-                        ModularHousingUnit housing = (ModularHousingUnit) tempSlot.getTile().getMyComponent();
+                            ModularHousingUnit housing = (ModularHousingUnit) tempSlot.getTile().getMyComponent();
 
-                        if (Util.checkNearLFS(pos, housing.getAlienColor(), myShip)) {
+                            if (Util.checkNearLFS(pos, housing.getAlienColor(), myShip)) {
 
-                            if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.PURPLE) && nPurpleAliens == 0) {
-                                CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
-                                choiches.add("purple");
-                            }
-
-                            if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.BROWN) && nBrownAliens == 0) {
-                                CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
-                                choiches.add("brown");
-
-                            }
-                        }
-                        else {
-                            CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
-                            choiches.add("human");
-                        }
-
-
-                        boolean correct = false;
-
-                        while (!correct) {
-                            StringBuilder prompt = new StringBuilder("Type ");
-                            for (String choice : choiches) {
-                                prompt.append("(").append(choice).append(") ");
-                            }
-                            String choice = readLine(prompt.toString());
-
-                            switch (choice) {
-                                case "purple": {
-                                    nPurpleAliens++;
-                                    correct = true;
-                                    crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
-                                    break;
+                                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.PURPLE) && nPurpleAliens == 0) {
+                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
+                                    choiches.add("purple");
                                 }
 
-                                case "brown": {
-                                    nBrownAliens++;
-                                    correct = true;
-                                    crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.BROWN));
-                                    System.out.println("You cannot add a brown alien to this cabin.");
-                                    break;
-                                }
+                                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.BROWN) && nBrownAliens == 0) {
+                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
+                                    choiches.add("brown");
 
-                                case "human": { //Si inseriscono due umani
-                                    correct = true;
-                                    crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
-                                    crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
-                                    break;
                                 }
+                            } else {
+                                CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
+                                choiches.add("human");
+                            }
 
-                                default: {
-                                    System.out.println("Invalid choice: " + choice);
-                                    break;
+
+                            boolean correct = false;
+
+                            while (!correct) {
+                                StringBuilder prompt = new StringBuilder("Type ");
+                                for (String choice : choiches) {
+                                    prompt.append("(").append(choice).append(") ");
+                                }
+                                String choice = readLine(prompt.toString());
+
+                                switch (choice) {
+                                    case "purple": {
+                                        nPurpleAliens++;
+                                        correct = true;
+                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
+                                        break;
+                                    }
+
+                                    case "brown": {
+                                        nBrownAliens++;
+                                        correct = true;
+                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.BROWN));
+                                        System.out.println("You cannot add a brown alien to this cabin.");
+                                        break;
+                                    }
+
+                                    case "human": { //Si inseriscono due umani
+                                        correct = true;
+                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
+                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
+                                        break;
+                                    }
+
+                                    default: {
+                                        System.out.println("Invalid choice: " + choice);
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            }finally {
+            } finally {
                 disableInput();
             }
         }
@@ -1383,7 +1347,6 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
     }
 
 
-
     // chiedere di selezionare uno dei pianeti disponibili
     @Override
     public void askSelectPlanetChoice(HashMap<Integer, Planet> landablePlanets) {
@@ -1393,47 +1356,40 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         enableInput();
         try {
             do {
+                out.println();
+                out.println("List Planet choices: ");
+                CardPrintUtils.printPlanetList(landablePlanets);
+                String input = readLine("Scegli un pianeta, oppure '0' per non scegliere: ").trim();
+
+                int choice;
+
                 try {
-                    out.println();
-                    out.println("List Planet choices: ");
-                    CardPrintUtils.printPlanetList(landablePlanets);
-                    String input = readLine("Scegli un pianeta, oppure '0' per non scegliere: ").trim();
-
-                    int choice;
-
-                    try{
-                        choice = Integer.parseInt(input);
-                    }
-                    catch (NumberFormatException e) {
-                        choice = -1;
-                    }
-
-                    if (!landablePlanets.containsKey(choice) && choice != 0 ) {
-                        System.out.println("Input non valido.");
-                        continue;
-                    }
-
-
-
-                    if (choice == 0) {
-                        clientController.sendSelectPlanetResponse(null, -1);
-                        showGenericMessage("Hai scelto di non scegliere un pianeta. Devi aspettare la scelta degli altri giocatori.");
-                    } else {
-                        Planet selected = landablePlanets.get(choice);
-                        clientController.sendSelectPlanetResponse(selected, choice);
-                    }
-
-                    validInput = true;
-
-                } catch (ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                    choice = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    choice = -1;
                 }
+
+                if (!landablePlanets.containsKey(choice) && choice != 0) {
+                    System.out.println("Input non valido.");
+                    continue;
+                }
+
+
+                if (choice == 0) {
+                    clientController.sendSelectPlanetResponse(null, -1);
+                    showGenericMessage("Hai scelto di non scegliere un pianeta. Devi aspettare la scelta degli altri giocatori.");
+                } else {
+                    Planet selected = landablePlanets.get(choice);
+                    clientController.sendSelectPlanetResponse(selected, choice);
+                }
+
+                validInput = true;
+
             } while (!validInput);
-        }finally {
+        } finally {
             disableInput();
         }
     }
-
 
 
     @Override
@@ -1441,25 +1397,25 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         String input = null;
         boolean valid = false;
         enableInput();
-    try {
+        try {
 
 
-        do {
-            try {
-                input = readLine("Cosa vuoi fare? [L]Load, [D]Discard, [F]Finish: ").trim().toLowerCase();
-                if (input.toLowerCase().matches("[ldf]")) {
-                    valid = true;
-                } else {
-                    out.println("Input non valido. Inserisci L, D o F.");
+            do {
+                try {
+                    input = readLine("Cosa vuoi fare? [L]Load, [D]Discard, [F]Finish: ").trim().toLowerCase();
+                    if (input.toLowerCase().matches("[ldf]")) {
+                        valid = true;
+                    } else {
+                        out.println("Input non valido. Inserisci L, D o F.");
+                    }
+                } catch (Exception e) {
+                    out.println("Errore nella lettura dell'input: " + e.getMessage());
                 }
-            } catch (Exception e) {
-                out.println("Errore nella lettura dell'input: " + e.getMessage());
-            }
-        } while (!valid);
+            } while (!valid);
 
-    }finally {
-        disableInput();
-    }
+        } finally {
+            disableInput();
+        }
         clientController.handleLoadGoodChoice(input);
 
 
@@ -1606,19 +1562,11 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
 
             do {
-                try {
-                    input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ").trim().toLowerCase();
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
+                input = readLine("Inserisci la tua scelta (a/b/c/d o menu) : ").trim().toLowerCase();
 
                 while (input.equals("m") || input.equals("menu") || input.equals("?")) {
                     menuManager.showCurrentMenu();
-                    try {
-                        input = readLine("\nInserisci la tua scelta (a/b/c/d o menu) : ").trim().toLowerCase();
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
+                    input = readLine("\nInserisci la tua scelta (a/b/c/d o menu) : ").trim().toLowerCase();
                 }
 
                 if (input.matches("[abcd]")) {
@@ -1635,11 +1583,10 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                 }
 
             } while (!valid);
-        }finally {
+        } finally {
             disableInput();
         }
     }
-
 
 
     public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
@@ -1647,6 +1594,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         FlightBoardPrintUtils.printFlightBoard(flightBoard, infoPlayers, myinfo);
 
     }
+
     @Override
     public void askCollectRewards() {
         enableInput();
@@ -1666,23 +1614,18 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
     showTimerInfos() {
 
 
-        new Thread(()->{
+        new Thread(() -> {
             ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
 
             printTimerInfo(timerInfos);
-            try {
-                showTimerMenu(timerInfos);
-            } catch (IOException | ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            showTimerMenu(timerInfos);
 
         }).start();
 
     }
 
 
-
-    private void showTimerMenu(ArrayList<TimerInfo> timerInfos) throws IOException, ExecutionException, InterruptedException {
+    private void showTimerMenu(ArrayList<TimerInfo> timerInfos) {
         String input;
         boolean valid = false;
         boolean oneActive = false;
@@ -1691,27 +1634,22 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
 
 
             do {
-                try {
 
 
-                    boolean now = false;
+                boolean now = false;
 
-                    for (TimerInfo timerInfo : timerInfos) {
-                        if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
-                            oneActive = true;
-                            break;
-                        }
+                for (TimerInfo timerInfo : timerInfos) {
+                    if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
+                        oneActive = true;
+                        break;
                     }
-
-                    if (oneActive) {
-                        input = readLine("Inserisci la tua scelta (menu) : ").trim().toLowerCase();
-
-                    } else
-                        input = readLine("Inserisci la tua scelta  \n a) Flip Timer \n m) (menu/m/?)\n > ").trim().toLowerCase();
-
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
                 }
+
+                if (oneActive) {
+                    input = readLine("Inserisci la tua scelta (menu) : ").trim().toLowerCase();
+
+                } else
+                    input = readLine("Inserisci la tua scelta  \n a) Flip Timer \n m) (menu/m/?)\n > ").trim().toLowerCase();
 
                 if (input.equals("m") || input.equals("menu") || input.equals("?")) {
 
@@ -1737,7 +1675,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
                 }
 
             } while (!valid);
-        }finally {
+        } finally {
             disableInput();
         }
     }
@@ -1762,12 +1700,14 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         out.println("Carta avventura attiva: ");
         CardPrintUtils.printCard(clientController.getCurrentAdventureCard());
     }
+
     @Override
     public void showEndGame(ArrayList<PlayerScore> scores) {
         ScorePrintUtils.printScoreTable(scores);
 
 
     }
+
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);
@@ -1779,14 +1719,9 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
     }
 
     @Override
-    public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException {
+    public void notifyObservers(NetworkMessage message) {
         for (Observer observer : observers) {
-            try {
-                observer.update(message);
-            } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition |
-                     InterruptedException e) {
-                System.err.println(e.getMessage());
-            }
+            observer.update(message);
         }
     }
 
@@ -1796,7 +1731,7 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
     }
 
     @Override
-    public void notifyObservers(String message) throws IOException, ExecutionException {
+    public void notifyObservers(String message) {
         for (Observer observer : observers) {
             observer.update(message);
         }
@@ -1812,21 +1747,17 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         boolean validInput = false;
         String input;
         do {
-            try {
-                input = readLine(prompt).trim().toLowerCase();
-                if ("y".equals(input)) {
-                    try {
-                        onYesAction.run();
-                        validInput = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    } else {
-                    System.out.println("Input non valido. Inserisci solo 'y' per confermare.");
+            input = readLine(prompt).trim().toLowerCase();
+            if ("y".equals(input)) {
+                try {
+                    onYesAction.run();
+                    validInput = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
+
+            } else {
+                System.out.println("Input non valido. Inserisci solo 'y' per confermare.");
             }
         } while (!validInput);
     }
@@ -1835,22 +1766,18 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
         boolean validInput = false;
         String input;
         do {
-            try {
-                input = readLine(prompt).trim().toLowerCase();
-                switch (input) {
-                    case "y", "yes" -> {
-                        onYes.run();
-                        validInput = true;
-                    }
-                    case "n", "no" -> {
-                        onNo.run();
-                        validInput = true;
-                    }
-                    default -> System.out.println("Input non valido. Inserisci 'y' per sì o 'n' per no.");
+            input = readLine(prompt).trim().toLowerCase();
+            switch (input) {
+                case "y", "yes" -> {
+                    onYes.run();
+                    validInput = true;
                 }
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-                        }
+                case "n", "no" -> {
+                    onNo.run();
+                    validInput = true;
+                }
+                default -> System.out.println("Input non valido. Inserisci 'y' per sì o 'n' per no.");
+            }
         } while (!validInput);
 
     }

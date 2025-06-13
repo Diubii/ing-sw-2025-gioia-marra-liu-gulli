@@ -7,12 +7,10 @@ import org.polimi.ingsw.galaxytrucker.network.client.Client;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.observer.Observable;
 import org.polimi.ingsw.galaxytrucker.observer.Observer;
-import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -95,12 +93,7 @@ public class ClientSocket implements Client, Observable {
     @Override
     public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException {
         for (Observer observer : observers) {
-            try {
-                observer.update(message);
-            } catch (TooManyPlayersException | PlayerAlreadyExistsException | InvalidTilePosition |
-                     InterruptedException e) {
-                System.err.println(e.getMessage());
-            }
+            observer.update(message);
         }
     }
 

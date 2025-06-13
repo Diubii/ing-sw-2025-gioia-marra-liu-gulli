@@ -37,6 +37,8 @@ public interface View {
 
     void forceReset();
 
+    void askServerInfo();
+
     void askNickname() throws IOException, ExecutionException, InterruptedException;
 
     void showShip(Ship targetShipView, String nickname);

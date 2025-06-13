@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
 import java.util.concurrent.ExecutionException;
 
 public interface ClientInterfaceRMI extends Remote, Client {
-    public void sendMessage(NetworkMessage message) throws IOException, RemoteException, ExecutionException, InterruptedException;
+    void sendMessage(NetworkMessage message) throws RemoteException;
 
-    public void receiveMessage(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition;
+    void receiveMessage(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition;
 }

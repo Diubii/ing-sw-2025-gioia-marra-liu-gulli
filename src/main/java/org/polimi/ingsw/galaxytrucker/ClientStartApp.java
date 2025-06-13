@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 
 public class ClientStartApp {
 
-    public static void main(String[] args) throws ExecutionException, IOException, InterruptedException {
+    public static void main(String[] args) {
 
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
         //Aggiungere che se args contengono cli o gui ad esempio non chiede nemmeno e parte subito con quell'impostazione
@@ -44,8 +44,5 @@ public class ClientStartApp {
 
             ((Tui) myT).start(); //Cli
         }
-
-
     }
-
 }
