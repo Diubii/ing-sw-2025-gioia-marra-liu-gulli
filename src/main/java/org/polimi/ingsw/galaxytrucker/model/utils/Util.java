@@ -355,6 +355,49 @@ public class Util {
     }
 
 
+    /**
+     * Controlla se la Ship e' formata o no da tronconi separati
+
+     * @param myShip           La nave in cui si sta effettuando la verifica.
+     */
+    public  static Pair<Boolean, ArrayList<Integer>> checkShipStructure(Ship myShip, Position startingPos) {
+        
+        ArrayList<Integer> visitedTilesId = new ArrayList<>();
+        visitedTilesId.add(myShip.getTileFromPosition(startingPos).getId());
+        checkShipStructureTileVisitor(startingPos, myShip, visitedTilesId);
+
+        //ora in visitedTilesId ho tutte le tile che fanno parte del troncone principale
+        //devo confrontare le Tile totali con quelle visitate, se sono le stesse allora non ci sono troconi separati
+
+        ArrayList<Integer> tilesId = new ArrayList<>(Arrays.stream(myShip.getShipBoard())
+                .flatMap(Arrays::stream).map(Slot::getTile)
+                .filter(Objects::nonNull).map(Tile::getId).toList());
+
+        Collections.sort(visitedTilesId);
+        Collections.sort(tilesId);
+        boolean same = visitedTilesId.equals(tilesId);
+
+        return new Pair<>(same, visitedTilesId);
+        
+    }
+
+    private static void checkShipStructureTileVisitor(Position startingPos, Ship myShip, ArrayList<Integer> visitedTilesId) {
+
+        ArrayList<Pair<Position, Tile>> connectedTiles = myShip.getConnectedTiles(startingPos);
+
+
+        if (!connectedTiles.isEmpty()) {
+            for (Pair<Position, Tile> connectedTile : connectedTiles) {
+                if (!visitedTilesId.contains(connectedTile.getValue().getId())) {
+                    visitedTilesId.add(connectedTile.getValue().getId());
+                    checkShipStructureTileVisitor(connectedTile.getKey(), myShip, visitedTilesId);
+
+                }
+            }
+
+        }
+    }
+
     public static Boolean inBoundaries(int x, int y) {
         return (y >= 0 && y < 5) && (x >= 0 && x < 7);
     }

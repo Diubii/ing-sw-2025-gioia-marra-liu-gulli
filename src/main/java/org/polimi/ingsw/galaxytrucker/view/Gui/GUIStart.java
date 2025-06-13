@@ -12,6 +12,7 @@ import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
+import java.net.URL;
 
 public class GUIStart extends Application {
 
@@ -23,7 +24,10 @@ public class GUIStart extends Application {
 
         FXMLLoader loader;
         try{
-            loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Loading.fxml"));
+
+
+            URL url = getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Loading.fxml");
+            loader = new FXMLLoader(url);
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);

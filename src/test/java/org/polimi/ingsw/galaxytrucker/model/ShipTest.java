@@ -2,7 +2,6 @@ package org.polimi.ingsw.galaxytrucker.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
@@ -245,12 +244,12 @@ class ShipTest {
     @Test
     void testCheckShip() {
         Ship ship = MockShipFactory.createMockShip();
-        assertTrue(ship.checkShip());
+        assertTrue(ship.checkShip(null));
         ShipPrintUtils.printShip(ship);
         Ship errorShip = MockShipFactory.createMockShipForCheckShip();
         ShipPrintUtils.printShip(errorShip);
 
-        assertFalse(errorShip.checkShip());
+        assertFalse(errorShip.checkShip(null));
     }
 
     @Test

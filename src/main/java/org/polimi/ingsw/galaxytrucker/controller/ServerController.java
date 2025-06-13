@@ -19,6 +19,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
+import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.Heartbeat;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -538,7 +539,22 @@ public class ServerController {
             }
         }
 
-        Boolean result = ship.checkShip();
+
+        Boolean result;
+        //controllo se e' formata da tronconi separati
+
+        Position pos = Arrays.stream(ship.getShipBoard())
+                .flatMap(Arrays::stream)
+                .filter(Objects::nonNull).filter(slot -> slot.getTile() != null && slot.getTile().getMyComponent() != null).map(slot -> slot.getPosition()).toList().getFirst();
+
+
+        Boolean result1 = Util.checkShipStructure(ship, pos).getKey();
+
+        //se non lo e' allora controllo la ship
+        if (result1) {
+            result = ship.checkShip(Util.checkShipStructure(ship, new Position(3,2)).getValue());
+        } else result = false;
+
         ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
         CheckShipStatusResponse response = new CheckShipStatusResponse(ship, result, message.getID());
         clientHandler.sendMessage(shipUpdate);
