@@ -11,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
@@ -128,12 +130,14 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
 
         scrollListaTiles.setOnMouseClicked(event -> {
-            if (clientController.getCurrentTileInHand() != null) {
-                // esegui le tue istruzioni qui
-                clientController.handleBuildingMenuChoice("h");
-                inHandTileImage.visibleProperty().set(false);
+            if(event.getButton() == MouseButton.PRIMARY){
+                if (clientController.getCurrentTileInHand() != null) {
+                    // esegui le tue istruzioni qui
+                    clientController.handleBuildingMenuChoice("h");
+                    inHandTileImage.visibleProperty().set(false);
+                }
+                event.consume();
             }
-            event.consume();
         });
 
         mainStackPane.setOnMouseMoved(event -> {
@@ -269,6 +273,28 @@ public class BuildingController extends GenericGamePhaseSceneController {
         });
     }
 
+    @Override
+    public void showWaitOtherPlayers() {
+        System.out.println("debug: showWaitOtherPlayers");
+
+        StackCenterMenu.getChildren().removeLast();
+        VBox root = null;
+        FXMLLoader loader;
+        try {
+            //1-Prima caricare FXML
+            loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Elements/WaitOverlay.fxml"));
+            root = loader.load();
+
+            root.setMaxWidth(Double.MAX_VALUE);
+            root.setMaxHeight(Double.MAX_VALUE);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        StackCenterMenu.getChildren().add(root);
+
+    }
+
 
     public void finishBuilding(ActionEvent e){
         //Disable di tutto ciò che è interagibile aparte la clessidra in teoria
@@ -286,7 +312,6 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * @param state
      */
     public void updateBuildingPageInterface(GameState state){
-        //Todo: magari rivedere con visitor, però sono solo 3 o 4 combinazioni
         switch(state){
             case SHIP_CHECK:
                 Platform.runLater(() -> {
@@ -325,7 +350,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         root = loader.load();
                         //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                         SMLoadCrewController pageController = loader.getController();
-                        pageController.initialize(clientController,mainViewController);
+                        pageController.initialize(clientController,mainViewController,StackCenterMenu);
                         root.setMaxWidth(Double.MAX_VALUE);
                         root.setMaxHeight(Double.MAX_VALUE);
                         //3-impostare la nuova root alla scena principale
@@ -404,12 +429,17 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
-    public void pickedAside1(){
-        handlePickedAsideTile(0);
+    public void pickedAside1(MouseEvent event){
+        if(event.getButton() == MouseButton.PRIMARY){
+            handlePickedAsideTile(0);
+        }
+
     }
 
-    public void pickedAside2(){
-        handlePickedAsideTile(1);
+    public void pickedAside2(MouseEvent event){
+        if(event.getButton() == MouseButton.PRIMARY){
+            handlePickedAsideTile(1);
+        }
     }
 
     /**

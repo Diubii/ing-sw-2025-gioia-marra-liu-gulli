@@ -140,7 +140,7 @@ public class Util {
 
         // Controlla la connessione del motore in base alla rotazione della tile
         if (T.getRotation() == 0) {
-            if (!tempIP.contains(sud) && inBoundaries(sud.getY(), sud.getY()) && P.getShipBoard()[sud.getY()][sud.getX()].getTile() != null) {
+            if (!tempIP.contains(sud) && inBoundaries(sud.getX(), sud.getY()) && P.getShipBoard()[sud.getX()][sud.getY()].getTile() != null) {
                 wellConnected = false;
             }
         } else wellConnected = false;
@@ -158,22 +158,22 @@ public class Util {
 
         switch (T.getRotation()) {
             case 0:
-                if (!tempIP.contains(nord) && inBoundaries(nord.getY(), nord.getX()) && P.getShipBoard()[nord.getY()][nord.getX()].getTile() != null) {
+                if (!tempIP.contains(nord) && inBoundaries(nord.getX(), nord.getY()) && P.getShipBoard()[nord.getX()][nord.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
             case 90:
-                if (!tempIP.contains(ovest) && inBoundaries(ovest.getY(), ovest.getX()) && P.getShipBoard()[ovest.getY()][ovest.getX()].getTile() != null) {
+                if (!tempIP.contains(ovest) && inBoundaries(ovest.getX(), ovest.getY()) && P.getShipBoard()[ovest.getX()][ovest.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
             case 180:
-                if (!tempIP.contains(sud) && inBoundaries(sud.getY(), sud.getX()) && P.getShipBoard()[sud.getY()][sud.getX()].getTile() != null) {
+                if (!tempIP.contains(sud) && inBoundaries(sud.getX(), sud.getY()) && P.getShipBoard()[sud.getX()][sud.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
             case 270:
-                if (!tempIP.contains(est) && inBoundaries(est.getY(), est.getX()) && P.getShipBoard()[est.getY()][est.getX()].getTile() != null) {
+                if (!tempIP.contains(est) && inBoundaries(est.getX(), est.getY()) && P.getShipBoard()[est.getX()][est.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
@@ -359,10 +359,10 @@ public class Util {
                 int s = positions.size();
                 for (int i = 0; i < s; i++) {
 
-                    if (inBoundaries(positions.get(i).getX(), positions.get(i).getY()) && myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile() != null && compatible(myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
-                        Tile tempTile = myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()].getTile();
-                        System.out.println("STO PER VISITARE : " + positions.get(i).getY() + positions.get(i).getX());
-                        visitTile(tempTile, tilesID, myShip.getShipBoard()[positions.get(i).getY()][positions.get(i).getX()], invalidPositions, newBrokenPos, myShip);
+                    if (inBoundaries(positions.get(i).getX(), positions.get(i).getY()) && myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile() != null && compatible(myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
+                        Tile tempTile = myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile();
+                        System.out.println("STO PER VISITARE : " + positions.get(i).getX() + positions.get(i).getY());
+                        visitTile(tempTile, tilesID, myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()], invalidPositions, newBrokenPos, myShip);
 
 
                     }
@@ -376,6 +376,49 @@ public class Util {
         }
     }
 
+
+    /**
+     * Controlla se la Ship e' formata o no da tronconi separati
+
+     * @param myShip           La nave in cui si sta effettuando la verifica.
+     */
+    public  static Pair<Boolean, ArrayList<Integer>> checkShipStructure(Ship myShip, Position startingPos) {
+
+        ArrayList<Integer> visitedTilesId = new ArrayList<>();
+        visitedTilesId.add(myShip.getTileFromPosition(startingPos).getId());
+        checkShipStructureTileVisitor(startingPos, myShip, visitedTilesId);
+
+        //ora in visitedTilesId ho tutte le tile che fanno parte del troncone principale
+        //devo confrontare le Tile totali con quelle visitate, se sono le stesse allora non ci sono troconi separati
+
+        ArrayList<Integer> tilesId = new ArrayList<>(Arrays.stream(myShip.getShipBoard())
+                .flatMap(Arrays::stream).map(Slot::getTile)
+                .filter(Objects::nonNull).map(Tile::getId).toList());
+
+        Collections.sort(visitedTilesId);
+        Collections.sort(tilesId);
+        boolean same = visitedTilesId.equals(tilesId);
+
+        return new Pair<>(same, visitedTilesId);
+
+    }
+
+    private static void checkShipStructureTileVisitor(Position startingPos, Ship myShip, ArrayList<Integer> visitedTilesId) {
+
+        ArrayList<Pair<Position, Tile>> connectedTiles = myShip.getConnectedTiles(startingPos);
+
+
+        if (!connectedTiles.isEmpty()) {
+            for (Pair<Position, Tile> connectedTile : connectedTiles) {
+                if (!visitedTilesId.contains(connectedTile.getValue().getId())) {
+                    visitedTilesId.add(connectedTile.getValue().getId());
+                    checkShipStructureTileVisitor(connectedTile.getKey(), myShip, visitedTilesId);
+
+                }
+            }
+
+        }
+    }
 
     public static Boolean inBoundaries(int x, int y) {
         return (y >= 0 && y < 5) && (x >= 0 && x < 7);

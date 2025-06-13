@@ -157,7 +157,7 @@ public class ClientController implements Observer {
         }
 
         //HEARTBEAT
-        new Thread(() -> {
+        Thread heartbeat = new Thread(() -> {
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
             while (true) {
                 try {
@@ -168,7 +168,9 @@ public class ClientController implements Observer {
                     throw new RuntimeException(e);
                 }
             }
-        }).start();
+        });
+        heartbeat.setPriority(Thread.MAX_PRIORITY);
+        heartbeat.start();
 
         new Thread(() -> {
             try {
@@ -1057,6 +1059,7 @@ public void handleDrawReservedTile (int slotIndex){
             return;
         }
 
+        currentTileInHand.setRotation(0);
         DiscardTileRequest request = new DiscardTileRequest(currentTileInHand);
 
         try {
@@ -1224,7 +1227,7 @@ public void handleDrawReservedTile (int slotIndex){
                 CheckShipStatusResponse response = (CheckShipStatusResponse) future.get();
                 boolean isValid = response.getIsValid();
                 if (isValid) {
-                    view.showGenericMessage("Aspetta gli altri giocatori per scegliere l'equipaggio...");
+                    view.showWaitOtherPlayers();
                     view.showGenericMessage("Nave immacolata!");
                     return;
 

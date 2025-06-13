@@ -1,6 +1,5 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
-import javafx.geometry.Pos;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.enums.*;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
@@ -258,6 +257,7 @@ public class Ship implements Serializable {
      * Inserisce una tile in una posizione specifica della nave.
      *
      * @param tile La tile da posizionare.
+     * @param tile La tile da posizionare
      * @param pos  La posizione in cui posizionare la tile.
      */
     public void putTile(Tile tile, Position pos) {
@@ -491,27 +491,41 @@ public class Ship implements Serializable {
         return sb.toString();
     }
 
+
+    //ho levato dal checkShip il setting di wellConnected diretto.
     /**
      * Verifica se la nave è ben collegata e rispetta le regole di connessione.
      *
      * @return {@code true} se la nave è valida, {@code false} altrimenti.
      */
-    public Boolean checkShip() {
+    public Boolean checkShip(ArrayList<Integer> visitedTiles) {
+
+
+
+        boolean result = true;
+
+        //do per scontato che la faccio part
+//        boolean isBroken = Util.checkShipStructure(this, new Position(3, 2));
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 5; j++) {
-                if (shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
+
+                Position tempPos = new Position(i, j);
+                Tile tile = this.getTileFromPosition(tempPos);
+//                Boolean same = tile.ge
+
+                if ( shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
                     String name = shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor());
 
                     if (!Util.wellConnectedConnectors(this, shipBoard[i][j], shipBoard[i][j].getTile())) {
 
                         shipBoard[i][j].getTile().setWellConnected(false);
-                        return false;
+                        result =  false;
                     } else {
                         //System.out.println("CHECKING : " + shipBoard[i][j].getPosition());
                         if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Engine") || shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("DoubleEngine")) {
                             Boolean temp = Util.EngineWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
                             shipBoard[i][j].getTile().setWellConnected(temp);
-                            return temp;
+                            result =  false;
 
 
                         }
@@ -520,26 +534,24 @@ public class Ship implements Serializable {
 
                             Boolean temp = Util.CannonWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
                             shipBoard[i][j].getTile().setWellConnected(temp);
-                            return temp;
+                            if (!temp) result = false;
                         }
 
                         if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
 
                             AlienColor al = null;
                             ModularHousingUnit temp = (ModularHousingUnit) shipBoard[i][j].getTile().getMyComponent();
-                            if (temp.getNBrownAlien() > temp.getNPurpleAlien() && temp.getNCrewMembers() == 0)
-                                al = AlienColor.BROWN;
-                            if (temp.getNPurpleAlien() > temp.getNBrownAlien() && temp.getNCrewMembers() == 0)
-                                al = AlienColor.PURPLE;
+                            al = temp.getAlienColor();
 
-                            if (al != null) {
-                                Boolean result = Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+
+                            if (al != AlienColor.EMPTY) {
+                                Boolean result1 = Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
                                 if (!result) {
                                     temp.removeAlienCrew();
                                 }
 
                                 shipBoard[i][j].getTile().setWellConnected(result);
-                                return result;
+                                if (!result1) result = false;
 
                             }
 
@@ -550,7 +562,7 @@ public class Ship implements Serializable {
             }
         }
 
-        return true;
+        return result;
 
     }
 
@@ -649,9 +661,9 @@ public class Ship implements Serializable {
 
     public ArrayList<Ship> truncateShip(Position pos, Queue<Position> brokenPos) throws InvalidTilePosition {
 
-        System.out.println("IF");
+//        System.out.println("IF");
 
-        checkShip();
+        checkShip(null);
         // Lista dei vicini validi della posizione corrente
         ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 
@@ -659,12 +671,12 @@ public class Ship implements Serializable {
 
         // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
         if (!invalidPositions.contains(up) && Util.inBoundaries(up.getX(), up.getY())) {
-            System.out.println("VALIDA : " + up);
+            System.out.println("VALIDA UP: " + up);
             if (shipBoard[up.getX()][up.getY()] != null && shipBoard[up.getX()][up.getY()].getTile() != null) {
-                System.out.println("1");
+                System.out.println("ID: " + shipBoard[up.getX()][up.getY()].getTile().getId());
 
                 if (shipBoard[up.getX()][up.getY()].getTile().getWellConnected()) {
-                    System.out.println("OK");
+//                    System.out.println("OK");
 
                     villagers.add(new Pair<>(ProjectileDirection.UP, shipBoard[up.getX()][up.getY()]));
 
@@ -679,10 +691,10 @@ public class Ship implements Serializable {
         Position left = new Position(pos.getX() - 1, pos.getY());
 
         if (!invalidPositions.contains(left) && Util.inBoundaries(left.getX(), left.getY())) {
-            System.out.println("VALIDA : " + left);
+            System.out.println("VALIDA KLEFT : " + left);
 
             if (shipBoard[left.getX()][left.getY()] != null && shipBoard[left.getX()][left.getY()].getTile() != null) {
-                System.out.println("1");
+                System.out.println("ID: " + shipBoard[left.getX()][left.getY()].getTile().getId());
 
                 if (shipBoard[left.getX()][left.getY()].getTile().getWellConnected()) {
                     System.out.println("OK");
@@ -700,14 +712,14 @@ public class Ship implements Serializable {
         Position right = new Position(pos.getX() + 1, pos.getY());
 
         if (!invalidPositions.contains(right) && Util.inBoundaries(right.getX(), right.getY())) {
-            System.out.println("VALIDA : " + right);
+            System.out.println("VALIDA RIGHT: " + right);
 
             if (shipBoard[right.getX()][right.getY()] != null && shipBoard[right.getX()][right.getY()].getTile() != null) {
-                System.out.println("1");
-                if (shipBoard[right.getX()][right.getX()].getTile().getWellConnected()) {
-                    System.out.println("OK");
+//                System.out.println("1");
+                if (shipBoard[right.getX()][right.getY()].getTile().getWellConnected()) {
+                    System.out.println("ID: " + shipBoard[right.getX()][right.getY()].getTile().getId());
 
-                    villagers.add(new Pair<>(ProjectileDirection.DOWN, shipBoard[right.getX()][right.getY()]));
+                    villagers.add(new Pair<>(ProjectileDirection.RIGHT, shipBoard[right.getX()][right.getY()]));
 
                 } else {
                     brokenPos.add(right);
@@ -720,14 +732,14 @@ public class Ship implements Serializable {
         Position down = new Position(pos.getX(), pos.getY() + 1);
 
         if (!invalidPositions.contains(down) && Util.inBoundaries(down.getX(), down.getY())) {
-            System.out.println("VALIDA : " + down);
+            System.out.println("VALIDA DOWN: " + down);
             if (shipBoard[down.getX()][down.getY()] != null && shipBoard[down.getX()][down.getY()].getTile() != null) {
-                System.out.println("1");
+                System.out.println("ID: " + shipBoard[down.getX()][down.getY()].getTile().getId());
 
                 if (shipBoard[down.getX()][down.getY()].getTile().getWellConnected()) {
-                    System.out.println("OK");
+//                    System.out.println("OK");
 
-                    villagers.add(new Pair<>(ProjectileDirection.RIGHT, shipBoard[down.getX()][down.getY()]));
+                    villagers.add(new Pair<>(ProjectileDirection.DOWN, shipBoard[down.getX()][down.getY()]));
 
                 } else {
                     brokenPos.add(down);
@@ -803,7 +815,7 @@ public class Ship implements Serializable {
                 for (int j = 0; j < 7; j++) {
                     for (int k = 0; k < 5; k++) {
                         // Se la tile appartiene alla classe di equivalenza, viene inclusa nella nuova nave
-                        if (shipBoard[j][k].getTile() != null && equivalenceClass.contains(shipBoard[j][k].getTile().getId()) || !invalidPositions.contains(new Position(j, k))) {
+                        if (shipBoard[j][k].getTile() != null && equivalenceClass.contains(shipBoard[j][k].getTile().getId()) && !invalidPositions.contains(new Position(j, k))) {
 //                            myshipBoard[j][k] = shipBoard[j][k];
                             myShip.putTile(shipBoard[j][k].getTile(), shipBoard[j][k].getPosition());
                         }

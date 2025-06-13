@@ -790,6 +790,14 @@ public class GuiJavaFx implements View {
     }
 
     @Override
+    public void showWaitOtherPlayers() {
+        //Devo dire a quelli di fase di gioco di mostrare un overlay di attesa
+        Platform.runLater(() -> {
+            ((GenericGamePhaseSceneController) actualPageController).showWaitOtherPlayers();
+        });
+    }
+
+    @Override
     public void askLoadGoodChoice() {
         System.out.println("Debug: askLoadGoodChoice");
         //Sempre come se accettasse. massimo poi decide subito di fare termina e scartare tutto

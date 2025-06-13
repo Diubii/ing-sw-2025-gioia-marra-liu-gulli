@@ -22,4 +22,6 @@ public abstract class GenericGamePhaseSceneController extends GenericSceneContro
     public abstract void showShip(Ship targetShipView, String Nickname);
 
     public abstract void chooseTroncone(ArrayList<Ship> tronconi);
+
+    public abstract void showWaitOtherPlayers();
 }

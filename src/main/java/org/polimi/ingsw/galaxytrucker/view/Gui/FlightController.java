@@ -224,6 +224,10 @@ public class FlightController extends GenericGamePhaseSceneController {
         activateComponentController.addBatteryPosition(inHandBatteryPosition);
     }
 
+    public void resetInHandBattery(){
+        battInHand = false;
+        hideHand();
+    }
     /**
      * Hides the overlay with the current inHandGood
      */
@@ -360,7 +364,7 @@ public class FlightController extends GenericGamePhaseSceneController {
                 root = secondloader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 activateComponentController = secondloader.getController();
-                activateComponentController.initialize(component,subMenu,clientController);
+                activateComponentController.initialize(component,subMenu,clientController,this);
                 root.setMaxWidth(Double.MAX_VALUE);
                 root.setMaxHeight(Double.MAX_VALUE);
                 //3-impostare la nuova root alla scena principale
@@ -519,6 +523,11 @@ public class FlightController extends GenericGamePhaseSceneController {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void showWaitOtherPlayers() {
+        ShowGenericMessage("Aspetta gli altri giocatori");
     }
 
     @Override

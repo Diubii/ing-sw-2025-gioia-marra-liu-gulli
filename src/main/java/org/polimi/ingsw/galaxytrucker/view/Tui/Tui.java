@@ -1097,6 +1097,11 @@ public String readLine(String prompt) throws InterruptedException, ExecutionExce
     }
 
     @Override
+    public void showWaitOtherPlayers() {
+        showGenericMessage("Attendi gli altri giocatori per avanzare alla prossima fase");
+    }
+
+    @Override
     public void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException {
         printShip(myShip);
         System.out.println("You can activate your " + component.name());
