@@ -257,6 +257,7 @@ public class Ship implements Serializable {
      * Inserisce una tile in una posizione specifica della nave.
      *
      * @param tile La tile da posizionare.
+     * @param tile La tile da posizionare
      * @param pos  La posizione in cui posizionare la tile.
      */
     public void putTile(Tile tile, Position pos) {

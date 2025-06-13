@@ -140,7 +140,7 @@ public class Util {
 
         // Controlla la connessione del motore in base alla rotazione della tile
         if (T.getRotation() == 0) {
-            if (!tempIP.contains(sud) && inBoundaries(sud.getY(), sud.getY()) && P.getShipBoard()[sud.getY()][sud.getX()].getTile() != null) {
+            if (!tempIP.contains(sud) && inBoundaries(sud.getX(), sud.getY()) && P.getShipBoard()[sud.getX()][sud.getY()].getTile() != null) {
                 wellConnected = false;
             }
         } else wellConnected = false;
@@ -158,22 +158,22 @@ public class Util {
 
         switch (T.getRotation()) {
             case 0:
-                if (!tempIP.contains(nord) && inBoundaries(nord.getY(), nord.getX()) && P.getShipBoard()[nord.getY()][nord.getX()].getTile() != null) {
+                if (!tempIP.contains(nord) && inBoundaries(nord.getX(), nord.getY()) && P.getShipBoard()[nord.getX()][nord.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
             case 90:
-                if (!tempIP.contains(ovest) && inBoundaries(ovest.getY(), ovest.getX()) && P.getShipBoard()[ovest.getY()][ovest.getX()].getTile() != null) {
+                if (!tempIP.contains(ovest) && inBoundaries(ovest.getX(), ovest.getY()) && P.getShipBoard()[ovest.getX()][ovest.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
             case 180:
-                if (!tempIP.contains(sud) && inBoundaries(sud.getY(), sud.getX()) && P.getShipBoard()[sud.getY()][sud.getX()].getTile() != null) {
+                if (!tempIP.contains(sud) && inBoundaries(sud.getX(), sud.getY()) && P.getShipBoard()[sud.getX()][sud.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
             case 270:
-                if (!tempIP.contains(est) && inBoundaries(est.getY(), est.getX()) && P.getShipBoard()[est.getY()][est.getX()].getTile() != null) {
+                if (!tempIP.contains(est) && inBoundaries(est.getX(), est.getY()) && P.getShipBoard()[est.getX()][est.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
