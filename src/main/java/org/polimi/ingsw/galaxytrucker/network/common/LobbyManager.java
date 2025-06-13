@@ -3,7 +3,6 @@ package org.polimi.ingsw.galaxytrucker.network.common;
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.controller.GameController;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
-import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.PlayerInfo;
 import org.polimi.ingsw.galaxytrucker.model.TileBunch;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
@@ -23,7 +22,7 @@ public class LobbyManager {
     private final GameController gameController;
     private final ArrayList<String> playerShipFinished = new ArrayList<>();
     private final ArrayList<String> playerCrewFinished = new ArrayList<>();
-    private ArrayList<PlayerInfo> playerInfos = new ArrayList<>();
+    private final ArrayList<PlayerInfo> playerInfos = new ArrayList<>();
     private final Set<String> readyPlayers = new HashSet<>();
     private final Set<String> earlyLandingPlayers = new HashSet<>();
 
@@ -197,10 +196,10 @@ public class LobbyManager {
         earlyLandingPlayers.add(playerNickname);
     }
     public synchronized boolean allActivePlayerReady() {
-        int onlinePlayers = this.PlayerHandlers.size();
+        int playingPlayers = gameController.getPlayingPlayers().size();
         int readyPlayers = this.readyPlayers.size();
         int earlyLandingPlayers = this.earlyLandingPlayers.size();
-        return readyPlayers == onlinePlayers - earlyLandingPlayers;
+        return readyPlayers == playingPlayers - earlyLandingPlayers;
     }
 
     public synchronized  void resetReadyPlayers() {

@@ -104,12 +104,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(ViewAdventureDecksRequest viewAdventureDecksRequest) {
-        try {
-            clientController.getClient().sendMessage(viewAdventureDecksRequest);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
+        clientController.safeSendMessage(viewAdventureDecksRequest);
         return null;
     }
 
@@ -170,7 +165,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(TileDiscardedUpdate tileDiscardedUpdate) {
-        clientController.handleTileDiscardUpdate(tileDiscardedUpdate);
+        //clientController.handleTileDiscardUpdate(tileDiscardedUpdate);
         return null;
     }
 
@@ -333,11 +328,6 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(HeartbeatRequest heartbeatRequest) {
-        try {
-            clientController.handleHeartbeatRequest(heartbeatRequest);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         return null;
     }
 

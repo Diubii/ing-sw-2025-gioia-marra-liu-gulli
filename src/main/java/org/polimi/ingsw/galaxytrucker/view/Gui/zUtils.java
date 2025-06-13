@@ -214,7 +214,7 @@ public class zUtils {
                                         try {
                                             if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() == null) {
                                                 clientController.setCurrentPos(fX, fY);
-                                                clientController.handleTilePlacement(true);
+                                                clientController.handleTilePlacement();
                                             }
                                         } catch (ExecutionException e) {
                                             throw new RuntimeException(e);

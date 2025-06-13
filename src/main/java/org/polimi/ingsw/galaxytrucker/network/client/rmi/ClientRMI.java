@@ -1,7 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.network.client.rmi;
 
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
-import org.polimi.ingsw.galaxytrucker.enums.NetworkMessageType;
 import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
@@ -52,21 +51,11 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
     }
 
     @Override
-    public void sendMessage(NetworkMessage message) {
-        //NetworkMessageType type = message.accept(nmnv);
+    public void sendMessage(NetworkMessage message) throws RemoteException{
+        RMIClientHandler handler = server.getClientHandler(this);
 
-//        if (type != NetworkMessageType.HeartbeatRequest) {
-//            System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerRMI, TuiColor.YELLOW, "message: " + type));
-//        }
-
-        try {
-            RMIClientHandler handler = server.getClientHandler(this);
-
-            NetworkMessageVisitor nmv = new NetworkMessageVisitor(server.getControllerHandles(), handler);
-            message.accept(nmv);
-        }catch (RemoteException e){
-            System.err.println("Couldn't send message via RMI: " + e.getMessage());
-        }
+        NetworkMessageVisitor nmv = new NetworkMessageVisitor(server.getControllerHandles(), handler);
+        message.accept(nmv);
     }
 
     @Override
@@ -95,15 +84,8 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
     @Override
     public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException, InvalidTilePosition {
-
-
         for (Observer observer : observers) {
-//            System.out.println("i\n");
-            try {
-                observer.update(message);
-            } catch (TooManyPlayersException | PlayerAlreadyExistsException | InterruptedException e) {
-                System.err.println(e.getMessage());
-            }
+            observer.update(message);
         }
     }
 

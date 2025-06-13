@@ -124,21 +124,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         String nickname = getNicknameFromClientHandler(client);
         LobbyManager game = getLobbyFromHandler(client);
 
-        if (game != null) {
+        System.out.println("Removing an inactive player from a lobby");
+
+        if(game != null) {
             game.getGameController().kickPlayerFromGame(nickname);
-
             synchronized (lobbyInfos) {
-                lobbyInfos.stream().filter(l -> l.getLobbyID() == game.getGameID()).findFirst().ifPresent(LobbyInfo::removeConnectedPlayer);
+                lobbyInfos.remove(game.getGameID());
             }
-
-            if (game.getPlayerHandlers().isEmpty()) {
-                synchronized (lobbyInfos) {
-                    lobbyInfos.removeIf(info -> info.getLobbyID() == game.getGameID());
-                }
-                //System.out.println("A game was empty. Cleared from the list of games.");
-                synchronized (lobbyManagers) {
-                    lobbyManagers.remove(game.getGameID());
-                }
+            synchronized (lobbyManagers) {
+                lobbyManagers.remove(game.getGameID());
             }
         }
 

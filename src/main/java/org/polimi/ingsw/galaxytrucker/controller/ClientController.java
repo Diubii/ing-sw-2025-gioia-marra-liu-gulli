@@ -49,27 +49,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ClientController implements Observer {
 
 
     private Client client;
-
-    private final ExecutorService taskQueue;
+    
     private View view;
-    ExecutorService inputExecutor = Executors.newSingleThreadExecutor();
-    private final CompletableFuture<Void> nicknameAsked = new CompletableFuture<>();
-    private final ExecutorService viewExecutor = Executors.newSingleThreadExecutor();
     private CompletableFuture<NetworkMessage> completableFuture;
     private Pair<Integer, CompletableFuture<NetworkMessage>> pair;
-    private final ClientModel myModel;
+    private ClientModel myModel;
     private final NetworkMessageVisitorsInterface<Void> messageVisitor = new ClientNetworkMessageVisitor(this);
     private Tile currentTileInHand = null;
     private Position currentPosition;
     private Position tmpCurrentPosition;
-    private ClientPhaseController clientPhaseController = new ClientPhaseController(this);
+    private final ClientPhaseController clientPhaseController = new ClientPhaseController(this);
+    private Thread heartbeat;
 
     public GameState getPhase() {
         return phase;
@@ -85,19 +80,13 @@ public class ClientController implements Observer {
     public ClientModel getMyModel() {
         return myModel;
     }
-
-    public CompletableFuture<NetworkMessage> getCompletableFuture() {
-        return completableFuture;
-    }
-
+    
     public void setCompletableFuture(CompletableFuture<NetworkMessage> completableFuture, int id) {
         this.completableFuture = completableFuture;
         this.pair = new Pair<>(id, completableFuture);
     }
-
-
-    private Boolean isHost = false;
-    private Boolean isSocket = false;
+    
+    private final Boolean isSocket;
 
     public ClientController(View view, Boolean flag) {
 
@@ -106,7 +95,6 @@ public class ClientController implements Observer {
         this.view = view;
 
 //        clientPhaseController.next();
-        taskQueue = Executors.newSingleThreadExecutor();
         InputStream in = System.in;
 
         //per vedere se si chiude per sbaglio System.in nel programma
@@ -119,16 +107,8 @@ public class ClientController implements Observer {
         });
     }
 
-    public void setIsPlaced(Boolean isPlaced) {
-        this.isPlaced = isPlaced;
-    }
-
-    public Boolean getIsPlaced() {
-        return isPlaced;
-    }
-
     @Override
-    public void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException {
+    public void update(NetworkMessage message) {
         message.accept(messageVisitor);
     }
 
@@ -143,9 +123,29 @@ public class ClientController implements Observer {
             try {
                 client = new ClientRMI(port, this); // già fa addObserver
             } catch (RemoteException e) {
-                throw new IOException(e);
+                System.err.println(e.getMessage());
             }
         }
+
+        heartbeat = getHeartbeatThread();
+        heartbeat.start();
+    }
+
+    private Thread getHeartbeatThread() {
+        Thread heartbeat = new Thread(() -> {
+            HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
+            while (true) {
+                try {
+                    safeSendMessage(heartbeatRequest);
+                    //System.out.println("[ClientController] Sent heartbeat.");
+                    Thread.sleep(Duration.ofSeconds(1));
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        });
+        heartbeat.setPriority(Thread.MAX_PRIORITY);
+        return heartbeat;
     }
 
     public void handleServerInfo(SERVER_INFO info) {
@@ -155,22 +155,6 @@ public class ClientController implements Observer {
             view.showGenericMessage(" Failed to connect to server: " + e.getMessage());
             return;
         }
-
-        //HEARTBEAT
-        Thread heartbeat = new Thread(() -> {
-            HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
-            while (true) {
-                try {
-                    client.sendMessage(heartbeatRequest);
-                    //System.out.println("[ClientController] Sent heartbeat.");
-                    Thread.sleep(Duration.ofSeconds(1));
-                } catch (IOException | ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        heartbeat.setPriority(Thread.MAX_PRIORITY);
-        heartbeat.start();
 
         new Thread(() -> {
             try {
@@ -223,12 +207,7 @@ public class ClientController implements Observer {
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Error sending nickname request: " + e.getMessage());
-            return;
-        }
+        safeSendMessage(request);
 
         new Thread(() -> {
             try {
@@ -264,12 +243,8 @@ public class ClientController implements Observer {
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        try {
-            client.sendMessage(request);
-            view.showGenericMessage("Room creation request sent.");
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send create room request: " + e.getMessage());
-        }
+        safeSendMessage(request);
+        view.showGenericMessage("Room creation request sent.");
 
         new Thread(() -> {
             try {
@@ -301,12 +276,7 @@ public class ClientController implements Observer {
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send room options request: " + e.getMessage());
-            return;
-        }
+        safeSendMessage(request);
 
         new Thread(() -> {
             try {
@@ -332,18 +302,9 @@ public class ClientController implements Observer {
         JoinRoomRequest request = new JoinRoomRequest(roomId, getNickname());
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            new Thread(() -> {
-                view.showGenericMessage("Failed to send join room request.");
-            });
-            return;
-        }
-
+        safeSendMessage(request);
 
         try {
-
             JoinRoomResponse response = (JoinRoomResponse) future.get();
             if (response.getOperationSuccess()) {
                 clientPhaseController.setPhase(PLAYER_PHASE.LOBBY);
@@ -400,15 +361,11 @@ public class ClientController implements Observer {
 
                 clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
 
-                try {
-                    FinishBuildingRequest finishBuildingRequest = new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile());
-                    finishBuildingRequest.name = getNickname();
+                FinishBuildingRequest finishBuildingRequest = new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile());
+                finishBuildingRequest.name = getNickname();
 
-                    client.sendMessage(finishBuildingRequest);
+                safeSendMessage(finishBuildingRequest);
 
-                } catch (IOException | ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
                 return;
             }
 
@@ -430,12 +387,8 @@ public class ClientController implements Observer {
             case "menu", "?", "m" -> {
                 view.toShowCurrentMenu();
                 view.handleChoiceForPhase(phase);
-                break;
             }
-            case "a" -> {
-                view.askFetchShip();
-                break;
-            }
+            case "a" -> view.askFetchShip();
             case "b" -> {
                 if (!myModel.isLearningMatch()) {
 
@@ -457,14 +410,12 @@ public class ClientController implements Observer {
                     view.showGenericMessage("You are not allowed to spy on the learningMatch!");
                     view.showBuildingMenu();
                 }
-
-                break;
+                
             }
             case "c" -> {
 
                 view.askShowFaceUpTiles();
                 view.showBuildingMenu();
-                break;
             }
             case "d" -> {
                 if (currentTileInHand != null ) {
@@ -478,10 +429,7 @@ public class ClientController implements Observer {
                 }
 
             }
-            case "e" -> {
-                showTileInHand();
-
-            }
+            case "e" -> showTileInHand();
             case "f" -> {
                 if(currentTileInHand ==null){
                     view.showGenericMessage("Before set rotation, you need to draw a tile ");
@@ -492,53 +440,24 @@ public class ClientController implements Observer {
                 }
 
             }
-
-            case "g" -> {
-                view.askTilePlacement();
-
-            }
-            case "h" -> {
-                sendDiscardRequest();
-
-            }
-
+            case "g" -> view.askTilePlacement();
+            case "h" -> sendDiscardRequest();
             case "i" -> {
-                try {
-                    clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
+                clientPhaseController.setPhase(PLAYER_PHASE.FINISH_BUILDING);
 
-                    FinishBuildingRequest finishBuildingRequest = new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile());
-                    finishBuildingRequest.name = getNickname();
+                FinishBuildingRequest finishBuildingRequest = new FinishBuildingRequest(myModel.getMyInfo().getShip(), myModel.getMyInfo().getShip().getLastTile());
+                finishBuildingRequest.name = getNickname();
 
-                    client.sendMessage(finishBuildingRequest);
-                } catch (IOException | ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
-                break;
+                safeSendMessage(finishBuildingRequest);
             }
 
-            case "j" -> {
-                //devo far vedere i risultati dei TimerInfo e far appararire un menu
-//                if (!myModel.isLearningMatch())
-//                {
-                new Thread(() -> {
-                    view.showTimerInfos();
-
-                }).start();
-//                }
-
-                break;
-            }
-            case "reset" -> {
-                break;
-            }
-            default -> {
+            case "j" -> new Thread(() -> view.showTimerInfos()).start();
+            case "reset" -> {}
+            default -> 
                 new Thread(() -> {
                     view.showGenericMessage("Invalid option \"" + input + "\". Please try again.");
                     view.showBuildingMenu();
                 }).start();
-                break;
-            }
         }
 
     }
@@ -550,7 +469,7 @@ public class ClientController implements Observer {
         currentPosition = null;
         currentTileInHand = null;
         update.setOnlyFix(true);
-        client.sendMessage(update);
+        safeSendMessage(update);
     }
 
 
@@ -625,7 +544,7 @@ public class ClientController implements Observer {
 
     //case (b)
     public Boolean viewAdventureCardDeck(int DeckID) {
-        Boolean allowed=false;
+        boolean allowed=false;
         ArrayList<CardDeck> cardDecks = myModel.getCardDecks();
 
         if (!cardDecks.isEmpty()) {
@@ -674,16 +593,12 @@ public class ClientController implements Observer {
         AskTimerInfoRequest askTimerInfoRequest = new AskTimerInfoRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, askTimerInfoRequest.getID());
-        final ArrayList<TimerInfo> timerInfos = new ArrayList<>();
+        final ArrayList<TimerInfo> timerInfos;
 
-        try {
-            client.sendMessage(askTimerInfoRequest);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send request: " + e.getMessage());
-        }
+        safeSendMessage(askTimerInfoRequest);
         try {
             TimerInfoResponse timerInfoResponse = (TimerInfoResponse) future.get();
-            timerInfos.addAll(timerInfoResponse.getTimerInfoList());
+            timerInfos = new ArrayList<>(timerInfoResponse.getTimerInfoList());
 
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
@@ -709,33 +624,26 @@ public class ClientController implements Observer {
         DrawTileRequest request = new DrawTileRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send draw tile request: " + e.getMessage());
-        }
+        safeSendMessage(request);
         new Thread(() -> {
             try {
                 DrawTileResponse response = (DrawTileResponse) future.get();
                 String error = response.getErrorMessage();
 
-                if ("VALID".equals(error)) {
+                switch (error) {
+                    case "VALID" -> {
 
-                    view.showTile(response.getTile());
-                    ComponentNameVisitor visitor = new ComponentNameVisitor();
-                    Component c = response.getTile().getMyComponent();
-                    String name = c.accept(visitor);
-                    int id = response.getTile().getId();
-                    view.showGenericMessage("You drew a " + name + " tile." + "ID: " + id);
-                    currentTileInHand = response.getTile();
-
-                } else if ("EMPTY".equals(error)) {
-                    view.showGenericMessage("The tile bunch is empty.");
-
-                } else if ("INVALID_STATE".equals(error)) {
-                    view.showGenericMessage("You cannot draw a tile right now.");
-                } else {
-                    view.showGenericMessage("Unexpected response while drawing tile: " + error);
+                        view.showTile(response.getTile());
+                        ComponentNameVisitor visitor = new ComponentNameVisitor();
+                        Component c = response.getTile().getMyComponent();
+                        String name = c.accept(visitor);
+                        int id = response.getTile().getId();
+                        view.showGenericMessage("You drew a " + name + " tile." + "ID: " + id);
+                        currentTileInHand = response.getTile();
+                    }
+                    case "EMPTY" -> view.showGenericMessage("The tile bunch is empty.");
+                    case "INVALID_STATE" -> view.showGenericMessage("You cannot draw a tile right now.");
+                    case null, default -> view.showGenericMessage("Unexpected response while drawing tile: " + error);
                 }
                 //Todo: MAI per la GUI ridisegnare tutto, quindi no chiamare così
                 view.showBuildingMenu();
@@ -766,11 +674,7 @@ public class ClientController implements Observer {
         DrawTileRequest request = new DrawTileRequest(tile);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send draw tile request(Face-Up): " + e.getMessage());
-        }
+        safeSendMessage(request);
 
         new Thread(() -> {
 
@@ -815,11 +719,7 @@ public class ClientController implements Observer {
         DrawTileRequest request = DrawTileRequest.reclaimLastTileRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(request);
         new Thread(() -> {
 
             try {
@@ -854,11 +754,7 @@ public void handleDrawReservedTile (int slotIndex){
     DrawTileRequest request = DrawTileRequest.fromReservedSlot(slotIndex);
     CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
     setCompletableFuture(future, request.getID());
-    try {
-        client.sendMessage(request);
-    } catch (IOException | ExecutionException | InterruptedException e) {
-        throw new RuntimeException(e);
-    }
+    safeSendMessage(request);
     new Thread(() -> {
 
         try {
@@ -927,17 +823,11 @@ public void handleDrawReservedTile (int slotIndex){
             throw new IllegalArgumentException("Invalid Position" + toShowPosition);
         }
 
-//    if (ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() != null) {
-//        throw new IllegalArgumentException("Invalid position: cannot place tile here.");
-//    }
-
         currentPosition = pos;
-//    view.showGenericMessage("Tile moved successfully.");
-//    view.showBuildingMenu();
     }
 
     // h
-    public void handleTilePlacement(Boolean confirm) throws InvalidTilePosition {
+    public void handleTilePlacement() throws InvalidTilePosition {
         if ( currentTileInHand == null) {
             view.showGenericMessage("No tile selected.");
             view.showBuildingMenu();
@@ -952,13 +842,7 @@ public void handleDrawReservedTile (int slotIndex){
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send tile placement: " + e.getMessage());
-            view.showBuildingMenu();
-            return;
-        }
+        safeSendMessage(request);
 
 
         new Thread(() -> {
@@ -1014,13 +898,7 @@ public void handleDrawReservedTile (int slotIndex){
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send tile placement: " + e.getMessage());
-            view.showBuildingMenu();
-            return;
-        }
+        safeSendMessage(request);
 
         new Thread(() -> {
             try {
@@ -1062,28 +940,13 @@ public void handleDrawReservedTile (int slotIndex){
         currentTileInHand.setRotation(0);
         DiscardTileRequest request = new DiscardTileRequest(currentTileInHand);
 
-        try {
-            client.sendMessage(request);
-            currentTileInHand = null;
-            currentPosition = null;
-            view.showGenericMessage("Tile discarded successfully.");
-            view.showBuildingMenu();
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            view.showGenericMessage("Failed to send discard request: " + e.getMessage());
-        }
+        safeSendMessage(request);
+        currentTileInHand = null;
+        currentPosition = null;
+        view.showGenericMessage("Tile discarded successfully.");
+        view.showBuildingMenu();
     }
-
-    public void handleTileDiscardUpdate(TileDiscardedUpdate update) {
-//        new Thread(() -> {
-//            Tile discardedTile = update.getTile();
-//            synchronized (myModel.getFaceUpTiles()) {
-//                myModel.getFaceUpTiles().add(discardedTile);
-//            }
-//
-//        }).start();
-    }
-
-
+    
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {
 
 //        Tile[] reservedTiles = myModel.getReservedTiles();
@@ -1191,12 +1054,7 @@ public void handleDrawReservedTile (int slotIndex){
 
                 }
                 case "c" -> handleCheckShipRequest();
-                case "menu", "m", "?" -> {
-                    view.handleChoiceForPhase(phase);
-
-                }
-
-
+                case "menu", "m", "?" -> view.handleChoiceForPhase(phase);
                 default -> {
                     view.showGenericMessage("Invalid option. Please try again.");
                     view.showcheckShipMenu();
@@ -1217,11 +1075,7 @@ public void handleDrawReservedTile (int slotIndex){
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, checkShipStatusRequest.getID());
 
-        try {
-            client.sendMessage(checkShipStatusRequest);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(checkShipStatusRequest);
         new Thread(() -> {
             try {
                 CheckShipStatusResponse response = (CheckShipStatusResponse) future.get();
@@ -1255,7 +1109,6 @@ public void handleDrawReservedTile (int slotIndex){
                 case "a" -> {
                     view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
                     view.showembarkCrewMenu();
-                    break;
                 }
 
                 case "b" -> {
@@ -1266,15 +1119,9 @@ public void handleDrawReservedTile (int slotIndex){
                              TooManyPlayersException | PlayerAlreadyExistsException e) {
                         throw new RuntimeException(e);
                     }
-                    break;
                 }
 
-                case "menu", "m", "?" -> {
-                    view.handleChoiceForPhase(phase);
-
-                }
-
-
+                case "menu", "m", "?" -> view.handleChoiceForPhase(phase);
                 default -> {
                     view.showGenericMessage("Invalid option. Please try again.");
                     view.showembarkCrewMenu();
@@ -1301,30 +1148,15 @@ public void handleDrawReservedTile (int slotIndex){
         new Thread(() -> {
                 switch (input) {
                     case "RESET" -> {
-                        return;
-
                     }
-                    case "a" -> {
-                        view.askFetchShip();
-
-                        break;
-                    }
-
+                    case "a" -> view.askFetchShip();
                     case "b" -> {
                         view.showFlightBoard(myModel.getFlightBoard(), myModel.getPlayerInfos(), myModel.getMyInfo());
                         view.handleChoiceForPhase(phase);
-                        break;
                     }
-
-                    case "c" ->
-                            handleEarlyLandingRequest();
-
-                    case "d" ->
-                            handleReadyTurnRequest();
-
-                    case "menu", "m", "?" -> {
-                        view.handleChoiceForPhase(phase);
-                    }
+                    case "c" -> handleEarlyLandingRequest();
+                    case "d" -> handleReadyTurnRequest();
+                    case "menu", "m", "?" -> view.handleChoiceForPhase(phase);
                     default -> {
                         view.showGenericMessage("Invalid option. Please try again.");
                         view.handleChoiceForPhase(phase);
@@ -1336,22 +1168,14 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void handleEarlyLandingRequest() {
         EarlyLandingRequest request = new EarlyLandingRequest();
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(request);
         view.showGenericMessage("Hai scelto l’atterraggio anticipato, ora guarda gli altri giocatori.");
         view.showYouAreNowSpectating();
 
     }
     public void handleReadyTurnRequest()  {
         ReadyTurnRequest request = new ReadyTurnRequest();
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(request);
         view.showGenericMessage(" Devi aspettare che gli altri giocatori siano pronti.");
 
     }
@@ -1383,11 +1207,7 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void sendDrawAdventureCardRequest() {
         DrawAdventureCardRequest request = new DrawAdventureCardRequest();
-        try {
-            client.sendMessage(request);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(request);
     }
 
     public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
@@ -1399,17 +1219,13 @@ public void handleDrawReservedTile (int slotIndex){
         view.showCurrentAdventureCard();
     }
 
-    public void handleActivateAdventureCardRequest(ActivateAdventureCardRequest activateAdventureCardRequest) {
+    public void handleActivateAdventureCardRequest(ActivateAdventureCardRequest ignoredActivateAdventureCardRequest) {
         view.askActivateAdventureCard();
     }
 
     public void sendActivateAdventureCardResponse(boolean confirm) {
         ActivateAdventureCardResponse response = new ActivateAdventureCardResponse(confirm);
-        try {
-            client.sendMessage(response);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(response);
 
         if (confirm && "AbandonedStation".equals(getCurrentAdventureCard().getName())){
             AbandonedStation abandonedStation = (AbandonedStation)  getCurrentAdventureCard();
@@ -1432,11 +1248,7 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void sendSelectPlanetResponse(Planet planet, int planetIndex) {
         SelectPlanetResponse response = new SelectPlanetResponse(planet, planetIndex);
-        try {
-            client.sendMessage(response);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(response);
     }
 
     //Notifica: il giocatore (nome del giocatore) ha selezionato il pianeta x
@@ -1454,7 +1266,7 @@ public void handleDrawReservedTile (int slotIndex){
 
     /**
      * Handles the choice for the loading goods phase, and tells the View what to show
-     * @param input
+     * @param input f
      */
     public void handleLoadGoodChoice(String input) {
         if (input == null) return;
@@ -1470,9 +1282,7 @@ public void handleDrawReservedTile (int slotIndex){
                     view.showGenericMessage("Errore durante l'invio della nave: " + e.getMessage());
                 }
             }
-            default -> {
-                view.showGenericMessage(" Comando non riconosciuto. Usa L, D o F.");
-            }
+            default -> view.showGenericMessage(" Comando non riconosciuto. Usa L, D o F.");
         }
     }
 
@@ -1487,17 +1297,16 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
-    public void sendShipForGoodUpdate() throws IOException, ExecutionException, InterruptedException {
+    public void sendShipForGoodUpdate() {
         ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
-        client.sendMessage(update);
+        safeSendMessage(update);
     }
 
     public ArrayList<Good> getDiscardPositionGoods(Position pos) {
         Ship ship = getMyShip();
         Slot slot = getSlot(ship, pos);
         GenericCargoHolds hold = (GenericCargoHolds) slot.getTile().getMyComponent();
-        ArrayList<Good> goodsInHold = hold.getGoods();
-        return goodsInHold;
+        return hold.getGoods();
     }
 
     public void discardGood(int GoodIndex, Position pos) {
@@ -1508,28 +1317,17 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void handleActivateComponentRequest(ActivateComponentRequest request) {
         ActivatableComponent component = request.getActivatableComponentType();
-        String componentName;
-        switch (component) {
-            case ActivatableComponent.DoubleCannon:
-                componentName = "DoubleCannon";
-                break;
-            case ActivatableComponent.DoubleEngine:
-                componentName = "DoubleEngine";
-                break;
-            case ActivatableComponent.Shield:
-                componentName = "Shield";
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown component type: " + component);
-        }
+        String componentName = switch (component) {
+            case ActivatableComponent.DoubleCannon -> "DoubleCannon";
+            case ActivatableComponent.DoubleEngine -> "DoubleEngine";
+            case ActivatableComponent.Shield -> "Shield";
+        };
 
         Ship myShip = getMyShip();
 
         ArrayList<Position> activateComponentPosition = myShip.getComponentPositionsFromName(componentName);
-        if (activateComponentPosition == null||activateComponentPosition.size()==0) {
+        if (activateComponentPosition == null || activateComponentPosition.isEmpty()) {
             handleActivateComponentResponse(component,null,null);
-            return;
-
         }
         else {
             //Invoca metodo della view fare scegliere al giocatore i componenti da attivare e le batterie da usare
@@ -1546,11 +1344,7 @@ public void handleDrawReservedTile (int slotIndex){
 
         //Inviare la response
         ActivateComponentResponse resp = new ActivateComponentResponse(component, componentPos, battPos);
-        try {
-            client.sendMessage(resp);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(resp);
     }
 
     public void handleDiscardCrewMembersRequest(DiscardCrewMembersRequest request) {
@@ -1563,26 +1357,28 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void handleDiscardCrewMembersResponse(ArrayList<Position> housingPos) {
         DiscardCrewMembersResponse resp = new DiscardCrewMembersResponse(housingPos);
-        try {
-            client.sendMessage(resp);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(resp);
     }
-
-    public void handleHeartbeatRequest(HeartbeatRequest heartbeatRequest) throws IOException, ExecutionException, InterruptedException {
-    }
-
+    
     @NeedsToBeCompleted
     public void handlePlayerKickedUpdate(PlayerKickedUpdate playerKickedUpdate) {
         if (playerKickedUpdate.getNickname().equals(this.getNickname())) {
-            //TODO: Torna alla scelta dei menù
-            //Questo perché magari la connessione del client potrebbe cadere per più di 5 secondi, ma nel caso in cui tornasse su potrebbe ricevere tutti i messaggi arretrati.
-            //Quindi dato che il PlayerKickedUpdate viene mandato anche a chi sta per essere kickato, questo è un caso da gestire
-            view.showGenericMessage("SEI STATO KIKKATO");
+            view.showGenericMessage("You've been kicked from the game!");
         } else {
-            view.showGenericMessage("Player " + playerKickedUpdate.getNickname() + " got kicked out of the game!");
+            view.showGenericMessage(playerKickedUpdate.getNickname() + " got kicked out of the game!");
         }
+
+        view.showGenericMessage("As " + playerKickedUpdate.getNickname() + " left the game, the game has ended prematurely and you'll have to start over.");
+        backToMainMenu();
+    }
+
+    private void backToMainMenu(){
+        view.askJoinOrCreateRoom();
+        PlayerInfo myInfo = myModel.getMyInfo();
+        myModel = new ClientModel();
+        myModel.setMyInfo(myInfo);
+
+        phase = GameState.LOBBY;
     }
 
     //da chiamare nel visitor
@@ -1598,20 +1394,12 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void handleTrunkResponse(int choice) {
         AskTrunkResponse response = new AskTrunkResponse(choice-1);
-        try {
-            client.sendMessage(response);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        safeSendMessage(response);
     }
 
     public void sendCollectRewardsResponse(boolean confirm) {
        CollectRewardsResponse response = new CollectRewardsResponse(confirm);
-        try {
-            client.sendMessage(response);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+       safeSendMessage(response);
 
 
         if (confirm && "Smugglers".equals(getCurrentAdventureCard().getName())) {
@@ -1621,7 +1409,7 @@ public void handleDrawReservedTile (int slotIndex){
         }
     }
 
-    public void handleCollectRewardsRequest(CollectRewardsRequest request){
+    public void handleCollectRewardsRequest(CollectRewardsRequest ignoredrequest){
         view.askCollectRewards();
 
     }
@@ -1630,7 +1418,7 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate) throws IOException, ExecutionException, InterruptedException {
-        client.sendMessage(crewInitUpdate);
+        safeSendMessage(crewInitUpdate);
     }
 
 
@@ -1680,8 +1468,7 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
     private Slot getSlot(Ship ship, Position pos) {
-        Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
-        return slot;
+        return ship.getShipBoard()[pos.getX()][pos.getY()];
     }
 
     private ArrayList<Position> getCargoHolds(Ship ship) {
@@ -1741,11 +1528,7 @@ public void handleDrawReservedTile (int slotIndex){
     public Position getCurrentPosition() {
         return currentPosition;
     }
-
-    public void setCurrentTileInHand(Tile currentTileInHand) {
-        this.currentTileInHand = currentTileInHand;
-    }
-
+    
     //Todo : eliminare
     public Tile[] getReservedTiles() {
         return myModel.getReservedTiles();
@@ -1772,7 +1555,7 @@ public void handleDrawReservedTile (int slotIndex){
         }
     }
 
-    public void sendFlipRequest(ArrayList<TimerInfo> timerInfos) throws IOException, ExecutionException, InterruptedException {
+    public void sendFlipRequest(ArrayList<TimerInfo> timerInfos) {
         //trovo quello che si puo flippare
 
         int index = 0;
@@ -1786,6 +1569,21 @@ public void handleDrawReservedTile (int slotIndex){
 
         FlipTimerRequest flipTimerRequest = new FlipTimerRequest();
         flipTimerRequest.setTimerIndex(index);
-        client.sendMessage(flipTimerRequest);
+        safeSendMessage(flipTimerRequest);
+    }
+
+    public void safeSendMessage(NetworkMessage message) {
+        try {
+            client.sendMessage(message);
+        } catch (IOException e){
+            heartbeat.interrupt();
+            myModel = new ClientModel();
+            MenuManager.clearConsole();
+            view.showGenericMessage("Server connection has been lost. Going back to server selection.");
+            new Thread(() -> {
+                view.forceReset();
+                view.askServerInfo();
+            }).start();
+        }
     }
 }

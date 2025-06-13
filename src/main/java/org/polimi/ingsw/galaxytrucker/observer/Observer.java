@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public interface Observer {
-
-    void update(NetworkMessage message) throws IOException, ExecutionException, TooManyPlayersException, PlayerAlreadyExistsException, InvalidTilePosition, InterruptedException;
-
+    void update(NetworkMessage message);
     void update(String genericMessage);
 
 }

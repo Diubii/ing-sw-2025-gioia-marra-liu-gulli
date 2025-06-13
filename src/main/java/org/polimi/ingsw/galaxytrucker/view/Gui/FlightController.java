@@ -20,7 +20,6 @@ import org.polimi.ingsw.galaxytrucker.model.Planet;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DrawAdventureCardRequest;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
@@ -401,11 +400,7 @@ public class FlightController extends GenericGamePhaseSceneController {
         cardView.setImage(new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/cards/deck.png").toExternalForm()));
         cardView.setOnMouseClicked(event -> {
             DrawAdventureCardRequest request = new DrawAdventureCardRequest();
-            try {
-                clientController.getClient().sendMessage(request);
-            } catch (IOException | ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            clientController.safeSendMessage(request);
         });
     }
 
