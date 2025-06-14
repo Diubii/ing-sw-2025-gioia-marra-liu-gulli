@@ -152,7 +152,7 @@ public class ClientController implements Observer {
         try {
             connectToServer(info.getAddress(), info.getPort());
         } catch (IOException e) {
-            view.showGenericMessage(" Failed to connect to server: " + e.getMessage());
+            view.showGenericMessage(" Failed to connect to server: " + e.getMessage(),false);
             return;
         }
 
@@ -199,7 +199,7 @@ public class ClientController implements Observer {
 
     public void handleNicknameInput(String nickname) throws IOException, ExecutionException, InterruptedException {
         if (!isNicknameLegal(nickname)) {
-            view.showGenericMessage("Invalid nickname. It must  contain only letters, numbers, or underscores.");
+            view.showGenericMessage("Invalid nickname. It must  contain only letters, numbers, or underscores.",false);
             view.askNickname();
             return;
         }
@@ -214,14 +214,14 @@ public class ClientController implements Observer {
                 NicknameResponse response = (NicknameResponse) future.get();
                 if ("VALID".equals(response.getResponse())) {
                     setNickname(nickname);
-                    view.showGenericMessage("Nickname accepted.");
+                    view.showGenericMessage("Nickname accepted.",false);
                     view.askJoinOrCreateRoom();
                 } else {
-                    view.showGenericMessage("Nickname rejected. Try again.");
+                    view.showGenericMessage("Nickname rejected. Try again.",false);
                     view.askNickname();
                 }
             } catch (Exception e) {
-                view.showGenericMessage("Failed to receive nickname response: " + e.getMessage());
+                view.showGenericMessage("Failed to receive nickname response: " + e.getMessage(),true);
             }
         }).start();
 
@@ -233,7 +233,7 @@ public class ClientController implements Observer {
         } else if ("b".equals(choice)) {
             handleJoinRoomOptionsChoice();
         } else {
-            view.showGenericMessage("Invalid choice.");
+            view.showGenericMessage("Invalid choice.",false);
             view.askJoinOrCreateRoom();
         }
     }
@@ -244,7 +244,7 @@ public class ClientController implements Observer {
         setCompletableFuture(future, request.getID());
 
         safeSendMessage(request);
-        view.showGenericMessage("Room creation request sent.");
+        view.showGenericMessage("Room creation request sent.",false);
 
         new Thread(() -> {
             try {
@@ -260,13 +260,13 @@ public class ClientController implements Observer {
 
                     myModel.getPlayerInfos().add(myModel.getMyInfo());
                     view.showPlayersLobby(myModel.getMyInfo(),myModel.getPlayerInfos());
-                    view.showGenericMessage("Room created and joined successfully! Waiting for other players...");
+                    view.showGenericMessage("Lobby creata con successo,in attesa di giocatori...",false);
                 } else {
-                    view.showGenericMessage("Room creation failed: " + response.getErrMess());
+                    view.showGenericMessage("Room creation failed: " + response.getErrMess(),true);
                     view.askJoinOrCreateRoom();
                 }
             } catch (Exception e) {
-                view.showGenericMessage("Error while waiting for room creation response: " + e.getMessage());
+                view.showGenericMessage("Error while waiting for room creation response: " + e.getMessage(),true);
             }
         }).start();
     }
@@ -292,7 +292,7 @@ public class ClientController implements Observer {
 
                 }
             } catch (InterruptedException | ExecutionException e) {
-                view.showGenericMessage("Error receiving room options: " + e.getMessage());
+                view.showGenericMessage("Error receiving room options: " + e.getMessage(),false);
             }
         }).start();
     }
@@ -309,7 +309,7 @@ public class ClientController implements Observer {
             if (response.getOperationSuccess()) {
                 clientPhaseController.setPhase(PLAYER_PHASE.LOBBY);
 
-                view.showGenericMessage("Successfully joined the lobby! Waiting for other players...");
+                view.showGenericMessage("Successfully joined the lobby! Waiting for other players...",false);
 
                 myModel.getMyInfo().setColor(response.getColor());
                 myModel.getMyInfo().setShip(response.getMyShip());
@@ -326,11 +326,11 @@ public class ClientController implements Observer {
                 view.showPlayersLobby(myModel.getMyInfo(), myModel.getPlayerInfos());
 
             } else {
-                view.showGenericMessage("Failed to join the lobby: " + response.getErrMess());
+                view.showGenericMessage("Failed to join the lobby: " + response.getErrMess(),false);
                 view.askRoomCode();
             }
         } catch (Exception e) {
-            view.showGenericMessage("Error while waiting for join room response: " + e.getMessage());
+            view.showGenericMessage("Error while waiting for join room response: " + e.getMessage(),false);
         }
 
     }
@@ -402,12 +402,12 @@ public class ClientController implements Observer {
 
                     }
                     else{
-                        view.showGenericMessage("Hai un tile  in mano, per favore posizionala prima.");
+                        view.showGenericMessage("Hai un tile  in mano, per favore posizionala prima.",false);
                         view.showBuildingMenu();
                     }
 
                 } else {
-                    view.showGenericMessage("You are not allowed to spy on the learningMatch!");
+                    view.showGenericMessage("You are not allowed to spy on the learningMatch!",false);
                     view.showBuildingMenu();
                 }
                 
@@ -419,7 +419,7 @@ public class ClientController implements Observer {
             }
             case "d" -> {
                 if (currentTileInHand != null ) {
-                    view.showGenericMessage("You already have a tile in hand! Place it or discard it before drawing a new one.");
+                    view.showGenericMessage("You already have a tile in hand! Place it or discard it before drawing a new one.",false);
                     view.showBuildingMenu();
 
                 } else {
@@ -432,7 +432,7 @@ public class ClientController implements Observer {
             case "e" -> showTileInHand();
             case "f" -> {
                 if(currentTileInHand ==null){
-                    view.showGenericMessage("Before set rotation, you need to draw a tile ");
+                    view.showGenericMessage("Before set rotation, you need to draw a tile ",false);
                     view.showBuildingMenu();
                 }
                 else{
@@ -455,7 +455,7 @@ public class ClientController implements Observer {
             case "reset" -> {}
             default -> 
                 new Thread(() -> {
-                    view.showGenericMessage("Invalid option \"" + input + "\". Please try again.");
+                    view.showGenericMessage("Invalid option \"" + input + "\". Please try again.",false);
                     view.showBuildingMenu();
                 }).start();
         }
@@ -489,7 +489,7 @@ public class ClientController implements Observer {
             }
 
         } else {
-            view.showGenericMessage("No player with nickname " + targetNickname + " found. Please try again.");
+            view.showGenericMessage("No player with nickname " + targetNickname + " found. Please try again.",false);
             view.askFetchShip();
         }
     }
@@ -520,7 +520,7 @@ public class ClientController implements Observer {
                     if (playerInfo != null) {
                         playerInfo.setShip(ship);
                     } else {
-                        view.showGenericMessage("Player with nickname " + owner + " not found.");
+                        view.showGenericMessage("Player with nickname " + owner + " not found.",false);
                     }
                 }
             }
@@ -536,7 +536,7 @@ public class ClientController implements Observer {
             }
 
         } else {
-            view.showGenericMessage("No ship belongs to this player.");
+            view.showGenericMessage("No ship belongs to this player.",false);
             view.handleChoiceForPhase(phase);
         }
 
@@ -550,7 +550,7 @@ public class ClientController implements Observer {
         if (!cardDecks.isEmpty()) {
 
             if(cardDecks.size() <= DeckID){
-                view.showGenericMessage("Numero del deck non valido");
+                view.showGenericMessage("Numero del deck non valido",false);
             }
             else {
                 CardDeck deck = cardDecks.get(DeckID);
@@ -559,17 +559,17 @@ public class ClientController implements Observer {
                     int colums = 3;
                     CardPrintUtils.printDeck(deck, colums);
                     DeckID++;
-                    view.showGenericMessage("Deck  " + DeckID + " received successfully. ");
+                    view.showGenericMessage("Deck  " + DeckID + " received successfully. ",false);
                     allowed = true;
                 } else {
-                    view.showGenericMessage("You are not allowed to spy on this deck!");
+                    view.showGenericMessage("You are not allowed to spy on this deck!",false);
                 }
             }
 
 
 //
         } else {
-            view.showGenericMessage("No card decks found.");
+            view.showGenericMessage("No card decks found.",false);
         }
         view.showBuildingMenu();
         return allowed;
@@ -638,12 +638,12 @@ public class ClientController implements Observer {
                         Component c = response.getTile().getMyComponent();
                         String name = c.accept(visitor);
                         int id = response.getTile().getId();
-                        view.showGenericMessage("You drew a " + name + " tile." + "ID: " + id);
+                        view.showGenericMessage("You drew a " + name + " tile." + "ID: " + id,false);
                         currentTileInHand = response.getTile();
                     }
-                    case "EMPTY" -> view.showGenericMessage("The tile bunch is empty.");
-                    case "INVALID_STATE" -> view.showGenericMessage("You cannot draw a tile right now.");
-                    case null, default -> view.showGenericMessage("Unexpected response while drawing tile: " + error);
+                    case "EMPTY" -> view.showGenericMessage("The tile bunch is empty.",false);
+                    case "INVALID_STATE" -> view.showGenericMessage("You cannot draw a tile right now.",false);
+                    case null, default -> view.showGenericMessage("Unexpected response while drawing tile: " + error,false);
                 }
                 //Todo: MAI per la GUI ridisegnare tutto, quindi no chiamare così
                 view.showBuildingMenu();
@@ -659,11 +659,11 @@ public class ClientController implements Observer {
     public void startChooseTile() {
         List<Tile> tiles = myModel.getFaceUpTiles();
         if (tiles == null || tiles.isEmpty()) {
-            view.showGenericMessage("No face-up tiles available.");
+            view.showGenericMessage("No face-up tiles available.",false);
             view.showBuildingMenu();
             return;
         }
-        view.showGenericMessage("--Current face-up tiles--");
+        view.showGenericMessage("--Current face-up tiles--",false);
 
         view.showFaceUpTiles();
         view.askChooseTile();
@@ -696,17 +696,17 @@ public class ClientController implements Observer {
                         }
                         break;
                     case "TAKEN":
-                        view.showGenericMessage("The tile is chosen by another player.");
+                        view.showGenericMessage("The tile is chosen by another player.",false);
                         break;
                     case "INVALID_STATE":
-                        view.showGenericMessage("You cannot draw a tile right now.");
+                        view.showGenericMessage("You cannot draw a tile right now.",false);
                         break;
                     default:
-                        view.showGenericMessage("Unexpected response while drawing tile(Face-Up): " + error);
+                        view.showGenericMessage("Unexpected response while drawing tile(Face-Up): " + error,false);
                         break;
                 }
             } catch (Exception e) {
-                view.showGenericMessage("An error occurred while processing the response: " + e.getMessage());
+                view.showGenericMessage("An error occurred while processing the response: " + e.getMessage(),false);
 
             }
             view.showBuildingMenu();
@@ -736,13 +736,13 @@ public class ClientController implements Observer {
                         }
                         break;
                     case "FIXED":
-                        view.showGenericMessage("The tile is fixed.");
+                        view.showGenericMessage("The tile is fixed.",false);
                         break;
                     case "NO_TILE":
-                        view.showGenericMessage("You don't have any reclaimable tile  ");
+                        view.showGenericMessage("You don't have any reclaimable tile  ",false);
                 }
             } catch (Exception e) {
-                view.showGenericMessage("An error occurred while processing the response: " + e.getMessage());
+                view.showGenericMessage("An error occurred while processing the response: " + e.getMessage(),false);
 
             }
             view.showBuildingMenu();
@@ -771,11 +771,11 @@ public void handleDrawReservedTile (int slotIndex){
                     }
                     break;
                 case "NO_TILE_AT_INDEX":
-                    view.showGenericMessage("no tile at index");
+                    view.showGenericMessage("no tile at index",false);
                     break;
             }
         } catch (Exception e) {
-            view.showGenericMessage("An error occurred while processing the response: " + e.getMessage());
+            view.showGenericMessage("An error occurred while processing the response: " + e.getMessage(),false);
 
         }
         view.showBuildingMenu();
@@ -789,7 +789,7 @@ public void handleDrawReservedTile (int slotIndex){
     public void showTileInHand() {
 
         view.showTile(currentTileInHand);
-        view.showGenericMessage("Tile in hand successfully.");
+        view.showGenericMessage("Tile in hand successfully.",false);
         view.showBuildingMenu();
     }
 
@@ -797,7 +797,7 @@ public void handleDrawReservedTile (int slotIndex){
     public void rotateCurrentTile(int rotation) {
         currentTileInHand.rotate(rotation);
         view.showTile(currentTileInHand);
-        view.showGenericMessage("Tile rotated successfully.");
+        view.showGenericMessage("Tile rotated successfully.",false);
         view.showBuildingMenu();
 
     }
@@ -829,7 +829,7 @@ public void handleDrawReservedTile (int slotIndex){
     // h
     public void handleTilePlacement() throws InvalidTilePosition {
         if ( currentTileInHand == null) {
-            view.showGenericMessage("No tile selected.");
+            view.showGenericMessage("No tile selected.",false);
             view.showBuildingMenu();
             return;
         }
@@ -848,24 +848,24 @@ public void handleDrawReservedTile (int slotIndex){
         new Thread(() -> {
             try {
                 PlaceTileResponse response = (PlaceTileResponse) future.get();
-                view.showGenericMessage(response.getMessage());
+                view.showGenericMessage(response.getMessage(),false);
                 if(response.getMessage().equals("INVALID_STATE")){
 
                         currentPosition = tmpCurrentPosition;
-                    view.showGenericMessage("You cannot place a tile right now.");
+                    view.showGenericMessage("You cannot place a tile right now.",false);
                 }
                 if(response.getMessage().equals("INVALID_POS")){
 
                     currentPosition = tmpCurrentPosition;
 
-                    view.showGenericMessage("You cannot place a tile in that position. invalid pos");
+                    view.showGenericMessage("You cannot place a tile in that position. invalid pos",false);
 
                 }
                 if(response.getMessage().equals("OCCUPIED_POS")){
 
                         currentPosition = tmpCurrentPosition;
 
-                    view.showGenericMessage("You cannot place a tile in that position. occupied pos");
+                    view.showGenericMessage("You cannot place a tile in that position. occupied pos",false);
 
                 }
                 if (response.getMessage().equals("VALID")) {
@@ -878,7 +878,7 @@ public void handleDrawReservedTile (int slotIndex){
 
 
             } catch (Exception e) {
-                view.showGenericMessage("Error during tile placement: " + e.getMessage());
+                view.showGenericMessage("Error during tile placement: " + e.getMessage(),false);
             } finally {
 
                 view.showBuildingMenu();
@@ -889,7 +889,7 @@ public void handleDrawReservedTile (int slotIndex){
     }
     private void handlePlaceReservedTile(int slotIndex){
         if ( currentTileInHand == null) {
-            view.showGenericMessage("No tile selected.");
+            view.showGenericMessage("No tile selected.",false);
             view.showBuildingMenu();
             return;
         }
@@ -903,7 +903,7 @@ public void handleDrawReservedTile (int slotIndex){
         new Thread(() -> {
             try {
                 PlaceTileResponse response = (PlaceTileResponse) future.get();
-                view.showGenericMessage(response.getMessage());
+                view.showGenericMessage(response.getMessage(),false);
 
                 if (response.getMessage().equals("VALID")) {
 
@@ -913,12 +913,12 @@ public void handleDrawReservedTile (int slotIndex){
                     view.showTile(currentTileInHand);
                 }
                 else{
-                    view.showGenericMessage("err PlaceReservedTile");
+                    view.showGenericMessage("err PlaceReservedTile",false);
                 }
 
 
             } catch (Exception e) {
-                view.showGenericMessage("Error during tile placement: " + e.getMessage());
+                view.showGenericMessage("Error during tile placement: " + e.getMessage(),false);
             } finally {
 
                 view.showBuildingMenu();
@@ -931,7 +931,7 @@ public void handleDrawReservedTile (int slotIndex){
     //i
     public void sendDiscardRequest() {
         if (currentTileInHand == null) {
-            view.showGenericMessage("No tile in hand to discard.");
+            view.showGenericMessage("No tile in hand to discard.",false);
             view.showBuildingMenu();
 
             return;
@@ -943,7 +943,7 @@ public void handleDrawReservedTile (int slotIndex){
         safeSendMessage(request);
         currentTileInHand = null;
         currentPosition = null;
-        view.showGenericMessage("Tile discarded successfully.");
+        view.showGenericMessage("Tile discarded successfully.",false);
         view.showBuildingMenu();
     }
     
@@ -957,7 +957,7 @@ public void handleDrawReservedTile (int slotIndex){
         if (isPicking) {
             if (tile == null) {
                 int toShowIndex =slotIndex+1;
-                view.showGenericMessage("No reserved tile at slot " + toShowIndex + ".");
+                view.showGenericMessage("No reserved tile at slot " + toShowIndex + ".",false);
                 view.showBuildingMenu();
 
 
@@ -980,7 +980,7 @@ public void handleDrawReservedTile (int slotIndex){
                 handlePlaceReservedTile(slotIndex);
 
             } else {
-                view.showGenericMessage("A tile is already reserved at slot " + slotIndex + ".");
+                view.showGenericMessage("A tile is already reserved at slot " + slotIndex + ".",false);
                 view.showBuildingMenu();
             }
         }
@@ -1056,7 +1056,7 @@ public void handleDrawReservedTile (int slotIndex){
                 case "c" -> handleCheckShipRequest();
                 case "menu", "m", "?" -> view.handleChoiceForPhase(phase);
                 default -> {
-                    view.showGenericMessage("Invalid option. Please try again.");
+                    view.showGenericMessage("Invalid option. Please try again.",false);
                     view.showcheckShipMenu();
                 }
 
@@ -1082,18 +1082,18 @@ public void handleDrawReservedTile (int slotIndex){
                 boolean isValid = response.getIsValid();
                 if (isValid) {
                     view.showWaitOtherPlayers();
-                    view.showGenericMessage("Nave immacolata!");
+                    view.showGenericMessage("Nave immacolata!",true);
                     return;
 
                 } else {
-                    view.showGenericMessage("La nave va ricontrollata");
+                    view.showGenericMessage("La nave va ricontrollata",true);
                     myModel.getMyInfo().setShip(response.getShip());
 
                 }
                 view.showcheckShipMenu();
 
             } catch (ExecutionException | InterruptedException e) {
-                view.showGenericMessage("Errore durante il controllo della nave");
+                view.showGenericMessage("Errore durante il controllo della nave",true);
                 throw new RuntimeException(e);
             }
 
@@ -1123,7 +1123,7 @@ public void handleDrawReservedTile (int slotIndex){
 
                 case "menu", "m", "?" -> view.handleChoiceForPhase(phase);
                 default -> {
-                    view.showGenericMessage("Invalid option. Please try again.");
+                    view.showGenericMessage("Invalid option. Please try again.",false);
                     view.showembarkCrewMenu();
                 }
 
@@ -1135,13 +1135,18 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void handleEndTurnUpdate(EndTurnUpdate update) {
 
-        view.showGenericMessage("turn ended");
+        view.showGenericMessage("turn ended",false);
         if(update.isEndGame()){
-            view.showGenericMessage("Game ended");
+            view.showGenericMessage("Game ended",false);
             return;
         }
         view.toShowCurrentMenu();
-        view.showFlightMenu();
+        if(myModel.getPlayerState() != PlayerState.Spectating){
+            view.showFlightMenu();
+        }
+        else{
+            handleReadyTurnRequest();
+        }
     }
 
     public void handleFlightMenuChoice(String input) throws RuntimeException {
@@ -1158,7 +1163,7 @@ public void handleDrawReservedTile (int slotIndex){
                     case "d" -> handleReadyTurnRequest();
                     case "menu", "m", "?" -> view.handleChoiceForPhase(phase);
                     default -> {
-                        view.showGenericMessage("Invalid option. Please try again.");
+                        view.showGenericMessage("Invalid option. Please try again.",false);
                         view.handleChoiceForPhase(phase);
                     }
                 }
@@ -1169,14 +1174,14 @@ public void handleDrawReservedTile (int slotIndex){
     public void handleEarlyLandingRequest() {
         EarlyLandingRequest request = new EarlyLandingRequest();
         safeSendMessage(request);
-        view.showGenericMessage("Hai scelto l’atterraggio anticipato, ora guarda gli altri giocatori.");
+        view.showGenericMessage("Hai scelto l’atterraggio anticipato, ora guarda gli altri giocatori.",false);
         view.showYouAreNowSpectating();
 
     }
     public void handleReadyTurnRequest()  {
         ReadyTurnRequest request = new ReadyTurnRequest();
         safeSendMessage(request);
-        view.showGenericMessage(" Devi aspettare che gli altri giocatori siano pronti.");
+        view.showGenericMessage(" Devi aspettare che gli altri giocatori siano pronti.",false);
 
     }
 
@@ -1184,7 +1189,7 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void handleGameMessage(GameMessage gameMessage) {
 
-        view.showGenericMessage(gameMessage.getMessage());
+        view.showGenericMessage(gameMessage.getMessage(),false);
     }
 
     public void handleMatchInfoUpdate(MatchInfoUpdate matchInfoUpdate) {
@@ -1195,11 +1200,11 @@ public void handleDrawReservedTile (int slotIndex){
 
         boolean amLeader = leaderNickname.equals(getNickname());
         myModel.setLeader(amLeader);
-        view.showGenericMessage("Il giocatore: " + leaderNickname + " è il leader, rimangono: " + remainCards + "  carte.");
+        view.showGenericMessage("Il giocatore: " + leaderNickname + " è il leader, rimangono: " + remainCards + "  carte.",false);
         if (amLeader) {
             view.askDrawCard();
         } else {
-            view.showGenericMessage("Non sei leader per questo turno. Devi aspettare che il leader peschi la carta.");
+            view.showGenericMessage("Non sei leader per questo turno. Devi aspettare che il leader peschi la carta.",false);
 
         }
 
@@ -1213,9 +1218,6 @@ public void handleDrawReservedTile (int slotIndex){
     public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
         view.forceReset();
         myModel.setCurrentAdventureCard(drawnAdventureCardUpdate.getCard());
-
-
-
         view.showCurrentAdventureCard();
     }
 
@@ -1256,7 +1258,7 @@ public void handleDrawReservedTile (int slotIndex){
     // vuole mettere i goods nella sua ship
     public void handleSelectPlanetUpdate(SelectedPlanetUpdate update) {
         String selectingPlayerNickname = update.getSelectingPlayerNickname();
-        view.showGenericMessage("Player " + selectingPlayerNickname + " ha selezionato il pianeta " + update.getPlanetIndex());
+        view.showGenericMessage("Player " + selectingPlayerNickname + " ha selezionato il pianeta " + update.getPlanetIndex(),false);
         if (selectingPlayerNickname.equals(getNickname())) {
             Planet selectedPlanet = update.getSelectedPlanet();
             myModel.setSelectedPlanet(selectedPlanet);
@@ -1275,14 +1277,14 @@ public void handleDrawReservedTile (int slotIndex){
             case "l" -> view.askSelectGoodToLoad(myModel.getUnplacedGoods(), myModel.getMyInfo().getShip());
             case "d" -> view.askSelectGoodToDiscard( myModel.getMyInfo().getShip());
             case "f" -> {
-                view.showGenericMessage(" Caricamento merci completato.");
+                view.showGenericMessage(" Caricamento merci completato.",false);
                 try {
                     sendShipForGoodUpdate();
                 } catch (Exception e) {
-                    view.showGenericMessage("Errore durante l'invio della nave: " + e.getMessage());
+                    view.showGenericMessage("Errore durante l'invio della nave: " + e.getMessage(),false);
                 }
             }
-            default -> view.showGenericMessage(" Comando non riconosciuto. Usa L, D o F.");
+            default -> view.showGenericMessage(" Comando non riconosciuto. Usa L, D o F.",false);
         }
     }
 
@@ -1363,18 +1365,20 @@ public void handleDrawReservedTile (int slotIndex){
     @NeedsToBeCompleted
     public void handlePlayerKickedUpdate(PlayerKickedUpdate playerKickedUpdate) {
         if (playerKickedUpdate.getNickname().equals(this.getNickname())) {
-            view.showGenericMessage("You've been kicked from the game!");
+            view.showGenericMessage("You've been kicked from the game!",false);
         } else {
-            view.showGenericMessage(playerKickedUpdate.getNickname() + " got kicked out of the game!");
+            view.showGenericMessage(playerKickedUpdate.getNickname() + " got kicked out of the game!",false);
         }
 
-        view.showGenericMessage("As " + playerKickedUpdate.getNickname() + " left the game, the game has ended prematurely and you'll have to start over.");
+        view.showGenericMessage("As " + playerKickedUpdate.getNickname() + " left the game, the game has ended prematurely and you'll have to start over.",false);
         backToMainMenu();
     }
 
     private void backToMainMenu(){
         view.askJoinOrCreateRoom();
-        PlayerInfo myInfo = myModel.getMyInfo();
+        view.showGenericMessage("",false);
+        PlayerInfo myInfo = new PlayerInfo();
+        myInfo.setNickName(myModel.getMyInfo().getNickName());
         myModel = new ClientModel();
         myModel.setMyInfo(myInfo);
 
@@ -1457,9 +1461,9 @@ public void handleDrawReservedTile (int slotIndex){
             view.showYouAreNowSpectating();
         }
         if (isLandingEarly) {
-            view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.");
+            view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.",true);
         } else {
-            view.showGenericMessage("il giocatore " + nickname + " è stato rimosso forzatamente dalla partita.");
+            view.showGenericMessage("il giocatore " + nickname + " è stato rimosso forzatamente dalla partita.",true);
         }
     }
 
@@ -1538,12 +1542,12 @@ public void handleDrawReservedTile (int slotIndex){
     public void completeFuture(NetworkMessage message) {
         int responseId = message.getID();
         if (completableFuture == null) {
-            view.showGenericMessage("⚠️ CompletableFuture is null when receiving response with ID: " + responseId);
+            view.showGenericMessage("⚠️ CompletableFuture is null when receiving response with ID: " + responseId,false);
             return;
         }
 
         if (!pair.getKey().equals(responseId)) {
-            view.showGenericMessage("⚠️ ID mismatch! Expected: " + pair.getKey() + ", but got: " + responseId);
+            view.showGenericMessage("⚠️ ID mismatch! Expected: " + pair.getKey() + ", but got: " + responseId,false);
             return;
         }
         if (completableFuture != null && pair.getKey().equals(message.getID())) {
@@ -1579,7 +1583,7 @@ public void handleDrawReservedTile (int slotIndex){
             heartbeat.interrupt();
             myModel = new ClientModel();
             MenuManager.clearConsole();
-            view.showGenericMessage("Server connection has been lost. Going back to server selection.");
+            view.showGenericMessage("Connessione al server persa, tentare di riconnettersi.",true);
             new Thread(() -> {
                 view.forceReset();
                 view.askServerInfo();

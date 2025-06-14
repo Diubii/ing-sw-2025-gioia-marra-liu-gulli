@@ -247,7 +247,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
                     if (centralHousingUnit.getIsColored() && centralHousingUnit.getColor().equals(myColor)) {
                         centralTile = tile;
-//                    gameTiles.remove(tile);
+                        //gameTiles.remove(tile);
                     }
 
                 }

@@ -32,6 +32,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Pha
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Dialogs.ConfirmDialogController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.Dialogs.InfoDialogController;
 import org.polimi.ingsw.galaxytrucker.view.View;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
@@ -54,9 +55,9 @@ public class GuiJavaFx implements View {
     private final Stage primaryStage;
     private  Scene primaryScene;
     //Controller
-    private final ClientController controller;
+    private ClientController controller;
     //Model
-    private final ClientModel mymodel;
+    private ClientModel mymodel;
     //The current controller of the main node tree displayed
     private GenericSceneController actualPageController;
 
@@ -67,10 +68,8 @@ public class GuiJavaFx implements View {
 
 
 
-    public GuiJavaFx(Stage primaryStage,Scene primaryScene, ClientController controller, ClientModel mymodel) {
+    public GuiJavaFx(Stage primaryStage,Scene primaryScene ) {
         this.primaryStage = primaryStage;
-        this.controller = controller;
-        this.mymodel = mymodel;
         this.primaryScene = primaryScene;
         musicManager= new MusicManager();
         primaryStage.setOnCloseRequest(event -> {
@@ -82,6 +81,11 @@ public class GuiJavaFx implements View {
             }
         });
 
+    }
+
+    public void initializeController(ClientController controller) {
+        this.mymodel= controller.getMyModel();
+        this.controller = controller;
         primaryScene.setOnKeyPressed(event -> {
             if(controller.getCurrentTileInHand() != null) {
                 if (event.getCode() == KeyCode.Q || event.getCode() == KeyCode.LEFT) {
@@ -99,11 +103,7 @@ public class GuiJavaFx implements View {
                 controller.rotateCurrentTile(+90);
             }
         });
-
-
     }
-
-
 
     @Override
     public Boolean autoShowUpdates() {
@@ -164,23 +164,6 @@ public class GuiJavaFx implements View {
     //<editor-fold desc="FOLD: LoginConnect">
     public void askServerInfo() {
 
-//        //TEST caricare una pagina qualunque per vedere formato
-//            System.out.println("DEBUG: askServerInfo");
-//            //1-Prima caricare FXML
-//            Parent root;
-//            FXMLLoader loader;
-//            try{
-//                loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Flight.fxml"));
-//                root = loader.load();
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//            //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-//            FlightController pageController = loader.getController();
-//            pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
-//           // primaryStage.setFullScreen(true);
-//           // primaryStage.setMaximized(true);
-//             primaryScene.setRoot(root);
 
         Platform.runLater(() -> {
             System.out.println("DEBUG: askServerInfo");
@@ -193,7 +176,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 LoginConnectController pageController = loader.getController();
-                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.initialSetupSmall(this,primaryStage,musicManager);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
                 primaryScene.setRoot(root);
@@ -333,15 +316,11 @@ public class GuiJavaFx implements View {
                 e.printStackTrace();
             }
         });
-        showGenericMessage("Player joined: " + playerInfo);
+        showGenericMessage("Player joined: " + playerInfo,false);
     }
 
     @Override
     public void showPlayersLobby( PlayerInfo myInfo,ArrayList<PlayerInfo> playerInfo) {
-        //Todo: Quando chiamo questo metodo, a volte lo faccio solo perchè è entrato un nuovo giocatore
-        //Todo: non perchè devo cambiare scena/pagina.
-        //Todo: bisognerebbe fare in modo che se sono già su questa scena/pagina chiamo soltanto pagecontroller.updatePlayersList(playerInfo)
-        //Todo: praticamente è la stessa differenza di pagine sincrone e asincrone per il web
         System.out.println("DEBUG: showPlayersLobby");
         Platform.runLater(() -> {
             Parent root;
@@ -394,7 +373,7 @@ public class GuiJavaFx implements View {
             case FLIGHT:
                 showFlightMenu();
             break;
-            case null, default: showGenericMessage("Phase changed: " + update.getState().name());
+            case null, default: showGenericMessage("Phase changed: " + update.getState().name(),false);
             break;
         }
     }
@@ -481,7 +460,7 @@ public class GuiJavaFx implements View {
                         //Gestisce il controller della pagina building:
                         ((BuildingController) actualPageController).showDrawnTile(tile);
                     });
-            showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName());
+            showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName(),false);
         }
         else{
             ((BuildingController) actualPageController).hideZonaPescata();
@@ -765,7 +744,7 @@ public class GuiJavaFx implements View {
                 try {
                     controller.getClient().sendMessage(new org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskPositionResponse(id, pos));
                 } catch (Exception e) {
-                    showGenericMessage("Errore nell'inviare la posizione: " + e.getMessage());
+                    showGenericMessage("Errore nell'inviare la posizione: " + e.getMessage(),false);
                 }
             });
         });
@@ -778,11 +757,40 @@ public class GuiJavaFx implements View {
         ((FlightController)actualPageController).handlePlanetChoice(landablePlanets);
     }
 
+    /**
+     * If a message is important and needs to be shown in an alert it's shown otherwise it redirects generic messages to each page to handle,
+     * @param message
+     * @param important
+     */
     @Override
-    public void showGenericMessage(String message) {
+    public void showGenericMessage(String message,Boolean important) {
         Platform.runLater(() -> {
-            actualPageController.ShowGenericMessage(message);
-            //Ogni singolo page controller gestisce come mostrare
+            if(important){
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/InfoDialog.fxml"));
+                    Parent page = loader.load();
+
+                    Stage dialogStage = new Stage();
+                    dialogStage.setTitle("Comunicazione");
+                    dialogStage.initModality(Modality.APPLICATION_MODAL);
+                    dialogStage.initStyle(StageStyle.UTILITY);
+                    dialogStage.setResizable(false);
+                    dialogStage.setScene(new Scene(page));
+
+                    InfoDialogController controller = loader.getController();
+                    controller.setDialogStage(dialogStage);
+                    controller.setMessage(null,message);
+
+                    dialogStage.showAndWait();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else{
+                actualPageController.ShowGenericMessage(message);
+                //Ogni singolo page controller gestisce come mostrare
+            }
         });
     }
 

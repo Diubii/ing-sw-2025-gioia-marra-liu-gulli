@@ -45,7 +45,7 @@ public interface View {
 
     void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException;
 
-    void showGenericMessage(String s);
+    void showGenericMessage(String s,Boolean important);
 
     void showWaitOtherPlayers();
 

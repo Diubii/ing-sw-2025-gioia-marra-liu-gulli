@@ -63,13 +63,12 @@
                                     <Font name="System Bold" size="15.0" />
                                  </font>
                               </Label>
-                              <RadioButton layoutX="156.0" layoutY="25.0" mnemonicParsing="false" selected="true" stylesheets="@style.css" text="Socket" />
-                              <RadioButton layoutX="254.0" layoutY="24.0" mnemonicParsing="false" stylesheets="@style.css" text="RMI">
+                              <RadioButton fx:id="socketRadio" layoutX="156.0" layoutY="25.0" mnemonicParsing="false" onAction="#updateHint" selected="true" stylesheets="@style.css" text="Socket">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="tecRete" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <Label layoutX="25.0" layoutY="30.0" text="Da implementare così" textFill="WHITE">
+                                 </toggleGroup></RadioButton>
+                              <RadioButton fx:id="RMIradio" layoutX="254.0" layoutY="24.0" mnemonicParsing="false" onAction="#updateHint" stylesheets="@style.css" text="RMI" toggleGroup="$tecRete" />
+                              <Label layoutX="25.0" layoutY="30.0" text="Nerd setting" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
