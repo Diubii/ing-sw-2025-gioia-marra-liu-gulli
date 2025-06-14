@@ -253,7 +253,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 }
             }
 
-            newGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
+//            newGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
+            gameTiles.remove(centralTile);
+
 
 
             myPlayer.getShip().putTile(centralTile, new Position(3, 2));
@@ -362,6 +364,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     }
 
                     myGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
+                    gameTiles.remove(centralTile);
 
 
                     myPlayer.getShip().putTile(centralTile, new Position(3, 2));
