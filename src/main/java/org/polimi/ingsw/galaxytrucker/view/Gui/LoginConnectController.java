@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.view.Gui;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
@@ -19,10 +20,10 @@ public class LoginConnectController extends GenericSceneController {
     @FXML private javafx.scene.control.TextField TxfServerAddr;
     @FXML private javafx.scene.control.TextField TxfPort;
     @FXML private javafx.scene.control.TextField TxfNickname;
+    @FXML private RadioButton socketRadio;
+    @FXML private RadioButton RMIradio;
 
     private GuiJavaFx mainViewController;
-    private ClientController clientController;  // Riferimento al controller del client
-    private ClientModel mymodel;
     private Stage primaryStage;
     private  MusicManager musicManager;
 
@@ -31,14 +32,19 @@ public class LoginConnectController extends GenericSceneController {
 
 
     // Metodo per impostare il riferimento al controller del client
-    public void initialSetup(GuiJavaFx mainViewController,ClientController clientController,ClientModel mymodel,Stage primaryStage, MusicManager musicManager) {
+    public void initialSetupSmall(GuiJavaFx mainViewController,Stage primaryStage, MusicManager musicManager) {
         this.mainViewController = mainViewController;
-        this.clientController = clientController;
-        this.mymodel = mymodel;
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
+            }
 
-        TxfPort.setPromptText(this.clientController.getIsSocket() ? "Default Socket: 5000" : "Default RMI: 1099");
+    public void updateHint(){
+        TxfPort.setPromptText(socketRadio.isSelected() ? "Default Socket: 5000" : "Default RMI: 1099");
+    }
+
+    @Override
+    public void initialSetup(GuiJavaFx mainViewController, ClientController clientController, ClientModel mymodel, Stage primaryStage, MusicManager musicManager) {
+        //Not used
     }
 
     public void ShowGenericMessage(String message){
@@ -55,11 +61,15 @@ public class LoginConnectController extends GenericSceneController {
         int port;
         String address = TxfServerAddr.getText().trim();
 
+        ClientController controller = new ClientController(null, socketRadio.isSelected()); // true = socket, false = RMI
+        controller.setView(mainViewController);
+        mainViewController.initializeController(controller);
+
         //Default se vuoto
         if (address.isEmpty()) {address="127.0.0.1";}
         //Default se vuoto
         if(TxfPort.getText().isEmpty()){
-            port = this.clientController.getIsSocket() ? 5000 : 1099;
+            port = controller.getIsSocket() ? 5000 : 1099;
         }
         else{
             try {
@@ -71,14 +81,14 @@ public class LoginConnectController extends GenericSceneController {
         }
         //Si effettua connessione
         try{
-            clientController.handleServerInfo(new SERVER_INFO(address, port));
+            controller.handleServerInfo(new SERVER_INFO(address, port));
         } catch (Exception ex) {
             TxfPort.setText(ex.toString());
             return;
         }
         //Se ha successo si manda Nickname
         try {
-            clientController.handleNicknameInput(TxfNickname.getText().trim());
+            controller.handleNicknameInput(TxfNickname.getText().trim());
         } catch (IOException ex) {
             TxtError.setText("IOException.");
         } catch (ExecutionException ex) {

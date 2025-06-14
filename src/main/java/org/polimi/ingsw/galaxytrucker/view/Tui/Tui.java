@@ -418,7 +418,7 @@ public class Tui implements View, Observable {
         if (phase.equals(GameState.BUILDING_TIMER)) {
             new Thread(() -> {
 
-                showGenericMessage("TIMER STARTED !!");
+                showGenericMessage("TIMER STARTED !!",false);
             }).start();
             return;
         } else {
@@ -473,7 +473,7 @@ public class Tui implements View, Observable {
 
 
             } catch (Exception e) {
-                showGenericMessage("Error fetching ship: " + e.getMessage() + ", please try again");
+                showGenericMessage("Error fetching ship: " + e.getMessage() + ", please try again",false);
                 FetchMyShip();
                 throw new RuntimeException(e);
             }
@@ -524,7 +524,7 @@ public class Tui implements View, Observable {
                     String targetName = readLine("Enter the nickname of the player to fetch their ship: ").trim();
 
                     if ("RESET".equals(targetName)) {
-                        showGenericMessage("Input was reset.");
+                        showGenericMessage("Input was reset.",false);
                         break;
                     }
 
@@ -532,7 +532,7 @@ public class Tui implements View, Observable {
                     success = true;
 
                 } catch (Exception e) {
-                    showGenericMessage("Unexpected error: " + e.getMessage());
+                    showGenericMessage("Unexpected error: " + e.getMessage(),false);
                 }
             } while (!success);
         } finally {
@@ -777,11 +777,11 @@ public class Tui implements View, Observable {
                         disableInput();
                     }
                 } else {
-                    showGenericMessage("There is no tile to pick");
+                    showGenericMessage("There is no tile to pick",false);
                     showBuildingMenu();
                 }
             } else {
-                showGenericMessage("You already have a tile in hand to place ");
+                showGenericMessage("You already have a tile in hand to place ",false);
                 showBuildingMenu();
             }
         }
@@ -810,11 +810,11 @@ public class Tui implements View, Observable {
                         disableInput();
                     }
                 } else {
-                    showGenericMessage("There is no place to place the tile");
+                    showGenericMessage("There is no place to place the tile",false);
                     showBuildingMenu();
                 }
             } else {
-                showGenericMessage("You have no tile in hand to place");
+                showGenericMessage("You have no tile in hand to place",false);
                 showBuildingMenu();
             }
 
@@ -1047,13 +1047,19 @@ public class Tui implements View, Observable {
         }
     }
 
-    public void showGenericMessage(String message) {
+    public void showGenericMessage(String message,Boolean imporant) {
 
         synchronized (outputLock) {
             System.out.print("\n"); // Torna all'inizio della riga
 //            System.out.print(" ".repeat(100)); // Cancella eventuale scrittura
 //            System.out.print("\r"); // Torna di nuovo all'inizio
-            System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
+            if(imporant){
+                System.out.println(TuiColor.RED + message + TuiColor.RESET);
+            }
+            else{
+                System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
+            }
+
 
             // Ripristina il prompt e quello che l'utente aveva scritto
             System.out.print("> ");
@@ -1063,7 +1069,7 @@ public class Tui implements View, Observable {
 
     @Override
     public void showWaitOtherPlayers() {
-        showGenericMessage("Attendi gli altri giocatori per avanzare alla prossima fase");
+        showGenericMessage("Attendi gli altri giocatori per avanzare alla prossima fase",false);
     }
 
     @Override
@@ -1330,7 +1336,7 @@ public class Tui implements View, Observable {
                 () -> clientController.sendActivateAdventureCardResponse(true),
                 () -> {
                     clientController.sendActivateAdventureCardResponse(false);
-                    showGenericMessage("Hai scelto di non attivare l'effetto.");
+                    showGenericMessage("Hai scelto di non attivare l'effetto.",false);
                 }
         );
         disableInput();
@@ -1377,7 +1383,7 @@ public class Tui implements View, Observable {
 
                 if (choice == 0) {
                     clientController.sendSelectPlanetResponse(null, -1);
-                    showGenericMessage("Hai scelto di non scegliere un pianeta. Devi aspettare la scelta degli altri giocatori.");
+                    showGenericMessage("Hai scelto di non scegliere un pianeta. Devi aspettare la scelta degli altri giocatori.",false);
                 } else {
                     Planet selected = landablePlanets.get(choice);
                     clientController.sendSelectPlanetResponse(selected, choice);
@@ -1439,7 +1445,7 @@ public class Tui implements View, Observable {
                 try {
                     String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + ", oppure 0 per saltare): ");
                     if (input.equals("0")) {
-                        showGenericMessage("Hai scelto di non caricare nessuna merce. Devi aspettare gli altri giocatori.");
+                        showGenericMessage("Hai scelto di non caricare nessuna merce. Devi aspettare gli altri giocatori.",false);
                         return;
                     }
                     goodIndex = Integer.parseInt(input) - 1;
@@ -1603,7 +1609,7 @@ public class Tui implements View, Observable {
                 () -> clientController.sendCollectRewardsResponse(true),
                 () -> {
                     clientController.sendCollectRewardsResponse(false);
-                    showGenericMessage("Hai scelto di non accettare la ricompensa.");
+                    showGenericMessage("Hai scelto di non accettare la ricompensa.",false);
                 }
         );
         disableInput();

@@ -1,11 +1,12 @@
-package org.polimi.ingsw.galaxytrucker.network.server;
+package org.polimi.ingsw.galaxytrucker;
 
 import org.polimi.ingsw.galaxytrucker.controller.ServerController;
-import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import org.polimi.ingsw.galaxytrucker.network.server.ServerRMI;
+import org.polimi.ingsw.galaxytrucker.network.server.ServerRMIInterface;
+import org.polimi.ingsw.galaxytrucker.network.server.ServerSocket;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 
 public class ServerManager {
     public static void main(String[] args) {

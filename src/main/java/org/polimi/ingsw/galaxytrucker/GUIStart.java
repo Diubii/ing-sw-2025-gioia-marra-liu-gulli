@@ -1,4 +1,4 @@
-package org.polimi.ingsw.galaxytrucker.view.Gui;
+package org.polimi.ingsw.galaxytrucker;
 
 
 import javafx.application.Application;
@@ -8,10 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
+import org.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import java.io.File;
 import java.net.URL;
 
 public class GUIStart extends Application {
@@ -24,8 +22,6 @@ public class GUIStart extends Application {
 
         FXMLLoader loader;
         try{
-
-
             URL url = getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Loading.fxml");
             loader = new FXMLLoader(url);
             root = loader.load();
@@ -35,9 +31,8 @@ public class GUIStart extends Application {
         primaryScene = new Scene(root);
         primaryStage.setScene(primaryScene);
 
-        ClientController controller = new ClientController(null, true); // true = socket, false = RMI
-        GuiJavaFx gui = new GuiJavaFx(primaryStage,primaryScene, controller, controller.getMyModel());
-        controller.setView(gui);
+
+        GuiJavaFx gui = new GuiJavaFx(primaryStage,primaryScene);
 
 
         primaryStage.setTitle("Galaxy Trucker - GUI");
@@ -45,7 +40,6 @@ public class GUIStart extends Application {
         primaryStage.getIcons().add(icon);
         primaryStage.setMinHeight(800);
         primaryStage.setMinWidth(900);
-        //primaryStage.resizableProperty().setValue(Boolean.FALSE);
 
         gui.askServerInfo(); // Prima scena da mostrare
         primaryStage.show();
