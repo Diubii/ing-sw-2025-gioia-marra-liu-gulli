@@ -39,6 +39,13 @@ public class TileBunch {
         this.faceUpTiles = new ArrayList<>();
         try {
             tiles = Util.generateTiles();
+            ArrayList<Integer> centralCabIds = new ArrayList<Integer>();
+            centralCabIds.add(33);
+            centralCabIds.add(34);
+            centralCabIds.add(52);
+            centralCabIds.add(61);
+            tiles.removeIf(tile -> centralCabIds.contains(tile.getId()));
+
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

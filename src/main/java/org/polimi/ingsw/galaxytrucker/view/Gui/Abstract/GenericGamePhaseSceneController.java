@@ -23,5 +23,5 @@ public abstract class GenericGamePhaseSceneController extends GenericSceneContro
 
     public abstract void chooseTroncone(ArrayList<Ship> tronconi);
 
-    public abstract void showWaitOtherPlayers();
+    public abstract void showWaitOtherPlayers(Boolean clearLast);
 }
