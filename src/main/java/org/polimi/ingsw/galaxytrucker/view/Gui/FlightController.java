@@ -521,7 +521,7 @@ public class FlightController extends GenericGamePhaseSceneController {
     }
 
     @Override
-    public void showWaitOtherPlayers() {
+    public void showWaitOtherPlayers(Boolean clearLast) {
         ShowGenericMessage("Aspetta gli altri giocatori");
     }
 

@@ -39,6 +39,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import java.awt.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -733,13 +734,30 @@ public class GuiJavaFx implements View {
 
 
 
-    //NON DOVREBBE ESSERE MAI UTILIZZATO IN TEORIA
+
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
         Platform.runLater(() -> {
             ChoiceDialog<Integer> dialog = new ChoiceDialog<>(validPositions.get(0), validPositions);
+            dialog.getDialogPane().setStyle("-fx-background-color: Navy;");
             dialog.setTitle("Scegli la posizione");
             dialog.setHeaderText("Scegli la posizione di partenza al decollo");
+            //Niente bottone annulla che non ha senso averlo
+            dialog.getDialogPane().getButtonTypes().remove(ButtonType.CANCEL);
+
+            dialog.setOnShown(ev -> {
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                stage.setOnCloseRequest(closeEvent -> {
+                    closeEvent.consume(); // Previene la chiusura predefinita
+                    Integer selected = dialog.getSelectedItem(); // Prende la selezione corrente
+                    try {
+                        controller.getClient().sendMessage(new org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskPositionResponse(id, selected));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    stage.close(); // Chiude manualmente
+                });
+            });
             dialog.showAndWait().ifPresent(pos -> {
                 try {
                     controller.getClient().sendMessage(new org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskPositionResponse(id, pos));
@@ -798,7 +816,7 @@ public class GuiJavaFx implements View {
     public void showWaitOtherPlayers() {
         //Devo dire a quelli di fase di gioco di mostrare un overlay di attesa
         Platform.runLater(() -> {
-            ((GenericGamePhaseSceneController) actualPageController).showWaitOtherPlayers();
+            ((GenericGamePhaseSceneController) actualPageController).showWaitOtherPlayers(true);
         });
     }
 

@@ -274,10 +274,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
     }
 
     @Override
-    public void showWaitOtherPlayers() {
+    public void showWaitOtherPlayers(Boolean clearLast) {
         System.out.println("debug: showWaitOtherPlayers");
 
-        StackCenterMenu.getChildren().removeLast();
+        if(clearLast){ StackCenterMenu.getChildren().removeLast(); }
         VBox root = null;
         FXMLLoader loader;
         try {
@@ -302,9 +302,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         BtnFinishBuilding.setDisable(true);
         finishedBuilding = true;
-        HBox overlay = new HBox();
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3);");
-        StackCenterMenu.getChildren().add(overlay);
+        showWaitOtherPlayers(false);
     }
 
     /**

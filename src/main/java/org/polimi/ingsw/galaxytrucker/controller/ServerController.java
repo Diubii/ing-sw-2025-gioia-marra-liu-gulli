@@ -562,7 +562,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                       else{
 
-
                             myTile = myGame.getTileBunch().drawTile();
                             if (myTile == null) {
                                 drawTileResponse = new DrawTileResponse(null, message.getID());
