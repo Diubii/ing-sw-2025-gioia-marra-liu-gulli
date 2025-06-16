@@ -253,6 +253,8 @@ public class Tui implements View, Observable {
 
         try {
             String nickname = readLine("Enter your nickname: ");
+            if (checkReset(nickname)) return;
+
             clientController.handleNicknameInput(nickname);
         } catch (InterruptedException | ExecutionException | IOException e) {
             System.err.println("Error reading nickname: " + e.getMessage());
@@ -265,7 +267,8 @@ public class Tui implements View, Observable {
             String choice;
             do {
                 choice = readLine("Create Room (a) or Join Room (b): ").trim().toLowerCase();
-                if(choice.equals("reset")) break;
+                if (checkReset(choice)) return;
+
                 if (!choice.equals("a") && !choice.equals("b")) {
                     synchronized (outputLock) {
                         out.println("Invalid input. Please enter 'a' or 'b'.");
@@ -283,40 +286,44 @@ public class Tui implements View, Observable {
         }
     }
 
-    public void askCreateRoom() throws ExecutionException {
+    public void askCreateRoom() {
         enableInput();
         try {
             String maxPlayersStr;
             int maxPlayers;
             boolean isLearningMatch;
             synchronized (outputLock) {
-                maxPlayersStr = readLine("Set MAX players for Game (2-4): ");
+                maxPlayersStr = readLine("Set MAX players for Game (2-4): ").toLowerCase();
+                if (checkReset(maxPlayersStr)) return;
+
                 maxPlayers = Integer.parseInt(maxPlayersStr);
 
                 if (maxPlayers < 2 || maxPlayers > 4) {
-
                     out.println("Please enter a number between 2 and 4.");
                     askCreateRoom(); // Retry
                     return;
                 }
 
-                String learningInput = readLine("Is this a Learning Match? (y/n): ");
+                String learningInput = readLine("Is this a Learning Match? (y/n): ").toLowerCase();
+                if (checkReset(learningInput)) return;
 
-                if (learningInput.equals("y")) {
-                    isLearningMatch = true;
-                } else if (learningInput.equals("n")) {
-                    isLearningMatch = false;
-                } else {
-                    out.println("Invalid input. Please type 'y' or 'n'.");
-                    askCreateRoom();  // Retry
-                    return;
+                switch (learningInput) {
+                    case "y" -> isLearningMatch = true;
+                    case "n" -> isLearningMatch = false;
+                    default -> {
+                        out.println("Invalid input. Please type 'y' or 'n'.");
+                        askCreateRoom();  // Retry
+                        return;
+                    }
                 }
             }
 
             clientController.handleCreateChoice(maxPlayers, isLearningMatch);
 
         } catch (NumberFormatException e) {
-            out.println("Invalid number format.");
+            synchronized (outputLock) {
+                out.println("Invalid number format.");
+            }
             askCreateRoom(); // Retry
         } finally {
             disableInput();
@@ -329,12 +336,11 @@ public class Tui implements View, Observable {
             out.println("\nPlease enter the Lobby ID you want to join:");
             enableInput();
             try {
-                String input = readLine("> ").trim();
+                String input = readLine("> ").trim().toLowerCase();
+                if(input.equals("reset")) return;
+
                 int lobbyId = Integer.parseInt(input);
-
-
                 clientController.handleJoinChoice(lobbyId);
-
             } catch (NumberFormatException e) {
                 out.println("Invalid Lobby ID. Please enter a number.");
                 askRoomCode();
@@ -356,7 +362,7 @@ public class Tui implements View, Observable {
         synchronized (outputLock) {
             out.println("：List of rooms");
             for (LobbyInfo lobby : lobbies) {
-                Boolean isLearningMatch = lobby.isLearningMatch();
+                boolean isLearningMatch = lobby.isLearningMatch();
                 String matchType = isLearningMatch ? "Learning" : "Normal";
 
                 out.printf("Lobby ID: %d | Host: %s | GameType: " + matchType + " |Players: (%d/%d)  \n",
@@ -452,13 +458,18 @@ public class Tui implements View, Observable {
     @Override
     public void showBuildingMenu() {
         enableInput();
-        String input = readLine("\nChoose an option (a–k) or menu: ").trim().toLowerCase();
+
+        final String choiceEnd;
+        if(MenuManager.learningMatch) choiceEnd = "i";
+        else choiceEnd = "j";
+
+        final String string = "\nChoose an option (a–" + choiceEnd + ") or reprint this menu (m): ";
+        String input = readLine(string).trim().toLowerCase();
         if (checkReset(input)) return;
 
         while (input.equals("m") || input.equals("menu") || input.equals("?")) {
             menuManager.showCurrentMenu();
-            input = readLine("\nChoose an option (a–j) or menu: ").trim().toLowerCase();
-
+            input = readLine(string).trim().toLowerCase();
         }
 
         clientController.handleBuildingMenuChoice(input);
@@ -475,7 +486,7 @@ public class Tui implements View, Observable {
             } catch (Exception e) {
                 showGenericMessage("Error fetching ship: " + e.getMessage() + ", please try again",false);
                 FetchMyShip();
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
             }
 
         }).start();
@@ -497,8 +508,6 @@ public class Tui implements View, Observable {
                 int DeckID = Integer.parseInt(DeckIDStr);
 
                 if (checkReset(DeckIDStr)) return;
-                ;
-
 
                 if (DeckID < 1 || DeckID > 4) {
                     out.println("Deck ID not valid. Please enter a number between 1 and 4.");
@@ -523,10 +532,8 @@ public class Tui implements View, Observable {
                 try {
                     String targetName = readLine("Enter the nickname of the player to fetch their ship: ").trim();
 
-                    if ("RESET".equals(targetName)) {
-                        showGenericMessage("Input was reset.",false);
-                        break;
-                    }
+                    if (checkReset(targetName)) return;
+
 
                     clientController.handleFetchShip(targetName);
                     success = true;
@@ -568,13 +575,15 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void askPosition() throws ExecutionException {
+    public void askPosition() {
         boolean valid = false;
         Position pos = null;
 
         do {
             try {
                 String input = readLine("Enter position to move the tile to (format: (x,y)): ").trim();
+                if (checkReset(input)) return;
+
                 pos = parseCoordinate(input);
                 clientController.setTmpCurrentPosition(clientController.getCurrentPosition());
                 clientController.setCurrentPos(pos.getX() - 4, pos.getY() - 5);
@@ -859,8 +868,7 @@ public class Tui implements View, Observable {
             } while (true);
 
         } catch (Exception e) {
-            out.println("Error during tile placement.");
-            e.printStackTrace();
+            out.println("Error during tile placement: " + e.getMessage());
         } finally {
             disableInput();
         }
@@ -898,8 +906,7 @@ public class Tui implements View, Observable {
             }
 
         } catch (Exception e) {
-            out.println(" Error during tile placement ");
-            e.printStackTrace();
+            out.println("Error during tile placement " + e.getMessage());
         } finally {
             disableInput();
         }
@@ -916,6 +923,7 @@ public class Tui implements View, Observable {
         enableInput();
         try {
             String input = readLine("\nChoose an option (a–c) or menu: ").trim().toLowerCase();
+            if(checkReset(input)) return;
             clientController.handleCheckShipChoice(input);
         } finally {
             disableInput();
@@ -928,6 +936,7 @@ public class Tui implements View, Observable {
 
         try {
             String input = readLine("\nChoose an option (a–b) or menu: ").trim().toLowerCase();
+            if(checkReset(input)) return;
             clientController.handleEmbarkCrewMenu(Character.toString(input.charAt(input.length() - 1)));
         } finally {
             disableInput();
@@ -946,6 +955,7 @@ public class Tui implements View, Observable {
             do {
                 try {
                     String input = readLine("Enter position to remove the Tile from(format: (x,y)): ").trim();
+                    if(checkReset(input)) return;
                     pos1 = parseCoordinate(input);
 
                     Position pos = new Position(pos1.getX() - 4, pos1.getY() - 5);
@@ -970,6 +980,7 @@ public class Tui implements View, Observable {
                     }
 
                     String input2 = readLine("Do you want to finish? (y/n)").trim().toLowerCase();
+                    if(checkReset(input2)) return;
 
 
                     while (!input2.equals("n") && !input2.equals("y")) {
@@ -1022,6 +1033,7 @@ public class Tui implements View, Observable {
         try {
             do {
                 inputStr = readLine("Choose one > ").trim();
+                if(checkReset(inputStr)) return;
                 if (inputStr.isEmpty()) {
                     System.out.println("Input vuoto, riprova.");
                     continue;
@@ -1047,13 +1059,13 @@ public class Tui implements View, Observable {
         }
     }
 
-    public void showGenericMessage(String message,Boolean imporant) {
+    public void showGenericMessage(String message, Boolean important) {
 
         synchronized (outputLock) {
             System.out.print("\n"); // Torna all'inizio della riga
 //            System.out.print(" ".repeat(100)); // Cancella eventuale scrittura
 //            System.out.print("\r"); // Torna di nuovo all'inizio
-            if(imporant){
+            if(important){
                 System.out.println(TuiColor.RED + message + TuiColor.RESET);
             }
             else{
@@ -1073,22 +1085,23 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void chooseComponent(Ship myShip, ActivatableComponent component) throws ExecutionException, InterruptedException {
+    public void chooseComponent(Ship myShip, ActivatableComponent component) {
         printShip(myShip);
         System.out.println("You can activate your " + component.name());
         int totalBatteries = myShip.getnBatterieLeft();
-        Boolean stop = false;
+        boolean stop = false;
         Position compPos, battPos;
         ArrayList<Position> activatedComponentPositions = new ArrayList<>();
         ArrayList<Position> usedBatteryPositions = new ArrayList<>();
 
         //Ciclo while
         //Chiede finchè non dico no o finchè non termino le batterie
-        while (stop == false && totalBatteries > 0) {
+        while (!stop && totalBatteries > 0) {
             System.out.print("Activate " + component.name() + " specify the coordinates or type no to stop");
             enableInput();
             String input = readLine(" input (x,y) or no: ").trim().toLowerCase();
             disableInput();
+            if(checkReset(input)) return;
             if (input.equals("n") || input.equals("no")) {
                 stop = true;
             } else {
@@ -1137,7 +1150,7 @@ public class Tui implements View, Observable {
 
     //Non considerato che giocatore non ne abbia abbastanza, controllo lato server
     //per fare che il giocatore perde direttamente
-    public void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) throws ExecutionException, InterruptedException {
+    public void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) {
         ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
         printShip(myShip);
         ArrayList<Position> housingPositions = new ArrayList<>();
@@ -1152,6 +1165,8 @@ public class Tui implements View, Observable {
                 String input = readLine(" input (x,y): ").trim().toLowerCase();
                 disableInput();
 
+                if(checkReset(input)) return;
+
                 housingPos = parseCoordinate(input);
                 housingPos.setPos(housingPos.getX() - 4, housingPos.getY() - 5);
                 System.out.println(housingPos.getX() + " " + housingPos.getY());
@@ -1162,15 +1177,13 @@ public class Tui implements View, Observable {
                         !myShip.getComponentPositionsFromName("CentralHousingUnit").contains(housingPos)) {
                     System.out.println("Wrong Coordinates, another kind of component at that coordinates ");
                 } else {
-                    int nCrewAtPos = 0;
-                    switch (myShip.getComponentFromPosition(housingPos).accept(componentNameVisitor)) {
-                        case "ModularHousingUnit":
-                            nCrewAtPos = ((ModularHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
-                            break;
-                        case "CentralHousingUnit":
-                            nCrewAtPos = ((CentralHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
-                            break;
-                    }
+                    int nCrewAtPos = switch (myShip.getComponentFromPosition(housingPos).accept(componentNameVisitor)) {
+                        case "ModularHousingUnit" ->
+                                ((ModularHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
+                        case "CentralHousingUnit" ->
+                                ((CentralHousingUnit) myShip.getComponentFromPosition(housingPos)).getNCrewMembers();
+                        default -> 0;
+                    };
                     Position finalHousingPos = housingPos;
                     int timesSlotUsed = (int) housingPositions.stream().filter(p -> p.equals(finalHousingPos)).count();
                     if (nCrewAtPos <= timesSlotUsed) {
@@ -1191,7 +1204,7 @@ public class Tui implements View, Observable {
     }
 
 
-    public void chooseTroncone(ArrayList<Ship> tronconi) throws ExecutionException, InterruptedException {
+    public void chooseTroncone(ArrayList<Ship> tronconi) {
         //Mostro tutti i tronconi numerandoli
         System.out.println("The ship divided into pieces choose one to continue ");
         for (int i = 0; i < tronconi.size(); i++) {
@@ -1206,6 +1219,7 @@ public class Tui implements View, Observable {
                 System.out.println("Choose a Fragment as your ship (1-" + tronconi.size() + "): ");
                 try {
                     String input = readLine(" > ").trim().toLowerCase();
+                    if(checkReset(input)) return;
                     int inputNum = Integer.parseInt(input);
                     choice = inputNum - 1; //0 based
                 } catch (Exception e) {
@@ -1283,7 +1297,7 @@ public class Tui implements View, Observable {
                                 for (String choice : choiches) {
                                     prompt.append("(").append(choice).append(") ");
                                 }
-                                String choice = readLine(prompt.toString());
+                                String choice = readLine(prompt.toString()).toLowerCase();
 
                                 switch (choice) {
                                     case "purple": {
@@ -1307,7 +1321,7 @@ public class Tui implements View, Observable {
                                         crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
                                         break;
                                     }
-
+                                    case "reset": {}
                                     default: {
                                         System.out.println("Invalid choice: " + choice);
                                         break;
@@ -1366,6 +1380,7 @@ public class Tui implements View, Observable {
                 out.println("List Planet choices: ");
                 CardPrintUtils.printPlanetList(landablePlanets);
                 String input = readLine("Scegli un pianeta, oppure '0' per non scegliere: ").trim();
+                if(checkReset(input)) return;
 
                 int choice;
 
@@ -1409,6 +1424,7 @@ public class Tui implements View, Observable {
             do {
                 try {
                     input = readLine("Cosa vuoi fare? [L]Load, [D]Discard, [F]Finish: ").trim().toLowerCase();
+                    if(checkReset(input)) return;
                     if (input.toLowerCase().matches("[ldf]")) {
                         valid = true;
                     } else {
@@ -1444,6 +1460,7 @@ public class Tui implements View, Observable {
             while (goodIndex < 0 || goodIndex >= goods.size()) {
                 try {
                     String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + ", oppure 0 per saltare): ");
+                    if(checkReset(input)) return;
                     if (input.equals("0")) {
                         showGenericMessage("Hai scelto di non caricare nessuna merce. Devi aspettare gli altri giocatori.",false);
                         return;
@@ -1472,6 +1489,7 @@ public class Tui implements View, Observable {
             while (selectedPos == null) {
                 try {
                     String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7 oppure 0 per saltare): ");
+                    if(checkReset(input)) return;
                     if (input.equals("0")) {
                         out.println("Hai deciso di non caricare la merce.");
                         return;
@@ -1515,6 +1533,7 @@ public class Tui implements View, Observable {
             while (selectedPos == null) {
                 try {
                     String input = readLine("Inserisci le coordinate della posizione cargo (es. 6,7 oppure 0 per saltare): ");
+                    if(checkReset(input)) return;
                     if (input.equals("0")) {
                         out.println("Hai deciso di non discard la merce.");
                         askLoadGoodChoice();
@@ -1544,6 +1563,7 @@ public class Tui implements View, Observable {
             while (goodIndex < 0 || goodIndex >= goods.size()) {
                 try {
                     String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + "): ");
+                    if(checkReset(input)) return;
                     goodIndex = Integer.parseInt(input) - 1;
                 } catch (Exception e) {
                     out.println("Input non valido.");
@@ -1745,7 +1765,7 @@ public class Tui implements View, Observable {
 
 
     private Boolean checkReset(String input) {
-        return input.equals("reset") || input.equals("RESET");
+        return input.equalsIgnoreCase("reset");
     }
 
 
@@ -1782,6 +1802,9 @@ public class Tui implements View, Observable {
                     onNo.run();
                     validInput = true;
                 }
+                case "reset" -> {
+                    return;
+                }
                 default -> System.out.println("Input non valido. Inserisci 'y' per sì o 'n' per no.");
             }
         } while (!validInput);
@@ -1789,7 +1812,7 @@ public class Tui implements View, Observable {
     }
 
     public static boolean isValidNumberInRange(String input, int min, int max) {
-        if (input == null || input.isBlank()) return false;
+        if (input == null || input.isBlank() || input.equalsIgnoreCase("reset")) return false;
 
         try {
             int value = Integer.parseInt(input.trim());
