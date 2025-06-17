@@ -14,11 +14,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
+import org.polimi.ingsw.galaxytrucker.enums.TimerStatus;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Abstract.GenericGamePhaseSceneController;
 import org.polimi.ingsw.galaxytrucker.view.Gui.Elements.*;
@@ -61,8 +64,14 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private ImageView asideTile2;
     @FXML private Button BtnFinishBuilding;
 
+    @FXML private Label lblTimer1;
+    @FXML private Label lblTimer2;
+    @FXML private Label lblTimer3;
+
+
     private ArrayList<SingleShipController> shipControllers;
     private Boolean finishedBuilding;
+    private Boolean currPhaseDone;
 
     public void initialSetup(GuiJavaFx mainViewController, ClientController clientController,ClientModel mymodel, Stage primaryStage, MusicManager musicManager) {
         this.mainViewController = mainViewController;
@@ -71,6 +80,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
         finishedBuilding = false;
+        currPhaseDone = false;
 
         listaTiles.prefWidthProperty().bind(scrollListaTiles.widthProperty());
 
@@ -148,6 +158,36 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
+    public void showTimerInfo(){
+
+        ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
+        List<Label> timerLabels = List.of(lblTimer1,lblTimer2,lblTimer3);
+        for(int i = 0; i<timerInfos.size();i++){
+            if(timerInfos.get(i).isFlipped()){
+                timerLabels.get(i).setTextFill(Color.ORANGERED);
+            }
+            else{
+                timerLabels.get(i).setTextFill(Color.WHITE);
+            }
+            timerLabels.get(i).setText( Integer.toString(timerInfos.get(i).getValue()));
+        }
+
+    }
+
+    public void flipTimer(){
+        ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
+        boolean oneActive = false;
+        for (TimerInfo timerInfo : timerInfos) {
+            if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
+                oneActive = true;
+                break;
+            }
+        }
+        if(!oneActive) {
+            clientController.sendFlipRequest(timerInfos);
+        }
+        showTimerInfo();
+    }
     @Override
     public String pageName() {
         return "BuildingPage";
@@ -222,8 +262,11 @@ public class BuildingController extends GenericGamePhaseSceneController {
         Boolean details =false;
         Boolean editable = true;
         //Se ho finito e non sono oltre la fase di building non più editabile
-        if(finishedBuilding && clientController.getPhase() != GameState.CREW_INIT && clientController.getPhase() != GameState.SHIP_CHECK) {
+        if(finishedBuilding && clientController.getPhase() != GameState.CREW_INIT && clientController.getPhase() != GameState.SHIP_CHECK ) {
             editable= false;
+        }
+        if(currPhaseDone == true){
+            editable = false;
         }
 
         if(clientController.getPhase() == GameState.CREW_INIT){
@@ -278,6 +321,8 @@ public class BuildingController extends GenericGamePhaseSceneController {
         System.out.println("debug: showWaitOtherPlayers");
 
         if(clearLast){ StackCenterMenu.getChildren().removeLast(); }
+        //metto nave non editabile
+        currPhaseDone = true;
         VBox root = null;
         FXMLLoader loader;
         try {
@@ -300,6 +345,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
         //Disable di tutto ciò che è interagibile aparte la clessidra in teoria
         clientController.handleBuildingMenuChoice("i");
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
+
+    }
+
+    public void handleFinishBuilding(){
         BtnFinishBuilding.setDisable(true);
         finishedBuilding = true;
         showWaitOtherPlayers(false);
@@ -312,6 +361,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     public void updateBuildingPageInterface(GameState state){
         switch(state){
             case SHIP_CHECK:
+                currPhaseDone = false;
                 Platform.runLater(() -> {
                     if(StackCenterMenu.getChildren().size() > 1 ){
                         StackCenterMenu.getChildren().removeLast();
@@ -337,6 +387,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
             break;
             case CREW_INIT:
                 Platform.runLater(() -> {
+                    currPhaseDone = false;
                     if(StackCenterMenu.getChildren().size() > 1 ){
                         StackCenterMenu.getChildren().removeLast();
                     }

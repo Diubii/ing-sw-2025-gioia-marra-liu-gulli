@@ -27,14 +27,16 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
     private int rotation;
     private FlightController flightController;
     private ClientController clientController;
+    private Boolean editable=false;
 
 
-    public ComponentGuiDetailsRotationVisitor(ClientController clientController,FlightController flightController, StackPane stackPane, ImageView imageView, int rotation) {
+    public ComponentGuiDetailsRotationVisitor(ClientController clientController,FlightController flightController, StackPane stackPane, ImageView imageView, int rotation,Boolean editable) {
         this.stackPane = stackPane;
         this.imageView = imageView;
         this.rotation = rotation;
         this.flightController = flightController;
         this.clientController = clientController;
+        this.editable = editable;
     }
 
     @Override
@@ -298,7 +300,7 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
 
         String pathMerce = null;
 
-        if( flightController != null && flightController.getIsManagingGoodTime() == true){
+        if( flightController != null && flightController.getIsManagingGoodTime() == true && editable == true){
             for(int k = 0; k < slots.size(); k++){
                 int finalK = k;
                 slots.get(k).setOnMouseClicked(event -> {

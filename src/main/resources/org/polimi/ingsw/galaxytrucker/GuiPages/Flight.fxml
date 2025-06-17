@@ -32,9 +32,9 @@
       <!-- COLONNA 1 - Verde -->
       <VBox prefHeight="400.0" prefWidth="111.0" style="-fx-background-color: Navy;" GridPane.columnIndex="0">
          <children>
-               <HBox prefHeight="84.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+               <HBox prefHeight="190.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
                   <children>
-                     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" stylesheets="@style.css" HBox.hgrow="ALWAYS">
+                     <ScrollPane fx:id="logScroll" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" stylesheets="@style.css" HBox.hgrow="ALWAYS">
                         <content>
                            <VBox fx:id="logContainer" alignment="CENTER" prefHeight="36.0" prefWidth="200.0" spacing="5.0" />
                         </content>

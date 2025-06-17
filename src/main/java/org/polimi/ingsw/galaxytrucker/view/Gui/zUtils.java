@@ -75,7 +75,7 @@ public class zUtils {
 
                     //DetailRotationVisitor handles all of the "pieces" on the tiles, all the indicators
                     if(viewDetails) {
-                        ComponentGuiDetailsRotationVisitor visitor = new ComponentGuiDetailsRotationVisitor(clientController,flightController,stackPane,imageView,rotation);
+                        ComponentGuiDetailsRotationVisitor visitor = new ComponentGuiDetailsRotationVisitor(clientController,flightController,stackPane,imageView,rotation,editable);
                         tile.getMyComponent().accept(visitor);
                     }
                     stackPane.setRotate(rotation);

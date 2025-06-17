@@ -4,6 +4,7 @@
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,12 +19,14 @@ import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
+import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -355,7 +358,25 @@ public class GuiJavaFx implements View {
         switch (update.getState()){
             case BUILDING_START:
                 showBuildingMenu();
+                //Thread per aggiornare timer una volta al secondo
+                Thread timerThread = new Thread(() -> {
+                    while (controller.getPhase().equals(GameState.BUILDING_TIMER) || controller.getPhase().equals(GameState.BUILDING_START) ) {
+                        // Aggiorna la GUI
+                        Platform.runLater(() -> showTimerInfos());
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                });
+
+                timerThread.setDaemon(true);
+                timerThread.start();
+
             break;
+            case BUILDING_TIMER:
             case CREW_INIT:
                 try {
                     chooseCrew(mymodel.getMyInfo().getShip());
@@ -367,7 +388,6 @@ public class GuiJavaFx implements View {
                     throw new RuntimeException(e);
                 }
             case BUILDING_END:
-            case BUILDING_TIMER:
             case SHIP_CHECK:
                 ((BuildingController)actualPageController).updateBuildingPageInterface(update.getState());
             break;
@@ -737,7 +757,10 @@ public class GuiJavaFx implements View {
 
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
+
         Platform.runLater(() -> {
+            //FINE CERTA DI FASE BUILDING ANCHE DETTATA DAL SERVER IN CASO FINE TIMER:
+            ((BuildingController)actualPageController).handleFinishBuilding();
             ChoiceDialog<Integer> dialog = new ChoiceDialog<>(validPositions.get(0), validPositions);
             dialog.getDialogPane().setStyle("-fx-background-color: Navy;");
             dialog.setTitle("Scegli la posizione");
@@ -898,7 +921,7 @@ public class GuiJavaFx implements View {
     @NeedsToBeChecked
     @Override
     public void showTimerInfos() {
-        //Todo
+        ((BuildingController)actualPageController).showTimerInfo();
     }
 
     @Override
