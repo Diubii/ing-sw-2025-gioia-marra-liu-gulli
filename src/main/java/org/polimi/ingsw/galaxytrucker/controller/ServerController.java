@@ -1208,12 +1208,13 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             timerinfo.setTimerStatus(TimerStatus.STARTED);
 
-            int secondsIn = 0;
+            int secondsIn = seconds;
+            timerinfo.setValue(seconds);
 
-            while (secondsIn < seconds){
+            while (secondsIn > 0){
                 try {
                     Thread.sleep(1000);
-                    secondsIn += 1;
+                    secondsIn -= 1;
                     timerinfo.setValue(secondsIn);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);

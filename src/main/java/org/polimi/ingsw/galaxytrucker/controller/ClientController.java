@@ -339,7 +339,6 @@ public class ClientController implements Observer {
     }
 
 
-    //Todo: Mattia mettere lista player mandata da server
     public void handlePlayerJoinedUpdate(PlayerJoinedUpdate playerJoinedUpdate) {
 
         synchronized (myModel.getPlayerInfos()) {

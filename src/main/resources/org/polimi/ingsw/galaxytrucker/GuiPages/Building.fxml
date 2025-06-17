@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <StackPane fx:id="mainStackPane" prefHeight="400.0" prefWidth="623.0" style="-fx-background-color: #00f7ff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.polimi.ingsw.galaxytrucker.view.Gui.BuildingController">
    <children>
@@ -21,12 +20,30 @@
          <children>
             <VBox prefHeight="400.0" prefWidth="6.0" HBox.hgrow="ALWAYS">
                <children>
-                  <StackPane prefHeight="54.0" prefWidth="252.0">
+                  <StackPane prefHeight="54.0" prefWidth="252.0" style="-fx-background-color: navy;">
                      <children>
-                        <HBox prefHeight="52.0" prefWidth="252.0">
+                        <HBox alignment="CENTER_LEFT" prefHeight="52.0" prefWidth="252.0" spacing="20.0" styleClass="OverlayPanel" stylesheets="@style.css">
                            <children>
-                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="ZONA CLESSIDRA" />
+                              <Label fx:id="lblTimer1" text="0" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblTimer2" layoutX="10.0" layoutY="33.0" text="0" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblTimer3" layoutX="10.0" layoutY="33.0" text="0" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Button mnemonicParsing="false" onAction="#flipTimer" styleClass="semitransparent-button" stylesheets="@style.css" text=" Flip Timer" />
                            </children>
+                           <padding>
+                              <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+                           </padding>
                         </HBox>
                         <HBox fx:id="learningMatchOverlay2" alignment="CENTER" prefHeight="61.0" prefWidth="252.0" styleClass="OverlayPanel" stylesheets="@style.css" visible="false">
                            <children>
@@ -106,6 +123,9 @@
                                        </children>
                                     </VBox>
                                  </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
                               </VBox>
                               <StackPane fx:id="StackCenterMenu" prefHeight="363.0" prefWidth="194.0" HBox.hgrow="ALWAYS">
                                  <children>
