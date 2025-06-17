@@ -61,8 +61,7 @@ public class MenuManager {
         if (!learningMatch) {
             out.println("j. See Timers Status/ Flip Timer");
         }
-        out.println("menu. show menu");
-        out.println("reset. reset ");
+        out.println("m. show menu");
     }
 
     public void showCheckShipMenu() {

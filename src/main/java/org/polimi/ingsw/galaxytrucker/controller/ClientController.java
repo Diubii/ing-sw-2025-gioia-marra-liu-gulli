@@ -41,6 +41,7 @@ import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInt
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -49,6 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ClientController implements Observer {
 
@@ -65,6 +68,7 @@ public class ClientController implements Observer {
     private Position tmpCurrentPosition;
     private final ClientPhaseController clientPhaseController = new ClientPhaseController(this);
     private Thread heartbeat;
+    private AtomicBoolean isConnectionAlive = new AtomicBoolean(false);
 
     public GameState getPhase() {
         return phase;
@@ -113,20 +117,17 @@ public class ClientController implements Observer {
     }
 
 
-    public void connectToServer(String address, int port) throws IOException {
+    public void connectToServer(String address, int port) throws IOException, NotBoundException {
         if (isSocket) {
             client = new ClientSocket(address, port);
             ((ClientSocket) client).create(address, port);
             ((ClientSocket) client).addObserver(this);
             ((ClientSocket) client).receiveMessage();
         } else {
-            try {
-                client = new ClientRMI(port, this); // già fa addObserver
-            } catch (RemoteException e) {
-                System.err.println(e.getMessage());
-            }
+            client = new ClientRMI(port, this); // già fa addObserver
         }
 
+        isConnectionAlive.set(true);
         heartbeat = getHeartbeatThread();
         heartbeat.start();
     }
@@ -136,7 +137,7 @@ public class ClientController implements Observer {
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
             while (true) {
                 try {
-                    safeSendMessage(heartbeatRequest);
+                    if(!safeSendMessage(heartbeatRequest)) return;
                     //System.out.println("[ClientController] Sent heartbeat.");
                     Thread.sleep(Duration.ofSeconds(1));
                 } catch (InterruptedException e) {
@@ -151,8 +152,9 @@ public class ClientController implements Observer {
     public void handleServerInfo(SERVER_INFO info) {
         try {
             connectToServer(info.getAddress(), info.getPort());
-        } catch (IOException e) {
-            view.showGenericMessage(" Failed to connect to server: " + e.getMessage(),false);
+        } catch (IOException | NotBoundException e) {
+            view.showGenericMessage("Couldn't connect you to the specified server. Try again.",false);
+            view.askServerInfo();
             return;
         }
 
@@ -207,7 +209,7 @@ public class ClientController implements Observer {
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
 
         new Thread(() -> {
             try {
@@ -228,13 +230,14 @@ public class ClientController implements Observer {
     }
 
     public void handleCreateOrJoinChoice(String choice) throws ExecutionException {
-        if ("a".equals(choice)) {
-            view.askCreateRoom();
-        } else if ("b".equals(choice)) {
-            handleJoinRoomOptionsChoice();
-        } else {
-            view.showGenericMessage("Invalid choice.",false);
-            view.askJoinOrCreateRoom();
+        switch (choice.toLowerCase()) {
+            case "a" -> view.askCreateRoom();
+            case "b" -> handleJoinRoomOptionsChoice();
+            case "reset" -> {}
+            default -> {
+                view.showGenericMessage("Invalid choice.",false);
+                view.askJoinOrCreateRoom();
+            }
         }
     }
 
@@ -243,7 +246,7 @@ public class ClientController implements Observer {
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
         view.showGenericMessage("Room creation request sent.",false);
 
         new Thread(() -> {
@@ -276,7 +279,7 @@ public class ClientController implements Observer {
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
 
         new Thread(() -> {
             try {
@@ -302,7 +305,7 @@ public class ClientController implements Observer {
         JoinRoomRequest request = new JoinRoomRequest(roomId, getNickname());
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
 
         try {
             JoinRoomResponse response = (JoinRoomResponse) future.get();
@@ -595,7 +598,7 @@ public class ClientController implements Observer {
         setCompletableFuture(future, askTimerInfoRequest.getID());
         final ArrayList<TimerInfo> timerInfos;
 
-        safeSendMessage(askTimerInfoRequest);
+        if(!safeSendMessage(askTimerInfoRequest)) return null;
         try {
             TimerInfoResponse timerInfoResponse = (TimerInfoResponse) future.get();
             timerInfos = new ArrayList<>(timerInfoResponse.getTimerInfoList());
@@ -624,7 +627,8 @@ public class ClientController implements Observer {
         DrawTileRequest request = new DrawTileRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
+
         new Thread(() -> {
             try {
                 DrawTileResponse response = (DrawTileResponse) future.get();
@@ -674,7 +678,7 @@ public class ClientController implements Observer {
         DrawTileRequest request = new DrawTileRequest(tile);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
 
         new Thread(() -> {
 
@@ -719,7 +723,7 @@ public class ClientController implements Observer {
         DrawTileRequest request = DrawTileRequest.reclaimLastTileRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
         new Thread(() -> {
 
             try {
@@ -754,7 +758,8 @@ public void handleDrawReservedTile (int slotIndex){
     DrawTileRequest request = DrawTileRequest.fromReservedSlot(slotIndex);
     CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
     setCompletableFuture(future, request.getID());
-    safeSendMessage(request);
+    if(!safeSendMessage(request)) return;
+
     new Thread(() -> {
 
         try {
@@ -842,8 +847,7 @@ public void handleDrawReservedTile (int slotIndex){
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        safeSendMessage(request);
-
+        if(!safeSendMessage(request)) return;
 
         new Thread(() -> {
             try {
@@ -898,7 +902,7 @@ public void handleDrawReservedTile (int slotIndex){
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
 
         new Thread(() -> {
             try {
@@ -940,7 +944,7 @@ public void handleDrawReservedTile (int slotIndex){
         currentTileInHand.setRotation(0);
         DiscardTileRequest request = new DiscardTileRequest(currentTileInHand);
 
-        safeSendMessage(request);
+        if(!safeSendMessage(request)) return;
         currentTileInHand = null;
         currentPosition = null;
         view.showGenericMessage("Tile discarded successfully.",false);
@@ -1075,7 +1079,7 @@ public void handleDrawReservedTile (int slotIndex){
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, checkShipStatusRequest.getID());
 
-        safeSendMessage(checkShipStatusRequest);
+        if(!safeSendMessage(checkShipStatusRequest)) return;
         new Thread(() -> {
             try {
                 CheckShipStatusResponse response = (CheckShipStatusResponse) future.get();
@@ -1227,7 +1231,7 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void sendActivateAdventureCardResponse(boolean confirm) {
         ActivateAdventureCardResponse response = new ActivateAdventureCardResponse(confirm);
-        safeSendMessage(response);
+        if(!safeSendMessage(response)) return;
 
         if (confirm && "AbandonedStation".equals(getCurrentAdventureCard().getName())){
             AbandonedStation abandonedStation = (AbandonedStation)  getCurrentAdventureCard();
@@ -1403,14 +1407,13 @@ public void handleDrawReservedTile (int slotIndex){
 
     public void sendCollectRewardsResponse(boolean confirm) {
        CollectRewardsResponse response = new CollectRewardsResponse(confirm);
-       safeSendMessage(response);
+       if(!safeSendMessage(response)) return;
 
-
-        if (confirm && "Smugglers".equals(getCurrentAdventureCard().getName())) {
+       if (confirm && "Smugglers".equals(getCurrentAdventureCard().getName())) {
             Smugglers smugglers = (Smugglers)  getCurrentAdventureCard();
             myModel.setUnplacedGoods(smugglers.getGoods());
             view.askLoadGoodChoice();
-        }
+       }
     }
 
     public void handleCollectRewardsRequest(CollectRewardsRequest ignoredrequest){
@@ -1576,18 +1579,21 @@ public void handleDrawReservedTile (int slotIndex){
         safeSendMessage(flipTimerRequest);
     }
 
-    public void safeSendMessage(NetworkMessage message) {
+    public boolean safeSendMessage(NetworkMessage message) {
+        if(!isConnectionAlive.get()) return false;
+
         try {
             client.sendMessage(message);
+            return true;
         } catch (IOException e){
-            heartbeat.interrupt();
-            myModel = new ClientModel();
-            MenuManager.clearConsole();
-            view.showGenericMessage("Connessione al server persa, tentare di riconnettersi.",true);
-            new Thread(() -> {
+            if(isConnectionAlive.getAndSet(false)) {
+                myModel = new ClientModel();
+                MenuManager.clearConsole();
                 view.forceReset();
-                view.askServerInfo();
-            }).start();
+                view.showGenericMessage("Connessione al server persa, verrai riportato alla schermata di connessione.", true);
+                new Thread(() -> view.askServerInfo()).start();
+            }
+            return false;
         }
     }
 }
