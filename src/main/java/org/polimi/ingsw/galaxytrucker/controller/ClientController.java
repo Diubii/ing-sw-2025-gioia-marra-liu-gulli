@@ -350,6 +350,8 @@ public class ClientController implements Observer {
     }
 
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
+
+        System.out.println("Ricevuto phase update in clientController: "+phaseUpdate.getState().toString());
         phase = phaseUpdate.getState();
 
         if (phase.equals(GameState.FLIGHT)) myModel.setPlayerState(PlayerState.Playing);

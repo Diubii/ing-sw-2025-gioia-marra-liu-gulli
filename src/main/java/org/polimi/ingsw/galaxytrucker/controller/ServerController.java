@@ -692,8 +692,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             // [1] fisso l'ultima tile di Player
 
-            //devo chiedere in che posizione vuole essere
-            myGame.addPlayerShipFinished(nickname);
+
 
 
             synchronized (myGame.positionLock) {
@@ -744,6 +743,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
+
+            //Qui ha davvvero finito la fase di costruzione dicendo anche la posizione di partenza
+            myGame.addPlayerShipFinished(nickname);
 
             Color playerColor = myGame.getPlayerColors().get(nickname);
 
@@ -798,15 +800,20 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 broadCast(playerHandlers, new ShipUpdate(myShip, nickname));
             }
 
+            System.out.println("n gioctori che hanno finito: "+myGame.getPlayerShipFinishedSize());
             //controllo se tutti hanno finito
             if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
 
+                //TODO MATTIA FORSE MODIFICARE QUI PER scadenza timer, ma loro nn dovrebbe risultare che hanno già tutti finito
                 myGame.getGameController().nextState();
+                System.out.println("Fase successiva: "+myGame.getGameController().getGameState().toString());
                 if (myGame.getGameController().getGameState().equals(GameState.BUILDING_END))
                 //se hanno finito tutti allora si passa alla fase di check_ship
                 {
                     myGame.getGameController().nextState();
                     //System.out.println("STATE: " + myGame.getGameController());
+                    broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
+                }else if(myGame.getGameController().getGameState().equals(GameState.SHIP_CHECK)){
                     broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
                 }
 
