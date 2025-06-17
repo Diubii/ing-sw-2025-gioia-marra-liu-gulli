@@ -49,7 +49,7 @@ public class RMIClientHandler implements ClientHandler, Serializable {
 
             if (type == NetworkMessageType.AskPositionUpdate) {
                 AskPositionUpdate mess = (AskPositionUpdate) message;
-                System.out.println("ASKING TO " + mess.nickname);
+                System.out.println("ASKING TO " + mess.nickname + "ID" + mess.getID());
             }
         } catch (PlayerAlreadyExistsException | TooManyPlayersException | IOException | ExecutionException | InvalidTilePosition e) {
             System.err.println(e.getMessage());

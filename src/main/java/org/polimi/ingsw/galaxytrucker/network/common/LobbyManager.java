@@ -199,7 +199,7 @@ public class LobbyManager {
         int playingPlayers = gameController.getPlayingPlayers().size();
         int readyPlayers = this.readyPlayers.size();
         int earlyLandingPlayers = this.earlyLandingPlayers.size();
-        return readyPlayers == playingPlayers - earlyLandingPlayers;
+        return readyPlayers == playingPlayers;
     }
 
     public synchronized  void resetReadyPlayers() {

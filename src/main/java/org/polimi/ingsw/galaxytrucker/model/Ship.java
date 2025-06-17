@@ -271,9 +271,11 @@ public class Ship implements Serializable {
             }
 
             try {
-                shipBoard[pos.getX()][pos.getY()].putTile(tile);
-                updateSets(pos, tile);
-            } catch (InvalidTilePosition e) {
+                if (tile != null) {
+                    shipBoard[pos.getX()][pos.getY()].putTile(tile);
+                    updateSets(pos, tile);
+                } else throw new IllegalArgumentException("Tile is null");
+            } catch (InvalidTilePosition | IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
 
@@ -550,8 +552,8 @@ public class Ship implements Serializable {
                                     temp.removeAlienCrew();
                                 }
 
-                                shipBoard[i][j].getTile().setWellConnected(result);
-                                if (!result1) result = false;
+//                                shipBoard[i][j].getTile().setWellConnected(result);
+//                                if (!result1) result = false;
 
                             }
 

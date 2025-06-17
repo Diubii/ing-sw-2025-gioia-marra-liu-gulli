@@ -129,7 +129,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         if(game != null) {
             game.getGameController().kickPlayerFromGame(nickname);
             synchronized (lobbyInfos) {
-                lobbyInfos.remove(game.getGameID());
+            lobbyInfos.removeIf(l -> l.getLobbyID() == game.getGameID());
             }
             synchronized (lobbyManagers) {
                 lobbyManagers.remove(game.getGameID());
@@ -254,7 +254,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             }
 
 //            newGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
-            gameTiles.remove(centralTile);
+//            gameTiles.remove(centralTile);
 
 
 
@@ -363,8 +363,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                         }
                     }
 
-                    myGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
-                    gameTiles.remove(centralTile);
+//                    myGame.getRealGame().getTileBunch().getTiles().remove(centralTile);
+//                    gameTiles.remove(centralTile);
 
 
                     myPlayer.getShip().putTile(centralTile, new Position(3, 2));
@@ -446,7 +446,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                     if (myGame.getRealGame().getMaxPlayers() == myGame.getRealGame().getNumPlayers()) {
 
-                        //creo i deck
+                        //elimino tutte le cabine centrali da quelle pescabili
 
                         //creo flightDeck
                         myGame.getRealGame().createDecks();
@@ -741,6 +741,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     public void handleFinishBuildingRequest2(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             Boolean flag = false;
+            Boolean validChoice = true;
 
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
@@ -751,14 +752,34 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             int realPos = 0;
             synchronized (myGame.positionLock) {
+
+                ArrayList<Integer> takenPos = myGame.getRealGame().getFlightBoard().getOccupiedPositions();
+
                 switch (askPositionResponse.getPosition()) {
                     case 1 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFirstPos();
                     case 2 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getSecondPos();
                     case 3 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getThirdPos();
                     case 4 -> realPos = myGame.getRealGame().getFlightBoard().getFlightBoardMap().getFourthPos();
                 }
-                myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos);
-                myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
+
+
+                if (takenPos.contains(realPos)) {
+                    validChoice = false;
+                } else {
+                    myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos);
+                    myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
+                }
+
+
+            }
+
+            if (!validChoice){
+                try {
+                    handleFinishBuildingRequest(null, clientHandler);
+                    return;
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
 
