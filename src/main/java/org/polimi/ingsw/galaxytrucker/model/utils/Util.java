@@ -85,8 +85,14 @@ public class Util {
         }).stream().toList());
         ArrayList<AdventureCard> cardsToTest = new ArrayList<>();
         //cardsToTest.add(list.get(3));
-        //cardsToTest.add(list.get(3)); //Stardust
-        //cardsToTest.add(list.get(24)); //Epidemic
+        //TUTTE LE 11 TIPOLOGIE DI CARTE
+         cardsToTest.add(list.get(0)); //Schiavisti
+         cardsToTest.add(list.get(1)); //Contrabbandieri
+         cardsToTest.add(list.get(2)); //Pirati
+        cardsToTest.add(list.get(10)); //Metoeriti
+        cardsToTest.add(list.get(15)); //Zona di guerra
+         cardsToTest.add(list.get(3)); //Stardust
+         cardsToTest.add(list.get(24)); //Epidemic
          cardsToTest.add(list.get(16)); //AbandonedShip
          cardsToTest.add(list.get(31)); //Planets
          cardsToTest.add(list.get(4)); //Open Space
