@@ -7,6 +7,7 @@ import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -34,24 +35,20 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
     NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
 
-    public ClientRMI(int port, ClientController controller) throws RemoteException {
+    public ClientRMI(int port, ClientController controller) throws RemoteException, NotBoundException {
         super();
-        try {
             registry = LocateRegistry.getRegistry("localhost", port);
             server = (ServerRMIInterface) registry.lookup("GameServer");
             stub = (ClientInterfaceRMI) this;
 
             addObserver(controller);
             server.handleRMIRegistration(stub);
-
-
-        } catch (Exception e) {
-            System.err.println("Couldn't create the ClientRMI: " + e.getMessage());
-        }
     }
 
     @Override
     public void sendMessage(NetworkMessage message) throws RemoteException{
+        if(server == null) throw new RemoteException();
+
         RMIClientHandler handler = server.getClientHandler(this);
 
         NetworkMessageVisitor nmv = new NetworkMessageVisitor(server.getControllerHandles(), handler);
