@@ -2,9 +2,7 @@ package org.polimi.ingsw.galaxytrucker.controller;
 
 import org.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
-import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils;
 import org.polimi.ingsw.galaxytrucker.enums.*;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
@@ -16,7 +14,6 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 import org.polimi.ingsw.galaxytrucker.model.game.Game;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.AskTrunkRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
 import java.io.IOException;
@@ -235,18 +232,18 @@ public class GameController {
         return score;
     }
 
-    public void removePlayerFromGame(String nickname, boolean isLandingEarly) {
+    public void removePlayerFromGame(String nickname, PlayerLostReason reason) {
         game.getRealGame().getPlayer(nickname).setPlayerState(PlayerState.Spectating);
         game.getRealGame().getFlightBoard().removePlayer(game.getPlayerColors().get(nickname));
 
         FlightBoardUpdate fbu = new FlightBoardUpdate(game.getRealGame().getFlightBoard());
-        PlayerLostUpdate plu = new PlayerLostUpdate(nickname, isLandingEarly);
+        PlayerLostUpdate plu = new PlayerLostUpdate(nickname, reason);
         game.getPlayerHandlers().values().forEach(ch -> {
             ch.sendMessage(plu);
             ch.sendMessage(fbu);
         }); //Notifichiamo i client che un player ha perso e aggiorniamo la flight board
 
-        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty() && isLandingEarly) {
+        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
             handleEndGame();
 //            completeCardDrawn();
@@ -461,10 +458,9 @@ public class GameController {
         for(Player player : getPlayingPlayers()) {
             Ship ship = player.getShip();
             int nCrewAndAlien = ship.getnCrew();
-            int nCrew = 0;
-            nCrew = nCrewAndAlien - ship.getNBrownAlien()-ship.getNPurpleAlien();
-            if( nCrew== 0){
-                removePlayerFromGame(player.getNickName(), false);
+            int nCrew = nCrewAndAlien - ship.getNBrownAlien()-ship.getNPurpleAlien();
+            if(nCrew == 0){
+                removePlayerFromGame(player.getNickName(), PlayerLostReason.NoCrewMembersLeft);
             }
         }
     }
@@ -472,7 +468,7 @@ public class GameController {
     public void clearLappedPlayers() {
         for(Color color : game.getRealGame().getFlightBoard().getRankedPlayers()) {
             if(game.getRealGame().getFlightBoard().isPlayerLapped(color)){
-                removePlayerFromGame(game.getNicknameFromColor(color), false);
+                removePlayerFromGame(game.getNicknameFromColor(color), PlayerLostReason.Lapped);
             }
         }
     }

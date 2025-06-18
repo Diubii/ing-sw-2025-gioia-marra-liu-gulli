@@ -1151,7 +1151,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             String nickname = getNicknameFromClientHandler(clientHandler);
             GameController gameController = myGame.getGameController();
 
-            myGame.getGameController().removePlayerFromGame(nickname, true);
+            myGame.getGameController().removePlayerFromGame(nickname, PlayerLostReason.Quit);
             new Thread(() -> {
 //                myGame.getGameController().handleTurnBeforeDrawnCard();
                 myGame.addEarlyLandingPlayer(nickname);

@@ -1456,7 +1456,6 @@ public void handleDrawReservedTile (int slotIndex){
 
 
     public void handlePlayerLostUpdate(PlayerLostUpdate update) {
-        boolean isLandingEarly = update.isLandingEarly();
         String nickname = update.getNickname();
 
         if (nickname.equals(getNickname())) {
@@ -1464,11 +1463,17 @@ public void handleDrawReservedTile (int slotIndex){
             //Todo comunicare bene a giocatore che rimosso
             view.showYouAreNowSpectating();
         }
-        if (isLandingEarly) {
-            view.showGenericMessage("Il giocatore " + nickname + " ha lasciato la partita.",true);
-        } else {
-            view.showGenericMessage("il giocatore " + nickname + " è stato rimosso forzatamente dalla partita.",true);
+
+        String message = nickname + " ha perso: ";
+        switch (update.getReason()){
+            case PlayerLostReason.Quit -> message += "ha deciso di atterrare in anticipo.";
+            case PlayerLostReason.NoCrewMembersLeft -> message += "non aveva più membri dell'equipaggio a disposizione.";
+            case PlayerLostReason.Lapped -> message += "è stato doppiato.";
+            case PlayerLostReason.ZeroEnginePower -> message += "non aveva potenza motrice.";
+            default -> message += "le ragioni rimangono tutt'ora ignote.";
         }
+
+        view.showGenericMessage(message, true);
     }
 
     public Ship getMyShip() {
@@ -1491,7 +1496,7 @@ public void handleDrawReservedTile (int slotIndex){
             Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
             if (slot != null && slot.getTile() != null) {
                 Component c = slot.getTile().getMyComponent();
-                if (c instanceof GenericCargoHolds hold && !hold.isFull()) {
+                if (c instanceof GenericCargoHolds hold && !hold.isFull()) { //TODO: Rimuovere instanceof
                     if (good.getColor() == Color.RED) {
                         if (hold.isSpecial()) {
                             available.add(pos);
