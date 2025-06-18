@@ -583,17 +583,24 @@ public class GuiJavaFx implements View {
     public void editPositionCrew(int x,int y){
         ModularHousingUnit currentHousingUnit = ((ModularHousingUnit) mymodel.getMyInfo().getShip().getShipBoard()[x][y].getTile().getMyComponent());
 
+        int nBrownAlien = mymodel.getMyInfo().getShip().getNBrownAlien();
+        int nPurpleAlien= mymodel.getMyInfo().getShip().getNPurpleAlien();
 
         //modificare nella SHIP Locale
         if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()) && Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a entrambi
-            if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0){
+            if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0 && nPurpleAlien == 0){
                 //Ci sono umani vado a viola
                 currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addPurpleAlien();
             }
-            else if(currentHousingUnit.getNPurpleAlien() == 1){
+            else if(currentHousingUnit.getNPurpleAlien() == 1 && nBrownAlien == 0){
                 //C'è viola vado a marrone
+                currentHousingUnit.removeAllCrew();
+                currentHousingUnit.addBrownAlien();
+            }
+            else if( nBrownAlien == 0){
+                //Ci sono umani, viola occupato e vado a marrone
                 currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addBrownAlien();
             }
@@ -605,7 +612,7 @@ public class GuiJavaFx implements View {
         }
         else if(Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a viola
-            if(currentHousingUnit.getNPurpleAlien() == 0){
+            if(currentHousingUnit.getNPurpleAlien() == 0 && nPurpleAlien == 0){
                 currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addPurpleAlien();
             }
@@ -617,7 +624,7 @@ public class GuiJavaFx implements View {
         }
         else if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip())){
             //Vicino a marrone
-            if(currentHousingUnit.getNBrownAlien() == 0){
+            if(currentHousingUnit.getNBrownAlien() == 0 && nBrownAlien == 0){
                 currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addBrownAlien();
             }
