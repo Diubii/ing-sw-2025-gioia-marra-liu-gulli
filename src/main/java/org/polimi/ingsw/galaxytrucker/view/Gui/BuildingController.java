@@ -323,6 +323,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         if(clearLast){ StackCenterMenu.getChildren().removeLast(); }
         //metto nave non editabile
         currPhaseDone = true;
+        showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
         VBox root = null;
         FXMLLoader loader;
         try {
@@ -361,8 +362,8 @@ public class BuildingController extends GenericGamePhaseSceneController {
     public void updateBuildingPageInterface(GameState state){
         switch(state){
             case SHIP_CHECK:
-                currPhaseDone = false;
                 Platform.runLater(() -> {
+                    currPhaseDone = false;
                     if(StackCenterMenu.getChildren().size() > 1 ){
                         StackCenterMenu.getChildren().removeLast();
                     }
@@ -399,7 +400,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         root = loader.load();
                         //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                         SMLoadCrewController pageController = loader.getController();
-                        pageController.initialize(clientController,mainViewController,StackCenterMenu);
+                        pageController.initialize(clientController,mainViewController,StackCenterMenu,this);
                         root.setMaxWidth(Double.MAX_VALUE);
                         root.setMaxHeight(Double.MAX_VALUE);
                         //3-impostare la nuova root alla scena principale

@@ -582,65 +582,57 @@ public class GuiJavaFx implements View {
 
     public void editPositionCrew(int x,int y){
         ModularHousingUnit currentHousingUnit = ((ModularHousingUnit) mymodel.getMyInfo().getShip().getShipBoard()[x][y].getTile().getMyComponent());
+
+
         //modificare nella SHIP Locale
         if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()) && Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a entrambi
             if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0){
                 //Ci sono umani vado a viola
-                currentHousingUnit.removeCrewMember();
-                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addPurpleAlien();
-                currentHousingUnit.setAlienColor(AlienColor.PURPLE);
             }
             else if(currentHousingUnit.getNPurpleAlien() == 1){
                 //C'è viola vado a marrone
-                currentHousingUnit.removePurpleAlien();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addBrownAlien();
-                currentHousingUnit.setAlienColor(AlienColor.BROWN);
             }
             else{
                 //C'è marrone vado a umani
-                currentHousingUnit.removeBrownAlien();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addHumanCrew();
-                currentHousingUnit.addHumanCrew();
-                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
             }
         }
         else if(Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a viola
             if(currentHousingUnit.getNPurpleAlien() == 0){
-                currentHousingUnit.removeCrewMember();
-                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addPurpleAlien();
-                currentHousingUnit.setAlienColor(AlienColor.PURPLE);
             }
             else{
-                currentHousingUnit.removePurpleAlien();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addHumanCrew();
-                currentHousingUnit.addHumanCrew();
-                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
             }
 
         }
         else if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip())){
             //Vicino a marrone
             if(currentHousingUnit.getNBrownAlien() == 0){
-                currentHousingUnit.removeCrewMember();
-                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addBrownAlien();
-                currentHousingUnit.setAlienColor(AlienColor.BROWN);
             }
             else{
-                currentHousingUnit.removeBrownAlien();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addHumanCrew();
-                currentHousingUnit.addHumanCrew();
-                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
             }
         }
         else{
             currentHousingUnit.addHumanCrew();
-            currentHousingUnit.addHumanCrew();
         }
+
+        //Todo togli debug
+        System.out.println("La cab ha: "+currentHousingUnit.getNBrownAlien()+" marroni "+currentHousingUnit.getNPurpleAlien()+" viola e "+currentHousingUnit.getNCrewMembers()+" membri crew in generale");
+
 
         Position position = new Position(x,y);
         for(int i=0; i< crewInitUpdate.getCrewPos().size() ; i++){

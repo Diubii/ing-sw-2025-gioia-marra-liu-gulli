@@ -189,7 +189,12 @@ public class zUtils {
                                             ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tile.getMyComponent();
                                             if(modularHousingUnit.getNCrewMembers() > 0){
                                                 //Aggiorno model locale
+                                                System.out.println("Prima la cab ha: "+modularHousingUnit.getNBrownAlien()+" marroni "+modularHousingUnit.getNPurpleAlien()+" viola e "+modularHousingUnit.getNCrewMembers()+" membri crew in generale");
+
                                                 modularHousingUnit.removeCrewMember();
+
+                                                System.out.println("Dopo la cab ha: "+modularHousingUnit.getNBrownAlien()+" marroni "+modularHousingUnit.getNPurpleAlien()+" viola e "+modularHousingUnit.getNCrewMembers()+" membri crew in generale");
+
                                                 flightController.addHousingPosition(new Position(fX, fY));
                                                 System.out.println("Ultima inserita Posizione: "+fX+" "+fY);
                                                 showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController,activatableComponent);
