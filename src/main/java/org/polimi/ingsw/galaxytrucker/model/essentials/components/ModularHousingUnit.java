@@ -55,6 +55,13 @@ public class ModularHousingUnit extends CentralHousingUnit {
 
     }
 
+    public void removeAllCrew(){
+        nPurpleAlien = 0;
+        nBrownAlien = 0;
+        super.setHumanCrewNumber(0);
+        this.alienColor = AlienColor.EMPTY;
+    }
+
     public void removeAlienCrew() {
         nPurpleAlien = 0;
         nBrownAlien = 0;
@@ -73,8 +80,8 @@ public class ModularHousingUnit extends CentralHousingUnit {
     public void removeCrewMember() {
         switch (alienColor) {
             case EMPTY -> super.removeCrewMember();
-            case BROWN -> removeBrownAlien();
-            case PURPLE -> removePurpleAlien();
+            case BROWN -> removeAllCrew();
+            case PURPLE -> removeAllCrew();
         }
     }
 
