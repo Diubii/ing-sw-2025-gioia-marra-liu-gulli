@@ -9,10 +9,7 @@ import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import org.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
-import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import org.polimi.ingsw.galaxytrucker.model.essentials.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
@@ -97,7 +94,7 @@ public class Util {
 //        cardsToTest.add(list.get(8));
 
 
-        //cardsToTest.add(list.get(3)); //Stardust
+        cardsToTest.add(list.get(3)); //Stardust
         //cardsToTest.add(list.get(24)); //Epidemic
 
         return new CardDeck(cardsToTest, true);
@@ -198,46 +195,61 @@ public class Util {
         String s1, s2, s3, s4;
 
         // Controlla la tile sopra
-        if (S.getPosition().getY() - 1 >= 0 && TempShipBoard[S.getPosition().getY() - 1][S.getPosition().getX()].getTile() != null) {
-            s1 = TempShipBoard[S.getPosition().getX()][S.getPosition().getY() - 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
-        } else {
-            s1 = null;
-        }
+//        if (S.getPosition().getY() - 1 >= 0 && TempShipBoard[S.getPosition().getX][S.getPosition().getY() - 1].getTile() != null) {
+//            s1 = TempShipBoard[S.getPosition().getX()][S.getPosition().getY() - 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
+//        } else {
+//            s1 = null;
+//        }
+//
+//        // Controlla la tile a sinistra
+//        if (S.getPosition().getX() - 1 >= 0 && TempShipBoard[S.getPosition().getX() - 1][S.getPosition().getY()].getTile() != null) {
+//            s2 = TempShipBoard[S.getPosition().getX() - 1][S.getPosition().getY()].getTile().getMyComponent().accept(new ComponentNameVisitor());
+//        } else {
+//            s2 = null;
+//        }
+//
+//        // Controlla la tile sotto
+//        if (S.getPosition().getY() + 1 <= 6 && TempShipBoard[S.getPosition().getY() + 1][S.getPosition().getX()].getTile() != null) {
+//            s3 = TempShipBoard[S.getPosition().getX()][S.getPosition().getY() + 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
+//        } else {
+//            s3 = null;
+//        }
+//
+//        // Controlla la tile a destra
+//        if (S.getPosition().getX() + 1 <= 4 && TempShipBoard[S.getPosition().getY()][S.getPosition().getX() + 1].getTile() != null) {
+//            s4 = TempShipBoard[S.getPosition().getX() + 1][S.getPosition().getY()].getTile().getMyComponent().accept(new ComponentNameVisitor());
+//        } else {
+//            s4 = null;
+//        }
+//
+//        // Verifica se c'è un sistema di supporto vitale del colore richiesto
+//        if (color.equals(AlienColor.PURPLE)) {
+//            if ("PurpleLifeSupportSystem".equals(s1) || "PurpleLifeSupportSystem".equals(s2) ||
+//                    "PurpleLifeSupportSystem".equals(s3) || "PurpleLifeSupportSystem".equals(s4)) {
+//                return true;
+//            }
+//        }
+//        if (color.equals(AlienColor.BROWN)) {
+//            return "BrownLifeSupportSystem".equals(s1) || "BrownLifeSupportSystem".equals(s2) ||
+//                    "BrownLifeSupportSystem".equals(s3) || "BrownLifeSupportSystem".equals(s4);
+//        }
+//
+//        return false;
 
-        // Controlla la tile a sinistra
-        if (S.getPosition().getX() - 1 >= 0 && TempShipBoard[S.getPosition().getY()][S.getPosition().getX() - 1].getTile() != null) {
-            s2 = TempShipBoard[S.getPosition().getX() - 1][S.getPosition().getY()].getTile().getMyComponent().accept(new ComponentNameVisitor());
-        } else {
-            s2 = null;
-        }
+        ArrayList<Pair<Position, Tile>> connectedTiles = new ArrayList<>(P.getConnectedTiles(S.getPosition()));
+        for (Pair<Position, Tile> pair : connectedTiles) {
+            Component component = pair.getValue().getMyComponent();
 
-        // Controlla la tile sotto
-        if (S.getPosition().getY() + 1 <= 6 && TempShipBoard[S.getPosition().getY() + 1][S.getPosition().getX()].getTile() != null) {
-            s3 = TempShipBoard[S.getPosition().getX()][S.getPosition().getY() + 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
-        } else {
-            s3 = null;
-        }
-
-        // Controlla la tile a destra
-        if (S.getPosition().getX() + 1 <= 4 && TempShipBoard[S.getPosition().getY()][S.getPosition().getX() + 1].getTile() != null) {
-            s4 = TempShipBoard[S.getPosition().getX() + 1][S.getPosition().getY()].getTile().getMyComponent().accept(new ComponentNameVisitor());
-        } else {
-            s4 = null;
-        }
-
-        // Verifica se c'è un sistema di supporto vitale del colore richiesto
-        if (color.equals(AlienColor.PURPLE)) {
-            if ("PurpleLifeSupportSystem".equals(s1) || "PurpleLifeSupportSystem".equals(s2) ||
-                    "PurpleLifeSupportSystem".equals(s3) || "PurpleLifeSupportSystem".equals(s4)) {
-                return true;
+            if (component != null && wellConnectedTiles(T.getSides(), pair.getValue().getSides(), S.getPosition(), pair.getKey())){
+                if (component.accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && color.equals(AlienColor.PURPLE)){
+                    return true;
+                } else if (component.accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && color.equals(AlienColor.BROWN)){
+                    return true;
+                }
             }
         }
-        if (color.equals(AlienColor.BROWN)) {
-            return "BrownLifeSupportSystem".equals(s1) || "BrownLifeSupportSystem".equals(s2) ||
-                    "BrownLifeSupportSystem".equals(s3) || "BrownLifeSupportSystem".equals(s4);
-        }
 
-        return false;
+        return  false;
     }
 
 
@@ -309,26 +321,36 @@ public class Util {
 
     }
 
+    public static Boolean wellConnectedTiles(ArrayList<Connector> tile1Connectors, ArrayList<Connector> tile2Connectors, Position position1, Position position2) {
+
+        String relativePos;
+        Boolean wellConnected = false;
+
+        if (position1.getX() != position2.getX()) {
+            relativePos = "left-right";
+        } else relativePos = "up-down";
+
+
+        if (relativePos.equals("left-right")){
+            if (position1.getX() > position2.getX()) {
+                wellConnected = compatible(tile1Connectors.get(1), tile2Connectors.get(3));
+            } else wellConnected = compatible(tile1Connectors.get(3), tile2Connectors.get(1));
+        } else {
+            if (position1.getY() > position2.getY()) {
+                wellConnected = compatible(tile1Connectors.getFirst(), tile2Connectors.get(2));
+
+            } else  wellConnected = compatible(tile2Connectors.getFirst(), tile1Connectors.get(2));
+
+            }
+
+
+        return wellConnected;
+    }
+
 
     public static Boolean checkNearLFS(Position position, AlienColor color, Ship myShip) {
 
-        ArrayList<Position> adjacentPos = getAdjacentPositions(position);
-
-        for (Position pos : adjacentPos) {
-
-            Slot tempSlot = myShip.getShipBoard()[pos.getX()][pos.getY()];
-
-            if (tempSlot != null && tempSlot.getTile() != null) {
-                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && color.equals(AlienColor.PURPLE)) {
-                    return true;
-                } else if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && color.equals(AlienColor.BROWN)) {
-                    return true;
-                }
-            }
-
-        }
-
-        return false;
+        return CheckLifeSupportSystem(color, myShip.getTileFromPosition(position),myShip, myShip.getShipBoard()[position.getX()][position.getY()]);
 
     }
 

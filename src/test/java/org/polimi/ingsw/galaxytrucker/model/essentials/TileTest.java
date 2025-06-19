@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils;
 
 import java.util.ArrayList;
 
@@ -21,8 +22,14 @@ class TileTest {
     void setUp() {
         component = new Component(false);
         ArrayList<Connector> connectors = new ArrayList<>();
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.SINGLE);
+        connectors.add(Connector.DOUBLE);
+        connectors.add(Connector.EMPTY);
         tile = new Tile(1, 0, connectors, component);
         slot = new Slot(new Position(0, 0));
+        TilePrintUtils.printTile(tile);
+
     }
 
 

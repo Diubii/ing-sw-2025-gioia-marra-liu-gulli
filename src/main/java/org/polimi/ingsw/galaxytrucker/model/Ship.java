@@ -500,7 +500,7 @@ public class Ship implements Serializable {
      *
      * @return {@code true} se la nave è valida, {@code false} altrimenti.
      */
-    public Boolean checkShip(ArrayList<Integer> visitedTiles) {
+    public Boolean checkShip() {
 
 
 
@@ -523,6 +523,9 @@ public class Ship implements Serializable {
                         shipBoard[i][j].getTile().setWellConnected(false);
                         result =  false;
                     } else {
+
+                        shipBoard[i][j].getTile().setWellConnected(true);
+
                         //System.out.println("CHECKING : " + shipBoard[i][j].getPosition());
                         if (shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("Engine") || shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("DoubleEngine")) {
                             Boolean temp = Util.EngineWellConnected(shipBoard[i][j].getTile(), this, shipBoard[i][j]);
@@ -548,12 +551,12 @@ public class Ship implements Serializable {
 
                             if (al != AlienColor.EMPTY) {
                                 Boolean result1 = Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
-                                if (!result) {
+                                if (!result1) {
                                     temp.removeAlienCrew();
                                 }
 
-//                                shipBoard[i][j].getTile().setWellConnected(result);
-//                                if (!result1) result = false;
+                                shipBoard[i][j].getTile().setWellConnected(result);
+                                if (!result1) result = false;
 
                             }
 
@@ -665,7 +668,7 @@ public class Ship implements Serializable {
 
 //        System.out.println("IF");
 
-        checkShip(null);
+        checkShip();
         // Lista dei vicini validi della posizione corrente
         ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 

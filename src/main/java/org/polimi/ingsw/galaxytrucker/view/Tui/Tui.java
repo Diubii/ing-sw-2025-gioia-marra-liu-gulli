@@ -1459,10 +1459,13 @@ public class Tui implements View, Observable {
         try {
             while (goodIndex < 0 || goodIndex >= goods.size()) {
                 try {
-                    String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + ", oppure 0 per saltare): ");
+                    String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + ", oppure 0 per saltare il caricamento merci): ");
                     if(checkReset(input)) return;
                     if (input.equals("0")) {
-                        showGenericMessage("Hai scelto di non caricare nessuna merce. Devi aspettare gli altri giocatori.",false);
+                        showGenericMessage("Hai scelto di non caricare nessuna merce. ",false);
+                        disableInput();
+                        askLoadGoodChoice();
+
                         return;
                     }
                     goodIndex = Integer.parseInt(input) - 1;

@@ -1146,6 +1146,7 @@ public void handleDrawReservedTile (int slotIndex){
         }
         view.toShowCurrentMenu();
         if(myModel.getPlayerState() != PlayerState.Spectating){
+            view.showGenericMessage("Il turno e' finito !", true);
             view.showFlightMenu();
         }
         else{

@@ -7,7 +7,6 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMap;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class FlightBoard implements Serializable {
 
@@ -28,18 +27,20 @@ public class FlightBoard implements Serializable {
         return learningMatch;
     }
 
-    public void positionPlayer(Color token, int pos) {
+    public void positionPlayer(Color token, int pos, Player playerFromClientHandler) {
         for (int i = 0; i < flightBoardMap.getFlightBoardMapSlots().size(); i++) {
             if (i == pos) {
                 if (flightBoardMap.getFlightBoardMapSlots().get(i).getPlayerToken() == Color.EMPTY) {
                     flightBoardMap.getFlightBoardMapSlots().get(i).setPlayerToken(token);
                     playerSteps.put(token, i);
+                    playerFromClientHandler.setPlacement(i);
+
                 }
             }
         }
     }
 
-    public void movePlayer(Color token, int steps) {
+    public void movePlayer(Color token, int steps, Player player) {
         int size = flightBoardMap.getFlightBoardMapSlots().size();
         int initialPos = ((playerSteps.get(token) % size) + size) % size;
         boolean occupied = true;
@@ -68,7 +69,7 @@ public class FlightBoard implements Serializable {
 
         }
 
-        positionPlayer(token, tempFinalPos);
+        positionPlayer(token, tempFinalPos,player);
         flightBoardMap.getFlightBoardMapSlots().get(initialPos).setPlayerToken(Color.EMPTY);
 
     }

@@ -11,11 +11,8 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 
-import javax.smartcardio.Card;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UtilTest {
 
@@ -60,7 +57,7 @@ class UtilTest {
 
         ship.removeTile(new Position(5,2),false);
 
-        ship.checkShip(null);
+        ship.checkShip();
         System.out.println(ship.toString());
 
         ArrayList<Ship> ships = ship.getTronc();

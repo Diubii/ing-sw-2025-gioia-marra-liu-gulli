@@ -152,7 +152,10 @@ public class FlightController extends GenericGamePhaseSceneController {
             if(subMenu.getChildren().size() > 0 ){
                 subMenu.getChildren().removeLast();
             }
+
+
             //Imposta carta vuota
+
             cardView.setImage(new Image(getClass().getResource("/org/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/cards/empty.png").toExternalForm()));
             VBox root;
             FXMLLoader secondloader;

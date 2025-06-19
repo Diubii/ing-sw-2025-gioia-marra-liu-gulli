@@ -43,6 +43,18 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * The ServerController class handles the management of clients, lobbies, game tiles,
+ * network messages, and various game-related actions. It acts as the core server-side
+ * controller to manage game flow and client-server interactions.
+ *
+ * The class also provides mechanisms for synchronously or asynchronously executing tasks
+ * and manages the mapping between clients and their respective nicknames or game lobbies.
+ * Its primary responsibilities include handling client requests, managing game state,
+ * and broadcasting messages to clients.
+ *
+ * ServerController extends java.rmi.server.UnicastRemoteObject and implements org.polimi.ingsw.galaxytrucker.controller.ServerControllerHandles.
+ */
 public class ServerController extends UnicastRemoteObject implements ServerControllerHandles {
 
     private final HashMap<Integer, LobbyManager> lobbyManagers;
@@ -86,10 +98,27 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
 
+    /**
+     * Retrieves the list of game tiles currently managed by the server.
+     *
+     * @return An ArrayList of Tile objects representing the current game tiles.
+     */
     public ArrayList<Tile> getGameTiles() {
         return gameTiles;
     }
 
+    /**
+     * Populates the list of game tiles by deserializing data from a JSON file.
+     * This method reads the tiles data from a JSON file located at a specific path
+     * and maps it to an ArrayList of Tile objects. If there's an issue reading or
+     * deserializing the file, the error message is printed to the standard error stream.
+     *
+     * Note: The JSON file path is hardcoded and might need adjustment based on the
+     * project's structure or deployment setup.
+     *
+     * Exceptions:
+     * - Handles IOExceptions that might occur during file reading or parsing.
+     */
     public void generateGameTiles() {
         File file = new File("src/main/resources/tiledata.json"); // metti qui il percorso corretto
         ObjectMapper mapper = new ObjectMapper();
@@ -102,12 +131,23 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         }
     }
 
+    /**
+     * Adds a client to the list of managed clients in a thread-safe manner.
+     *
+     * @param client The {@link ClientHandler} instance representing the client to add.
+     */
     public void addClient(ClientHandler client) {
         synchronized (clients) {
             clients.add(client);
         }
     }
 
+    /**
+     * Retrieves the list of all connected client handlers.
+     * This method ensures thread-safe access to the clients list.
+     *
+     * @return An ArrayList containing all the currently connected ClientHandler instances.
+     */
     public ArrayList<ClientHandler> getClients() {
         synchronized (clients) {
             return clients;
@@ -169,6 +209,12 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         return lobbyManager;
     }
 
+    /**
+     * Retrieves the list of lobby information managed by the server.
+     * This method ensures thread-safe access to the lobby information list.
+     *
+     * @return An ArrayList containing instances of {@link LobbyInfo} that hold details about each lobby.
+     */
     public ArrayList<LobbyInfo> getLobbyInfos() {
         synchronized (lobbyInfos) {
             return lobbyInfos;
@@ -182,6 +228,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      *
      */
 
+    /**
+     * Handles the nickname request sent by the client. Validates the provided nickname and
+     * updates the server's record of client nicknames if the nickname is unique.
+     * Sends a response back to the client indicating whether the nickname was accepted or rejected.
+     *
+     * @param message The {@link NicknameRequest} object containing the nickname to be validated.
+     * @param clientHandler The {@link ClientHandler} instance representing the client making the request.
+     * @throws RemoteException If a remote communication error occurs during the nickname handling process.
+     */
     public void handleNicknameRequest(NicknameRequest message, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
                     Boolean result = false;
@@ -210,6 +265,17 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         //System.out.println("SENDING RESPONSE\n");
     }
 
+    /**
+     * Handles a client request to create a new game room. This method initializes a new game lobby,
+     * assigns colors to players, updates the game tiles, sets the game configurations, and sends
+     * appropriate responses back to the client.
+     *
+     * @param message       The {@link CreateRoomRequest} object containing details about the room to be created,
+     *                      such as the requested nickname, max players, and type of match.
+     * @param clientHandler The {@link ClientHandler} responsible for managing communication with the client
+     *                      that sent the request.
+     * @throws RemoteException If an error occurs during the execution of a remote method call.
+     */
     public void handleCreateRoomRequest(CreateRoomRequest message, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             //get nickname & check
@@ -282,6 +348,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles a request to fetch the available options for joining a room. This method
+     * processes a {@code JoiniRoomOptionsRequest} and sends back a {@code JoinRoomOptionsResponse}
+     * to the requesting client.
+     *
+     * @param message The request message containing the data related to the join room options.
+     * @param clientHandler The client handler responsible for sending the response to the client.
+     * @throws RemoteException If a remote communication error occurs during message handling.
+     */
     public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(null, message.getID());
@@ -292,6 +367,17 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles a request from a client to join a specific game lobby.
+     * This method processes the join room request, validates the lobby and player constraints,
+     * and communicates the result to the requesting client. If the player successfully joins
+     * the lobby, the other players in the lobby are notified. If the lobby becomes full,
+     * it transitions to the game start phase.
+     *
+     * @param message       The `JoinRoomRequest` object containing the player's information and the target lobby ID.
+     * @param clientHandler The `ClientHandler` responsible for communicating with the requesting client.
+     * @throws RemoteException If there is an error during remote method invocation.
+     */
     public void handleJoinRoomRequest(JoinRoomRequest message, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             String mess = "";
@@ -478,6 +564,19 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
     }
 
+    ///////
+
+    /**
+     * Handles the request to draw a tile during the gameplay. Depending on the state of the game,
+     * the requested tile is drawn from the deck, face-up tiles, or reserved tiles. It ensures game
+     * rules are adhered to before processing the request.
+     *
+     * @param message       The request message containing details about the tile to be drawn,
+     *                      whether it is from face-up tiles, reserved tiles, or the main deck.
+     * @param clientHandler The client handler associated with the requesting player, used to send responses
+     *                      back and retrieve player-related information.
+     * @throws RemoteException If a remote communication error occurs during the execution of the request.
+     */
     public void handleDrawTileRequest(DrawTileRequest message, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             //il client mi chiede una Tile, e devo restituirla
@@ -579,6 +678,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the request to fetch a player's ship and sends the corresponding ship update to the client.
+     * Retrieves the target player's ship using the provided nickname and constructs a {@link ShipUpdate}
+     * to communicate the relevant data to the client.
+     *
+     * @param message The {@link FetchShipRequest} containing the target player's nickname whose ship is requested.
+     * @param clientHandler The {@link ClientHandler} responsible for handling messages with the client initiating the request.
+     * @throws RemoteException If a remote communication error occurs while processing or sending the message.
+     */
     @NeedsToBeCompleted
     //Se player inserisce un Nickname non esiste? cosa ricevo
     public void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler) throws RemoteException {
@@ -597,6 +705,17 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the request to check the ship's status, validating its structure and notifying
+     * the involved players about the results. This process includes removing specified tiles
+     * from the ship, verifying if the ship structure is valid, broadcasting updates to all players,
+     * and potentially transitioning the game state if all players complete their ships.
+     *
+     * @param message The {@link CheckShipStatusRequest} containing details about the tiles to be removed
+     *                and the player's request ID.
+     * @param clientHandler The {@link ClientHandler} associated with the player making the request.
+     * @throws RemoteException If a remote communication error occurs during the process.
+     */
     public void handleCheckShipStatusRequest(CheckShipStatusRequest message, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             //devo controllare se la nave è corretta
@@ -632,7 +751,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             //se non lo e' allora controllo la ship
             if (result1) {
-                result = ship.checkShip(Util.checkShipStructure(ship, new Position(3,2)).getValue());
+                result = ship.checkShip();
             } else result = false;
 
             ShipUpdate shipUpdate = new ShipUpdate(ship, player.getNickName());
@@ -660,6 +779,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the response to an "ask position" request by executing the corresponding task in a separate thread.
+     * It invokes the {@code handleFinishBuildingRequest2} method, which processes the {@link AskPositionResponse}.
+     * Any {@link RemoteException} encountered during the execution is encapsulated and rethrown as a runtime exception.
+     *
+     * @param askPositionResponse the {@link AskPositionResponse} message containing the position data to handle
+     * @param clientHandler the {@link ClientHandler} associated with the response, representing the client who sent it
+     * @throws RemoteException if a communication-related exception occurs during the handling of the response
+     */
     public void handleAskPositionResponse(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             try {
@@ -670,6 +798,14 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the SelectPlanetResponse message received from a client.
+     * Executes the appropriate game logic within the lobby and triggers the next phase after processing the message.
+     *
+     * @param selectPlanetResponse the message containing the planet selection details from the client
+     * @param clientHandler the client handler associated with the sender of the message
+     * @throws RemoteException if a communication-related error occurs during the remote method call
+     */
     public void handleSelectPlanetResponse(SelectPlanetResponse selectPlanetResponse, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
@@ -677,12 +813,26 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             tryExecutePhaseAfterMessage(game, NetworkMessageType.SelectPlanetResponse);
         });
     }
+    /**
+     * Handles the AskTrunkResponse by forwarding it to the corresponding game's controller
+     * and attempting to execute the next phase based on the message type.
+     *
+     * @param askTrunkResponse the AskTrunkResponse message received from the client
+     * @param clientHandler the handler associated with the client sending the message
+     */
     public void handleAskTrunkResponse(AskTrunkResponse askTrunkResponse, ClientHandler clientHandler) {
         LobbyManager game = getLobbyFromHandler(clientHandler);
         game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(askTrunkResponse);
         tryExecutePhaseAfterMessage(game, NetworkMessageType.AskTrunkResponse);
     }
 
+    /**
+     * Handles the request to finalize the building action for a player's ship.
+     * This method processes the completion of the building phase for the player and determines possible valid positions
+     * for their ship on the flight board. It then sends a response to the client with the valid options for positioning
+     * the ship. Upon receiving the chosen position from the client, the player's ship will be placed in the respective position.
+     *
+     * @param finishBuildingRequest The request containing details about completing the ship building process for*/
     public void handleFinishBuildingRequest(FinishBuildingRequest finishBuildingRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -738,6 +888,14 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the request to finish building in the game, validates the position chosen by the player,
+     * updates game state, and communicates state updates to relevant clients.
+     *
+     * @param askPositionResponse The response containing the position selected by the player.
+     * @param clientHandler       The client handler associated with the player making the request.
+     * @throws RemoteException If there is an issue during remote method execution.
+     */
     public void handleFinishBuildingRequest2(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             Boolean flag = false;
@@ -766,7 +924,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 if (takenPos.contains(realPos)) {
                     validChoice = false;
                 } else {
-                    myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos);
+                    myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos, getPlayerFromClientHandler(clientHandler
+                    ));
                     myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
                 }
 
@@ -835,6 +994,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the request to place a tile on the game board. Validates whether the action can be performed
+     * based on the game state*/
     public void handlePlaceTileRequest(PlaceTileRequest placeTileRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             PlaceTileResponse placeTileResponse = new PlaceTileResponse(null, placeTileRequest.getID());
@@ -903,6 +1065,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles a request to discard a tile during the game. The method processes the
+     * request by discarding the specified tile, updating the game state, and broadcasting
+     * the relevant updates to all players in the game.
+     *
+     * @param discardTileRequest the request containing the tile to be discarded
+     * @param clientHandler the handler for the client making the discard request
+     * @throws RemoteException if a communication-related exception occurs during the operation
+     */
     @NeedsToBeCompleted
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
@@ -934,11 +1105,31 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the request to view adventure decks.
+     * Processes the incoming request from the client and performs the necessary actions
+     * to retrieve the adventure deck data, ensuring the response is sent back to the client.
+     *
+     * @param viewAdventureDecksRequest the request object containing details needed to view adventure decks
+     * @param clientHandler the handler responsible for managing client communication and responses
+     * @throws RemoteException if there is a communication-related error during the execution of the request
+     */
     @NeedsToBeCompleted
     public void handleViewAdventureDecksRequest(ViewAdventureDecksRequest viewAdventureDecksRequest, ClientHandler clientHandler) throws RemoteException {
 
     }
 
+    /**
+     * Handles the initialization and update of the crew positions during the game setup phase. This method updates
+     * the positions of crew members on the ship, applies changes to housing units based on crew color,
+     * and progresses the game state when all players have completed their setup.
+     *
+     * @param crewInitUpdate Contains the initial setup data for the crew positions, including crew member colors
+     *                       and their corresponding positions on the ship.
+     * @param clientHandler The client handler representing the player making the current crew setup update request.
+     *
+     * @throws RemoteException If a remote communication error occurs during the operation.
+     */
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -1004,6 +1195,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the response for activating an adventure card. This method is responsible for processing
+     */
     public void handleActivateAdventureCardResponse(ActivateAdventureCardResponse activateAdventureCardResponse, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
@@ -1015,6 +1209,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the response for activating a component within a ship. This method is responsible
+     * for processing the activation of various types of components (e.g., Double Engine, Double Cannon, Shield)
+     * based on the provided response data and updating the client accordingly.
+     * It*/
     public void handleActivateComponentResponse(ActivateComponentResponse activateComponentResponse, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
@@ -1054,6 +1253,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     **/
     public void handleHeartbeatRequest(HeartbeatRequest ignoredHeartbeatRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED, "Received heartbeat from " + clientHandler.toString() + "."));
@@ -1064,6 +1265,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the ship update request sent by a client. This includes processing changes to the ship state
+     * such as fixing tiles or handling the ship update during the flight phase depending on the current
+     * game state.
+     *
+     * @param shipUpdate The {@link ShipUpdate} object containing the details of the ship update sent by the client.
+     * @param clientHandler The {@link ClientHandler} object representing the client that sent the ship update request.
+     * @throws RemoteException If a remote communication error occurs during the execution of the update.
+     */
     public void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
@@ -1110,6 +1320,13 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the response related to discarding crew members. This method processes the incoming
+     * DiscardCrewMembersResponse, updates the game state, and executes the appropriate phase based
+     * on the received response.
+     *
+     * @param discardCrewMembersResponse the response object containing details of the discarded crew members
+     **/
     public void handleDiscardCrewMembersResponse(DiscardCrewMembersResponse discardCrewMembersResponse, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
@@ -1118,6 +1335,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the response received for collecting rewards, updating the game state accordingly,
+     * and attempting to execute the next game phase if applicable.
+     *
+     * @param collectRewardsResponse the response object containing*/
     public void handleCollectRewardsResponse(CollectRewardsResponse collectRewardsResponse, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
@@ -1126,6 +1348,12 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the request to draw an adventure card.
+     *
+     * @param drawAdventureCardRequest the request object containing the details of the draw adventure card action
+     * @param clientHandler the client handler responsible for managing communication with the client
+     * @throws RemoteException*/
     public void handleDrawAdventureCardRequest(DrawAdventureCardRequest drawAdventureCardRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -1140,6 +1368,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the ready turn request sent by a client. This method processes the request
+     * asynchronously, updates the player's readiness status in the lobby, and notifies the game
+     * controller if all active players are ready.
+     *
+     * @param readyTurnRequest the request containing the player's ready status information
+     * @param clientHandler the handler associated with the client making the request
+     * @throws RemoteException if a remote communication error occurs during execution
+     */
     public void handleReadyTurnRequest(ReadyTurnRequest readyTurnRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -1159,6 +1396,16 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles a request for early landing from a client. This method initiates the process
+     * of removing the player from the game, updating the game state, and managing the player's
+     * early landing status.
+     *
+     * @param earlyLandingRequest the request object containing information about the early landing
+     *                            request made by the player.
+     * @param clientHandler       the client handler associated with the requesting player.
+     * @throws RemoteException    if a remote communication issue occurs while handling the request.
+     */
     public void handleEarlyLandingRequest(EarlyLandingRequest earlyLandingRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -1176,6 +1423,13 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the request for timer information and sends the details back to the client.
+     *
+     * @param askTimerInfoRequest the request object containing information regarding the timer info request
+     * @param clientHandler the client handler responsible for managing communication with the client
+     * @throws RemoteException if a communication-related exception occurs during execution
+     */
     public void handleAskTimerInfoRequest(AskTimerInfoRequest askTimerInfoRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -1190,6 +1444,13 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         });
     }
 
+    /**
+     * Handles the flip timer request by updating the respective timer and initiating the next timer sequence.
+     *
+     * @param flipTimerRequest the request containing the identifier of the timer to be flipped
+     * @param clientHandler the handler for the client making the request
+     * @throws RemoteException if a remote communication error occurs
+     */
     public void handleFlipTimerRequest(FlipTimerRequest flipTimerRequest, ClientHandler clientHandler) throws RemoteException {
        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
@@ -1211,6 +1472,19 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      * UTILS
      * */
 
+    /**
+     * Starts a timer that runs for the specified duration in seconds. When the timer starts, a message is broadcasted to clients.
+     * During the timer operation, the time elapsed is updated on a shared TimerInfo object. When the timer ends, it may trigger
+     * a change in the game state depending on the game controller and provided parameters.
+     *
+     * @param seconds        The duration of the timer in seconds.
+     * @param gameController The GameController managing the state of the game.
+     * @param clients        The list of ClientHandler objects representing the connected clients that need
+     *                       to be notified of timer events.
+     * @param last           A boolean value indicating if this is the last timer, which may trigger a state change
+     *                       when the timer ends.
+     * @param index          The index of the timer, used to associate the timer with a specific TimerInfo object.
+     */
     public void startTimer(int seconds, GameController gameController, ArrayList<ClientHandler> clients, boolean last, int index) {
         //mando a tutti la notifica di end_timer\
 
@@ -1270,6 +1544,14 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 //        }, seconds, TimeUnit.SECONDS);
     }
 
+    /**
+     * Handles the execution of a game phase after processing a network message of the specified type.
+     * The method checks the current game's card context, processes the incoming network message,
+     * and determines whether the phase execution should proceed based on the specified conditions.
+     *
+     * @param game the current instance of LobbyManager, which manages the game and its associated context.
+     * @param type the type of network message to process, represented as a NetworkMessageType.
+     */
     private void tryExecutePhaseAfterMessage(LobbyManager game, NetworkMessageType type) {
         CardContext cardContext =game.getGameController().getCurrentCardContext();
 
@@ -1294,6 +1576,12 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         }
     }
 
+    /**
+     * Broadcasts a network message to a list of client handlers.
+     *
+     * @param clients the list of client handlers to send the message to
+     * @param message the network message to be broadcasted
+     */
     public void broadCast(ArrayList<ClientHandler> clients, NetworkMessage message) {
         NetworkMessageType networkMessageType = message.accept(networkMessageNameVisitor);
 
@@ -1305,8 +1593,24 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         }
     }
 
+    /**
+     * A constant map that defines the allowed actions for each game state.
+     * The map uses {@link GameState} as its keys and associates them with a set of
+     * {@link GameAction} values, representing the permissible actions for each state.
+     * This is implemented using an {@link EnumMap} for efficient storage and retrieval.
+     */
     private static final Map<GameState, Set<GameAction>> allowedActionsPerState = new EnumMap<>(GameState.class);
 
+    /**
+     * Initializes the mapping of allowed actions for each game state.
+     *
+     * This method defines which actions are permissible for specific game states during the game lifecycle.
+     * The mapping is stored in the allowedActionsPerState, associating each GameState with an EnumSet of
+     * GameActions that are valid in that state.
+     *
+     * Modifications to this mapping may be necessary to accommodate additional game states or
+     * actions as the game evolves.
+     */
     private void initActionsAllowed() {
         allowedActionsPerState.put(GameState.BUILDING_START, EnumSet.of(GameAction.DRAW_TILE, GameAction.PLACE_TILE, GameAction.DISCARD_TILE));
         allowedActionsPerState.put(GameState.BUILDING_TIMER, EnumSet.of(GameAction.DRAW_TILE, GameAction.PLACE_TILE, GameAction.DISCARD_TILE, GameAction.FINISH_BUILDING));
@@ -1314,25 +1618,59 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         // altri stati se necessario
     }
 
+    /**
+     * Determines if a specific game action is allowed in the current state of the game.
+     *
+     * @param myGame the game manager that provides access to the current game's state and controller
+     * @param action the game action to check for allowance
+     * @return true if the action is allowed in the current state, false otherwise
+     */
     private boolean isActionAllowed(LobbyManager myGame, GameAction action) {
         GameState currentState = myGame.getGameController().getGameState();
         Set<GameAction> allowedActions = allowedActionsPerState.getOrDefault(currentState, Collections.emptySet());
         return allowedActions.contains(action);
     }
 
+    /**
+     * Retrieves the nickname associated with a given ClientHandler.
+     *
+     * @param clientHandler the ClientHandler whose associated nickname is to be retrieved.
+     * @return the nickname of the client associated with the provided ClientHandler,
+     *         or null if no nickname is found for the client.
+     */
     public String getNicknameFromClientHandler(ClientHandler clientHandler) {
         return clientNicknameMap.get(clientHandler.getClientID());
     }
 
+    /**
+     * Retrieves the Player object associated with the provided ClientHandler.
+     *
+     * @param clientHandler the ClientHandler instance from which the player is to be retrieved
+     * @return the Player object associated with the given ClientHandler
+     */
     private Player getPlayerFromClientHandler(ClientHandler clientHandler) {
         LobbyManager myGame = getLobbyFromHandler(clientHandler);
         return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
     }
 
+    /**
+     * Retrieves a Player instance associated with the given ClientHandler.
+     *
+     * @param clientHandler the client handler representing the connection with the client
+     * @param myGame the lobby manager containing the current game and player details
+     * @return the Player instance corresponding to the client handler
+     */
     private Player getPlayerFromClientHandler(ClientHandler clientHandler, LobbyManager myGame) {
         return myGame.getRealGame().getPlayer(getNicknameFromClientHandler(clientHandler));
     }
 
+    /**
+     * Starts a new heartbeat for the specified client handler.
+     * This method initializes a new Heartbeat instance, adds it to the list of active heartbeats,
+     * and starts the heartbeat process.
+     *
+     * @param clientHandler the client handler associated with the new heartbeat
+     */
     public void startNewHeartbeat(ClientHandler clientHandler) {
         Heartbeat heartbeat = new Heartbeat(this, clientHandler);
         heartbeats.add(heartbeat);

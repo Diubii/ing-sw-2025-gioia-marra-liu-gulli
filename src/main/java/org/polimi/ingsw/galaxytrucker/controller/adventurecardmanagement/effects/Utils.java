@@ -37,7 +37,7 @@ public abstract class Utils {
         LobbyManager game = context.getCurrentGame();
 
         FlightBoard flightBoard = game.getRealGame().getFlightBoard();
-        flightBoard.movePlayer(game.getPlayerColors().get(player.getNickName()), steps);
+        flightBoard.movePlayer(game.getPlayerColors().get(player.getNickName()), steps, player);
         FlightBoardUpdate fbu = new FlightBoardUpdate(flightBoard);
         String direction = steps < 0 ? "backwards" : "forwards";
         String message = "Player " + player.getNickName() + " moved " + Math.abs(steps) + " steps " + direction + "!";

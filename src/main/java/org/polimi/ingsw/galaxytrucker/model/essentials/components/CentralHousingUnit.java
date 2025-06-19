@@ -6,6 +6,14 @@ import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
+/**
+ * Represents the central housing unit of a structure or ship.
+ * This component is associated with a specific color and has the capacity
+ * to host a limited number of human crew members.
+ * It provides functionality to manage and query the crew members as well as
+ * the state of being colored.
+ * Extends the {@link Component} class to inherit base component characteristics.
+ */
 public class CentralHousingUnit extends Component {
 
     private final Color color;
@@ -37,6 +45,13 @@ public class CentralHousingUnit extends Component {
         return humanCrewNumber;
     }
 
+    /**
+     * Sets the number of human crew members assigned to the housing unit.
+     * The number of crew members must be within the valid range, inclusive.
+     *
+     * @param humanCrewNumber the new number of human crew members. Must be between 0 and 2.
+     * @throws IllegalArgumentException if the provided humanCrewNumber is outside the range [0, 2].
+     */
     public void setHumanCrewNumber(int humanCrewNumber) {
         if (humanCrewNumber >= 0 && humanCrewNumber <= 2) {
             this.humanCrewNumber = humanCrewNumber;
@@ -44,6 +59,11 @@ public class CentralHousingUnit extends Component {
         } else throw new IllegalArgumentException("humanCrewNumber must be between 0 and 2");
     }
 
+    /**
+     * Determines whether the component is associated with a color.
+     *
+     * @return {@code true} if the component is colored, {@code false} otherwise.
+     */
     public Boolean getIsColored() {
         return isColored;
     }

@@ -245,12 +245,12 @@ class ShipTest {
     @Test
     void testCheckShip() {
         Ship ship = MockShipFactory.createMockShip();
-        assertTrue(ship.checkShip(null));
+        assertTrue(ship.checkShip());
         ShipPrintUtils.printShip(ship);
         Ship errorShip = MockShipFactory.createMockShipForCheckShip();
         ShipPrintUtils.printShip(errorShip);
 
-        assertFalse(errorShip.checkShip(null));
+        assertFalse(errorShip.checkShip());
     }
 
     @Test

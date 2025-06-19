@@ -27,7 +27,7 @@ public class DoubleEngine extends Engine {
             if (charged) {
                 enginePower = 2;
                 charged = false;
-            } else enginePower = 1;
+            } else enginePower = 0;
         } else {
             enginePower = 0;
         }

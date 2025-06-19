@@ -59,8 +59,11 @@ public abstract class OpenSpaceEffect {
         });
 
         //Cleanup
+
+
         playerToPowerMapPerGame.get(game).clear();
         playerToPowerMapPerGame.remove(game);
+
 
         //Execute CommonEffects::end
         context.nextPhase();
