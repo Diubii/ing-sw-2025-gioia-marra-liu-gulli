@@ -2,7 +2,9 @@ package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effect
 
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import org.polimi.ingsw.galaxytrucker.model.Player;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.FlightBoardUpdate;
 
+import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.broadcast;
 import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.movePlayer;
 
 public class StardustEffect {
@@ -10,7 +12,6 @@ public class StardustEffect {
         for (Player player : context.getCurrentGame().getGameController().getRankedPlayers().reversed()) { //Si parte dall'ultimo, stavolta uso la lista del game controller perché quella del context viene aggiornata durante il foreach
             movePlayer(context, player, -player.getShip().getnExposedConnector());
         }
-
         //Execute CommonEffects::end
         context.goToEndPhase();
         context.executePhase();

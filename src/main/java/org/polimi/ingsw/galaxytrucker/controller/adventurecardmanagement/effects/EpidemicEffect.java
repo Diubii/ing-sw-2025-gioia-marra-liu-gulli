@@ -2,18 +2,23 @@ package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effect
 
 import javafx.util.Pair;
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
+import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.broadcast;
 
 public abstract class EpidemicEffect {
 
     public static void check(CardContext context) {
         ArrayList<Position> housings = new ArrayList<>();
+        Player currentPlayer = context.getCurrentPlayer();
         Ship ship = context.getCurrentPlayer().getShip();
 
         //Prendo tutte le housing units
@@ -55,6 +60,7 @@ public abstract class EpidemicEffect {
         }
 
         if (context.getCurrentPlayer() != context.getCurrentRankedPlayers().getLast()) {
+            broadcast(context, new ShipUpdate(ship,currentPlayer.getNickName()));
             //Eseguo ancora questo metodo con il giocatore successivo
             context.nextPlayer();
             context.executePhase();

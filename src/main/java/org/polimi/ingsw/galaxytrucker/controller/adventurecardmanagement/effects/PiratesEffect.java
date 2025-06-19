@@ -18,6 +18,7 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.A
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.CollectRewardsResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
+import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class PiratesEffect {
     private final static HashMap<LobbyManager, ArrayList<Ship>> trunksPerGame = new HashMap<>();
     private final static HashMap<LobbyManager, Boolean> rewardTaken  = new HashMap<>();
     private final static HashMap <LobbyManager, Integer> projectileVictimIndexes = new HashMap<>();
+    private final static HashMap<LobbyManager, Integer> currentDiceRoll = new HashMap<>();
 
     private final static Random rand = new Random();
 
@@ -164,6 +166,7 @@ public class PiratesEffect {
             trunksPerGame.remove(game);
             rewardTaken.remove(game);
             projectileVictimIndexes.remove(game);
+            broadcastGameMessage(context,"Nessuno è stato sconfitto, nessuno subirà l'attacco dei cannoni. L'effetto della carta è terminato");
             context.goToEndPhase();
             context.executePhase();
             return;
@@ -182,7 +185,7 @@ public class PiratesEffect {
 
             context.goToEndPhase();
             context.executePhase();
-                return;
+            return;
         }
         projectileVictimIndexes.putIfAbsent(game, 0);
 
@@ -195,9 +198,11 @@ public class PiratesEffect {
 
         if (projectileIndex < pirates.getCannonFires().size()) {
             //Fare player.sendMessage(new YourTurnStart());
+
             ActivateComponentRequest activateShieldRequest = new ActivateComponentRequest(ActivatableComponent.Shield);
             context.nextPhase();
-            if (projectile.getSize().equals(ProjectileSize.Little) && projectile.getType().equals(ProjectileType.CannonFire)) {
+
+            if (projectile.getSize().equals(ProjectileSize.Little) && playerCanDefendThemselvesWithAShield(player, projectile)) {
                 sendMessage(context, player, activateShieldRequest);
             } else {
                 context.executePhase();
@@ -212,18 +217,29 @@ public class PiratesEffect {
 
         LobbyManager game = context.getCurrentGame();
 
-
-
         Pirates pirates = (Pirates) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
+        Ship playerShip = player.getShip();
+        ShipPrintUtils.printShip(playerShip);
+
         System.out.println(player.getNickName() + " DEBUG: cannonaitsFire");
         int projectileIndex = projectileIndexes.getOrDefault(game,0);
         int victimIdx = projectileVictimIndexes.getOrDefault(game, 0);
 
         Projectile projectile = pirates.getCannonFires().get(projectileIndex);
 
-        int shiftDiceRoll = rand.nextInt(2, 13);
-        int diceRoll = getCorrectedDiceRoll( shiftDiceRoll,projectile.getDirection());
+        if(player.equals(losersPerGame.get(game).get(0))) {
+            int viewDiceRoll = rand.nextInt(2, 13);
+            currentDiceRoll.putIfAbsent(game, 0);
+            currentDiceRoll.put(game, viewDiceRoll);
+        }
+
+
+        int diceRoll = getCorrectedDiceRoll(currentDiceRoll.get(game), projectile.getDirection());
+
+        broadcastGameMessage(context,player.getNickName() + "  sta per essere colpito da un " + projectile.getType().name() +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
+
+        System.out.println("Stai per essere colpito da un " + projectile.getType().name()  +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
 
 
         if (losersPerGame.get(game).size() == victimIdx +1 ) {
@@ -234,36 +250,26 @@ public class PiratesEffect {
             projectileVictimIndexes.put(game, victimIdx + 1);
         }
 
-
-        //TEST
-//        int diceRoll = 0;
-//        switch (projectile.getDirection()) {
-//            case UP, DOWN -> diceRoll = 3;
-//            case LEFT, RIGHT -> diceRoll = 2;
-//        }
-
-
-        broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
         Tile destroyedTile = game.getGameController().reactToProjectile(player, projectile, diceRoll);
+        ShipPrintUtils.printShip(playerShip);
+        broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
+
         if (destroyedTile != null) {
             ArrayList<Ship> tronconi;
 
 //            se ho eliminato una tile vedo se ho creato dei tronconi
-//            tronconi = player.getShip().getTronc();
-
-            tronconi = new ArrayList<Ship>();
-            tronconi.add(player.getShip());
+            tronconi = player.getShip().getTronc();
             trunksPerGame.put(game, tronconi);
 
             if (tronconi.size() > 1) {
-                System.out.println("in tronconi.size()>1");
+                System.out.println("in tronconi size()>1");
+                System.out.println(player.getNickName() + " size tronconi " + tronconi.size());
                 //se ho creato nuovi tronconi chiedo quale tenere
                 AskTrunkRequest askTrunkRequest = new AskTrunkRequest(tronconi);
                 context.nextPhase();
                 sendMessage(context, player, askTrunkRequest);
 
             } else {
-                System.out.println("Player " + player.getNickName() + "  in else!");
                 context.previousPhase();
                 context.executePhase();
             }

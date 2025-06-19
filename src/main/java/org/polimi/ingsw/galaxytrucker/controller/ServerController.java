@@ -525,20 +525,21 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                           drawTileResponse = new DrawTileResponse(null, message.getID());
                           drawTileResponse.setErrorMessage("NO_TILE");
                       }
-                       else if (lastTile.getFixed()) {
-                           drawTileResponse = new DrawTileResponse(null, message.getID());
-                           drawTileResponse.setErrorMessage("FIXED");
-                       }
-                       else{
-                           targetShip.removeTile(targetShip.getLastTilePosition(),true);
-                           targetShip.setLastTile(null);
-                           ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
+                       else {
+                          if (lastTile.getFixed()) {
+                              drawTileResponse = new DrawTileResponse(null, message.getID());
+                              drawTileResponse.setErrorMessage("FIXED");
+                          } else {
+                              targetShip.removeTile(targetShip.getLastTilePosition(), true);
+                              targetShip.setLastTile(null);
+                              ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
 
-                           broadCast(playerHandlers, shipUpdate);
+                              broadCast(playerHandlers, shipUpdate);
 
-                           drawTileResponse = new DrawTileResponse(lastTile, message.getID());
-                           drawTileResponse.setErrorMessage("VALID");
-                       }
+                              drawTileResponse = new DrawTileResponse(lastTile, message.getID());
+                              drawTileResponse.setErrorMessage("VALID");
+                          }
+                      }
                   }
                   else {
                       if (message.isFromReserved()) {
@@ -1059,25 +1060,26 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 Ship myShip = myPlayer.getShip();
 
                 synchronized (myShip) {
-                    List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
-                            .flatMap(Arrays::stream)
-                            .filter(Objects::nonNull)
-                            .toList();
-
-                    //trovo la tile non fissata
-
-                    for (Slot slot : Slots) {
-
-                        Tile tempTile = slot.getTile();
-
-                        if (tempTile != null) {
-
-                            if (!tempTile.getFixed()) {
-                                tempTile.setFixed(true);
-                                break;
-                            }
-                        }
-                    }
+                    myShip.getLastTile().setFixed(true);
+//                    List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
+//                            .flatMap(Arrays::stream)
+//                            .filter(Objects::nonNull)
+//                            .toList();
+//
+//                    //trovo la tile non fissata
+//
+//                    for (Slot slot : Slots) {
+//
+//                        Tile tempTile = slot.getTile();
+//
+//                        if (tempTile != null) {
+//
+//                            if (!tempTile.getFixed()) {
+//                                tempTile.setFixed(true);
+//                                break;
+//                            }
+//                        }
+//                    }
 
 
                 }

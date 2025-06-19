@@ -44,33 +44,25 @@ public class GenericCargoHolds extends Component {
         return getGoods().stream().anyMatch(g -> g.getColor() == color);
     }
 
-    //Perchè fatta così, e anche metodo playerloadgood?
-    public void loadGood(Good g) {
-
-        if (Goods == null) {
-            Goods = new ArrayList<>();
-            Goods.add(g);
-        }
-
-        else {
-            for (int i = 0; i < Goods.size(); i++) {
-                if (Goods.get(i).getColor().equals(g.getColor())) {
-                    Goods.add(i + 1, new Good(g.getColor()));
-                    break;
-                } else if (i == Goods.size() - 1) Goods.add(new Good(g.getColor()));
-
-            }
-        }
-    }
-
     public void playerLoadGood(Good g) {
         if (Goods == null) {
             Goods = new ArrayList<>();
-        }
-        if (Goods.size() < nMaxContainers)
             Goods.add(g);
+        }
+        else {
+            if (Goods.size() < nMaxContainers) {
+                for (int i = 0; i < Goods.size(); i++) {
+                    if (Goods.get(i).getColor().equals(g.getColor())) {
+                        Goods.add(i + 1, new Good(g.getColor()));
+                        break;
+                    } else if (i == Goods.size() - 1) Goods.add(new Good(g.getColor()));
 
-
+                }
+            }
+            else{
+                System.out.println("Good list contains more than " + nMaxContainers);
+            }
+        }
     }
 
     public void removeGood(Good g) {

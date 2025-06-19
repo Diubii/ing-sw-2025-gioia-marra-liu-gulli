@@ -3,6 +3,7 @@ package org.polimi.ingsw.galaxytrucker.model.utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.util.Pair;
+import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.Connector;
@@ -468,81 +469,4 @@ public class Util {
         return false;
     }
 
-    public static ArrayList<Good> getAndRemoveMostValuableGoods(Ship ship, int penalty ) {
-        //red, yellow, green, blue
-        ArrayList<Good> goodsToDiscard = new ArrayList<>();
-        Map<Color, ArrayList<Position>> goodPositions = new HashMap<>();
-
-        goodPositions.put(Color.RED, new ArrayList<>());
-        goodPositions.put(Color.BLUE, new ArrayList<>());
-        goodPositions.put(Color.GREEN, new ArrayList<>());
-        goodPositions.put(Color.YELLOW, new ArrayList<>());
-
-        ArrayList<Position> storagePos = ship.getComponentPositionsFromName("GenericCargoHolds");
-
-        for (Position pos : storagePos) {
-            GenericCargoHolds hold = (GenericCargoHolds) ship.getComponentFromPosition(pos);
-            if (hold.isEmpty()) {
-                continue;
-            }
-
-            for (Good good : hold.getGoods()) {
-                Color color = good.getColor();
-                goodPositions.get(color).add(pos);
-            }
-        }
-
-        //dopo averle, parto dalla piu importante
-
-
-        List<Color> priority = List.of(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
-
-        int index = 0;
-
-        while (goodsToDiscard.size() < penalty && index < priority.size()) {
-            Color currentColor = priority.get(index);
-            List<Position> positions = goodPositions.get(currentColor);
-
-            if (positions.isEmpty()) {
-                index++;
-                continue;
-            }
-
-            Position pos = positions.remove(0);
-            GenericCargoHolds hold = (GenericCargoHolds) ship.getComponentFromPosition(pos);
-
-            hold.removeGood(currentColor);
-
-            goodsToDiscard.add(new Good(currentColor));
-
-        }
-
-        return goodsToDiscard;
-
-    }
-
-    public static void removeBatteries(Ship ship, int batteryToDiscard) {
-        if (batteryToDiscard <= 0) return;
-
-        ArrayList<Position> storagePos = ship.getComponentPositionsFromName("BatterySlot");
-
-        int removed = 0;
-
-        for (Position pos : storagePos) {
-            BatterySlot batterySlot = (BatterySlot) ship.getComponentFromPosition(pos);
-
-            while (batterySlot.getBatteriesLeft() > 0 && removed < batteryToDiscard) {
-                boolean success = batterySlot.removeBattery();
-                if (success) {
-                    removed++;
-                } else {
-                    break;
-                }
-            }
-
-            if (removed >= batteryToDiscard) {
-                break; //Done
-            }
-        }
-    }
 }

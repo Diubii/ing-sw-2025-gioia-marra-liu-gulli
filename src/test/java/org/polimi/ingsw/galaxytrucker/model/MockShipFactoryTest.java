@@ -1,5 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.model;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
@@ -30,6 +32,10 @@ class MockShipFactoryTest {
         Ship ship = MockShipFactory.createMockShip();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
 
         }
     @Test
@@ -37,6 +43,12 @@ class MockShipFactoryTest {
         Ship ship = MockShipFactory.createMockShip2();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
+
+
 
     }
 
@@ -45,6 +57,10 @@ class MockShipFactoryTest {
         Ship ship = MockShipFactory.createShipWithConnectedHousingUnits();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
 
     }
 
@@ -53,6 +69,10 @@ class MockShipFactoryTest {
         Ship ship = MockShipFactory.createHighFirePowerShip();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
 
     }
     @Test
@@ -60,6 +80,10 @@ class MockShipFactoryTest {
         Ship ship = MockShipFactory.createMockShipForCheckShip();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
 
     }
 
@@ -68,6 +92,10 @@ class MockShipFactoryTest {
         Ship ship = MockShipFactory.createMockShipWithShield();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
 
     }
     @Test
@@ -75,13 +103,46 @@ class MockShipFactoryTest {
         Ship ship = MockShipFactory.createHighFirePowerShipWithMultiDirection();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
 
     }
+
     @Test
     void testCreateHighFirePowerShipWithMultiDirection2()  {
         Ship ship = MockShipFactory.createHighFirePowerShipWithMultiDirection2();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
 
     }
+
+    @Test
+    void  testCreateEasyDestroyedShip()  {
+        Ship ship = MockShipFactory.createEasyDestroyedShip();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
+
+    }
+    @Test
+    void testCreateMockShip_CombatZone() {
+        Ship ship = MockShipFactory.createMockShip_CombatZone();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
+
+    }
+
 }

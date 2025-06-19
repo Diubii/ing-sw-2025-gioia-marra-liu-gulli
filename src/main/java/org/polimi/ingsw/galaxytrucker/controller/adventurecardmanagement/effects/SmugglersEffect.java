@@ -64,7 +64,7 @@ public class SmugglersEffect {
         GameMessage broadcast = new GameMessage(player.getNickName() + " has less FirePower than the Smugglers!");
         broadcastExcept(context, broadcast, player);
 
-        ArrayList<Good> removedGoods = Util.getAndRemoveMostValuableGoods(player.getShip(), smugglers.getPenalty());
+        ArrayList<Good> removedGoods = getAndRemoveMostValuableGoods(context, player, smugglers.getPenalty());
         int goodsCount = removedGoods.size();
         int batteryToDiscard = smugglers.getPenalty() - goodsCount;
 
@@ -72,10 +72,10 @@ public class SmugglersEffect {
         if (goodsCount == smugglers.getPenalty()) {
             message = "[Smugglers] Ha ha! We'll steal your " + goodsCount + " most valuable goods!";
         } else if (goodsCount > 0) {
-            Util.removeBatteries(player.getShip(), batteryToDiscard);
+            removeBatteries(context, player, batteryToDiscard);
             message = "[Smugglers] We'll steal your " + goodsCount + " most valuable good(s) and " + batteryToDiscard + " battery(ies), if you have them.";
         } else {
-            Util.removeBatteries(player.getShip(), batteryToDiscard);
+            removeBatteries(context,player, batteryToDiscard);
             message = "[Smugglers] You don't have any goods, so we'll steal " + batteryToDiscard + " of your batteries! Well, if you have any, poor fella.";
         }
 

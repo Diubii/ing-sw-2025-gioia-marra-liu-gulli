@@ -1,6 +1,7 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
+import org.polimi.ingsw.galaxytrucker.enums.Color;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
 import org.polimi.ingsw.galaxytrucker.enums.ProjectileType;
@@ -9,6 +10,7 @@ import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.model.Projectile;
 import org.polimi.ingsw.galaxytrucker.model.Ship;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Component;
+import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
@@ -16,9 +18,15 @@ import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DiscardCrewMembersResponse;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.FlightBoardUpdate;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 import org.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class includes common shared methods among the cards' effects methods.
@@ -187,6 +195,91 @@ public abstract class Utils {
             }
 
             default -> throw new IllegalArgumentException("Invalid direction");
+        }
+    }
+
+    public static ArrayList<Good> getAndRemoveMostValuableGoods(CardContext context,Player player, int penalty ) {
+        //red, yellow, green, blue
+        Ship ship = player.getShip();
+        ArrayList<Good> goodsToDiscard = new ArrayList<>();
+        Map<Color, ArrayList<Position>> goodPositions = new HashMap<>();
+
+        goodPositions.put(Color.RED, new ArrayList<>());
+        goodPositions.put(Color.BLUE, new ArrayList<>());
+        goodPositions.put(Color.GREEN, new ArrayList<>());
+        goodPositions.put(Color.YELLOW, new ArrayList<>());
+
+        ArrayList<Position> storagePos = ship.getComponentPositionsFromName("GenericCargoHolds");
+
+        for (Position pos : storagePos) {
+            GenericCargoHolds hold = (GenericCargoHolds) ship.getComponentFromPosition(pos);
+            if (hold.isEmpty()) {
+                continue;
+            }
+
+            for (Good good : hold.getGoods()) {
+                Color color = good.getColor();
+                goodPositions.get(color).add(pos);
+            }
+        }
+
+        //dopo averle, parto dalla piu importante
+
+
+        List<Color> priority = List.of(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
+
+        int index = 0;
+
+        while (goodsToDiscard.size() < penalty && index < priority.size()) {
+            Color currentColor = priority.get(index);
+            List<Position> positions = goodPositions.get(currentColor);
+
+            if (positions.isEmpty()) {
+                index++;
+                continue;
+            }
+
+            Position pos = positions.remove(0);
+            GenericCargoHolds hold = (GenericCargoHolds) ship.getComponentFromPosition(pos);
+
+            hold.removeGood(currentColor);
+
+            ShipUpdate shipUpdate = new ShipUpdate(ship,player.getNickName());
+            broadcast(context, shipUpdate);
+
+            goodsToDiscard.add(new Good(currentColor));
+
+        }
+
+        return goodsToDiscard;
+
+    }
+
+    public static void removeBatteries(CardContext context,Player player, int batteryToDiscard) {
+        if (batteryToDiscard <= 0) return;
+        Ship ship = player.getShip();
+
+        ArrayList<Position> storagePos = ship.getComponentPositionsFromName("BatterySlot");
+
+        int removed = 0;
+
+        for (Position pos : storagePos) {
+            BatterySlot batterySlot = (BatterySlot) ship.getComponentFromPosition(pos);
+
+            while (batterySlot.getBatteriesLeft() > 0 && removed < batteryToDiscard) {
+                boolean success = batterySlot.removeBattery();
+                if (success) {
+                    removed++;
+                    ShipUpdate shipUpdate = new ShipUpdate(ship,player.getNickName());
+                    broadcast(context, shipUpdate);
+                } else {
+                    break;
+                }
+            }
+
+            if (removed >= batteryToDiscard) {
+                break; //Done
+            }
         }
     }
 }

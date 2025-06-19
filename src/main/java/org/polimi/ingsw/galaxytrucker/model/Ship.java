@@ -339,7 +339,10 @@ public class Ship implements Serializable {
     public void removeTile(Position pos, Boolean isNormalRemove) {
         //ComponentNameVisitor visitor = new ComponentNameVisitor();
         //if (tile != null && tile.getMyComponent() != null) {
-        System.out.println("STO ELIMIMANDO" + pos);
+
+        Position viewPos = new Position(pos.getX()+4, pos.getY()+5);
+        System.out.println("STO ELIMIMANDO" + viewPos);
+
 //LOGICA PER AGGIORNARE LE POSIZIONI AL PRIMO INSERIMENTO
 //            switch (tile.getMyComponent().accept(visitor)) {
 //                case "BatterySlot":
