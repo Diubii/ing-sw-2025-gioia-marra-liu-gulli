@@ -4,6 +4,7 @@
 package org.polimi.ingsw.galaxytrucker.view.Gui;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,12 +19,14 @@ import org.polimi.ingsw.galaxytrucker.controller.ClientController;
 import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import org.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import org.polimi.ingsw.galaxytrucker.enums.GameState;
+import org.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import org.polimi.ingsw.galaxytrucker.model.*;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import org.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
+import org.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import org.polimi.ingsw.galaxytrucker.model.utils.Util;
 import org.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -355,7 +358,25 @@ public class GuiJavaFx implements View {
         switch (update.getState()){
             case BUILDING_START:
                 showBuildingMenu();
+                //Thread per aggiornare timer una volta al secondo
+                Thread timerThread = new Thread(() -> {
+                    while (controller.getPhase().equals(GameState.BUILDING_TIMER) || controller.getPhase().equals(GameState.BUILDING_START) ) {
+                        // Aggiorna la GUI
+                        Platform.runLater(() -> showTimerInfos());
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                });
+
+                timerThread.setDaemon(true);
+                timerThread.start();
+
             break;
+            case BUILDING_TIMER:
             case CREW_INIT:
                 try {
                     chooseCrew(mymodel.getMyInfo().getShip());
@@ -367,7 +388,6 @@ public class GuiJavaFx implements View {
                     throw new RuntimeException(e);
                 }
             case BUILDING_END:
-            case BUILDING_TIMER:
             case SHIP_CHECK:
                 ((BuildingController)actualPageController).updateBuildingPageInterface(update.getState());
             break;
@@ -544,9 +564,7 @@ public class GuiJavaFx implements View {
 
                 Tile tile = shipboard[x][y].getTile();
 
-                if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" &&
-                        ( !Util.checkNearLFS(new Position(x, y), AlienColor.BROWN, mymodel.getMyInfo().getShip()) &&
-                                !Util.checkNearLFS(new Position(x, y), AlienColor.PURPLE, mymodel.getMyInfo().getShip()))) {
+                if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" ) {
 
                     //Editare a giro Crew tra varie possibilità e tenere aggiornato CrewInitUpdate
                     ((GuiJavaFx) controller.getView()).editPositionCrew(x, y);
@@ -562,65 +580,64 @@ public class GuiJavaFx implements View {
 
     public void editPositionCrew(int x,int y){
         ModularHousingUnit currentHousingUnit = ((ModularHousingUnit) mymodel.getMyInfo().getShip().getShipBoard()[x][y].getTile().getMyComponent());
+
+        int nBrownAlien = mymodel.getMyInfo().getShip().getNBrownAlien();
+        int nPurpleAlien= mymodel.getMyInfo().getShip().getNPurpleAlien();
+
         //modificare nella SHIP Locale
         if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()) && Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a entrambi
-            if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0){
+            if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0 && nPurpleAlien == 0){
                 //Ci sono umani vado a viola
-                currentHousingUnit.removeCrewMember();
-                currentHousingUnit.removeCrewMember();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addPurpleAlien();
-                currentHousingUnit.setAlienColor(AlienColor.PURPLE);
             }
-            else if(currentHousingUnit.getNPurpleAlien() == 1){
+            else if(currentHousingUnit.getNPurpleAlien() == 1 && nBrownAlien == 0){
                 //C'è viola vado a marrone
-                currentHousingUnit.removePurpleAlien();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addBrownAlien();
-                currentHousingUnit.setAlienColor(AlienColor.BROWN);
+            }
+            else if( nBrownAlien == 0){
+                //Ci sono umani, viola occupato e vado a marrone
+                currentHousingUnit.removeAllCrew();
+                currentHousingUnit.addBrownAlien();
             }
             else{
                 //C'è marrone vado a umani
-                currentHousingUnit.removeBrownAlien();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addHumanCrew();
-                currentHousingUnit.addHumanCrew();
-                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
             }
         }
         else if(Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a viola
-            if(currentHousingUnit.getNPurpleAlien() == 0){
-                currentHousingUnit.removeCrewMember();
-                currentHousingUnit.removeCrewMember();
+            if(currentHousingUnit.getNPurpleAlien() == 0 && nPurpleAlien == 0){
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addPurpleAlien();
-                currentHousingUnit.setAlienColor(AlienColor.PURPLE);
             }
             else{
-                currentHousingUnit.removePurpleAlien();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addHumanCrew();
-                currentHousingUnit.addHumanCrew();
-                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
             }
 
         }
         else if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip())){
             //Vicino a marrone
-            if(currentHousingUnit.getNBrownAlien() == 0){
-                currentHousingUnit.removeCrewMember();
-                currentHousingUnit.removeCrewMember();
+            if(currentHousingUnit.getNBrownAlien() == 0 && nBrownAlien == 0){
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addBrownAlien();
-                currentHousingUnit.setAlienColor(AlienColor.BROWN);
             }
             else{
-                currentHousingUnit.removeBrownAlien();
+                currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addHumanCrew();
-                currentHousingUnit.addHumanCrew();
-                currentHousingUnit.setAlienColor(AlienColor.EMPTY);
             }
         }
         else{
             currentHousingUnit.addHumanCrew();
-            currentHousingUnit.addHumanCrew();
         }
+
+        //Todo togli debug
+        System.out.println("La cab ha: "+currentHousingUnit.getNBrownAlien()+" marroni "+currentHousingUnit.getNPurpleAlien()+" viola e "+currentHousingUnit.getNCrewMembers()+" membri crew in generale");
+
 
         Position position = new Position(x,y);
         for(int i=0; i< crewInitUpdate.getCrewPos().size() ; i++){
@@ -737,7 +754,10 @@ public class GuiJavaFx implements View {
 
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
+
         Platform.runLater(() -> {
+            //FINE CERTA DI FASE BUILDING ANCHE DETTATA DAL SERVER IN CASO FINE TIMER:
+            ((BuildingController)actualPageController).handleFinishBuilding();
             ChoiceDialog<Integer> dialog = new ChoiceDialog<>(validPositions.get(0), validPositions);
             dialog.getDialogPane().setStyle("-fx-background-color: Navy;");
             dialog.setTitle("Scegli la posizione");
@@ -898,30 +918,34 @@ public class GuiJavaFx implements View {
     @NeedsToBeChecked
     @Override
     public void showTimerInfos() {
-        //Todo
+        Platform.runLater(() -> {
+            ((BuildingController) actualPageController).showTimerInfo();
+        });
     }
 
     @Override
     public void showYouAreNowSpectating() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
-            Parent page = loader.load();
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
+                Parent page = loader.load();
 
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("ATTENZIONE");
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.initStyle(StageStyle.UTILITY);
-            dialogStage.setResizable(false);
-            dialogStage.setScene(new Scene(page));
+                Stage dialogStage = new Stage();
+                dialogStage.setTitle("ATTENZIONE");
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.initStyle(StageStyle.UTILITY);
+                dialogStage.setResizable(false);
+                dialogStage.setScene(new Scene(page));
 
-            ConfirmDialogController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
-            controller.setMessage("Che tu lo voglia o no ora sei uno spettatore");
+                ConfirmDialogController controller = loader.getController();
+                controller.setDialogStage(dialogStage);
+                controller.setMessage("Che tu lo voglia o no ora sei uno spettatore");
 
-            dialogStage.showAndWait();
+                dialogStage.showAndWait();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

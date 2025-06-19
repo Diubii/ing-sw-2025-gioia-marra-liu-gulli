@@ -25,7 +25,9 @@ public class CombatZoneFSM extends CardFSM {
                         CombatZoneEffect::receivedDiscardCrewMembersRequest,
                         CombatZoneEffect::sendDoubleCannonsActivationRequest,
                         CombatZoneEffect::minFirePowerCheck,
-                        CombatZoneEffect::cannonaits
+                        CombatZoneEffect::cannonaitsStart,
+                        CombatZoneEffect::cannonaitsFire,
+                        CombatZoneEffect::cannonaitsTrunks
                 )
         );
     }

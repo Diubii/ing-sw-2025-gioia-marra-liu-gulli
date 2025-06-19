@@ -1,5 +1,6 @@
 package org.polimi.ingsw.galaxytrucker.model.essentials.components;
 
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
@@ -42,19 +43,21 @@ public class DoubleCannon extends Cannon {
      */
     private void calculateFP() {
         if (getRotation() == 0) {
-            // Case when the orientation is 0 degrees
+            //FirePower =2
             if (charged == false) {
-                FirePower = FirePower / 2;
-            } else {
+                FirePower = 1.0F;
+            }
+            else{
+                FirePower = 2.0F;
                 charged = false;
             }
+            //Altrimenti rimane uguale
         } else {
-            // Case when the orientation is not 0 degrees
-            FirePower = FirePower / 2;
-            if (charged == false) {
-                FirePower = FirePower / 2;
-            } else {
+            if (charged==false) {
+                FirePower = 0.5F;
+            } else { //Altrimenti rimane uguale
                 charged = false;
+                FirePower = 1.0F;
             }
         }
     }

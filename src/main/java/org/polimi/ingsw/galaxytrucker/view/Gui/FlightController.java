@@ -68,6 +68,7 @@ public class FlightController extends GenericGamePhaseSceneController {
     @FXML private StackPane StackCenterMenu;
     @FXML private ImageView handImage;
     @FXML private VBox logContainer;
+    @FXML private ScrollPane logScroll;
 
 
     private Boolean isDiscardingCrewTime=false;
@@ -394,9 +395,7 @@ public class FlightController extends GenericGamePhaseSceneController {
         logEntry.setMaxWidth(Double.MAX_VALUE);
         logEntry.setMaxHeight(Double.MAX_VALUE);
         logContainer.getChildren().add(logEntry);
-        if(logContainer.getChildren().size() > 3){
-            logContainer.getChildren().removeFirst();
-        }
+        logScroll.setVvalue(1.0);
     }
 
     public void askDrawCard(){

@@ -1,16 +1,13 @@
 package org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
 import org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
-import org.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerNotFoundException;
+import org.polimi.ingsw.galaxytrucker.enums.PlayerLostReason;
 import org.polimi.ingsw.galaxytrucker.model.Player;
 import org.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
-import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateComponentRequest;
 
 import java.util.HashMap;
 
 import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.movePlayer;
-import static org.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.sendMessage;
 
 public abstract class OpenSpaceEffect {
     private final static HashMap<LobbyManager, HashMap<String, Integer>> playerToPowerMapPerGame = new HashMap<>();
@@ -54,7 +51,7 @@ public abstract class OpenSpaceEffect {
         playerToPowerMap.forEach((nickname, power) -> {
             if (power == 0) {
                 System.out.println("DEBUG " + nickname + " removed from game");
-                game.getGameController().removePlayerFromGame(nickname, false);
+                game.getGameController().removePlayerFromGame(nickname, PlayerLostReason.ZeroEnginePower);
             }
         });
 

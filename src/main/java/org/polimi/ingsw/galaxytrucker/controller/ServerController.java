@@ -624,20 +624,21 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                           drawTileResponse = new DrawTileResponse(null, message.getID());
                           drawTileResponse.setErrorMessage("NO_TILE");
                       }
-                       else if (lastTile.getFixed()) {
-                           drawTileResponse = new DrawTileResponse(null, message.getID());
-                           drawTileResponse.setErrorMessage("FIXED");
-                       }
-                       else{
-                           targetShip.removeTile(targetShip.getLastTilePosition(),true);
-                           targetShip.setLastTile(null);
-                           ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
+                       else {
+                          if (lastTile.getFixed()) {
+                              drawTileResponse = new DrawTileResponse(null, message.getID());
+                              drawTileResponse.setErrorMessage("FIXED");
+                          } else {
+                              targetShip.removeTile(targetShip.getLastTilePosition(), true);
+                              targetShip.setLastTile(null);
+                              ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
 
-                           broadCast(playerHandlers, shipUpdate);
+                              broadCast(playerHandlers, shipUpdate);
 
-                           drawTileResponse = new DrawTileResponse(lastTile, message.getID());
-                           drawTileResponse.setErrorMessage("VALID");
-                       }
+                              drawTileResponse = new DrawTileResponse(lastTile, message.getID());
+                              drawTileResponse.setErrorMessage("VALID");
+                          }
+                      }
                   }
                   else {
                       if (message.isFromReserved()) {
@@ -842,8 +843,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             // [1] fisso l'ultima tile di Player
 
-            //devo chiedere in che posizione vuole essere
-            myGame.addPlayerShipFinished(nickname);
+
 
 
             synchronized (myGame.positionLock) {
@@ -903,6 +903,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
+
+            //Qui ha davvvero finito la fase di costruzione dicendo anche la posizione di partenza
+            myGame.addPlayerShipFinished(nickname);
 
             Color playerColor = myGame.getPlayerColors().get(nickname);
 
@@ -978,15 +981,20 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 broadCast(playerHandlers, new ShipUpdate(myShip, nickname));
             }
 
+            System.out.println("n gioctori che hanno finito: "+myGame.getPlayerShipFinishedSize());
             //controllo se tutti hanno finito
             if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
 
+                //TODO MATTIA FORSE MODIFICARE QUI PER scadenza timer, ma loro nn dovrebbe risultare che hanno già tutti finito
                 myGame.getGameController().nextState();
+                System.out.println("Fase successiva: "+myGame.getGameController().getGameState().toString());
                 if (myGame.getGameController().getGameState().equals(GameState.BUILDING_END))
                 //se hanno finito tutti allora si passa alla fase di check_ship
                 {
                     myGame.getGameController().nextState();
                     //System.out.println("STATE: " + myGame.getGameController());
+                    broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
+                }else if(myGame.getGameController().getGameState().equals(GameState.SHIP_CHECK)){
                     broadCast(playerHandlers, new PhaseUpdate(GameState.SHIP_CHECK));
                 }
 
@@ -1283,25 +1291,26 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 Ship myShip = myPlayer.getShip();
 
                 synchronized (myShip) {
-                    List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
-                            .flatMap(Arrays::stream)
-                            .filter(Objects::nonNull)
-                            .toList();
-
-                    //trovo la tile non fissata
-
-                    for (Slot slot : Slots) {
-
-                        Tile tempTile = slot.getTile();
-
-                        if (tempTile != null) {
-
-                            if (!tempTile.getFixed()) {
-                                tempTile.setFixed(true);
-                                break;
-                            }
-                        }
-                    }
+                    myShip.getLastTile().setFixed(true);
+//                    List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
+//                            .flatMap(Arrays::stream)
+//                            .filter(Objects::nonNull)
+//                            .toList();
+//
+//                    //trovo la tile non fissata
+//
+//                    for (Slot slot : Slots) {
+//
+//                        Tile tempTile = slot.getTile();
+//
+//                        if (tempTile != null) {
+//
+//                            if (!tempTile.getFixed()) {
+//                                tempTile.setFixed(true);
+//                                break;
+//                            }
+//                        }
+//                    }
 
 
                 }
@@ -1412,7 +1421,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             String nickname = getNicknameFromClientHandler(clientHandler);
             GameController gameController = myGame.getGameController();
 
-            myGame.getGameController().removePlayerFromGame(nickname, true);
+            myGame.getGameController().removePlayerFromGame(nickname, PlayerLostReason.Quit);
             new Thread(() -> {
 //                myGame.getGameController().handleTurnBeforeDrawnCard();
                 myGame.addEarlyLandingPlayer(nickname);
@@ -1503,12 +1512,13 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             timerinfo.setTimerStatus(TimerStatus.STARTED);
 
-            int secondsIn = 0;
+            int secondsIn = seconds;
+            timerinfo.setValue(seconds);
 
-            while (secondsIn < seconds){
+            while (secondsIn > 0){
                 try {
                     Thread.sleep(1000);
-                    secondsIn += 1;
+                    secondsIn -= 1;
                     timerinfo.setValue(secondsIn);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);

@@ -75,7 +75,7 @@ public class zUtils {
 
                     //DetailRotationVisitor handles all of the "pieces" on the tiles, all the indicators
                     if(viewDetails) {
-                        ComponentGuiDetailsRotationVisitor visitor = new ComponentGuiDetailsRotationVisitor(clientController,flightController,stackPane,imageView,rotation);
+                        ComponentGuiDetailsRotationVisitor visitor = new ComponentGuiDetailsRotationVisitor(clientController,flightController,stackPane,imageView,rotation,editable);
                         tile.getMyComponent().accept(visitor);
                     }
                     stackPane.setRotate(rotation);
@@ -151,19 +151,19 @@ public class zUtils {
 
                                     //For activating component
                                     if(activatableComponent != null) {
-                                        if(tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if(tile.getMyComponent().accept(namevisitor).equals("DoubleEngine") && tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((DoubleEngine)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));
                                             showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);
                                         }
-                                        if(tile.getMyComponent().accept(namevisitor).equals("DoubleCannon") && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if(tile.getMyComponent().accept(namevisitor).equals("DoubleCannon") &&tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((DoubleCannon)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));
                                             showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);
                                         }
-                                        if(tile.getMyComponent().accept(namevisitor).equals("Shield") && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if(tile.getMyComponent().accept(namevisitor).equals("Shield") &&tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((Shield)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));
@@ -189,7 +189,12 @@ public class zUtils {
                                             ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tile.getMyComponent();
                                             if(modularHousingUnit.getNCrewMembers() > 0){
                                                 //Aggiorno model locale
+                                                System.out.println("Prima la cab ha: "+modularHousingUnit.getNBrownAlien()+" marroni "+modularHousingUnit.getNPurpleAlien()+" viola e "+modularHousingUnit.getNCrewMembers()+" membri crew in generale");
+
                                                 modularHousingUnit.removeCrewMember();
+
+                                                System.out.println("Dopo la cab ha: "+modularHousingUnit.getNBrownAlien()+" marroni "+modularHousingUnit.getNPurpleAlien()+" viola e "+modularHousingUnit.getNCrewMembers()+" membri crew in generale");
+
                                                 flightController.addHousingPosition(new Position(fX, fY));
                                                 System.out.println("Ultima inserita Posizione: "+fX+" "+fY);
                                                 showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController,activatableComponent);

@@ -13,6 +13,7 @@ import org.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import org.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DiscardCrewMembersRequest;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 
@@ -297,6 +298,75 @@ public class MockResponsesFactory {
                         new ActivateComponentResponse(ActivatableComponent.Shield,
                                 shieldChosen,
                                 batteryPosChosen)
+                )));
+        return responses;
+    }
+
+    public static Map<String, ArrayList<NetworkMessage>> forPirates_TestTruck(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+
+        int i=0;
+        ArrayList<Position>  doubleCannonPosList =  players.get(i).getShip().getComponentPositionsFromName("DoubleCannon");
+        ArrayList<Position>  batteryPosList = players.get(i).getShip().getComponentPositionsFromName("BatterySlot");
+
+        ArrayList<Position> doubleCannonPosChosen = new ArrayList<>();
+        ArrayList<Position> batteryPosChosen = new ArrayList<>();
+
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                                doubleCannonPosChosen,
+                                batteryPosChosen),
+
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                doubleCannonPosChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                doubleCannonPosChosen,
+                                batteryPosChosen),
+                        new AskTrunkResponse(0),
+                        new AskTrunkResponse(0),
+                        new AskTrunkResponse(0)
+
+                )));
+
+        i++;
+        doubleCannonPosChosen = new ArrayList<>();
+        batteryPosChosen = new ArrayList<>();
+        ArrayList<Position> shieldChosen;
+        shieldChosen = new ArrayList<>();
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                                shieldChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                shieldChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                shieldChosen,
+                                batteryPosChosen)
+
+                )));
+
+        i++;
+
+
+        shieldChosen = new ArrayList<>();
+        batteryPosChosen = new ArrayList<>();
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                                doubleCannonPosChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                shieldChosen,
+                                batteryPosChosen),
+                        new ActivateComponentResponse(ActivatableComponent.Shield,
+                                shieldChosen,
+                                batteryPosChosen)
+
                 )));
         return responses;
     }
@@ -614,13 +684,26 @@ public class MockResponsesFactory {
         i++;
         responses.put(players.get(i).getNickName(), new ArrayList<>(
                 List.of(
-                        new ActivateAdventureCardResponse(false)
+                        new ActivateComponentResponse(ActivatableComponent.DoubleEngine,
+                                players.get(i).getShip().getComponentPositionsFromName("DoubleEngine"),
+                                players.get(i).getShip().getComponentPositionsFromName("Battery")),
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                                players.get(i).getShip().getComponentPositionsFromName("DoubleCannon"),
+                                players.get(i).getShip().getComponentPositionsFromName("Battery"))
+
                 )));
 
         i++;
         responses.put(players.get(i).getNickName(), new ArrayList<>(
-                List.of(new ActivateAdventureCardResponse(false)
-                )));
+                List.of(
+                        new ActivateComponentResponse(ActivatableComponent.DoubleEngine,
+                        players.get(i).getShip().getComponentPositionsFromName("DoubleEngine"),
+                        players.get(i).getShip().getComponentPositionsFromName("Battery")),
+                        new DiscardCrewMembersResponse(players.get(i).getShip().getComponentPositionsFromName("CentralHousingUnit")),
+                        new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
+                                players.get(i).getShip().getComponentPositionsFromName("DoubleCannon"),
+                                players.get(i).getShip().getComponentPositionsFromName("Battery"))
+                                )));
         return responses;
     }
     private static void loadGoodsIntoShip(Ship ship, List<Good> goods, List<Position> normal, List<Position> special) {
