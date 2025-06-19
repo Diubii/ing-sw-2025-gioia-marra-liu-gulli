@@ -1410,7 +1410,7 @@ public void handleDrawReservedTile (int slotIndex){
        CollectRewardsResponse response = new CollectRewardsResponse(confirm);
        if(!safeSendMessage(response)) return;
 
-       if (confirm && "Smugglers".equals(getCurrentAdventureCard().getName())) {
+       if (confirm && "Contrabbandieri".equals(getCurrentAdventureCard().getName())) {
             Smugglers smugglers = (Smugglers)  getCurrentAdventureCard();
             myModel.setUnplacedGoods(smugglers.getGoods());
             view.askLoadGoodChoice();

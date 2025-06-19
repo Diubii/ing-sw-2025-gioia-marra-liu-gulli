@@ -564,9 +564,7 @@ public class GuiJavaFx implements View {
 
                 Tile tile = shipboard[x][y].getTile();
 
-                if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" &&
-                        ( !Util.checkNearLFS(new Position(x, y), AlienColor.BROWN, mymodel.getMyInfo().getShip()) &&
-                                !Util.checkNearLFS(new Position(x, y), AlienColor.PURPLE, mymodel.getMyInfo().getShip()))) {
+                if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" ) {
 
                     //Editare a giro Crew tra varie possibilità e tenere aggiornato CrewInitUpdate
                     ((GuiJavaFx) controller.getView()).editPositionCrew(x, y);
@@ -920,30 +918,34 @@ public class GuiJavaFx implements View {
     @NeedsToBeChecked
     @Override
     public void showTimerInfos() {
-        ((BuildingController)actualPageController).showTimerInfo();
+        Platform.runLater(() -> {
+            ((BuildingController) actualPageController).showTimerInfo();
+        });
     }
 
     @Override
     public void showYouAreNowSpectating() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
-            Parent page = loader.load();
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
+                Parent page = loader.load();
 
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("ATTENZIONE");
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.initStyle(StageStyle.UTILITY);
-            dialogStage.setResizable(false);
-            dialogStage.setScene(new Scene(page));
+                Stage dialogStage = new Stage();
+                dialogStage.setTitle("ATTENZIONE");
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.initStyle(StageStyle.UTILITY);
+                dialogStage.setResizable(false);
+                dialogStage.setScene(new Scene(page));
 
-            ConfirmDialogController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
-            controller.setMessage("Che tu lo voglia o no ora sei uno spettatore");
+                ConfirmDialogController controller = loader.getController();
+                controller.setDialogStage(dialogStage);
+                controller.setMessage("Che tu lo voglia o no ora sei uno spettatore");
 
-            dialogStage.showAndWait();
+                dialogStage.showAndWait();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
