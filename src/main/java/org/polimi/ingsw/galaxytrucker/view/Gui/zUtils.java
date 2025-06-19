@@ -151,19 +151,19 @@ public class zUtils {
 
                                     //For activating component
                                     if(activatableComponent != null) {
-                                        if(tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if(tile.getMyComponent().accept(namevisitor).equals("DoubleEngine") && tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((DoubleEngine)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));
                                             showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);
                                         }
-                                        if(tile.getMyComponent().accept(namevisitor).equals("DoubleCannon") && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if(tile.getMyComponent().accept(namevisitor).equals("DoubleCannon") &&tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((DoubleCannon)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));
                                             showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);
                                         }
-                                        if(tile.getMyComponent().accept(namevisitor).equals("Shield") && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if(tile.getMyComponent().accept(namevisitor).equals("Shield") &&tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((Shield)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));

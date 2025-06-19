@@ -564,9 +564,7 @@ public class GuiJavaFx implements View {
 
                 Tile tile = shipboard[x][y].getTile();
 
-                if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" &&
-                        ( !Util.checkNearLFS(new Position(x, y), AlienColor.BROWN, mymodel.getMyInfo().getShip()) &&
-                                !Util.checkNearLFS(new Position(x, y), AlienColor.PURPLE, mymodel.getMyInfo().getShip()))) {
+                if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" ) {
 
                     //Editare a giro Crew tra varie possibilità e tenere aggiornato CrewInitUpdate
                     ((GuiJavaFx) controller.getView()).editPositionCrew(x, y);
@@ -583,17 +581,24 @@ public class GuiJavaFx implements View {
     public void editPositionCrew(int x,int y){
         ModularHousingUnit currentHousingUnit = ((ModularHousingUnit) mymodel.getMyInfo().getShip().getShipBoard()[x][y].getTile().getMyComponent());
 
+        int nBrownAlien = mymodel.getMyInfo().getShip().getNBrownAlien();
+        int nPurpleAlien= mymodel.getMyInfo().getShip().getNPurpleAlien();
 
         //modificare nella SHIP Locale
         if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()) && Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a entrambi
-            if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0){
+            if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0 && nPurpleAlien == 0){
                 //Ci sono umani vado a viola
                 currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addPurpleAlien();
             }
-            else if(currentHousingUnit.getNPurpleAlien() == 1){
+            else if(currentHousingUnit.getNPurpleAlien() == 1 && nBrownAlien == 0){
                 //C'è viola vado a marrone
+                currentHousingUnit.removeAllCrew();
+                currentHousingUnit.addBrownAlien();
+            }
+            else if( nBrownAlien == 0){
+                //Ci sono umani, viola occupato e vado a marrone
                 currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addBrownAlien();
             }
@@ -605,7 +610,7 @@ public class GuiJavaFx implements View {
         }
         else if(Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a viola
-            if(currentHousingUnit.getNPurpleAlien() == 0){
+            if(currentHousingUnit.getNPurpleAlien() == 0 && nPurpleAlien == 0){
                 currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addPurpleAlien();
             }
@@ -617,7 +622,7 @@ public class GuiJavaFx implements View {
         }
         else if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip())){
             //Vicino a marrone
-            if(currentHousingUnit.getNBrownAlien() == 0){
+            if(currentHousingUnit.getNBrownAlien() == 0 && nBrownAlien == 0){
                 currentHousingUnit.removeAllCrew();
                 currentHousingUnit.addBrownAlien();
             }
@@ -913,30 +918,34 @@ public class GuiJavaFx implements View {
     @NeedsToBeChecked
     @Override
     public void showTimerInfos() {
-        ((BuildingController)actualPageController).showTimerInfo();
+        Platform.runLater(() -> {
+            ((BuildingController) actualPageController).showTimerInfo();
+        });
     }
 
     @Override
     public void showYouAreNowSpectating() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
-            Parent page = loader.load();
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
+                Parent page = loader.load();
 
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("ATTENZIONE");
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.initStyle(StageStyle.UTILITY);
-            dialogStage.setResizable(false);
-            dialogStage.setScene(new Scene(page));
+                Stage dialogStage = new Stage();
+                dialogStage.setTitle("ATTENZIONE");
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.initStyle(StageStyle.UTILITY);
+                dialogStage.setResizable(false);
+                dialogStage.setScene(new Scene(page));
 
-            ConfirmDialogController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
-            controller.setMessage("Che tu lo voglia o no ora sei uno spettatore");
+                ConfirmDialogController controller = loader.getController();
+                controller.setDialogStage(dialogStage);
+                controller.setMessage("Che tu lo voglia o no ora sei uno spettatore");
 
-            dialogStage.showAndWait();
+                dialogStage.showAndWait();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

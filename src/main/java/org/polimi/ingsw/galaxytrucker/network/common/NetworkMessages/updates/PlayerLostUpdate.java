@@ -1,26 +1,22 @@
 package org.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates;
 
-import org.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
-import org.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
-import org.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
+import org.polimi.ingsw.galaxytrucker.enums.PlayerLostReason;
 import org.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import org.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInterface;
 
-import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.concurrent.ExecutionException;
 
 public class PlayerLostUpdate extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 13975924237534L;
 
     private final String nickname;
-    private final boolean isLandingEarly;
+    private final PlayerLostReason reason;
 
-    public PlayerLostUpdate(String nickname, boolean isLandingEarly) {
+    public PlayerLostUpdate(String nickname, PlayerLostReason reason) {
         this.nickname = nickname;
-        this.isLandingEarly = isLandingEarly;
+        this.reason = reason;
     }
 
     @Override
@@ -32,7 +28,7 @@ public class PlayerLostUpdate extends NetworkMessage implements Serializable {
         return nickname;
     }
 
-    public boolean isLandingEarly() {
-        return isLandingEarly;
+    public PlayerLostReason getReason() {
+        return reason;
     }
 }
