@@ -68,6 +68,9 @@ public class GuiJavaFx implements View {
     private MusicManager musicManager;
     private Boolean firstTimeMainMenu = true;
 
+    //Config variable to disable feature music and other setting during testing
+    private final static Boolean testing = true;
+
 
 
 
@@ -230,11 +233,9 @@ public class GuiJavaFx implements View {
             //Di default passato a FullScreen quandoe entra il Main Menu
             if(firstTimeMainMenu){
                 firstTimeMainMenu = false;
-                //Todo Riattivare FullScreen Automatico
-               // primaryStage.setFullScreen(true);
+               if(!testing) primaryStage.setFullScreen(true);
             }
-            //Todo Riattivare musica
-           // musicManager.playBackgroundMusic("CRMIntroMenu.wav",true);
+            if(!testing) musicManager.playBackgroundMusic("CRMIntroMenu.wav",true);
         });
     }
 
