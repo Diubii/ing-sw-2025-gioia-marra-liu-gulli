@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<VBox spacing="10" alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="it.polimi.ingsw.galaxytrucker.TileCardsJsonUtility">
+    <HBox spacing="20">
+        <Label text="ID (da 1 a 157):"/>
+        <TextField fx:id="tileId" text="1"/>
+        <Button text="Vedi per Id" onAction="#handleShowTileId"/>
+        <Button text="Prec" onAction="#handlePrevTile"/>
+        <Label text="TILES" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        <Button text="Next" onAction="#handleNextTile"/>
+        <Button text="Salva la lista" onAction="#handleSaveTileList"/>
+        <Button text="Carica la lista" onAction="#handleLoadTileList"/>
+    </HBox>
+    <HBox spacing="20">
+        <VBox>
+            <HBox spacing="10">
+                <ImageView fx:id="tileImageView" fitWidth="181" fitHeight="181"/>
+            </HBox>
+            <VBox spacing="10">
+                <Button text="Carica Immagine" onAction="#handleLoadTileImage"/>
+
+
+                <HBox spacing="10">
+                    <Label text="Tipo Component:"/>
+                    <ComboBox fx:id="tileComponentType">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value=""/>
+                                <String fx:value="BatterySlot"/>
+                                <String fx:value="Cannon"/>
+                                <String fx:value="CentralHousingUnit"/>
+                                <String fx:value="DoubleCannon"/>
+                                <String fx:value="DoubleEngine"/>
+                                <String fx:value="Engine"/>
+                                <String fx:value="GenericCargoHolds"/>
+                                <String fx:value="PurpleLifeSupportSystem"/>
+                                <String fx:value="BrownLifeSupportSystem"/>
+                                <String fx:value="ModularHousingUnit"/>
+                                <String fx:value="Shield"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                    <VBox>
+                        <Label text="ValExtra (nBatterie,nSlot...:"/>
+                        <TextField fx:id="extraVal"/>
+                        <Label text="Colore per cabine:"/>
+                        <ComboBox fx:id="centralHousingUnitColor">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="YELLOW"/>
+                                    <String fx:value="RED"/>
+                                    <String fx:value="GREEN"/>
+                                    <String fx:value="BLUE"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                        <Label text="Se speciale per Cargo:"/>
+                        <CheckBox fx:id="specialCargo"></CheckBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </VBox>
+        <VBox spacing="10">
+            <HBox spacing="10">
+                <Label text="Top Connettore:"/>
+                <ComboBox fx:id="comboBoxTopConn" value="Empty">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Empty"/>
+                            <String fx:value="Single"/>
+                            <String fx:value="Double"/>
+                            <String fx:value="Universal"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+            <HBox spacing="10">
+                <Label text="RConnettore:"/>
+                <ComboBox fx:id="comboBoxRConn" value="Empty">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Empty"/>
+                            <String fx:value="Single"/>
+                            <String fx:value="Double"/>
+                            <String fx:value="Universal"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+            <HBox spacing="10">
+                <Label text="Bottom Connettore:"/>
+                <ComboBox fx:id="comboBoxBotConn" value="Empty">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Empty"/>
+                            <String fx:value="Single"/>
+                            <String fx:value="Double"/>
+                            <String fx:value="Universal"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+            <HBox spacing="10">
+                <Label text="LConnettore:"/>
+                <ComboBox fx:id="comboBoxLConn" value="Empty">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Empty"/>
+                            <String fx:value="Single"/>
+                            <String fx:value="Double"/>
+                            <String fx:value="Universal"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+
+
+        </VBox>
+    </HBox>
+
+    <Button text="Imposta nella lista" onAction="#handleAddTileToList"/>
+
+</VBox>

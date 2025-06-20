@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane prefHeight="248.0" prefWidth="520.0" style="-fx-background-color: DARKBLUE;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.galaxytrucker.view.Gui.Dialogs.ConfirmDialogController">
+   <children>
+      <Button layoutX="300.0" layoutY="196.0" mnemonicParsing="false" onAction="#handleYes" prefHeight="29.0" prefWidth="193.0" styleClass="button-confirm" stylesheets="@../style.css" text="OK" />
+      <Button layoutX="35.0" layoutY="196.0" mnemonicParsing="false" onAction="#handleNo" prefHeight="29.0" prefWidth="200.0" styleClass="button-cancel" stylesheets="@../style.css" text="NON OK" />
+      <ImageView fitHeight="132.0" fitWidth="123.0" layoutX="32.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../galaxy_trucker_imgs/VermeMalefico.png" />
+         </image></ImageView>
+      <Label fx:id="messageLabel" layoutX="176.0" layoutY="43.0" prefHeight="111.0" prefWidth="317.0" text="Label" textFill="WHITE" wrapText="true">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

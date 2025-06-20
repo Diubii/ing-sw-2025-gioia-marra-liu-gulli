@@ -1,0 +1,126 @@
+package it.polimi.ingsw.galaxytrucker.model.essentials.components;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
+import it.polimi.ingsw.galaxytrucker.enums.Color;
+import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
+
+public class ModularHousingUnit extends CentralHousingUnit {
+
+    private int nBrownAlien = 0;
+    private int nPurpleAlien = 0;
+
+    public void setAlienColor(AlienColor alienColor) {
+        this.alienColor = alienColor;
+    }
+
+    private AlienColor alienColor;
+
+    @JsonCreator
+    public ModularHousingUnit(@JsonProperty("color") Color color, @JsonProperty("nbrownAlien") int nBrownAlien, @JsonProperty("npurpleAlien") int nPurpleAlien, @JsonProperty("alienColor") AlienColor alienColor, @JsonProperty("humanCrewNumber") int humanCrew) {
+        super(color, humanCrew);
+        this.nBrownAlien = nBrownAlien;
+        this.nPurpleAlien = nPurpleAlien;
+        this.alienColor = alienColor != null ? alienColor : AlienColor.EMPTY;
+    }
+
+    public ModularHousingUnit() {
+        super(Color.EMPTY);
+        this.alienColor = AlienColor.EMPTY;
+    }
+
+
+    public void addBrownAlien() {
+            alienColor = AlienColor.BROWN;
+            nBrownAlien += 1;
+
+    }
+
+    public void addPurpleAlien() {
+          alienColor = AlienColor.PURPLE;
+          nPurpleAlien += 1;
+    }
+
+    public void addHumanCrew() {
+        super.setHumanCrewNumber(2);
+    }
+
+    public void removeBrownAlien() {
+        if (nBrownAlien > 0 && alienColor == AlienColor.BROWN) {
+            nBrownAlien -= 1;
+            this.alienColor = AlienColor.EMPTY;
+
+        }
+
+    }
+
+    public void removeAllCrew(){
+        nPurpleAlien = 0;
+        nBrownAlien = 0;
+        super.setHumanCrewNumber(0);
+        this.alienColor = AlienColor.EMPTY;
+    }
+
+    public void removeAlienCrew() {
+        nPurpleAlien = 0;
+        nBrownAlien = 0;
+        this.alienColor = AlienColor.EMPTY;
+
+    }
+
+    public void removePurpleAlien() {
+        if (nPurpleAlien > 0 && alienColor == AlienColor.PURPLE) {
+            nPurpleAlien -= 1;
+            this.alienColor = AlienColor.EMPTY;
+        }
+    }
+
+    @Override
+    public void removeCrewMember() {
+        switch (alienColor) {
+            case EMPTY -> super.removeCrewMember();
+            case BROWN -> removeAllCrew();
+            case PURPLE -> removeAllCrew();
+        }
+    }
+
+
+
+    @Override
+    public int getNCrewMembers() {
+        int result = 0;
+        switch (alienColor) {
+            case PURPLE -> result = getNPurpleAlien();
+            case BROWN -> result = getNBrownAlien();
+            case EMPTY -> result = super.getNCrewMembers();
+            default -> throw new IllegalStateException("Multiversal housing issue.");
+        }
+        return result;
+    }
+    public int getNBrownAlien() {
+        return nBrownAlien;
+    }
+
+    public int getNPurpleAlien() {
+        return nPurpleAlien;
+    }
+    public AlienColor getAlienColor() {
+        return this.alienColor;
+    }
+    @Override
+    public ModularHousingUnit clone() {
+        ModularHousingUnit copy = (ModularHousingUnit) super.clone();
+        copy.nBrownAlien = this.nBrownAlien;
+        copy.nPurpleAlien = this.nPurpleAlien;
+        copy.alienColor = this.alienColor;
+        return copy;
+    }
+
+    @Override
+    public <T> T accept(ComponentVisitorInterface<T> visitor) {
+        return visitor.visit(this);
+    }
+
+
+}
