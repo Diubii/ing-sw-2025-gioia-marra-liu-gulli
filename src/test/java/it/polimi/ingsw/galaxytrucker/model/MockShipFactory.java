@@ -25,7 +25,7 @@ public class MockShipFactory {
      * @return list of Tile objects
      */
     public static List<Tile> loadAllTiles() {
-        File file = new File("src/main/resources/it/polimi/ingsw/galaxytrucker/tiledata.json");
+        File file = new File("src/main/resources/tiledata.json");
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(file, new TypeReference<>() {});
@@ -522,8 +522,10 @@ public class MockShipFactory {
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
         if(genericCargoHold2 != null) ship.putTile(genericCargoHold, new Position(2, 4));
 
-        GenericCargoHolds hold1 = (GenericCargoHolds) modularHousingUnit.getMyComponent();
-        GenericCargoHolds hold2 = (GenericCargoHolds) modularHousingUnit2.getMyComponent();
+        assert genericCargoHold != null;
+        GenericCargoHolds hold1 = (GenericCargoHolds) genericCargoHold.getMyComponent();
+        assert genericCargoHold2 != null;
+        GenericCargoHolds hold2 = (GenericCargoHolds) genericCargoHold2.getMyComponent();
 
         Good good1 = new Good(Color.GREEN);
         Good  good2 = new Good(Color.GREEN);

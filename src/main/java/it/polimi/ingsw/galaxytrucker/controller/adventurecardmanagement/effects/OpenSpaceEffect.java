@@ -21,6 +21,7 @@ public abstract class OpenSpaceEffect {
         System.out.println("DEBUG: playerEnginePower = " + playerEnginePower);
         HashMap<String, Integer> playerToPowerMap;
 
+
         //Populating HashMap
         if (playerToPowerMapPerGame.get(game) != null) {
             playerToPowerMap = playerToPowerMapPerGame.get(game);
@@ -29,7 +30,7 @@ public abstract class OpenSpaceEffect {
             playerToPowerMapPerGame.put(game, playerToPowerMap);
         }
         playerToPowerMap.put(player.getNickName(), playerEnginePower);
-
+        playerToPowerMapPerGame.put(game, playerToPowerMap);
         movePlayer(context, player, playerEnginePower);
 
         if (player == context.getCurrentRankedPlayers().getLast()) {

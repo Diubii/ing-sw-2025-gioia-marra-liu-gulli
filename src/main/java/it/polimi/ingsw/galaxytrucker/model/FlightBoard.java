@@ -124,6 +124,16 @@ public class FlightBoard implements Serializable {
 
         return positions;
     }
+    public void updateAllPlayerPlacements(Map<Color, Player> colorToPlayerMap) {
+        ArrayList<Color> rankedColors = getRankedPlayers();
+        int placement = 1;
+        for (Color color : rankedColors) {
+            Player p = colorToPlayerMap.get(color);
+            if (p != null) {
+                p.setPlacement(placement++);
+            }
+        }
+    }
 
     public FlightBoardMap getFlightBoardMap() {
         return flightBoardMap;

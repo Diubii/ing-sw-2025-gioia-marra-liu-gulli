@@ -26,6 +26,7 @@ public class GameTestHelper {
 
     public static GameTestContext setupGame(Map<String, ArrayList<NetworkMessage>> responses, ArrayList<Player> players) {
         final ServerController serverController;
+        int createdGameId = -1;
         try {
             serverController = new ServerController();
             serverController.setSynchronousExecution(true);
@@ -36,9 +37,10 @@ public class GameTestHelper {
 
         HashMap<String, ClientHandler> nicknameToHandlerMap = new HashMap<>();
 
-        players.forEach(p -> {
+        for (Player p : players) {
             FakeClientHandler fakeClientHandler = new FakeClientHandler(serverController, responses.get(p.getNickName()));
             NicknameRequest nicknameRequest = new NicknameRequest(p.getNickName());
+
             try {
                 serverController.handleNicknameRequest(nicknameRequest, fakeClientHandler);
             } catch (RemoteException e) {
@@ -48,12 +50,14 @@ public class GameTestHelper {
             if (p.equals(players.getFirst())) {
                 CreateRoomRequest createRoomRequest = new CreateRoomRequest(players.size(), false, p.getNickName());
                 try {
+
                     serverController.handleCreateRoomRequest(createRoomRequest, fakeClientHandler);
+                    createdGameId = serverController.getLastCreatedGameId();
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                JoinRoomRequest joinRoomRequest = new JoinRoomRequest(serverController.getLobbyInfos().size() - 1, p.getNickName());
+                JoinRoomRequest joinRoomRequest = new JoinRoomRequest(createdGameId, p.getNickName());
                 try {
                     serverController.handleJoinRoomRequest(joinRoomRequest, fakeClientHandler);
                 } catch (RemoteException e) {
@@ -62,7 +66,7 @@ public class GameTestHelper {
             }
 
             nicknameToHandlerMap.put(p.getNickName(), fakeClientHandler);
-        });
+        }
 
         AtomicInteger position = new AtomicInteger();
         AtomicInteger id = new AtomicInteger(17);

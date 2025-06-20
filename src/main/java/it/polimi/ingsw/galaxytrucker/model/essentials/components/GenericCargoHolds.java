@@ -47,21 +47,24 @@ public class GenericCargoHolds extends Component {
     public void playerLoadGood(Good g) {
         if (Goods == null) {
             Goods = new ArrayList<>();
-            Goods.add(g);
         }
-        else {
-            if (Goods.size() < nMaxContainers) {
-                for (int i = 0; i < Goods.size(); i++) {
-                    if (Goods.get(i).getColor().equals(g.getColor())) {
-                        Goods.add(i + 1, new Good(g.getColor()));
-                        break;
-                    } else if (i == Goods.size() - 1) Goods.add(new Good(g.getColor()));
 
-                }
+        if (Goods.size() >= nMaxContainers) {
+            System.out.println("Good list contains more than " + nMaxContainers);
+            return;
+        }
+
+        boolean inserted = false;
+        for (int i = 0; i < Goods.size(); i++) {
+            if (Goods.get(i).getColor().equals(g.getColor())) {
+                Goods.add(i + 1, new Good(g.getColor()));
+                inserted = true;
+                break;
             }
-            else{
-                System.out.println("Good list contains more than " + nMaxContainers);
-            }
+        }
+
+        if (!inserted) {
+            Goods.add(new Good(g.getColor()));
         }
     }
 

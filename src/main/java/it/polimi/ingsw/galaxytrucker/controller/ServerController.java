@@ -1692,6 +1692,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         heartbeats.add(heartbeat);
         heartbeat.start();
     }
+
+    public int getLastCreatedGameId() {
+        return nextLobbyIndex - 1;
+    }
 }
 
 
