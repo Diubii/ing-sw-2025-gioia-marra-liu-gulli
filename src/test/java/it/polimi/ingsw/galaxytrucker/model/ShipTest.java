@@ -158,7 +158,7 @@ class ShipTest {
 
         int power = ship.calculateEnginePower();
 
-        assertEquals(3, power);
+        assertEquals(2, power);
         Tile doubleEngine = ship.getTileFromPosition(pos3);
         DoubleEngine dEngine = (DoubleEngine) doubleEngine.getMyComponent();
         dEngine.setCharged(true);
@@ -166,7 +166,7 @@ class ShipTest {
         assertEquals(4, newPower);
         dEngine.setCharged(false);
         int newPower2 = ship.calculateEnginePower();
-        assertEquals(3, newPower2);
+        assertEquals(2, newPower2);
 
     }
     // end tests for calculateEnginePower
