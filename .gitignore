@@ -99,3 +99,8 @@ mvnw.*
 
 # === IntelliJ build output ===
 /out/
+
+# === bat ===
+*.bat
+
+launch4j

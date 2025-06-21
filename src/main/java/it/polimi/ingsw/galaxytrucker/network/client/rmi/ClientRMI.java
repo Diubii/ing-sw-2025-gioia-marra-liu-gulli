@@ -31,14 +31,13 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
     NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
 
-    public ClientRMI(int port, ClientController controller) throws RemoteException, NotBoundException {
-        super();
-            registry = LocateRegistry.getRegistry("localhost", port);
-            server = (ServerRMIInterface) registry.lookup("GameServer");
-            stub = (ClientInterfaceRMI) this;
-
-            addObserver(controller);
-            server.handleRMIRegistration(stub);
+    public ClientRMI(String address, int port, ClientController controller) throws RemoteException, NotBoundException {
+        super(6969);
+        registry = LocateRegistry.getRegistry(address, port);
+        server = (ServerRMIInterface) registry.lookup("GameServer");
+        stub = (ClientInterfaceRMI) this;
+        addObserver(controller);
+        server.handleRMIRegistration(stub);
     }
 
     @Override

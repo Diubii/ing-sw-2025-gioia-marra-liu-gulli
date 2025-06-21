@@ -177,7 +177,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleViewAdventureDecksRequest(viewAdventureDecksRequest, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -203,7 +203,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleFinishBuildingRequest(finishBuildingRequest, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -214,7 +214,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleShipUpdate(shipUpdate, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -232,7 +232,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleCheckShipStatusRequest(checkShipStatusRequest, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -247,7 +247,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleCrewInitUpdate(crewInitUpdate, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -262,7 +262,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleAskPositionResponse(askPositionResponse, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -304,7 +304,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleActivateAdventureCardResponse(activateAdventureCardResponse, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -335,7 +335,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleSelectPlanetResponse(selectPlanetResponse, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -356,7 +356,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleDiscardCrewMembersResponse(discardCrewMembersResponse, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -382,7 +382,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleDrawAdventureCardRequest(drawAdventureCardRequest, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -412,7 +412,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleHeartbeatRequest(heartbeatRequest, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -422,7 +422,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleEarlyLandingRequest(earlyLandingRequest, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -432,7 +432,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleReadyTurnRequest(readyTurnRequest, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -447,7 +447,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleCollectRewardsResponse(collectRewardsResponse, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -463,7 +463,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleAskTrunkResponse(askTrunkResponse, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -478,7 +478,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         try {
             serverControllerHandles.handleAskTimerInfoRequest(askTimerInfoRequest, clientHandler);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
         }
         return null;
     }

@@ -121,7 +121,8 @@ public class ClientController implements Observer {
             ((ClientSocket) client).addObserver(this);
             ((ClientSocket) client).receiveMessage();
         } else {
-            client = new ClientRMI(port, this); // già fa addObserver
+            System.setProperty("java.rmi.server.hostname", "87.15.5.27");
+            client = new ClientRMI(address, port, this); // già fa addObserver
         }
 
         isConnectionAlive.set(true);
@@ -260,7 +261,7 @@ public class ClientController implements Observer {
 
                     myModel.getPlayerInfos().add(myModel.getMyInfo());
                     view.showPlayersLobby(myModel.getMyInfo(),myModel.getPlayerInfos());
-                    view.showGenericMessage("Lobby creata con successo,in attesa di giocatori...",false);
+                    view.showGenericMessage("Lobby creata con successo, in attesa di giocatori...",false);
                 } else {
                     view.showGenericMessage("Room creation failed: " + response.getErrMess(),true);
                     view.askJoinOrCreateRoom();
