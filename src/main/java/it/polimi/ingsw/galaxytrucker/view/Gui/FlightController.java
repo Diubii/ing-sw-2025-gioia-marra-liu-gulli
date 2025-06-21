@@ -98,6 +98,7 @@ public class FlightController extends GenericGamePhaseSceneController {
             radioButtons.get(i).visibleProperty().set(true);
             if(mymodel.getPlayerInfos().get(i).getNickName().equals(mymodel.getMyInfo().getNickName())){
                 radioButtons.get(i).selectedProperty().set(true);
+                names.get(i).setStyle("-fx-text-fill: Yellow;");
             }
             switch (mymodel.getPlayerInfos().get(i).getColor()){
                 case RED ->  avatars.get(i).setImage(new Image(getClass().getResource("/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarRosso.png").toExternalForm()));

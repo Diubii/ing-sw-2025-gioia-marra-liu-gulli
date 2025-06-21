@@ -836,12 +836,13 @@ public void handleDrawReservedTile (int slotIndex){
             view.showBuildingMenu();
             return;
         }
-        //Todo Cambiare non deve fare modifica diretta e show diretto
-//        myModel.getMyInfo().getShip().putTile(currentTileInHand, currentPosition);   //ship.putTile(tileInHand)
-//        myModel.getMyInfo().getShip().setLastTile(currentTileInHand);               //ship.setLastTile
-//        view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
+        //Toglie preventivametne tile dalla mano per evitare bug se click rapidi
+        Tile appInHand = currentTileInHand;
+        currentTileInHand = null;
+        isPlaced = true;
+        view.showTile(currentTileInHand);
 
-        PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, currentPosition);
+        PlaceTileRequest request = new PlaceTileRequest(appInHand, currentPosition);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
@@ -871,10 +872,12 @@ public void handleDrawReservedTile (int slotIndex){
 
                 }
                 if (response.getMessage().equals("VALID")) {
-
                     resetCurrentPos();
-                    currentTileInHand = null;
-                    isPlaced = true;
+                }
+                else{
+                    //Rida tile in mano se non era valido
+                    currentTileInHand = appInHand;
+                    isPlaced = false;
                     view.showTile(currentTileInHand);
                 }
 
@@ -1144,7 +1147,7 @@ public void handleDrawReservedTile (int slotIndex){
         }
         view.toShowCurrentMenu();
         if(myModel.getPlayerState() != PlayerState.Spectating){
-            view.showGenericMessage("Il turno e' finito !", true);
+            view.showGenericMessage("Il turno e' finito !", false);
             view.showFlightMenu();
         }
         else{

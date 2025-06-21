@@ -111,7 +111,7 @@ public class Util {
 //        cardsToTest.add(list.get(1)); //Contrabbandieri
 //        cardsToTest.add(list.get(10)); //Meteoriti
 //        cardsToTest.add(list.get(3)); //Stardust
-//        cardsToTest.add(list.get(31)); //Planets
+//
 //
 //        cardsToTest.add(list.get(0)); //Schiavisti
 //
@@ -125,6 +125,8 @@ public class Util {
 //         cardsToTest.add(list.get(4)); //Open Space
 //         cardsToTest.add(list.get(19)); //AbandonedStation
 
+
+        cardsToTest.add(list.get(31)); //Planets
         //Si blocca sempre sembra
         cardsToTest.add(list.get(15)); //Zona di guerra
 

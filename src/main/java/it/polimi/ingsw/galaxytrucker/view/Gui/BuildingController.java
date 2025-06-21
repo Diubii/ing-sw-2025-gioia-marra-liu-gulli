@@ -139,7 +139,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
 
         scrollListaTiles.setOnMouseClicked(event -> {
-            if(event.getButton() == MouseButton.PRIMARY){
+            if(event.getClickCount() == 1 && event.getButton() == MouseButton.PRIMARY){
                 if (clientController.getCurrentTileInHand() != null) {
                     // esegui le tue istruzioni qui
                     clientController.handleBuildingMenuChoice("h");
@@ -320,23 +320,27 @@ public class BuildingController extends GenericGamePhaseSceneController {
         System.out.println("debug: showWaitOtherPlayers");
 
         if(clearLast){ StackCenterMenu.getChildren().removeLast(); }
-        //metto nave non editabile
-        currPhaseDone = true;
-        showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
-        VBox root = null;
-        FXMLLoader loader;
-        try {
-            //1-Prima caricare FXML
-            loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/galaxytrucker/GuiPages/Elements/WaitOverlay.fxml"));
-            root = loader.load();
+        //Non mostro se sto già mostrando altro subMenu
+        if(StackCenterMenu.getChildren().size() < 2){
+            //metto nave non editabile
+            currPhaseDone = true;
+            showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+            VBox root = null;
+            FXMLLoader loader;
+            try {
+                //1-Prima caricare FXML
+                loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/galaxytrucker/GuiPages/Elements/WaitOverlay.fxml"));
+                root = loader.load();
 
-            root.setMaxWidth(Double.MAX_VALUE);
-            root.setMaxHeight(Double.MAX_VALUE);
+                root.setMaxWidth(Double.MAX_VALUE);
+                root.setMaxHeight(Double.MAX_VALUE);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            StackCenterMenu.getChildren().add(root);
         }
-        StackCenterMenu.getChildren().add(root);
+
 
     }
 
