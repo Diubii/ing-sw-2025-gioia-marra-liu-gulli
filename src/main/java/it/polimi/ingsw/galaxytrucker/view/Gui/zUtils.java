@@ -116,7 +116,7 @@ public class zUtils {
                 if(editable){
                     //Click on whole tile has different effect depending on phase and other settings
                     stackPane.setOnMouseClicked(event -> {
-                        if(event.getButton() == MouseButton.PRIMARY) {
+                        if(event.getClickCount() == 1 && event.getButton() == MouseButton.PRIMARY ) {
 
                             switch (clientController.getPhase()) {
                                 case SHIP_CHECK:
@@ -217,9 +217,9 @@ public class zUtils {
                                                 clientController.handleTilePlacement();
                                             }
                                         } catch (ExecutionException e) {
-                                            throw new RuntimeException(e);
+                                            e.printStackTrace();
                                         } catch (InvalidTilePosition e) {
-                                            throw new RuntimeException(e);
+                                            e.printStackTrace();
                                         }
                                     } else {
                                         if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
