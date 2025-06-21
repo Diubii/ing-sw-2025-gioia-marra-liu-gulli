@@ -22,6 +22,9 @@ class BatterySlotTest {
 
     @Test
     void testClone() {
+        BatterySlot batterySlot = new BatterySlot(1);
+        BatterySlot clonedBatterySlot = batterySlot.clone();
+        assertTrue(clonedBatterySlot.getBatteriesLeft() == batterySlot.getBatteriesLeft());
     }
 
     @Test

@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Nickname request.
+ */
 public class NicknameRequest extends NetworkMessage implements Serializable {
 
     @Serial
@@ -13,12 +16,20 @@ public class NicknameRequest extends NetworkMessage implements Serializable {
 
     private String nickname;
 
-    // ✅ Costruttore senza argomenti richiesto per la deserializzazione
+    /**
+     * Instantiates a new Nickname request.
+     */
+// ✅ Costruttore senza argomenti richiesto per la deserializzazione
     public NicknameRequest() {
         super(); // o un default valido
     }
 
-    // ✅ Costruttore che usi per creare il messaggio nel client
+    /**
+     * Instantiates a new Nickname request.
+     *
+     * @param nickname the nickname
+     */
+// ✅ Costruttore che usi per creare il messaggio nel client
     public NicknameRequest(String nickname) {
         super();
         this.nickname = nickname;
@@ -29,12 +40,22 @@ public class NicknameRequest extends NetworkMessage implements Serializable {
         return visitor.visit(this);
     }
 
+    /**
+     * Gets nickname.
+     *
+     * @return the nickname
+     */
     public String getNickname() {
         return nickname;
     }
 
 
-    // Setter necessari per deserializzazione
+    /**
+     * Sets nickname.
+     *
+     * @param nickname the nickname
+     */
+// Setter necessari per deserializzazione
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }

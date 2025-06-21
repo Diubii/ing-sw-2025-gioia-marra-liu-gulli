@@ -7,12 +7,20 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Activate component request.
+ */
 public class ActivateComponentRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 87698987L;
 
     private final ActivatableComponent activatableComponentType;
 
+    /**
+     * Instantiates a new Activate component request.
+     *
+     * @param activatableComponentType the activatable component type
+     */
     public ActivateComponentRequest(ActivatableComponent activatableComponentType) {
         this.activatableComponentType = activatableComponentType;
     }
@@ -22,6 +30,11 @@ public class ActivateComponentRequest extends NetworkMessage implements Serializ
         return visitor.visit(this);
     }
 
+    /**
+     * Gets activatable component type.
+     *
+     * @return the activatable component type
+     */
     public ActivatableComponent getActivatableComponentType() {
         return activatableComponentType;
     }

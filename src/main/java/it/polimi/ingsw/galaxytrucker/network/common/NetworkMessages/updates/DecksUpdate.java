@@ -8,6 +8,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * The type Decks update.
+ */
 public class DecksUpdate extends NetworkMessage implements Serializable {
 
     @Serial
@@ -16,18 +19,38 @@ public class DecksUpdate extends NetworkMessage implements Serializable {
     private ArrayList<CardDeck> decks = new ArrayList<>();
     private CardDeck flightDeck = null;
 
+    /**
+     * Gets decks.
+     *
+     * @return the decks
+     */
     public ArrayList<CardDeck> getDecks() {
         return decks;
     }
 
+    /**
+     * Sets decks.
+     *
+     * @param decks the decks
+     */
     public void setDecks(ArrayList<CardDeck> decks) {
         this.decks = decks;
     }
 
+    /**
+     * Gets flight deck.
+     *
+     * @return the flight deck
+     */
     public CardDeck getFlightDeck() {
         return flightDeck;
     }
 
+    /**
+     * Sets flight deck.
+     *
+     * @param flightDeck the flight deck
+     */
     public void setFlightDeck(CardDeck flightDeck) {
         this.flightDeck = flightDeck;
     }

@@ -7,12 +7,20 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Tile discarded update.
+ */
 public class TileDiscardedUpdate extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 438506757L;
 
     private final Tile tile;
 
+    /**
+     * Instantiates a new Tile discarded update.
+     *
+     * @param tile the tile
+     */
     public TileDiscardedUpdate(Tile tile) {
         this.tile = tile;
     }
@@ -22,6 +30,11 @@ public class TileDiscardedUpdate extends NetworkMessage implements Serializable 
         return visitor.visit(this);
     }
 
+    /**
+     * Gets tile.
+     *
+     * @return the tile
+     */
     public Tile getTile() {
         return tile;
     }

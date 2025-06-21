@@ -191,13 +191,7 @@ public class Ship implements Serializable {
         return this.nCrew;
     }
 
-    public Boolean getSynch() {
-        return synch;
-    }
 
-    public void setSynch(Boolean synch) {
-        this.synch = synch;
-    }
 
     // GETTERS End ----------------------
 
@@ -347,46 +341,20 @@ public class Ship implements Serializable {
         Position viewPos = new Position(pos.getX()+4, pos.getY()+5);
         System.out.println("STO ELIMIMANDO" + viewPos);
 
-//LOGICA PER AGGIORNARE LE POSIZIONI AL PRIMO INSERIMENTO
-//            switch (tile.getMyComponent().accept(visitor)) {
-//                case "BatterySlot":
-//                    batteryPos.remove(pos);
-//                    break;
-//                case "Cannon":
-//                    cannonPos.remove(pos);
-//                    break;
-//                case "Engine":
-//                    enginePos.remove(pos);
-//                    break;
-//                case "ModularHousingUnit":
-//                    housingPos.remove(pos);
-//                    break;
-//                case "GenericCargoHolds": {
-//                    GenericCargoHolds test = (GenericCargoHolds) tile.getMyComponent();
-//                    Boolean s = test.isSpecial();
-//                    if (s) {
-//                        redStoragePos.remove(pos);
-//                    } else storagePos.remove(pos);
-//                }
-//
-//                case "LifeSupportSystem":
-//                    lssPos.remove(pos);
-//                    break;
-//            }
-
-        //se sto distruggendo e non semplicemente eliminando le aggiungo alle broken
         if (!isNormalRemove) {
             brokenPositions.add(pos);
             destroyedTiles++;
         }
 
 
-        Slot slot = shipBoard[pos.getX()][pos.getY()];
-        if (slot != null) {
-            slot.removeTile();
-        } else {
-            System.out.println("WARN: Tried to remove tile from null slot at " + pos);
-        }
+        if (Util.inBoundaries(pos.getX(), pos.getY())  && !invalidPositions.contains(pos)) {
+            Slot slot = shipBoard[pos.getX()][pos.getY()];
+            if (slot != null) {
+                slot.removeTile();
+            } else {
+                System.out.println("WARN: Tried to remove tile from null slot at " + pos);
+            }
+        } else System.out.println("WARN: Tried to remove tile from null slot at " + pos);
     }
 
     //}
@@ -560,7 +528,7 @@ public class Ship implements Serializable {
                                     temp.removeAlienCrew();
                                 }
 
-                                shipBoard[i][j].getTile().setWellConnected(result);
+//                                shipBoard[i][j].getTile().setWellConnected(result);
                                 if (!result1) result = false;
 
                             }

@@ -19,12 +19,17 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * Classe di utilità che fornisce metodi per verificare la connettività di componenti nella nave.
+ * Utility class that provides methods for verifying connectivity of components in the ship.
  *
  * @author nerd53
  */
 public class Util {
 
+    /**
+     * Creates a deck of level 1 adventure cards by loading data from a JSON file.
+     *
+     * @return A CardDeck containing level 1 adventure cards
+     */
     public static CardDeck createLvl1Deck() {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -45,6 +50,11 @@ public class Util {
         return null;
     }
 
+    /**
+     * Creates a deck of level 2 adventure cards by loading data from a JSON file.
+     *
+     * @return A CardDeck containing level 2 adventure cards
+     */
     public static CardDeck createLvl2Deck() {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -65,6 +75,11 @@ public class Util {
         return null;
     }
 
+    /**
+     * Creates a deck of learning flight adventure cards by loading data from a JSON file.
+     *
+     * @return A CardDeck containing learning flight adventure cards
+     */
     public static CardDeck createLearningDeck() {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -84,6 +99,12 @@ public class Util {
         return null;
     }
 
+    /**
+     * Creates a test deck of specific adventure cards for testing purposes.
+     *
+     * @return A CardDeck containing specific cards for testing
+     * @throws IOException if there's an error reading the JSON file
+     */
     public static CardDeck createTestDeck() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -171,24 +192,19 @@ public class Util {
     }
 
     /**
-     * Controlla se un motore è ben connesso alla nave, verificando che non sia bloccato da altri componenti.
+     * Checks if an engine is well connected to the ship, verifying that it is not blocked by other components.
      *
-     * @param T Il tile contenente il motore.
-     * @param P La nave in cui è posizionato il motore.
-     * @param S Lo slot in cui è posizionato il motore.
-     * @return {@code true} se il motore è ben connesso, {@code false} altrimenti.
+     * @param T The tile containing the engine
+     * @param P The ship where the engine is positioned
+     * @param S The slot where the engine is positioned
+     * @return {@code true} if the engine is well connected, {@code false} otherwise
      */
     public static Boolean EngineWellConnected(Tile T, Ship P, Slot S) {
         boolean wellConnected = true;
         ArrayList<Position> tempIP = P.getInvalidPositions();
 
-        // Posizioni adiacenti alla tile corrente
-        //Position nord = new Position(S.getPosition().getY() - 1, S.getPosition().getX());
         Position sud = new Position(S.getPosition().getX(), S.getPosition().getY() + 1);
-        //Position est = new Position(S.getPosition().getY(), S.getPosition().getX() + 1);
-        //Position ovest = new Position(S.getPosition().getY(), S.getPosition().getX() - 1);
 
-        // Controlla la connessione del motore in base alla rotazione della tile
         if (T.getRotation() == 0) {
             if (!tempIP.contains(sud) && inBoundaries(sud.getX(), sud.getY()) && P.getShipBoard()[sud.getX()][sud.getY()].getTile() != null) {
                 wellConnected = false;
@@ -198,6 +214,14 @@ public class Util {
         return wellConnected;
     }
 
+    /**
+     * Checks if a cannon is well connected to the ship, verifying that it is not blocked by other components.
+     *
+     * @param T The tile containing the cannon
+     * @param P The ship where the cannon is positioned
+     * @param S The slot where the cannon is positioned
+     * @return {@code true} if the cannon is well connected, {@code false} otherwise
+     */
     public static Boolean CannonWellConnected(Tile T, Ship P, Slot S) {
         boolean wellConnected = true;
         ArrayList<Position> tempIP = P.getInvalidPositions();
@@ -233,62 +257,16 @@ public class Util {
     }
 
     /**
-     * Verifica se un determinato sistema di supporto vitale (Life Support System) è presente nelle vicinanze della posizione indicata.
+     * Verifies if a certain life support system is present near the specified position.
      *
-     * @param color Il colore del supporto vitale da verificare.
-     * @param T     Il tile su cui viene effettuato il controllo.
-     * @param P     La nave in cui si sta effettuando la ricerca.
-     * @param S     Lo slot di riferimento all'interno della nave.
-     * @return {@code true} se il sistema di supporto vitale è ben connesso, {@code false} altrimenti.
+     * @param color The color of the life support system to check
+     * @param T     The tile on which the check is performed
+     * @param P     The ship in which the search is being conducted
+     * @param S     The reference slot within the ship
+     * @return {@code true} if the life support system is well connected, {@code false} otherwise
      */
     public static Boolean CheckLifeSupportSystem(AlienColor color, Tile T, Ship P, Slot S) {
         Boolean wellConnected = true;
-        ArrayList<Position> tempIP = P.getInvalidPositions();
-        Slot[][] TempShipBoard = P.getShipBoard();
-        String s1, s2, s3, s4;
-
-        // Controlla la tile sopra
-//        if (S.getPosition().getY() - 1 >= 0 && TempShipBoard[S.getPosition().getX][S.getPosition().getY() - 1].getTile() != null) {
-//            s1 = TempShipBoard[S.getPosition().getX()][S.getPosition().getY() - 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
-//        } else {
-//            s1 = null;
-//        }
-//
-//        // Controlla la tile a sinistra
-//        if (S.getPosition().getX() - 1 >= 0 && TempShipBoard[S.getPosition().getX() - 1][S.getPosition().getY()].getTile() != null) {
-//            s2 = TempShipBoard[S.getPosition().getX() - 1][S.getPosition().getY()].getTile().getMyComponent().accept(new ComponentNameVisitor());
-//        } else {
-//            s2 = null;
-//        }
-//
-//        // Controlla la tile sotto
-//        if (S.getPosition().getY() + 1 <= 6 && TempShipBoard[S.getPosition().getY() + 1][S.getPosition().getX()].getTile() != null) {
-//            s3 = TempShipBoard[S.getPosition().getX()][S.getPosition().getY() + 1].getTile().getMyComponent().accept(new ComponentNameVisitor());
-//        } else {
-//            s3 = null;
-//        }
-//
-//        // Controlla la tile a destra
-//        if (S.getPosition().getX() + 1 <= 4 && TempShipBoard[S.getPosition().getY()][S.getPosition().getX() + 1].getTile() != null) {
-//            s4 = TempShipBoard[S.getPosition().getX() + 1][S.getPosition().getY()].getTile().getMyComponent().accept(new ComponentNameVisitor());
-//        } else {
-//            s4 = null;
-//        }
-//
-//        // Verifica se c'è un sistema di supporto vitale del colore richiesto
-//        if (color.equals(AlienColor.PURPLE)) {
-//            if ("PurpleLifeSupportSystem".equals(s1) || "PurpleLifeSupportSystem".equals(s2) ||
-//                    "PurpleLifeSupportSystem".equals(s3) || "PurpleLifeSupportSystem".equals(s4)) {
-//                return true;
-//            }
-//        }
-//        if (color.equals(AlienColor.BROWN)) {
-//            return "BrownLifeSupportSystem".equals(s1) || "BrownLifeSupportSystem".equals(s2) ||
-//                    "BrownLifeSupportSystem".equals(s3) || "BrownLifeSupportSystem".equals(s4);
-//        }
-//
-//        return false;
-
         ArrayList<Pair<Position, Tile>> connectedTiles = new ArrayList<>(P.getConnectedTiles(S.getPosition()));
         for (Pair<Position, Tile> pair : connectedTiles) {
             Component component = pair.getValue().getMyComponent();
@@ -296,7 +274,7 @@ public class Util {
             if (component != null && wellConnectedTiles(T.getSides(), pair.getValue().getSides(), S.getPosition(), pair.getKey())){
                 if (component.accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && color.equals(AlienColor.PURPLE)){
                     return true;
-                } else if (component.accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && color.equals(AlienColor.BROWN)){
+                }  if (component.accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && color.equals(AlienColor.BROWN)){
                     return true;
                 }
             }
@@ -307,12 +285,12 @@ public class Util {
 
 
     /**
-     * Verifica se i connettori di una tile sono ben connessi agli slot adiacenti della nave.
+     * Verifies if the connectors of a tile are properly connected to adjacent ship slots.
      *
-     * @param s      La nave in cui si sta effettuando il controllo.
-     * @param mySlot Lo slot della tile in esame.
-     * @param T      La tile in esame.
-     * @return Una coppia contenente un booleano che indica se la connessione è valida e un intero con il numero di connessioni valide.
+     * @param s      The ship being checked
+     * @param mySlot The slot containing the tile being checked
+     * @param T      The tile being checked
+     * @return true if all connections are valid, false otherwise
      */
     public static Boolean wellConnectedConnectors(Ship s, Slot mySlot, Tile T) {
 
@@ -331,7 +309,7 @@ public class Util {
         //UP TILE
 
         if (myPosY - 1 >= 0 && TempShipBoard[myPosX][myPosY-1].getTile() != null) {
-             cUp = TempShipBoard[myPosX][myPosY - 1].getTile().getSides().get(2);
+            cUp = TempShipBoard[myPosX][myPosY - 1].getTile().getSides().get(2);
             //Controlla se il connettore superiore del tile corrente è compatibile con il connettore inferiore del tile superiore
             wellConnected = compatible(cUp,T.getSides().get(0));
             if(!wellConnected){
@@ -374,6 +352,15 @@ public class Util {
 
     }
 
+    /**
+     * Checks if two adjacent tiles are properly connected through their connectors.
+     *
+     * @param tile1Connectors   Connectors of the first tile
+     * @param tile2Connectors   Connectors of the second tile
+     * @param position1         Position of the first tile
+     * @param position2         Position of the second tile
+     * @return true if the tiles are properly connected, false otherwise
+     */
     public static Boolean wellConnectedTiles(ArrayList<Connector> tile1Connectors, ArrayList<Connector> tile2Connectors, Position position1, Position position2) {
 
         String relativePos;
@@ -386,21 +373,29 @@ public class Util {
 
         if (relativePos.equals("left-right")){
             if (position1.getX() > position2.getX()) {
-                wellConnected = compatible(tile1Connectors.get(1), tile2Connectors.get(3));
-            } else wellConnected = compatible(tile1Connectors.get(3), tile2Connectors.get(1));
+                wellConnected = compatible(tile1Connectors.get(1), tile2Connectors.get(3)) && !tile1Connectors.get(1).equals(Connector.EMPTY);
+            } else wellConnected = compatible(tile1Connectors.get(3), tile2Connectors.get(1)) && !tile1Connectors.get(3).equals(Connector.EMPTY);
         } else {
             if (position1.getY() > position2.getY()) {
-                wellConnected = compatible(tile1Connectors.getFirst(), tile2Connectors.get(2));
+                wellConnected = compatible(tile1Connectors.getFirst(), tile2Connectors.get(2)) && !tile1Connectors.getFirst().equals(Connector.EMPTY);
 
-            } else  wellConnected = compatible(tile2Connectors.getFirst(), tile1Connectors.get(2));
+            } else  wellConnected = compatible(tile2Connectors.getFirst(), tile1Connectors.get(2)) && !tile2Connectors.getFirst().equals(Connector.EMPTY);
 
-            }
+        }
 
 
         return wellConnected;
     }
 
 
+    /**
+     * Checks if there's a life support system of the specified color near the given position.
+     *
+     * @param position The position to check around
+     * @param color    The color of the life support system to look for
+     * @param myShip   The ship to search within
+     * @return true if a matching life support system is found nearby, false otherwise
+     */
     public static Boolean checkNearLFS(Position position, AlienColor color, Ship myShip) {
 
         return CheckLifeSupportSystem(color, myShip.getTileFromPosition(position),myShip, myShip.getShipBoard()[position.getX()][position.getY()]);
@@ -408,13 +403,14 @@ public class Util {
     }
 
     /**
-     * Visita una tile e verifica se è ben connessa ai sistemi di supporto vitale.
+     * Visits a tile and verifies its connectivity to life support systems.
      *
-     * @param tile             La tile da visitare.
-     * @param tilesID          Lista degli ID delle tile già visitate.
-     * @param slot             Lo slot della tile in esame.
-     * @param invalidPositions Lista delle posizioni non valide.
-     * @param myShip           La nave in cui si sta effettuando la verifica.
+     * @param tile             The tile to visit
+     * @param tilesID          List of already visited tile IDs
+     * @param slot             The slot containing the tile
+     * @param invalidPositions List of invalid positions
+     * @param newBrokenPos     Queue to store newly broken positions
+     * @param myShip           The ship containing the tile
      */
     public static void visitTile(Tile tile, ArrayList<Integer> tilesID, Slot slot, ArrayList<Position> invalidPositions, Queue<Position> newBrokenPos, Ship myShip) {
         ComponentNameVisitor cnv = new ComponentNameVisitor();
@@ -441,9 +437,6 @@ public class Util {
 
 
                     }
-//                    System.out.println("[2]I: " + i + " " + positions.size());
-
-
                 }
 
             }
@@ -453,9 +446,13 @@ public class Util {
 
 
     /**
-     * Controlla se la Ship e' formata o no da tronconi separati
-
-     * @param myShip           La nave in cui si sta effettuando la verifica.
+     * Checks if the ship is composed of a single connected structure or has separate sections.
+     *
+     * @param myShip     The ship to check
+     * @param startingPos The starting position for the check
+     * @return A Pair containing:
+     *         - boolean indicating if the ship has no separate sections
+     *         - list of visited tile IDs
      */
     public  static Pair<Boolean, ArrayList<Integer>> checkShipStructure(Ship myShip, Position startingPos) {
 
@@ -463,8 +460,8 @@ public class Util {
         visitedTilesId.add(myShip.getTileFromPosition(startingPos).getId());
         checkShipStructureTileVisitor(startingPos, myShip, visitedTilesId);
 
-        //ora in visitedTilesId ho tutte le tile che fanno parte del troncone principale
-        //devo confrontare le Tile totali con quelle visitate, se sono le stesse allora non ci sono troconi separati
+        //now in visitedTilesId I have all the tiles that make up the main section
+        //I need to compare total tiles with visited tiles, if they are the same then there are no separate sections
 
         ArrayList<Integer> tilesId = new ArrayList<>(Arrays.stream(myShip.getShipBoard())
                 .flatMap(Arrays::stream).map(Slot::getTile)
@@ -478,6 +475,13 @@ public class Util {
 
     }
 
+    /**
+     * Recursive helper method for checking ship structure connectivity.
+     *
+     * @param startingPos   The current position to check from
+     * @param myShip        The ship being checked
+     * @param visitedTilesId List of IDs of visited tiles
+     */
     private static void checkShipStructureTileVisitor(Position startingPos, Ship myShip, ArrayList<Integer> visitedTilesId) {
 
         ArrayList<Pair<Position, Tile>> connectedTiles = myShip.getConnectedTiles(startingPos);
@@ -495,36 +499,55 @@ public class Util {
         }
     }
 
+    /**
+     * Checks if coordinates are within the ship board boundaries.
+     *
+     * @param x The x-coordinate to check
+     * @param y The y-coordinate to check
+     * @return true if within boundaries, false otherwise
+     */
     public static Boolean inBoundaries(int x, int y) {
         return (y >= 0 && y < 5) && (x >= 0 && x < 7);
     }
 
+    /**
+     * Gets the positions of adjacent tiles to a given position.
+     *
+     * @param pos The position to find adjacent positions for
+     * @return An ArrayList containing the positions of adjacent tiles
+     */
     public static ArrayList<Position> getAdjacentPositions(Position pos) {
         ArrayList<Position> adjacent = new ArrayList<>();
-        adjacent.add(new Position(pos.getX(), pos.getY() - 1)); // Nord
-        adjacent.add(new Position(pos.getX() - 1, pos.getY())); // Ovest
-        adjacent.add(new Position(pos.getX(), pos.getY() + 1)); // Sud
-        adjacent.add(new Position(pos.getX() + 1, pos.getY())); // Est
+        adjacent.add(new Position(pos.getX(), pos.getY() - 1)); // North
+        adjacent.add(new Position(pos.getX() - 1, pos.getY())); // West
+        adjacent.add(new Position(pos.getX(), pos.getY() + 1)); // South
+        adjacent.add(new Position(pos.getX() + 1, pos.getY())); // East
         return adjacent;
     }
 
+    /**
+     * Checks if two connectors are compatible with each other.
+     *
+     * @param connector1 The first connector to check
+     * @param connector2 The second connector to check
+     * @return true if the connectors are compatible, false otherwise
+     */
     public static Boolean compatible(Connector connector1, Connector connector2) {
-        //casi null
+        //cases with null
         if (connector1 == null && connector2 != null) return true;
         if (connector1 == null || connector2 == null) return true;
 
-        //con un connetore empty
+        //with one empty connector
         if (connector1.equals(Connector.EMPTY) && !connector2.equals(Connector.EMPTY)) return false;
         if (connector2.equals(Connector.EMPTY) && !connector1.equals(Connector.EMPTY)) return false;
 
-        //sono identici
+        //they are identical
         if (connector1.equals(connector2)) return true;
 
-        //con un connetore universal
+        //with one universal connector
         if (connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY)) return true;
         if (connector2.equals(Connector.UNIVERSAL) && !connector1.equals(Connector.EMPTY)) return true;
 
         return false;
     }
-
 }

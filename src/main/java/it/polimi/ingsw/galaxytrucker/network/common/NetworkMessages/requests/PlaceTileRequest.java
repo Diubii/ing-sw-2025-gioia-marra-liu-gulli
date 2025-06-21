@@ -8,6 +8,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Place tile request.
+ */
 public class PlaceTileRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 43848L;
@@ -18,6 +21,12 @@ public class PlaceTileRequest extends NetworkMessage implements Serializable {
     private final int reservedSlotIndex;
 
 
+    /**
+     * Instantiates a new Place tile request.
+     *
+     * @param tile the tile
+     * @param pos  the pos
+     */
     public PlaceTileRequest(Tile tile, Position pos) {
         super();
         this.tile = tile;
@@ -26,6 +35,12 @@ public class PlaceTileRequest extends NetworkMessage implements Serializable {
         this.reservedSlotIndex = -1;
     }
 
+    /**
+     * Instantiates a new Place tile request.
+     *
+     * @param tile              the tile
+     * @param reservedSlotIndex the reserved slot index
+     */
     public PlaceTileRequest(Tile tile, int reservedSlotIndex) {
         super();
         this.tile = tile;
@@ -35,14 +50,29 @@ public class PlaceTileRequest extends NetworkMessage implements Serializable {
     }
 
 
+    /**
+     * Gets pos.
+     *
+     * @return the pos
+     */
     public Position getPos() {
         return pos;
     }
 
+    /**
+     * Is to reserved boolean.
+     *
+     * @return the boolean
+     */
     public boolean isToReserved() {
         return toReserved;
     }
 
+    /**
+     * Gets reserved slot index.
+     *
+     * @return the reserved slot index
+     */
     public int getReservedSlotIndex() {
         return reservedSlotIndex;
     }
@@ -51,6 +81,11 @@ public class PlaceTileRequest extends NetworkMessage implements Serializable {
         return visitor.visit(this);
     }
 
+    /**
+     * Gets tile.
+     *
+     * @return the tile
+     */
     public Tile getTile() {
         return tile;
     }

@@ -8,16 +8,29 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * The type Ask trunk request.
+ */
 public class AskTrunkRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 834562902135L;
 
     private final ArrayList<Ship> trunks;
 
+    /**
+     * Instantiates a new Ask trunk request.
+     *
+     * @param trunks the trunks
+     */
     public AskTrunkRequest(ArrayList<Ship> trunks) {
         this.trunks = trunks;
     }
 
+    /**
+     * Gets trunks.
+     *
+     * @return the trunks
+     */
     public ArrayList<Ship> getTrunks() {
         return trunks;
     }

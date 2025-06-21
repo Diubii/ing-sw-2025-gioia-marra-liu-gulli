@@ -7,6 +7,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Phase update.
+ */
 public class PhaseUpdate extends NetworkMessage implements Serializable {
 
     @Serial
@@ -14,11 +17,21 @@ public class PhaseUpdate extends NetworkMessage implements Serializable {
 
     private final GameState state;
 
+    /**
+     * Instantiates a new Phase update.
+     *
+     * @param state the state
+     */
     public PhaseUpdate(GameState state) {
 
         this.state = state;
     }
 
+    /**
+     * Gets state.
+     *
+     * @return the state
+     */
     public GameState getState() {
         return state;
     }

@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Ask draw adventure card request.
+ */
 public class AskDrawAdventureCardRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 3287423907322938L;

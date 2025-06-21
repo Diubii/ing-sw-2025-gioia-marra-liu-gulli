@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Join room request.
+ */
 public class JoinRoomRequest extends NetworkMessage implements Serializable {
 
     @Serial
@@ -13,6 +16,12 @@ public class JoinRoomRequest extends NetworkMessage implements Serializable {
     private final int roomId;
     private final String nickName;
 
+    /**
+     * Instantiates a new Join room request.
+     *
+     * @param roomId   the room id
+     * @param nickName the nick name
+     */
     public JoinRoomRequest(int roomId, String nickName) {
 
         super();
@@ -25,10 +34,20 @@ public class JoinRoomRequest extends NetworkMessage implements Serializable {
         return visitor.visit(this);
     }
 
+    /**
+     * Gets room id.
+     *
+     * @return the room id
+     */
     public int getRoomId() {
         return roomId;
     }
 
+    /**
+     * Gets nick name.
+     *
+     * @return the nick name
+     */
     public String getNickName() {
         return nickName;
     }

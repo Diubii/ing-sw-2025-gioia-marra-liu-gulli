@@ -294,9 +294,11 @@ class ShipTest {
     void truncateShip() {
 
         Ship ship = MockShipFactory.createMockShip();
+        ShipPrintUtils.printShip(ship);
+
         //distruggo tile
 
-        ship.removeTile(new Position(3,2), false);
+        ship.removeTile(new Position(3,1), false);
 
         ArrayList<Ship> Troncons = ship.getTronc();
 

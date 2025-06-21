@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Create room request.
+ */
 public class CreateRoomRequest extends NetworkMessage implements Serializable {
 
     @Serial
@@ -15,20 +18,42 @@ public class CreateRoomRequest extends NetworkMessage implements Serializable {
     private final Boolean isLearningMatch;
     private final String nickName;
 
+    /**
+     * Instantiates a new Create room request.
+     *
+     * @param maxPlayers      the max players
+     * @param isLearningMatch the is learning match
+     * @param nickName        the nick name
+     */
     public CreateRoomRequest(int maxPlayers, Boolean isLearningMatch, String nickName) {
         this.maxPlayers = maxPlayers;
         this.isLearningMatch = isLearningMatch;
         this.nickName = nickName;
     }
 
+    /**
+     * Gets max players.
+     *
+     * @return the max players
+     */
     public int getMaxPlayers() {
         return maxPlayers;
     }
 
+    /**
+     * Gets nick name.
+     *
+     * @return the nick name
+     */
     public String getNickName() {
         return nickName;
     }
 
+    /**
+     * Gets is learning match.
+     *
+     * @return the is learning match
+     */
     public Boolean getIsLearningMatch() {
         return isLearningMatch;
     }

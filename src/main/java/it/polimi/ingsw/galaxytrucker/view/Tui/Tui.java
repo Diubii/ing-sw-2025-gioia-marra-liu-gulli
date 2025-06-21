@@ -1462,7 +1462,7 @@ public class Tui implements View, Observable {
                     String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + ", oppure 0 per saltare il caricamento merci): ");
                     if(checkReset(input)) return;
                     if (input.equals("0")) {
-                        showGenericMessage("Hai scelto di non caricare nessuna merce. ",false);
+                        showGenericMessage("Hai scelto di non caricare nessu+na merce. ",false);
                         disableInput();
                         askLoadGoodChoice();
 
@@ -1495,6 +1495,7 @@ public class Tui implements View, Observable {
                     if(checkReset(input)) return;
                     if (input.equals("0")) {
                         out.println("Hai deciso di non caricare la merce.");
+                        askLoadGoodChoice();
                         return;
                     }
                     Position pos = parseCoordinate(input);

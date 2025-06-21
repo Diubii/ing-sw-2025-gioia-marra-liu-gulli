@@ -7,6 +7,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Select planet response.
+ */
 public class SelectPlanetResponse extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 274424698798L;
@@ -14,6 +17,12 @@ public class SelectPlanetResponse extends NetworkMessage implements Serializable
     private final Planet selectedPlanet;
     private final Integer planetIndex;
 
+    /**
+     * Instantiates a new Select planet response.
+     *
+     * @param selectedPlanet the selected planet
+     * @param planetIndex    the planet index
+     */
     public SelectPlanetResponse(Planet selectedPlanet, Integer planetIndex) {
 
         this.selectedPlanet = selectedPlanet;
@@ -25,10 +34,20 @@ public class SelectPlanetResponse extends NetworkMessage implements Serializable
         return visitor.visit(this);
     }
 
+    /**
+     * Gets selected planet.
+     *
+     * @return the selected planet
+     */
     public Planet getSelectedPlanet() {
         return selectedPlanet;
     }
 
+    /**
+     * Gets planet index.
+     *
+     * @return the planet index
+     */
     public Integer getPlanetIndex() {
         return planetIndex;
     }

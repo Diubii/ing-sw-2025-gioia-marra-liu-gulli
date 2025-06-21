@@ -304,7 +304,7 @@ public class FlightController extends GenericGamePhaseSceneController {
         });
     }
 
-    public void handleDiscradCrew(int total){
+    public void  handleDiscradCrew(int total){
        // System.out.println("DEBUG: discradCrew");
         isDiscardingCrewTime= true;
         Platform.runLater(() -> {

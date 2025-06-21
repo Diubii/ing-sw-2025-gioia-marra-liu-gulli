@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Ask timer info request.
+ */
 public class AskTimerInfoRequest extends NetworkMessage implements Serializable {
 
     @Serial
@@ -16,6 +19,9 @@ public class AskTimerInfoRequest extends NetworkMessage implements Serializable 
         return visitor.visit(this);
     }
 
+    /**
+     * Instantiates a new Ask timer info request.
+     */
     public AskTimerInfoRequest() {
         super(); // Call to the parent class constructor
     }

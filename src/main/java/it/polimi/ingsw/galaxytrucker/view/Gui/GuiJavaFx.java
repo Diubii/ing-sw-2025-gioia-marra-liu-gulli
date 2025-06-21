@@ -47,6 +47,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -560,7 +561,7 @@ public class GuiJavaFx implements View {
 
                 Tile tile = shipboard[x][y].getTile();
 
-                if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" ) {
+                if (tile != null && Objects.equals(tile.getMyComponent().accept(namevisitor), "ModularHousingUnit")) {
 
                     //Editare a giro Crew tra varie possibilità e tenere aggiornato CrewInitUpdate
                     ((GuiJavaFx) controller.getView()).editPositionCrew(x, y);

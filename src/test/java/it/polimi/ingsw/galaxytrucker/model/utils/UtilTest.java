@@ -1,5 +1,6 @@
 package it.polimi.ingsw.galaxytrucker.model.utils;
 
+import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import it.polimi.ingsw.galaxytrucker.enums.Connector;
 import it.polimi.ingsw.galaxytrucker.model.MockShipFactory;
 import it.polimi.ingsw.galaxytrucker.model.Ship;
@@ -7,6 +8,7 @@ import it.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
+import it.polimi.ingsw.galaxytrucker.model.essentials.components.LifeSupportSystem;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
@@ -47,7 +49,9 @@ class UtilTest {
         connectors.add(Connector.UNIVERSAL);
 
 
-        Tile tile = new Tile(0,0,connectors,new BatterySlot(2));
+        LifeSupportSystem lifeSupportSystem = new LifeSupportSystem(AlienColor.PURPLE);
+
+        Tile tile = new Tile(0,0,connectors,lifeSupportSystem);
 
         ship.putTile(tile, new Position(5,3));
         ship.putTile(tile, new Position(5,2));
@@ -83,5 +87,64 @@ class UtilTest {
         var pos = Util.getAdjacentPositions(new Position(3, 3));
         assertEquals(4, pos.size());
         assertEquals(new Position(3, 2), pos.get(0)); // North
+    }
+
+    @Test
+    void engineWellConnected() {
+    }
+
+    @Test
+    void cannonWellConnected() {
+    }
+
+    @Test
+    void checkLifeSupportSystem() {
+        Ship ship = MockShipFactory.createMockShip();
+
+        ArrayList<Connector> connectors = new ArrayList<>();
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.UNIVERSAL);
+
+
+        LifeSupportSystem lifeSupportSystem = new LifeSupportSystem(AlienColor.PURPLE);
+
+        Tile tile = new Tile(0,0,connectors,lifeSupportSystem);
+
+        ship.putTile(tile, new Position(4,1));
+
+
+        ShipPrintUtils.printShip(ship);
+
+        assertTrue(Util.checkNearLFS(new Position(4,2), AlienColor.PURPLE, ship));
+    }
+
+    @Test
+    void wellConnectedConnectors() {
+    }
+
+    @Test
+    void wellConnectedTiles() {
+    }
+
+    @Test
+    void checkNearLFS() {
+    }
+
+    @Test
+    void checkShipStructure() {
+    }
+
+    @Test
+    void inBoundaries() {
+    }
+
+    @Test
+    void getAdjacentPositions() {
+    }
+
+    @Test
+    void compatible() {
     }
 }

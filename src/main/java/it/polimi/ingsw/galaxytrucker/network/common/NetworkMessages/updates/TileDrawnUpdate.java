@@ -6,12 +6,20 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Tile drawn update.
+ */
 public class TileDrawnUpdate extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 328586923L;
 
     private final int tileId;
 
+    /**
+     * Instantiates a new Tile drawn update.
+     *
+     * @param tileId the tile id
+     */
     public TileDrawnUpdate(int tileId) {
         this.tileId = tileId;
     }
@@ -21,6 +29,11 @@ public class TileDrawnUpdate extends NetworkMessage implements Serializable {
         return visitor.visit(this);
     }
 
+    /**
+     * Gets tile id.
+     *
+     * @return the tile id
+     */
     public int getTileId() {
         return tileId;
     }

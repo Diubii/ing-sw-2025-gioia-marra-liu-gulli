@@ -3,24 +3,47 @@ package it.polimi.ingsw.galaxytrucker.controller;
 import it.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 
+/**
+ * The type Client phase controller.
+ */
 public class ClientPhaseController {
     private final ClientController controller;
     private PLAYER_PHASE phase;
 
+    /**
+     * Instantiates a new Client phase controller.
+     *
+     * @param controller the controller
+     */
     public ClientPhaseController(ClientController controller) {
         this.controller = controller;
         phase = PLAYER_PHASE.START;
     }
 
+    /**
+     * Gets phase.
+     *
+     * @return the phase
+     */
     public synchronized PLAYER_PHASE getPhase() {
         return phase;
     }
 
 
+    /**
+     * Sets phase.
+     *
+     * @param phase the phase
+     */
     public synchronized void setPhase(PLAYER_PHASE phase) {
         this.phase = phase;
     }
 
+    /**
+     * Handle phase update.
+     *
+     * @param update the update
+     */
     public synchronized void handlePhaseUpdate(PhaseUpdate update) {
         switch (update.getState()) {
 

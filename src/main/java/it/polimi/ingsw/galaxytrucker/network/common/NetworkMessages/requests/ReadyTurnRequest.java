@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Ready turn request.
+ */
 public class ReadyTurnRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 3287423907322938L;

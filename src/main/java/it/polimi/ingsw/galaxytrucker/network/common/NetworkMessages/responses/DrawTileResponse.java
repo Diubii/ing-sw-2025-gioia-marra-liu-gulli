@@ -7,6 +7,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Draw tile response.
+ */
 public class DrawTileResponse extends NetworkMessage implements Serializable {
 
     @Serial
@@ -14,19 +17,40 @@ public class DrawTileResponse extends NetworkMessage implements Serializable {
     private final Tile tile;
     private String errorMessage;
 
+    /**
+     * Instantiates a new Draw tile response.
+     *
+     * @param tile the tile
+     * @param id   the id
+     */
     public DrawTileResponse(Tile tile, int id) {
         super(id);
         this.tile = tile;
     }
 
+    /**
+     * Gets tile.
+     *
+     * @return the tile
+     */
     public Tile getTile() {
         return tile;
     }
 
+    /**
+     * Gets error message.
+     *
+     * @return the error message
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
+    /**
+     * Sets error message.
+     *
+     * @param errorMessage the error message
+     */
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }

@@ -8,15 +8,28 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * The type Game end update.
+ */
 public class GameEndUpdate extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 72637L;
     private final ArrayList<PlayerScore> scores;
 
+    /**
+     * Instantiates a new Game end update.
+     *
+     * @param scores the scores
+     */
     public GameEndUpdate(ArrayList<PlayerScore> scores) {
         this.scores = scores;
     }
 
+    /**
+     * Gets scores.
+     *
+     * @return the scores
+     */
     public ArrayList<PlayerScore> getScores() {
         return scores;
     }

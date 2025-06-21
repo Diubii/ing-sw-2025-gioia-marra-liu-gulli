@@ -8,6 +8,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * The type Timer info response.
+ */
 public class TimerInfoResponse extends NetworkMessage implements Serializable {
 
     @Serial
@@ -20,24 +23,42 @@ public class TimerInfoResponse extends NetworkMessage implements Serializable {
         return visitor.visit(this);
     }
 
-    // Default constructor
+    /**
+     * Instantiates a new Timer info response.
+     */
+// Default constructor
     public TimerInfoResponse() {
         super(0); // Default ID
         this.timerInfoList = new ArrayList<>();
     }
 
-    // Parameterized constructor
+    /**
+     * Instantiates a new Timer info response.
+     *
+     * @param id the id
+     */
+// Parameterized constructor
     public TimerInfoResponse(int id) {
         super(id); // Call parent constructor
         this.timerInfoList = new ArrayList<>(); // Initialize the list
     }
 
-    // Getter for TimerInfo list
+    /**
+     * Gets timer info list.
+     *
+     * @return the timer info list
+     */
+// Getter for TimerInfo list
     public ArrayList<TimerInfo> getTimerInfoList() {
         return timerInfoList;
     }
 
-    // Setter for TimerInfo list
+    /**
+     * Sets timer info list.
+     *
+     * @param timerInfoList the timer info list
+     */
+// Setter for TimerInfo list
     public void setTimerInfoList(ArrayList<TimerInfo> timerInfoList) {
         this.timerInfoList = timerInfoList;
     }

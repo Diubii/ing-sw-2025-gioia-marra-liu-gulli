@@ -35,9 +35,15 @@ public class GameController {
     private Iterator<Player> rankedPlayersIterator;
     private CardContext currentCardContext;
 
+    /**
+     * Returns the current card context in use by the game controller.
+     *
+     * @return The current CardContext instance.
+     */
     public CardContext getCurrentCardContext() {
         return currentCardContext;
     }
+
 
     public CardDeck getCardDeckTest() {
         return cardDeckTest;
@@ -416,11 +422,16 @@ public class GameController {
         return false;
     }
 
+
+    /**
+     * Retrieves a list of ranked players based on their placement in the game.
+     *
+     * @return An ArrayList containing the ranked players.
+     */
     public ArrayList<Player> getRankedPlayers() {
 
 //        return new ArrayList<>(getPlayingPlayers().stream().sorted(Comparator.comparingInt(Player::getPlacement)).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
-
-        ArrayList<Color> rankedColors = game.getRealGame().getFlightBoard().getRankedPlayers();
+ArrayList<Color> rankedColors = game.getRealGame().getFlightBoard().getRankedPlayers();
         ArrayList<Player> rankedPlayers = new ArrayList<>();
         for (Color color : rankedColors) {
             String nickname = game.getNicknameFromColor(color);
@@ -432,14 +443,22 @@ public class GameController {
 
         return rankedPlayers;
 
-
     }
 
+    /**
+     * Gets the list of players who are currently active in the game.
+     *
+     * @return A List of players whose state is 'Playing'.
+     */
     public List<Player> getPlayingPlayers(){
         return game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList();
     }
 
 
+    /**
+     * Removes players from the game who have no remaining crew members on their ship.
+     * Players are removed with the reason 'NoCrewMembersLeft'.
+     */
     public void clearPlayersWithNoCrew(){
         for(Player player : getPlayingPlayers()) {
             Ship ship = player.getShip();
@@ -451,6 +470,10 @@ public class GameController {
         }
     }
 
+    /**
+     * Removes players from the game who have been lapped by other players on the flight board.
+     * Players are removed with the reason 'Lapped'.
+     */
     public void clearLappedPlayers() {
         for(Color color : game.getRealGame().getFlightBoard().getRankedPlayers()) {
             if(game.getRealGame().getFlightBoard().isPlayerLapped(color)){

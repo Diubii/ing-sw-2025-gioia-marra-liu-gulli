@@ -8,12 +8,20 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 
+/**
+ * The type Select planet request.
+ */
 public class SelectPlanetRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 98769876L;
 
     private final HashMap<Integer, Planet> landablePlanets;
 
+    /**
+     * Instantiates a new Select planet request.
+     *
+     * @param landablePlanets the landable planets
+     */
     public SelectPlanetRequest(HashMap<Integer, Planet> landablePlanets) {
         this.landablePlanets = landablePlanets;
     }
@@ -23,6 +31,11 @@ public class SelectPlanetRequest extends NetworkMessage implements Serializable 
         return visitor.visit(this);
     }
 
+    /**
+     * Gets landable planets.
+     *
+     * @return the landable planets
+     */
     public HashMap<Integer, Planet> getLandablePlanets() {
         return landablePlanets;
     }

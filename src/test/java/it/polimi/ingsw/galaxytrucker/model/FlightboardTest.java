@@ -22,58 +22,10 @@
 //        players.add(new Player("Bob", 0, 2, learningMatch));
 //        players.add(new Player("Charlie", 0, 3, learningMatch));
 //        players.add(new Player("David", 0, 4, learningMatch));
-//        flightBoard = new FlightBoard(players, learningMatch);
+//        flightBoard = new FlightBoard(learningMatch);
 //
 //    }
 //
-//    @Test
-//    public void testInitializeFlightBoard() {
-//        if (learningMatch == true) {
-//
-//            int i = 0;
-//            int j = 2;
-//
-//            assertEquals(18,flightBoard.getLapLength(), "err lap lenghth should be 18" );
-//            for (Player player : players) {
-//
-//                int position = flightBoard.getPlayerPositions(player);
-//
-//                if (i == 0) {
-//                    assertEquals(4, flightBoard.getPlayerPositions(player),"err init FirstPlayer in learningMatch ");
-//                    i = i + 1;
-//                } else {
-//                    assertEquals(j, flightBoard.getPlayerPositions(player),"err init Player " +  i +  "  in learningMatch ");
-//                    j--;
-//                    i++;
-//                }
-//            }
-//        } else {
-//            assertEquals(24,flightBoard.getLapLength(), "err lap lenghth should be 24" );
-//            int i = 0;
-//            int j = 1;
-//            for (Player player : players) {
-//
-//                int position = flightBoard.getPlayerPositions(player);
-//
-//                if (i == 0 || i == 1) {
-//                    if(i== 0 ) {
-//                        assertEquals(6, flightBoard.getPlayerPositions(player),"err init FirstPlayer in NormalMatch ");
-//                    }
-//                    if(i== 1 ) {
-//                        assertEquals(3, flightBoard.getPlayerPositions(player),"err init SecondPlayer in NormalMatch ");
-//                    }
-//                    i = i + 1;
-//                }
-//
-//
-//                else {
-//                    assertEquals(j, flightBoard.getPlayerPositions(player),"err init Player " +  i +  "  in NormalMatch ");
-//                    j--;
-//                    i++;
-//                }
-//            }
-//        }
-//    }
 //
 //
 //    @Test
@@ -129,28 +81,6 @@
 //
 //
 //
-//    @Test
-//    public void testUpdateOrder() {
-//        Player playerA = players.get(0);
-//        Player playerB = players.get(1);
-//        Player playerC = players.get(2);
-//        Player playerD = players.get(3);
 //
-//        flightBoard.moveBoard(playerD, 10);
-//        flightBoard.moveBoard(playerC, 5);
-//        flightBoard.moveBoard(playerA, 1);
-//
-//        List<Player> exceptedOrder = Arrays.asList(playerD, playerC, playerA, playerB);
-//
-//        flightBoard.updateOrder(players);
-//        for(int i = 0; i < players.size(); i++) {
-//            assert exceptedOrder.get(i).equals(players.get(i)) : "err PlayersOrder " + i +" Player" ;
-//
-//        }
-//        Player leader = flightBoard.getLeader();
-//        assertEquals(leader, playerD, "err Leader");
-//
-//
-//    }
 //
 //}

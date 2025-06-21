@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type End timer update.
+ */
 public class EndTimerUpdate extends NetworkMessage implements Serializable {
 
     @Serial
@@ -13,11 +16,21 @@ public class EndTimerUpdate extends NetworkMessage implements Serializable {
 
     private final int timerSeconds;
 
+    /**
+     * Instantiates a new End timer update.
+     *
+     * @param timerSeconds the timer seconds
+     */
     public EndTimerUpdate(int timerSeconds) {
 
         this.timerSeconds = timerSeconds;
     }
 
+    /**
+     * Gets timer seconds.
+     *
+     * @return the timer seconds
+     */
     public int getTimerSeconds() {
         return timerSeconds;
     }

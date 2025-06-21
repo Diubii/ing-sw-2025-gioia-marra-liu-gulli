@@ -51,6 +51,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
+/*
+ * Copyright (c) Politecnico di Milano - Ingegneria del Software
+ *
+ * This is the ClientController class responsible for handling all client-side logic,
+ * communication with the server (via Socket or RMI), and view interaction.
+ * It operates under the MVC pattern with a synchronized ClientModel and
+ * acts as an Observer for server-side updates.
+ */
+
+
+/**
+ * The type Client controller.
+ */
 public class ClientController implements Observer {
 
 
@@ -68,10 +82,22 @@ public class ClientController implements Observer {
     private Thread heartbeat;
     private final AtomicBoolean isConnectionAlive = new AtomicBoolean(false);
 
+
+    /**
+     * Returns the current game phase.
+     *
+     * @return the current game state
+     */
     public GameState getPhase() {
         return phase;
     }
 
+
+    /**
+     * Sets the game phase.
+     *
+     * @param phase the game state to set
+     */
     public void setPhase(GameState phase) {
         this.phase = phase;
     }
@@ -79,10 +105,21 @@ public class ClientController implements Observer {
     private GameState phase = GameState.LOBBY;
     private boolean isPlaced = false;
 
+    /**
+     * Gets my model.
+     *
+     * @return the my model
+     */
     public ClientModel getMyModel() {
         return myModel;
     }
-    
+
+    /**
+     * Sets completable future.
+     *
+     * @param completableFuture the completable future
+     * @param id                the id
+     */
     public void setCompletableFuture(CompletableFuture<NetworkMessage> completableFuture, int id) {
         this.completableFuture = completableFuture;
         this.pair = new Pair<>(id, completableFuture);
@@ -90,6 +127,12 @@ public class ClientController implements Observer {
     
     private final Boolean isSocket;
 
+    /**
+     * Instantiates a new Client controller.
+     *
+     * @param view the view
+     * @param flag the flag
+     */
     public ClientController(View view, Boolean flag) {
 
         this.myModel = new ClientModel();
@@ -109,12 +152,26 @@ public class ClientController implements Observer {
         });
     }
 
+
+    /**
+     * Receives and processes messages from the server using the visitor pattern.
+     * @param message the message received
+     */
     @Override
     public void update(NetworkMessage message) {
         message.accept(messageVisitor);
     }
 
 
+    /**
+     * Connects the client to the specified server using either Socket or RMI.
+     * Starts the heartbeat to ensure connection remains alive.
+     *
+     * @param address the server address
+     * @param port    the server port
+     * @throws IOException       if connection fails
+     * @throws NotBoundException if RMI lookup fails
+     */
     public void connectToServer(String address, int port) throws IOException, NotBoundException {
         if (isSocket) {
             client = new ClientSocket(address, port);
@@ -148,6 +205,11 @@ public class ClientController implements Observer {
         return heartbeat;
     }
 
+    /**
+     * Handle server info.
+     *
+     * @param info the info
+     */
     public void handleServerInfo(SERVER_INFO info) {
         try {
             connectToServer(info.getAddress(), info.getPort());
@@ -196,8 +258,10 @@ public class ClientController implements Observer {
      * Otherwise, an error is shown and the user is prompted to try a different nickname.
      *
      * @param nickname the nickname input provided by the user
+     * @throws IOException          the io exception
+     * @throws ExecutionException   the execution exception
+     * @throws InterruptedException the interrupted exception
      */
-
     public void handleNicknameInput(String nickname) throws IOException, ExecutionException, InterruptedException {
         if (!isNicknameLegal(nickname)) {
             view.showGenericMessage("Invalid nickname. It must  contain only letters, numbers, or underscores.",false);
@@ -228,6 +292,12 @@ public class ClientController implements Observer {
 
     }
 
+    /**
+     * Handles user's choice to create or join a room.
+     *
+     * @param choice user's input
+     * @throws ExecutionException if execution fails
+     */
     public void handleCreateOrJoinChoice(String choice) throws ExecutionException {
         switch (choice.toLowerCase()) {
             case "a" -> view.askCreateRoom();
@@ -240,6 +310,12 @@ public class ClientController implements Observer {
         }
     }
 
+    /**
+     * Sends a CreateRoomRequest to the server with specified options.
+     *
+     * @param maxPlayers      number of players allowed
+     * @param isLearningMatch true if learning match
+     */
     public void handleCreateChoice(int maxPlayers, boolean isLearningMatch) {
         CreateRoomRequest request = new CreateRoomRequest(maxPlayers, isLearningMatch, getNickname());
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -273,6 +349,9 @@ public class ClientController implements Observer {
         }).start();
     }
 
+    /**
+     * Handle join room options choice.
+     */
     public void handleJoinRoomOptionsChoice() {
         JoiniRoomOptionsRequest request = new JoiniRoomOptionsRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -299,7 +378,11 @@ public class ClientController implements Observer {
         }).start();
     }
 
-
+    /**
+     * Sends a JoinRoomRequest to the server with the selected room ID.
+     *
+     * @param roomId room ID to join
+     */
     public void handleJoinChoice(int roomId) {
         JoinRoomRequest request = new JoinRoomRequest(roomId, getNickname());
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -338,6 +421,11 @@ public class ClientController implements Observer {
     }
 
 
+    /**
+     * Handle player joined update.
+     *
+     * @param playerJoinedUpdate the player joined update
+     */
     public void handlePlayerJoinedUpdate(PlayerJoinedUpdate playerJoinedUpdate) {
 
         synchronized (myModel.getPlayerInfos()) {
@@ -348,6 +436,11 @@ public class ClientController implements Observer {
         view.showPlayersLobby(myModel.getMyInfo(), myModel.getPlayerInfos());
     }
 
+    /**
+     * Handle phase update.
+     *
+     * @param phaseUpdate the phase update
+     */
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
 
         System.out.println("Ricevuto phase update in clientController: "+phaseUpdate.getState().toString());
@@ -384,6 +477,11 @@ public class ClientController implements Observer {
 
     }
 
+    /**
+     * Handle building menu choice.
+     *
+     * @param input the input
+     */
     public void handleBuildingMenuChoice(String input) {
 
         switch (input) {
@@ -466,7 +564,13 @@ public class ClientController implements Observer {
     }
 
 
-    //case(a)
+    /**
+     * Sends the current ship state to the server for update.
+     *
+     * @throws IOException          if I/O fails
+     * @throws ExecutionException   if future fails
+     * @throws InterruptedException if interrupted
+     */
     public void sendShipUpdate() throws IOException, ExecutionException, InterruptedException {
         if(myModel.getMyInfo().getShip().getLastTile()!=null) {
             ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
@@ -478,6 +582,11 @@ public class ClientController implements Observer {
     }
 
 
+    /**
+     * Handle fetch ship.
+     *
+     * @param targetNickname the target nickname
+     */
     public void handleFetchShip(String targetNickname) {
 
         boolean exists;
@@ -500,6 +609,11 @@ public class ClientController implements Observer {
     }
 
 
+    /**
+     * Handle ship update.
+     *
+     * @param update the update
+     */
     public void handleShipUpdate(ShipUpdate update) {
 
 //        System.out.println("Debug: handleShipUpdate");
@@ -547,7 +661,13 @@ public class ClientController implements Observer {
 
     }
 
-    //case (b)
+    /**
+     * View adventure card deck boolean.
+     *
+     * @param DeckID the deck id
+     * @return the boolean
+     */
+//case (b)
     public Boolean viewAdventureCardDeck(int DeckID) {
         boolean allowed=false;
         ArrayList<CardDeck> cardDecks = myModel.getCardDecks();
@@ -583,6 +703,11 @@ public class ClientController implements Observer {
 //case (c)
 
 
+    /**
+     * Handle face up tile update.
+     *
+     * @param update the update
+     */
     public void handleFaceUpTileUpdate(FaceUpTileUpdate update) {
 
         ArrayList<Tile> faceUpTiles = update.getFaceUpTiles();
@@ -593,6 +718,11 @@ public class ClientController implements Observer {
 
     }
 
+    /**
+     * Get synch timer infos array list.
+     *
+     * @return the array list
+     */
     public ArrayList<TimerInfo> getSynchTimerInfos(){
 
         AskTimerInfoRequest askTimerInfoRequest = new AskTimerInfoRequest();
@@ -617,7 +747,10 @@ public class ClientController implements Observer {
     }
 
 
-    //case(d) draw tile
+    /**
+     * Sends a DrawTileRequest to the server and handles the response.
+     * For both face-down and face-up tile selections.
+     */
     public void handleDrawFaceDownTile() {
 
         if(currentTileInHand==null || isPlaced) {
@@ -663,6 +796,9 @@ public class ClientController implements Observer {
     }
 
 
+    /**
+     * Start choose tile.
+     */
     public void startChooseTile() {
         List<Tile> tiles = myModel.getFaceUpTiles();
         if (tiles == null || tiles.isEmpty()) {
@@ -676,6 +812,11 @@ public class ClientController implements Observer {
         view.askChooseTile();
     }
 
+    /**
+     * Handle choose face up tile.
+     *
+     * @param tile the tile
+     */
     public void handleChooseFaceUpTile(Tile tile) {
 
         DrawTileRequest request = new DrawTileRequest(tile);
@@ -722,6 +863,9 @@ public class ClientController implements Observer {
 
     }
 
+    /**
+     * Reclaim tile.
+     */
     public void reclaimTile(){
         DrawTileRequest request = DrawTileRequest.reclaimLastTileRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
@@ -757,7 +901,12 @@ public class ClientController implements Observer {
 
     }
 
-public void handleDrawReservedTile (int slotIndex){
+    /**
+     * Handle draw reserved tile.
+     *
+     * @param slotIndex the slot index
+     */
+    public void handleDrawReservedTile (int slotIndex){
     DrawTileRequest request = DrawTileRequest.fromReservedSlot(slotIndex);
     CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
     setCompletableFuture(future, request.getID());
@@ -794,6 +943,9 @@ public void handleDrawReservedTile (int slotIndex){
 }
 
 
+    /**
+     * Show tile in hand.
+     */
     public void showTileInHand() {
 
         view.showTile(currentTileInHand);
@@ -801,7 +953,11 @@ public void handleDrawReservedTile (int slotIndex){
         view.showBuildingMenu();
     }
 
-    // f
+    /**
+     * Rotates the current tile in hand and shows it on the view.
+     *
+     * @param rotation number of clockwise rotations to apply
+     */
     public void rotateCurrentTile(int rotation) {
         currentTileInHand.rotate(rotation);
         view.showTile(currentTileInHand);
@@ -813,15 +969,30 @@ public void handleDrawReservedTile (int slotIndex){
 //
 
 
+    /**
+     * Sets tmp current position.
+     *
+     * @param tmpCurrentPosition1 the tmp current position 1
+     */
     public void setTmpCurrentPosition(Position tmpCurrentPosition1) {
         this.tmpCurrentPosition = tmpCurrentPosition1;
     }
 
+    /**
+     * Reset current pos.
+     */
     public void resetCurrentPos() {
         currentPosition = null;
     }
 
 
+    /**
+     * Sets current pos.
+     *
+     * @param x the x
+     * @param y the y
+     * @throws ExecutionException the execution exception
+     */
     public void setCurrentPos(int x, int y) throws ExecutionException {
         Position pos = new Position(x, y);
         Ship ship = myModel.getMyInfo().getShip();
@@ -834,7 +1005,11 @@ public void handleDrawReservedTile (int slotIndex){
         currentPosition = pos;
     }
 
-    // h
+    /**
+     * Sends a PlaceTileRequest to the server to place the current tile.
+     *
+     * @throws InvalidTilePosition if position is invalid
+     */
     public void handleTilePlacement() throws InvalidTilePosition {
         if ( currentTileInHand == null) {
             view.showGenericMessage("No tile selected.",false);
@@ -938,7 +1113,9 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
-    //i
+    /**
+     * Sends a DiscardTileRequest to the server for the tile in hand.
+     */
     public void sendDiscardRequest() {
         if (currentTileInHand == null) {
             view.showGenericMessage("No tile in hand to discard.",false);
@@ -956,7 +1133,13 @@ public void handleDrawReservedTile (int slotIndex){
         view.showGenericMessage("Tile discarded successfully.",false);
         view.showBuildingMenu();
     }
-    
+
+    /**
+     * Handle pick reserved tile.
+     *
+     * @param slotIndex the slot index
+     * @param isPicking the is picking
+     */
     public void handlePickReservedTile(int slotIndex, boolean isPicking) {
 
 //        Tile[] reservedTiles = myModel.getReservedTiles();
@@ -1008,16 +1191,31 @@ public void handleDrawReservedTile (int slotIndex){
         System.out.println("[+]" + message);
     }
 
+    /**
+     * Returns whether there is a tile currently in hand.
+     *
+     * @return true if a tile is in hand
+     */
     public boolean hasTileInHand() {
         return this.getCurrentTileInHand() != null;
     }
 
+    /**
+     * Handle decks update.
+     *
+     * @param decksUpdate the decks update
+     */
     public void handleDecksUpdate(DecksUpdate decksUpdate) {
 
         myModel.setCardDecks(decksUpdate.getDecks());
 
     }
 
+    /**
+     * Handle flight board update.
+     *
+     * @param flightBoardUpdate the flight board update
+     */
     public void handleFlightBoardUpdate(FlightBoardUpdate flightBoardUpdate) {
 
         myModel.setFlightBoard(flightBoardUpdate.getFlightBoard());
@@ -1028,6 +1226,11 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
+    /**
+     * Handle ask position update.
+     *
+     * @param askPositionUpdate the ask position update
+     */
     public void handleAskPositionUpdate(AskPositionUpdate askPositionUpdate) {
         new Thread(() -> {
 
@@ -1041,11 +1244,21 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
+    /**
+     * Gets is socket.
+     *
+     * @return the is socket
+     */
     public boolean getIsSocket() {
         return isSocket;
     }
 
 
+    /**
+     * Handle check ship choice.
+     *
+     * @param input the input
+     */
     public void handleCheckShipChoice(String input) {
         new Thread(() -> {
 
@@ -1078,6 +1291,9 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
+    /**
+     * Handle check ship request.
+     */
     public void handleCheckShipRequest() {
 
         CheckShipStatusRequest checkShipStatusRequest = new CheckShipStatusRequest();
@@ -1112,6 +1328,11 @@ public void handleDrawReservedTile (int slotIndex){
 
     }
 
+    /**
+     * Handle embark crew menu.
+     *
+     * @param string the string
+     */
     public void handleEmbarkCrewMenu(String string) {
         new Thread(() -> {
 
@@ -1142,7 +1363,11 @@ public void handleDrawReservedTile (int slotIndex){
         }).start();
     }
 
-
+    /**
+     * Handles the end of a turn, displays appropriate messages and next menu.
+     *
+     * @param update EndTurnUpdate from the server
+     */
     public void handleEndTurnUpdate(EndTurnUpdate update) {
 
         view.showGenericMessage("turn ended",false);
@@ -1160,6 +1385,12 @@ public void handleDrawReservedTile (int slotIndex){
         }
     }
 
+    /**
+     * Handle flight menu choice.
+     *
+     * @param input the input
+     * @throws RuntimeException the runtime exception
+     */
     public void handleFlightMenuChoice(String input) throws RuntimeException {
         new Thread(() -> {
                 switch (input) {
@@ -1182,6 +1413,9 @@ public void handleDrawReservedTile (int slotIndex){
         }).start();
     }
 
+    /**
+     * Handle early landing request.
+     */
     public void handleEarlyLandingRequest() {
         EarlyLandingRequest request = new EarlyLandingRequest();
         safeSendMessage(request);
@@ -1189,6 +1423,10 @@ public void handleDrawReservedTile (int slotIndex){
         view.showYouAreNowSpectating();
 
     }
+
+    /**
+     * Handle ready turn request.
+     */
     public void handleReadyTurnRequest()  {
         ReadyTurnRequest request = new ReadyTurnRequest();
         safeSendMessage(request);
@@ -1197,12 +1435,21 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
-
+    /**
+     * Handle game message.
+     *
+     * @param gameMessage the game message
+     */
     public void handleGameMessage(GameMessage gameMessage) {
 
         view.showGenericMessage(gameMessage.getMessage(),false);
     }
 
+    /**
+     * Handle match info update.
+     *
+     * @param matchInfoUpdate the match info update
+     */
     public void handleMatchInfoUpdate(MatchInfoUpdate matchInfoUpdate) {
 
         int remainCards = matchInfoUpdate.getRemainingCards();
@@ -1221,21 +1468,39 @@ public void handleDrawReservedTile (int slotIndex){
 
     }
 
+    /**
+     * Send draw adventure card request.
+     */
     public void sendDrawAdventureCardRequest() {
         DrawAdventureCardRequest request = new DrawAdventureCardRequest();
         safeSendMessage(request);
     }
 
+    /**
+     * Handle drawn adventure card update.
+     *
+     * @param drawnAdventureCardUpdate the drawn adventure card update
+     */
     public void handleDrawnAdventureCardUpdate(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
         view.forceReset();
         myModel.setCurrentAdventureCard(drawnAdventureCardUpdate.getCard());
         view.showCurrentAdventureCard();
     }
 
+    /**
+     * Handle activate adventure card request.
+     *
+     * @param ignoredActivateAdventureCardRequest the ignored activate adventure card request
+     */
     public void handleActivateAdventureCardRequest(ActivateAdventureCardRequest ignoredActivateAdventureCardRequest) {
         view.askActivateAdventureCard();
     }
 
+    /**
+     * Send activate adventure card response.
+     *
+     * @param confirm the confirm
+     */
     public void sendActivateAdventureCardResponse(boolean confirm) {
         ActivateAdventureCardResponse response = new ActivateAdventureCardResponse(confirm);
         if(!safeSendMessage(response)) return;
@@ -1248,7 +1513,12 @@ public void handleDrawReservedTile (int slotIndex){
 
     }
 
-    //planet
+    /**
+     * Handle select planet request.
+     *
+     * @param request the request
+     */
+//planet
     //Select Planet
     public void handleSelectPlanetRequest(SelectPlanetRequest request) {
         HashMap<Integer, Planet> landablePlanets = request.getLandablePlanets();
@@ -1259,12 +1529,23 @@ public void handleDrawReservedTile (int slotIndex){
 // in modo che, quando ricevo un SelectPlanetUpdate, possa notificare a tutti i giocatori
 // quale giocatore ha scelto quale pianeta (usando l'indice del pianeta).
 
+    /**
+     * Send select planet response.
+     *
+     * @param planet      the planet
+     * @param planetIndex the planet index
+     */
     public void sendSelectPlanetResponse(Planet planet, int planetIndex) {
         SelectPlanetResponse response = new SelectPlanetResponse(planet, planetIndex);
         safeSendMessage(response);
     }
 
-    //Notifica: il giocatore (nome del giocatore) ha selezionato il pianeta x
+    /**
+     * Handle select planet update.
+     *
+     * @param update the update
+     */
+//Notifica: il giocatore (nome del giocatore) ha selezionato il pianeta x
     //Poi se selectingPlayerNickname uguale a mio nickname, va a chiedere all'utente come
     // vuole mettere i goods nella sua ship
     public void handleSelectPlanetUpdate(SelectedPlanetUpdate update) {
@@ -1279,6 +1560,7 @@ public void handleDrawReservedTile (int slotIndex){
 
     /**
      * Handles the choice for the loading goods phase, and tells the View what to show
+     *
      * @param input f
      */
     public void handleLoadGoodChoice(String input) {
@@ -1300,6 +1582,13 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
+    /**
+     * Place merci.
+     *
+     * @param goodIndex the good index
+     * @param good      the good
+     * @param pos       the pos
+     */
     @NeedsToBeChecked("non modificare model in locale, creare una TempShip ")
     public void placeMerci(int goodIndex, Good good, Position pos) {
         Ship ship = myModel.getMyInfo().getShip();
@@ -1310,11 +1599,20 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
+    /**
+     * Send ship for good update.
+     */
     public void sendShipForGoodUpdate() {
         ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
         safeSendMessage(update);
     }
 
+    /**
+     * Gets discard position goods.
+     *
+     * @param pos the pos
+     * @return the discard position goods
+     */
     public ArrayList<Good> getDiscardPositionGoods(Position pos) {
         Ship ship = getMyShip();
         Slot slot = getSlot(ship, pos);
@@ -1322,12 +1620,23 @@ public void handleDrawReservedTile (int slotIndex){
         return hold.getGoods();
     }
 
+    /**
+     * Discard good.
+     *
+     * @param GoodIndex the good index
+     * @param pos       the pos
+     */
     public void discardGood(int GoodIndex, Position pos) {
         Slot slot = getSlot(getMyShip(), pos);
         GenericCargoHolds hold = (GenericCargoHolds) slot.getTile().getMyComponent();
         hold.removeGood(hold.getGoods().get(GoodIndex));
     }
 
+    /**
+     * Handle activate component request.
+     *
+     * @param request the request
+     */
     public void handleActivateComponentRequest(ActivateComponentRequest request) {
         ActivatableComponent component = request.getActivatableComponentType();
         String componentName = switch (component) {
@@ -1352,6 +1661,13 @@ public void handleDrawReservedTile (int slotIndex){
         }
     }
 
+    /**
+     * Handle activate component response.
+     *
+     * @param component    the component
+     * @param componentPos the component pos
+     * @param battPos      the battery pos
+     */
     public void handleActivateComponentResponse(ActivatableComponent component, ArrayList<Position> componentPos, ArrayList<Position> battPos) {
         //Tornare lista di componenti e batterie
 
@@ -1360,6 +1676,11 @@ public void handleDrawReservedTile (int slotIndex){
         safeSendMessage(resp);
     }
 
+    /**
+     * Handle discard crew members request.
+     *
+     * @param request the request
+     */
     public void handleDiscardCrewMembersRequest(DiscardCrewMembersRequest request) {
         try {
             view.chooseDiscardCrew(myModel.getMyInfo().getShip(), request.getNumberOfCrewMembersToDiscard());
@@ -1368,11 +1689,21 @@ public void handleDrawReservedTile (int slotIndex){
         }
     }
 
+    /**
+     * Handle discard crew members response.
+     *
+     * @param housingPos the housing pos
+     */
     public void handleDiscardCrewMembersResponse(ArrayList<Position> housingPos) {
         DiscardCrewMembersResponse resp = new DiscardCrewMembersResponse(housingPos);
         safeSendMessage(resp);
     }
-    
+
+    /**
+     * Handle player kicked update.
+     *
+     * @param playerKickedUpdate the player kicked update
+     */
     @NeedsToBeCompleted
     public void handlePlayerKickedUpdate(PlayerKickedUpdate playerKickedUpdate) {
         if (playerKickedUpdate.getNickname().equals(this.getNickname())) {
@@ -1396,7 +1727,12 @@ public void handleDrawReservedTile (int slotIndex){
         phase = GameState.LOBBY;
     }
 
-    //da chiamare nel visitor
+    /**
+     * Handle ask trunk request.
+     *
+     * @param askTrunkRequest the ask trunk request
+     */
+//da chiamare nel visitor
     public void handleAskTrunkRequest(AskTrunkRequest askTrunkRequest) {
         //Lista di ship
         ArrayList<Ship> Trunks = askTrunkRequest.getTrunks();
@@ -1407,11 +1743,21 @@ public void handleDrawReservedTile (int slotIndex){
         }
     }
 
+    /**
+     * Handle trunk response.
+     *
+     * @param choice the choice
+     */
     public void handleTrunkResponse(int choice) {
         AskTrunkResponse response = new AskTrunkResponse(choice,myModel.getMyInfo().getNickName());
         safeSendMessage(response);
     }
 
+    /**
+     * Send collect rewards response.
+     *
+     * @param confirm the confirm
+     */
     public void sendCollectRewardsResponse(boolean confirm) {
        CollectRewardsResponse response = new CollectRewardsResponse(confirm);
        if(!safeSendMessage(response)) return;
@@ -1423,19 +1769,44 @@ public void handleDrawReservedTile (int slotIndex){
        }
     }
 
+    /**
+     * Handle collect rewards request.
+     *
+     * @param ignoredrequest the ignoredrequest
+     */
     public void handleCollectRewardsRequest(CollectRewardsRequest ignoredrequest){
         view.askCollectRewards();
 
     }
+
+    /**
+     * Gets current adventure card.
+     *
+     * @return the current adventure card
+     */
     public AdventureCard getCurrentAdventureCard() {
         return myModel.getCurrentAdventureCard();
     }
 
+    /**
+     * Handle crew init update.
+     *
+     * @param crewInitUpdate the crew init update
+     * @throws IOException          the io exception
+     * @throws ExecutionException   the execution exception
+     * @throws InterruptedException the interrupted exception
+     */
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate) throws IOException, ExecutionException, InterruptedException {
         safeSendMessage(crewInitUpdate);
     }
 
 
+    /**
+     * Gets occupied cargo holds.
+     *
+     * @param ship the ship
+     * @return the occupied cargo holds
+     */
     public ArrayList<Position> getOccupiedCargoHolds(Ship ship) {
         ArrayList<Position> cargoHolds = getCargoHolds(ship);
         ArrayList<Position> occupied = new ArrayList<>();
@@ -1454,13 +1825,22 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
-
+    /**
+     * Handle game end update.
+     *
+     * @param update the update
+     */
     public void handleGameEndUpdate(GameEndUpdate update) {
         ArrayList<PlayerScore> scores = update.getScores();
         view.showEndGame(scores);
     }
 
 
+    /**
+     * Handle player lost update.
+     *
+     * @param update the update
+     */
     public void handlePlayerLostUpdate(PlayerLostUpdate update) {
         String nickname = update.getNickname();
 
@@ -1482,6 +1862,11 @@ public void handleDrawReservedTile (int slotIndex){
         view.showGenericMessage(message, true);
     }
 
+    /**
+     * Returns the player's ship.
+     *
+     * @return the current Ship
+     */
     public Ship getMyShip() {
         return myModel.getMyInfo().getShip();
     }
@@ -1494,6 +1879,13 @@ public void handleDrawReservedTile (int slotIndex){
         return ship.getComponentPositionsFromName("GenericCargoHolds");
     }
 
+    /**
+     * Gets available cargo holds.
+     *
+     * @param ship the ship
+     * @param good the good
+     * @return the available cargo holds
+     */
     public ArrayList<Position> getAvailableCargoHolds(Ship ship, Good good) {
         ArrayList<Position> cargoHolds = getCargoHolds(ship);
         ArrayList<Position> available = new ArrayList<>();
@@ -1518,42 +1910,87 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
 
+    /**
+     * Gets client.
+     *
+     * @return the client
+     */
     public Client getClient() {
         return client;
     }
 
+    /**
+     * Sets view.
+     *
+     * @param v the v
+     */
     public void setView(View v) {
         this.view = v;
     }
 
+    /**
+     * Gets view.
+     *
+     * @return the view
+     */
     public View getView() {
         return view;
     }
 
 
+    /**
+     * Sets nickname.
+     *
+     * @param nickname the nickname
+     */
     public void setNickname(String nickname) {
 
         this.myModel.getMyInfo().setNickName(nickname);
     }
 
+    /**
+     * Gets nickname.
+     *
+     * @return the nickname
+     */
     public String getNickname() {
         return myModel.getMyInfo().getNickName();
     }
 
+    /**
+     * Returns the tile currently in hand.
+     *
+     * @return current Tile
+     */
     public Tile getCurrentTileInHand() {
         return this.currentTileInHand;
     }
 
+    /**
+     * Returns the current position selected on the board.
+     *
+     * @return selected Position
+     */
     public Position getCurrentPosition() {
         return currentPosition;
     }
-    
-    //Todo : eliminare
+
+    /**
+     * Get reserved tiles tile [ ].
+     *
+     * @return the tile [ ]
+     */
+//Todo : eliminare
     public Tile[] getReservedTiles() {
         return myModel.getReservedTiles();
     }
 
-    //update per generic message
+    /**
+     * Complete future.
+     *
+     * @param message the message
+     */
+//update per generic message
     public void completeFuture(NetworkMessage message) {
         int responseId = message.getID();
         if (completableFuture == null) {
@@ -1574,6 +2011,11 @@ public void handleDrawReservedTile (int slotIndex){
         }
     }
 
+    /**
+     * Sends a FlipTimerRequest for the first available OFF timer.
+     *
+     * @param timerInfos list of all timers
+     */
     public void sendFlipRequest(ArrayList<TimerInfo> timerInfos) {
         //trovo quello che si puo flippare
 
@@ -1591,6 +2033,12 @@ public void handleDrawReservedTile (int slotIndex){
         safeSendMessage(flipTimerRequest);
     }
 
+    /**
+     * Safely sends a message to the server. Handles disconnections.
+     *
+     * @param message message to send
+     * @return true if send was successful
+     */
     public boolean safeSendMessage(NetworkMessage message) {
         if(!isConnectionAlive.get()) return false;
 

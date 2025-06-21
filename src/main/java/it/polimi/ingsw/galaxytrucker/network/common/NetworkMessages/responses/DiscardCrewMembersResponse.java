@@ -8,12 +8,20 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * The type Discard crew members response.
+ */
 public class DiscardCrewMembersResponse extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 5563957029L;
 
     private final ArrayList<Position> housingPositions;
 
+    /**
+     * Instantiates a new Discard crew members response.
+     *
+     * @param housingPositions the housing positions
+     */
     public DiscardCrewMembersResponse(ArrayList<Position> housingPositions) {
         this.housingPositions = housingPositions;
     }
@@ -23,6 +31,11 @@ public class DiscardCrewMembersResponse extends NetworkMessage implements Serial
         return visitor.visit(this);
     }
 
+    /**
+     * Gets housing positions.
+     *
+     * @return the housing positions
+     */
     public ArrayList<Position> getHousingPositions() {
         return housingPositions;
     }

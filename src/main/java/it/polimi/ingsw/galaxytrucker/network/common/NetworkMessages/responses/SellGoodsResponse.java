@@ -6,12 +6,21 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Sell goods response.
+ */
 public class SellGoodsResponse extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 528658960523L;
 
     private final boolean accepted;
 
+    /**
+     * Instantiates a new Sell goods response.
+     *
+     * @param accepted choice
+     * @param id       the id
+     */
     public SellGoodsResponse(boolean accepted, int id) {
         super(id);
         this.accepted = accepted;
@@ -22,6 +31,11 @@ public class SellGoodsResponse extends NetworkMessage implements Serializable {
         return null;
     }
 
+    /**
+     * Is accepted boolean.
+     *
+     * @return the boolean
+     */
     public boolean isAccepted() {
         return accepted;
     }

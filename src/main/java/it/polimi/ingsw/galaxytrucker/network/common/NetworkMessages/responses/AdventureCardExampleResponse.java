@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * The type Adventure card example response.
+ */
 public class AdventureCardExampleResponse extends NetworkMessage implements Serializable {
 
     @Serial
@@ -13,6 +16,11 @@ public class AdventureCardExampleResponse extends NetworkMessage implements Seri
 
     private final String body;
 
+    /**
+     * Instantiates a new Adventure card example response.
+     *
+     * @param body the body
+     */
     public AdventureCardExampleResponse(String body) {
 
         this.body = body;
@@ -23,6 +31,11 @@ public class AdventureCardExampleResponse extends NetworkMessage implements Seri
         return visitor.visit(this);
     }
 
+    /**
+     * Gets body.
+     *
+     * @return the body
+     */
     public String getBody() {
         return body;
     }

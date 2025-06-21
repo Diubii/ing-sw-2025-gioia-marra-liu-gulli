@@ -8,6 +8,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * The type Player joined update.
+ */
 public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
 
     @Serial
@@ -17,23 +20,43 @@ public class PlayerJoinedUpdate extends NetworkMessage implements Serializable {
     private ArrayList<PlayerInfo> playersJoinedBefore;
     private final PlayerInfo playerInfo;
 
+    /**
+     * Instantiates a new Player joined update.
+     *
+     * @param playerInfo the player info
+     */
     public PlayerJoinedUpdate(PlayerInfo playerInfo) {
 //        this.players = players;
         this.playerInfo = playerInfo;
 
     }
 
-    //    public ArrayList<Player> getPlayers() {
+    /**
+     * Gets player info.
+     *
+     * @return the player info
+     */
+//    public ArrayList<Player> getPlayers() {
 //        return players;
 //    }
     public PlayerInfo getPlayerInfo() {
         return playerInfo;
     }
 
+    /**
+     * Sets players joined before.
+     *
+     * @param playersJoinedBefore the players joined before
+     */
     public void setPlayersJoinedBefore(ArrayList<PlayerInfo> playersJoinedBefore) {
         this.playersJoinedBefore = playersJoinedBefore;
     }
 
+    /**
+     * Gets players joined before.
+     *
+     * @return the players joined before
+     */
     public ArrayList<PlayerInfo> getPlayersJoinedBefore() {
         return playersJoinedBefore;
     }
