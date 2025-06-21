@@ -1178,7 +1178,7 @@ class CardEffectTest {
         playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//power 5.5~8
 
 
-        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSmugglers_PlayerA_SmugglersWin(rankedPlayers);
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forMeteorSwarm(rankedPlayers);
         responses.forEach((nick, responseList) -> {
             FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
             handler.setMockResponses(responseList);

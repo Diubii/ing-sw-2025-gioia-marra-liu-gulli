@@ -613,6 +613,15 @@ public class Ship implements Serializable {
 
 
                 Ship board = tronconi.get(i);
+                if (board == null || board.getShipBoard() == null) {
+                    System.err.println("Null board or shipBoard found at index: " + i);
+                    continue;
+                }
+                Slot[][] shipBoard = board.getShipBoard();
+                if (shipBoard == null) {
+                    System.err.println("WARN: shipBoard is null for board index " + i);
+                    continue;
+                }
 
                 List<Slot> Slots = Arrays.stream(board.getShipBoard())
                         .flatMap(Arrays::stream)
@@ -667,6 +676,15 @@ public class Ship implements Serializable {
         return tronconi;
 
     }
+
+
+//    public ArrayList<Ship> getTronc() {
+//        ArrayList<Ship> tronc = new ArrayList<>();
+//        tronc.add(this);
+//        tronc.add(this);
+//        return tronc;
+//
+//    }
 
 
     public ArrayList<Ship> truncateShip(Position pos, Queue<Position> brokenPos) throws InvalidTilePosition {

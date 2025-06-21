@@ -12,7 +12,10 @@ public class MeteorSwarmFSM extends CardFSM {
     public ArrayList<Consumer<CardContext>> initPhases() {
         return new ArrayList<>(Arrays.asList(
                 MeteorSwarmEffect::sendActivateComponentRequests,
-                MeteorSwarmEffect::unleashTheMeteorSwarm
+                MeteorSwarmEffect::unleashTheMeteorSwarm,
+                MeteorSwarmEffect::askTrunkReq,
+                MeteorSwarmEffect::receivedTrunkRepo
+
         ));
     }
 }

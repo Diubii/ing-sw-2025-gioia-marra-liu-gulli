@@ -1238,7 +1238,7 @@ public class Tui implements View, Observable {
 
 
         //handle response indicando numero
-        clientController.handleTrunkResponse(choice);
+        clientController.handleTrunkResponse(choice-1);
 
     }
 

@@ -68,7 +68,7 @@ public class SMtronconiController {
         if(shipToggleGroup.getSelectedToggle() != null){
             container.getChildren().removeLast();
             int id = (int)shipToggleGroup.getSelectedToggle().getUserData();
-            id--;
+
             clientController.handleTrunkResponse(id);
         }
 

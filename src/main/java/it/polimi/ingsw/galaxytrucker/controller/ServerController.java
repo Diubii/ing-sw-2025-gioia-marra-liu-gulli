@@ -1693,6 +1693,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         heartbeat.start();
     }
 
+    /**
+     * Mainly used for testing
+     * @return newly created roomId.
+     */
     public int getLastCreatedGameId() {
         return nextLobbyIndex - 1;
     }

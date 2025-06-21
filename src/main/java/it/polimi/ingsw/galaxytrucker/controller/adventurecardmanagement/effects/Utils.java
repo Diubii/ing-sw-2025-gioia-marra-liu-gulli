@@ -79,8 +79,7 @@ public abstract class Utils {
 
 
 //    protected static void sendMessageAndDeferGetResponse(LobbyManager lobbyManager, Player player, NetworkMessage message, ArrayList<CompletableFuture<NetworkMessage>> futures) {
-//        CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
-//        ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
+//        CompletableFuture<NetworkMessage> future =z//        ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
 //        lobbyManager.addPendingResponse(future, message.getID()); //Notifico che sono in attesa di una risposta
 //        clientHandler.sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
 //        futures.add(future);
@@ -281,4 +280,39 @@ public abstract class Utils {
             }
         }
     }
+
+    public static void resetDoubleCannon(Player player) {
+
+        Ship ship = player.getShip();
+        ArrayList<Position> doubleCannonPos = ship.getComponentPositionsFromName("DoubleCannon");
+
+        if (doubleCannonPos.isEmpty()) {
+            return;
+        }
+        for (Position pos : doubleCannonPos) {
+           DoubleCannon doubleCannon = (DoubleCannon) ship.getComponentFromPosition(pos);
+           doubleCannon.setCharged(false);
+        }
+
+    }
+
+    public static void resetShield(Player player) {
+
+        Ship ship = player.getShip();
+        ArrayList<Position>  shieldPos = ship.getComponentPositionsFromName("Shield");
+
+        if (shieldPos.isEmpty()) {
+            return;
+        }
+        for (Position pos : shieldPos) {
+            Shield shield = (Shield) ship.getComponentFromPosition(pos);
+            shield.setCharged(false);
+        }
+
+    }
+
+
+
+
+
 }

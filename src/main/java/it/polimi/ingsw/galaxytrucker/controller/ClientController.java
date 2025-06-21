@@ -1400,7 +1400,7 @@ public void handleDrawReservedTile (int slotIndex){
     }
 
     public void handleTrunkResponse(int choice) {
-        AskTrunkResponse response = new AskTrunkResponse(choice-1);
+        AskTrunkResponse response = new AskTrunkResponse(choice,myModel.getMyInfo().getNickName());
         safeSendMessage(response);
     }
 

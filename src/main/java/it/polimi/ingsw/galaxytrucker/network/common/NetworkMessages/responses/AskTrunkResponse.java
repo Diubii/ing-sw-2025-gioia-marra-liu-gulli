@@ -11,13 +11,19 @@ public class AskTrunkResponse extends NetworkMessage implements Serializable {
     private static final long serialVersionUID = 96243145242157961L;
 
     private final int trunkIndex;
+    private final String playerNickname;
 
-    public AskTrunkResponse(int trunkIndex) {
+    public AskTrunkResponse(int trunkIndex, String playerNickname) {
         this.trunkIndex = trunkIndex;
+        this.playerNickname = playerNickname;
     }
 
     public int getTrunkIndex() {
         return trunkIndex;
+    }
+
+    public String getPlayerNickname() {
+        return playerNickname;
     }
 
     @Override

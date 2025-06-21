@@ -251,6 +251,8 @@ public class PiratesEffect {
 
         Tile destroyedTile = game.getGameController().reactToProjectile(player, projectile, diceRoll);
         ShipPrintUtils.printShip(playerShip);
+        resetShield(player);
+
         broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
 
         if (destroyedTile != null) {

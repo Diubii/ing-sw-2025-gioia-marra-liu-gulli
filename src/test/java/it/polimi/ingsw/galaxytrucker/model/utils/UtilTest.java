@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class UtilTest {
 
     @Test
@@ -67,5 +69,19 @@ class UtilTest {
 
         }
 
+    }
+    @Test
+    void testInBoundaries() {
+        assertTrue(Util.inBoundaries(0, 0));
+        assertTrue(Util.inBoundaries(6, 4));
+        assertFalse(Util.inBoundaries(-1, 3));
+        assertFalse(Util.inBoundaries(7, 3));
+    }
+
+    @Test
+    void testGetAdjacentPositions() {
+        var pos = Util.getAdjacentPositions(new Position(3, 3));
+        assertEquals(4, pos.size());
+        assertEquals(new Position(3, 2), pos.get(0)); // North
     }
 }

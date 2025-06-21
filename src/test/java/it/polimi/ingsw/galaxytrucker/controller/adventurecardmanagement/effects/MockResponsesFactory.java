@@ -325,9 +325,9 @@ public class MockResponsesFactory {
                         new ActivateComponentResponse(ActivatableComponent.Shield,
                                 doubleCannonPosChosen,
                                 batteryPosChosen),
-                        new AskTrunkResponse(0),
-                        new AskTrunkResponse(0),
-                        new AskTrunkResponse(0)
+                        new AskTrunkResponse(0,playerANickname),
+                        new AskTrunkResponse(0,playerANickname),
+                        new AskTrunkResponse(0,playerANickname)
 
                 )));
 
@@ -668,6 +668,74 @@ public class MockResponsesFactory {
         return responses;
     }
 
+
+    public static Map<String, ArrayList<NetworkMessage>> forMeteorSwarm(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+
+        int i=0;
+        Player playerA = players.get(i);
+        Ship shipA = playerA.getShip();
+        ArrayList<Position>  centralHousingUnit = shipA.getComponentPositionsFromName("CentralHousingUnit");
+        ArrayList<Position>  discardCrewPositionsA = new ArrayList<>();
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+                        new ActivateComponentResponse(
+                                ActivatableComponent.Shield,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+                        new AskTrunkResponse(0,playerANickname)
+
+                )));
+        i++;
+        Player playerB = players.get(i);
+        Ship shipB = playerB.getShip();
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+                        new ActivateComponentResponse(
+                                ActivatableComponent.Shield,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+                        new AskTrunkResponse(0,playerBNickname)
+
+                )));
+        i++;
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+                        new ActivateComponentResponse(
+                                ActivatableComponent.Shield,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+                        new AskTrunkResponse(0,playerCNickname)
+
+
+                )));
+
+
+        return responses;
+    }
+
     public static Map<String, ArrayList<NetworkMessage>> forCombatZone(ArrayList<Player> players) {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
 
@@ -728,5 +796,7 @@ public class MockResponsesFactory {
             }
         }
     }
+
+
 
 }
