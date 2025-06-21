@@ -310,6 +310,20 @@ public abstract class Utils {
         }
 
     }
+    public static void resetDoubleEngine(Player player) {
+
+        Ship ship = player.getShip();
+        ArrayList<Position>  doubleEnginePos = ship.getComponentPositionsFromName("DoubleEngine");
+
+        if (doubleEnginePos.isEmpty()) {
+            return;
+        }
+        for (Position pos : doubleEnginePos) {
+            DoubleEngine doubleEngine = (DoubleEngine) ship.getComponentFromPosition(pos);
+            doubleEngine.setCharged(false);
+        }
+
+    }
 
 
 

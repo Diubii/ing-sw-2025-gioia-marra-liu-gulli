@@ -122,11 +122,13 @@ public class Util {
 //
 //
 //
-//         cardsToTest.add(list.get(4)); //Open Space
+         cardsToTest.add(list.get(4)); //Open Space
+        cardsToTest .add(list.get(5));
+        cardsToTest .add(list.get(6));
 //         cardsToTest.add(list.get(19)); //AbandonedStation
 
         //Si blocca sempre sembra
-        cardsToTest.add(list.get(15)); //Zona di guerra
+//        cardsToTest.add(list.get(15)); //Zona di guerra
 
 
 
@@ -135,7 +137,7 @@ public class Util {
 //        cardsToTest.add(list.get(8));
 
 
-        cardsToTest.add(list.get(3)); //Stardust
+//        cardsToTest.add(list.get(3)); //Stardust
         //cardsToTest.add(list.get(24)); //Epidemic
 
         return new CardDeck(cardsToTest, true);

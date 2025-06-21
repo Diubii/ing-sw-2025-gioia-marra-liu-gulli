@@ -8,11 +8,13 @@ import it.polimi.ingsw.galaxytrucker.model.Player;
 import it.polimi.ingsw.galaxytrucker.model.Projectile;
 import it.polimi.ingsw.galaxytrucker.model.Ship;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.MeteorSwarm;
+import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.ActivateComponentRequest;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.AskTrunkRequest;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskTrunkResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
+import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,10 +94,18 @@ public abstract class MeteorSwarmEffect {
         int projectileIndex = projectileCounters.computeIfAbsent(game, _ -> 0);
         Projectile projectile = meteorSwarm.getMeteors().get(projectileIndex);
 
+
         int diceRoll = diceRolls.get(game);
         needToAskTrunkReq.putIfAbsent(game,new ArrayList<>());
         for (Player player : context.getCurrentRankedPlayers()) {
-            game.getGameController().reactToProjectile(player, projectile, diceRoll);
+             Tile removedTile= game.getGameController().reactToProjectile(player, projectile, diceRoll);
+             if (removedTile != null) {
+                 ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+                 sendGameMessage(context, player, " Purtroppo, sei stato colpito e hai perso un  "+removedTile.getMyComponent().accept(componentNameVisitor));
+             }
+             else{
+                 sendGameMessage(context, player, "  Congratulazioni, sei riuscito a schivare l'attacco!");
+             }
             resetShield(player);
             resetDoubleCannon(player);
             ArrayList<Ship> troncs = player.getShip().getTronc();

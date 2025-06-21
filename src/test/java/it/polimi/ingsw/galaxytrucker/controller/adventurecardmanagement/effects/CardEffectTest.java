@@ -371,11 +371,9 @@ class CardEffectTest {
         ShipPrintUtils.printShip(shipC);
         positionPlayerA = flightBoard.getPlayerPosition(playerA.getColor());
         positionPlayerB = flightBoard.getPlayerPosition(playerB.getColor());
-        positionPlayerC = flightBoard.getPlayerPosition(playerC.getColor());
 
         System.out.println("PlayerA's current position : "  + positionPlayerA);
         System.out.println("PlayerB's current position : "  + positionPlayerB);
-        System.out.println("PlayerC's current position : "  + positionPlayerC);
 
 
         Tile batteryTileA = shipA.getTileFromPosition(new Position(2,2));
@@ -397,7 +395,7 @@ class CardEffectTest {
         assertEquals(2,numBatteryB);
         assertEquals(1,powerEngineB);
         assertEquals(8, positionPlayerA);
-        assertEquals(3, positionPlayerB);
+        assertEquals(4, positionPlayerB);
 
 //        int size = rankedPlayers.size();
 //        assertEquals(2, size);

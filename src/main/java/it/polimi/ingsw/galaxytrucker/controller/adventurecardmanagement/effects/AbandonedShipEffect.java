@@ -74,9 +74,7 @@ public abstract class AbandonedShipEffect {
         Utils.broadcast(context, shipUpdate);
 
         player.addCredits(abandonedShip.getCredits()); //Accredito crediti
-        if(player !=null) {
-            movePlayer(context, player, -abandonedShip.getDaysLost()); //Sposto il player
-        }
+        movePlayer(context, player, -abandonedShip.getDaysLost()); //Sposto il player
         //Execute CommonEffects::end
         context.nextPhase();
         context.executePhase();

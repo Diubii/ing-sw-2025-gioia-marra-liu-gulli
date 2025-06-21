@@ -25,6 +25,10 @@ public class SlaversEffect {
 
         Float playerFirePower = player.getShip().calculateFirePower();
         float slaversFirePower = (float) slavers.getFirePower();
+        resetDoubleCannon(player);
+        ShipUpdate shipUpdate = new ShipUpdate(player.getShip(),player.getNickName());
+        broadcast(context, shipUpdate);
+
 
         if (slaversFirePower > playerFirePower){
             GameMessage personalMessage = new GameMessage("The Slavers are going to haunt you!"); //personalMessage.setIsTurn(true);

@@ -21,9 +21,11 @@ public class CardContext {
     private Player currentPlayer;
     private ClientHandler currentPlayerHandler;
     private ArrayList<Player> currentRankedPlayers;
+    private ArrayList<Player> originRankedPlayers;
     private final CardFSM cardFSM;
     private final LobbyManager currentGame;
     private NetworkMessage incomingNetworkMessage;
+
 
     private final HashMap<NetworkMessageType, Integer> expectedNumberOfNetworkMessagesPerType;
 
@@ -33,6 +35,7 @@ public class CardContext {
         currentRankedPlayers = currentGame.getGameController().getRankedPlayers();
         currentPlayer = currentRankedPlayers.getFirst();
         currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
+
         cardFSM = this.adventureCard.accept(new AdventureCardFSMVisitor());
 
         //Si tiene traccia dei messaggi che dovrebbero arrivarci

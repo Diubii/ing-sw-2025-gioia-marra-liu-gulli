@@ -24,7 +24,7 @@ public class SmugglersEffect {
 
         float smugglerFirePower = smugglers.getFirePower();
         float playerFirePower =  player.getShip().calculateFirePower();
-
+        resetDoubleCannon(player);
 
         System.out.println( player.getNickName() + "  Debug: Fire Power Check");
         ShipUpdate shipUpdate = new ShipUpdate(player.getShip(),player.getNickName());

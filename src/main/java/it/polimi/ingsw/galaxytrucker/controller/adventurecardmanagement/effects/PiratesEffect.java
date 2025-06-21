@@ -45,6 +45,10 @@ public class PiratesEffect {
         float piratesFirePower = pirates.getFirePower();
         float playerFirePower = player.getShip().calculateFirePower();
 
+        resetDoubleCannon(player);
+        ShipUpdate shipUpdate = new ShipUpdate(player.getShip(),player.getNickName());
+        broadcast(context, shipUpdate);
+
         if (piratesFirePower > playerFirePower) {
             handlePiratesWin(context);
 

@@ -4,13 +4,17 @@ import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardCont
 import it.polimi.ingsw.galaxytrucker.enums.PlayerLostReason;
 import it.polimi.ingsw.galaxytrucker.model.Player;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
+import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.movePlayer;
+import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.*;
 
 public abstract class OpenSpaceEffect {
     private final static HashMap<LobbyManager, HashMap<String, Integer>> playerToPowerMapPerGame = new HashMap<>();
+    private final static HashMap<LobbyManager, ArrayList<Player>> originRankedPlayers = new HashMap<>();
+    private final static HashMap<LobbyManager, Integer> playerIndex= new HashMap<>();
 
     public static void doubleEnginesActivated(CardContext context) {
         System.out.println("DEBUG: OpenSpaceEffect.doubleEnginesActivated()");
@@ -31,12 +35,22 @@ public abstract class OpenSpaceEffect {
         }
         playerToPowerMap.put(player.getNickName(), playerEnginePower);
         playerToPowerMapPerGame.put(game, playerToPowerMap);
+
+        originRankedPlayers.computeIfAbsent(game, k -> context.getCurrentRankedPlayers());
+        playerIndex.computeIfAbsent(game, k -> 0);
+
         movePlayer(context, player, playerEnginePower);
 
-        if (player == context.getCurrentRankedPlayers().getLast()) {
+        resetDoubleEngine(player);
+        ShipUpdate shipUpdate =new ShipUpdate(player.getShip(),player.getNickName());
+        broadcast(context, shipUpdate);
+
+        if (player == originRankedPlayers.get(game).getLast()) {
             context.nextPhase();
         } else {
-            context.nextPlayer();
+            playerIndex.put(game, playerIndex.get(game) + 1);
+            int nextPlayerIndex = playerIndex.get(game);
+            context.setCurrentPlayer(originRankedPlayers.get(game).get(nextPlayerIndex));
             context.previousPhase();
         }
 
@@ -64,6 +78,8 @@ public abstract class OpenSpaceEffect {
 
 
         //Execute CommonEffects::end
+        originRankedPlayers.remove(game);
+        playerIndex.remove(game);
         context.nextPhase();
         context.executePhase();
     }
