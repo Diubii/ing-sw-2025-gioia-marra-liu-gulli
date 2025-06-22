@@ -67,7 +67,7 @@ public class GuiJavaFx implements View {
     private Boolean firstTimeMainMenu = true;
 
     //Config variable to disable feature music and other setting during testing
-    private final static Boolean testing = true;
+    private final static Boolean testing = false;
 
 
 

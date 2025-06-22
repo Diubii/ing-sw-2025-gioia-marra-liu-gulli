@@ -86,6 +86,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <finalName>GalaxyTrucker-Server</finalName>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>server</shadedClassifierName>
                             <transformers>
@@ -103,6 +104,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <finalName>GalaxyTrucker-GUI</finalName>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>gui</shadedClassifierName>
                             <transformers>
@@ -120,6 +122,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <finalName>GalaxyTrucker-TUI</finalName>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>tui</shadedClassifierName>
                             <transformers>
