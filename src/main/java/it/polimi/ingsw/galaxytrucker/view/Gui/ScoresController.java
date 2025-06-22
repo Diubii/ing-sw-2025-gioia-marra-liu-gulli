@@ -87,7 +87,7 @@ public class ScoresController extends GenericSceneController {
             names.get(i).setText(scores.get(i).getNickName());
             bellezze.get(i).setText(String.valueOf(scores.get(i).getBestLookingShipScore()));
             ordine.get(i).setText(String.valueOf(scores.get(i).getFinishOrderScore()));
-            perdite.get(i).setText(String.valueOf(scores.get(i).getLossesScore()));
+            perdite.get(i).setText("- "+String.valueOf(scores.get(i).getLossesScore()));
             merci.get(i).setText(String.valueOf(scores.get(i).getGoodRewardScore()));
             soldi.get(i).setText(String.valueOf(scores.get(i).getCredits()));
             totale.get(i).setText(String.valueOf(scores.get(i).getTotalScore()));

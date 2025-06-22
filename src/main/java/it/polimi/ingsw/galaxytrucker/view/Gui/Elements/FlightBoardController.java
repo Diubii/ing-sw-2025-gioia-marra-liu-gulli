@@ -98,6 +98,9 @@ public class FlightBoardController {
         clearStack(x,y);
         //Immagine vuota
         String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/emptyBoardSlot.png";
+        if(x==0 && y== 0){
+            imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/emptyBoardSlotFirst.png";
+        }
         Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
         String pathSegnalino = "";
         addImageAt(x,y,img);

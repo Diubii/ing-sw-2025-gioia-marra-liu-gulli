@@ -28,6 +28,7 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
+import it.polimi.ingsw.galaxytrucker.network.common.NetworkingUtils;
 import it.polimi.ingsw.galaxytrucker.observer.Observer;
 import it.polimi.ingsw.galaxytrucker.view.Tui.MenuManager;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
@@ -121,7 +122,7 @@ public class ClientController implements Observer {
             ((ClientSocket) client).addObserver(this);
             ((ClientSocket) client).receiveMessage();
         } else {
-            System.setProperty("java.rmi.server.hostname", "87.15.5.27");
+            System.setProperty("java.rmi.server.hostname", NetworkingUtils.getLocalIP());
             client = new ClientRMI(address, port, this); // già fa addObserver
         }
 

@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class BuildingController extends GenericGamePhaseSceneController {
 
@@ -439,8 +440,17 @@ public class BuildingController extends GenericGamePhaseSceneController {
      */
     public void viewMazzo(int num){
         //Non fa un tubo, va bene per la Tui ma qui no
-        if(clientController.viewAdventureCardDeck(num)){
+        if(clientController.hasTileInHand() == false && clientController.viewAdventureCardDeck(num)){
             Platform.runLater(() -> {
+                try {
+                    clientController.sendShipUpdate();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 //C'è altro oltre al layout di default (Altri menu left aperti)
                 if(StackLeftMenu.getChildren().size() > 1 ){
                     StackLeftMenu.getChildren().removeLast();
