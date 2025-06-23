@@ -616,7 +616,7 @@ class CardEffectTest {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Pianeti", 1);
         AdventureCard card = cards.getFirst();
         assertNotNull(card);
-        assertTrue(card instanceof Planets);
+        assertInstanceOf(Planets.class, card);
         Planets planetCard = (Planets) card;
 
         planetCard.getPlanets().get(0).setOccupied(true);
@@ -637,7 +637,11 @@ class CardEffectTest {
 //        assertEquals(1, sentMessages.size());
 //        assertTrue(sentMessages.get(0) instanceof SelectPlanetRequest);
 
-        SelectPlanetRequest request = (SelectPlanetRequest) sentMessages.getFirst();
+        SelectPlanetRequest request = (SelectPlanetRequest) sentMessages.stream()
+                .filter(m -> m instanceof SelectPlanetRequest)
+                .map(m -> (SelectPlanetRequest) m)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("No SelectPlanetRequest sent"));
 
         List<Planet> expectedAvailablePlanets = planetCard.getPlanets().stream()
                 .filter(p -> !p.isOccupied()).toList();

@@ -347,9 +347,8 @@ public class ServerControllerTest {
     @Test
     void testHeartBeat() throws RemoteException {
 
-        serverController.startNewHeartbeat(handler1);
-        ArrayList<Heartbeat> heartbeats = serverController.getHeartbeats();
-        ClientHandler clientHandler = heartbeats.getFirst().getClientHandler();
+        ClientHandler clientHandler = context.nicknameToHandlerMap.get("TestPlayer");
+        serverController.startNewHeartbeat(clientHandler);
         HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
         serverController.handleHeartbeatRequest(heartbeatRequest, clientHandler);
 

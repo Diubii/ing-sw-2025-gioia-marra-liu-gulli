@@ -31,8 +31,6 @@ public class GameController {
     private final LobbyManager game;
     private int nCompletedShips = 0;
     final Object ncsLock = new Object();
-    CompletableFuture cardDrawn;
-    private Boolean gameEndedEarly = false;
     private CardDeck cardDeckTest = new CardDeck(true);
     private Iterator<Player> rankedPlayersIterator;
     private CardContext currentCardContext;
@@ -43,10 +41,6 @@ public class GameController {
 
     public CardDeck getCardDeckTest() {
         return cardDeckTest;
-    }
-
-    public void setCardDeckTest(CardDeck cardDeckTest) {
-        this.cardDeckTest = cardDeckTest;
     }
 
     public int getnCompletedShips() {
@@ -342,27 +336,6 @@ public class GameController {
             }
         }
 
-        if (aTileHasBeenDestroyed) {
-            CardContext cardContext = game.getGameController().getCurrentCardContext();
-
-            game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(new GameMessage(message));
-            //TODO: tronc
-            ArrayList<Ship> tronconi = new ArrayList<>();
-            tronconi.addAll(targetPlayer.getShip().getTronc() );
-//            if(tronconi.size()>1) {
-//                AskTrunkRequest askTrunkRequest = new AskTrunkRequest(tronconi);
-//                cardContext.nextPhase();
-//                game.getPlayerHandlers().get(targetPlayer.getNickName()).sendMessage(askTrunkRequest);
-//            }
-//            else{
-//                cardContext.previousPhase();
-//                cardContext.executePhase();
-//            }
-
-
-
-        }
-
         return destroyedTile;
     }
 
@@ -466,9 +439,6 @@ public class GameController {
         return game.getRealGame().getPlayers().stream().filter(p -> p.getPlayerState() == PlayerState.Playing).toList();
     }
 
-    public Player nextPlayer() {
-        return rankedPlayersIterator.next();
-    }
 
     public void clearPlayersWithNoCrew(){
         for(Player player : getPlayingPlayers()) {

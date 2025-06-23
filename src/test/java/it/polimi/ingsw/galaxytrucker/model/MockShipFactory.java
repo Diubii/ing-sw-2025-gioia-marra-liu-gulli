@@ -542,4 +542,91 @@ public class MockShipFactory {
     }
 
 
+    public static Ship createMockShip3() {
+        Ship ship = new Ship(false);
+        Map<String, List<Tile>> tiles = MockShipFactory.getAllClonedTiles();
+
+
+        Tile cannon = getRequiredTile(tiles, "Cannon", 0);
+        cannon.rotate(180);
+        Tile engine = getRequiredTile(tiles, "Engine", 10);
+        Tile battery = getRequiredTile(tiles, "BatterySlot", 0);
+        Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
+        Tile modularHousingUnit = getRequiredTile(tiles, "ModularHousingUnit", 0);
+        Tile modularHousingUnit2 = getRequiredTile(tiles, "ModularHousingUnit", 1);
+        Tile genericCargoHold = getRequiredTile(tiles, "GenericCargoHolds", 0);
+        Tile brownLifeSupport = getRequiredTile(tiles, "BrownLifeSupportSystem", 0);
+        Tile purpleLifeSupport = getRequiredTile(tiles, "PurpleLifeSupportSystem", 0);
+        Tile doubleEngine = getRequiredTile(tiles, "DoubleEngine", 8);
+        Tile doubleCannon = getRequiredTile(tiles, "DoubleCannon", 0);
+
+        ModularHousingUnit mhu;
+        if(modularHousingUnit != null) {
+            mhu = (ModularHousingUnit) modularHousingUnit.getMyComponent();
+            mhu.addHumanCrew();
+            modularHousingUnit.setMyComponent(mhu);
+        }
+
+        ModularHousingUnit mhu2;
+        if(modularHousingUnit2 != null) {
+            mhu2 = (ModularHousingUnit) modularHousingUnit2.getMyComponent();
+            mhu2.addHumanCrew();
+            modularHousingUnit2.setMyComponent(mhu2);
+        }
+
+        if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
+        if(battery != null) ship.putTile(battery, new Position(2, 2));
+        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(3, 3));
+        if(cannon != null) ship.putTile(cannon, new Position(2, 4));
+        if(modularHousingUnit != null) ship.putTile(modularHousingUnit, new Position(2, 1));
+        if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
+        if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
+
+        return ship;
+    }
+
+    public static Ship createMockShip4() {
+        Ship ship = new Ship(false);
+        Map<String, List<Tile>> tiles = MockShipFactory.getAllClonedTiles();
+
+
+        Tile cannon = getRequiredTile(tiles, "Cannon", 0);
+        cannon.rotate(270);
+        Tile engine = getRequiredTile(tiles, "Engine", 10);
+        Tile battery = getRequiredTile(tiles, "BatterySlot", 0);
+        Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
+        Tile modularHousingUnit = getRequiredTile(tiles, "ModularHousingUnit", 0);
+        Tile modularHousingUnit2 = getRequiredTile(tiles, "ModularHousingUnit", 1);
+        Tile genericCargoHold = getRequiredTile(tiles, "GenericCargoHolds", 0);
+        Tile brownLifeSupport = getRequiredTile(tiles, "BrownLifeSupportSystem", 0);
+        Tile purpleLifeSupport = getRequiredTile(tiles, "PurpleLifeSupportSystem", 0);
+        Tile doubleEngine = getRequiredTile(tiles, "DoubleEngine", 8);
+        Tile doubleCannon = getRequiredTile(tiles, "DoubleCannon", 0);
+
+        ModularHousingUnit mhu;
+        if(modularHousingUnit != null) {
+            mhu = (ModularHousingUnit) modularHousingUnit.getMyComponent();
+            mhu.addHumanCrew();
+            modularHousingUnit.setMyComponent(mhu);
+        }
+
+        ModularHousingUnit mhu2;
+        if(modularHousingUnit2 != null) {
+            mhu2 = (ModularHousingUnit) modularHousingUnit2.getMyComponent();
+            mhu2.addHumanCrew();
+            modularHousingUnit2.setMyComponent(mhu2);
+        }
+
+        if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
+        if(battery != null) ship.putTile(battery, new Position(2, 2));
+        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(3, 3));
+        if(cannon != null) ship.putTile(cannon, new Position(1, 1));
+        if(modularHousingUnit != null) ship.putTile(modularHousingUnit, new Position(2, 1));
+        if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
+        if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
+
+        return ship;
+    }
+
+
 }
