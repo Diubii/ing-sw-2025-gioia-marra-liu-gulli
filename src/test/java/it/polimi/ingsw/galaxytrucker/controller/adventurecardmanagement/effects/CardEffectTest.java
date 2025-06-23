@@ -12,6 +12,7 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingU
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DrawAdventureCardRequest;
+import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.EarlyLandingRequest;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.SelectPlanetRequest;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import org.junit.jupiter.api.Test;
@@ -587,8 +588,7 @@ class CardEffectTest {
             throw new RuntimeException(e);
         }
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
-        first = rankedPlayers.getFirst();
-        second =  rankedPlayers.get(1);
+
 
 
         positionFirstPlayer = flightBoard.getPlayerPosition(first.getColor());
@@ -616,7 +616,7 @@ class CardEffectTest {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Pianeti", 1);
         AdventureCard card = cards.getFirst();
         assertNotNull(card);
-        assertTrue(card instanceof Planets);
+        assertInstanceOf(Planets.class, card);
         Planets planetCard = (Planets) card;
 
         planetCard.getPlanets().get(0).setOccupied(true);
@@ -637,7 +637,11 @@ class CardEffectTest {
 //        assertEquals(1, sentMessages.size());
 //        assertTrue(sentMessages.get(0) instanceof SelectPlanetRequest);
 
-        SelectPlanetRequest request = (SelectPlanetRequest) sentMessages.get(0);
+        SelectPlanetRequest request = (SelectPlanetRequest) sentMessages.stream()
+                .filter(m -> m instanceof SelectPlanetRequest)
+                .map(m -> (SelectPlanetRequest) m)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("No SelectPlanetRequest sent"));
 
         List<Planet> expectedAvailablePlanets = planetCard.getPlanets().stream()
                 .filter(p -> !p.isOccupied()).toList();

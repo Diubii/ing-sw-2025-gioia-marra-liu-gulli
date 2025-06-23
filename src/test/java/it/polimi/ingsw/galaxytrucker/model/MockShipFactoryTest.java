@@ -142,5 +142,28 @@ class MockShipFactoryTest {
         System.out.println("export component " + ship.getnExposedConnector() );
 
     }
+    @Test
+    void testCreateMockShip3() throws IOException {
+        Ship ship = MockShipFactory.createMockShip3();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
+
+    }
+
+    @Test
+    void testCreateMockShip4() throws IOException {
+        Ship ship = MockShipFactory.createMockShip4();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
+
+    }
 
 }

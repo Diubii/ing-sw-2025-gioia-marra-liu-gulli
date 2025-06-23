@@ -56,15 +56,13 @@ public interface View {
     void showLobbies(List<LobbyInfo> lobbies);
 
     void toShowCurrentMenu();
-//    void showPlayerJoined(HashMap<String, Color> playerInfo);
 
     void showPlayerJoined(PlayerInfo playerInfos);
 
-//    void showPlayersLobby(ArrayList<PlayerInfo> playerInfos);
 
     void handleChoiceForPhase(GameState phase);
 
-        void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> infoPlayer);
+    void showPlayersLobby(PlayerInfo myInfo, ArrayList<PlayerInfo> infoPlayer);
 
     void handlePhaseUpdate(PhaseUpdate phaseUpdate);
 
@@ -72,10 +70,9 @@ public interface View {
     void showBuildingMenu();
 
     void handleFaceUpTilesUpdate();
+
     void showFaceUpTiles();
 
-
-//    void showShip(Ship ship, String Nickname);
 
     void FetchMyShip();
 
@@ -100,11 +97,10 @@ public interface View {
 
     void askTilePlacement();
 
-    void askFinishBuilding();
 
-    void showcheckShipMenu();
+    void showCheckShipMenu();
 
-    void showembarkCrewMenu();
+    void showEmbarkCrewMenu();
 
     void askRemoveTile(Ship ship);
 

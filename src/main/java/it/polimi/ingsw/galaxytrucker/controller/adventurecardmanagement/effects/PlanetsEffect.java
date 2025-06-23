@@ -111,8 +111,7 @@ public abstract class PlanetsEffect {
         LobbyManager game = context.getCurrentGame();
 
         finishedPlayer.putIfAbsent(context.getCurrentGame(),0);
-        int finishedPlayerIndex = finishedPlayer.get(game);
-        finishedPlayer.put(game,finishedPlayerIndex+1);
+        finishedPlayer.compute(game, (k, finishedPlayerIndex) -> finishedPlayerIndex + 1);
 
         broadcast(context,shipUpdate);
 

@@ -507,18 +507,15 @@ public class GuiJavaFx implements View {
         controller.handleBuildingMenuChoice("h");
     }
 
-    @Override
-    public void askFinishBuilding() {
-        controller.handleBuildingMenuChoice("j");
-    }
+
 
     @Override
-    public void showcheckShipMenu() {
+    public void showCheckShipMenu() {
         //Gestita internamente a BuildingController in base a gamePhase
     }
 
     @Override
-    public void showembarkCrewMenu() {
+    public void showEmbarkCrewMenu() {
         //Gestita internamente a BuildingController in base a gamePhase
     }
 

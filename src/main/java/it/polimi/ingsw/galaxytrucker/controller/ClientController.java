@@ -397,8 +397,8 @@ public class ClientController implements Observer {
 
                     if(isPlaced || currentTileInHand == null) {
                         try {
-                            view.askViewAdventureDecks();
                             sendShipUpdate();
+                            view.askViewAdventureDecks();
                         } catch (IOException | ExecutionException | InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -468,11 +468,13 @@ public class ClientController implements Observer {
 
     //case(a)
     public void sendShipUpdate() throws IOException, ExecutionException, InterruptedException {
-        ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
-        currentPosition = null;
-        currentTileInHand = null;
-        update.setOnlyFix(true);
-        safeSendMessage(update);
+        if(myModel.getMyInfo().getShip().getLastTile()!=null) {
+            ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
+            currentPosition = null;
+            currentTileInHand = null;
+            update.setOnlyFix(true);
+            safeSendMessage(update);
+        }
     }
 
 
@@ -617,7 +619,8 @@ public class ClientController implements Observer {
 
     //case(d) draw tile
     public void handleDrawFaceDownTile() {
-        if(currentTileInHand!=null&&currentPosition!=null) {
+
+        if(currentTileInHand==null || isPlaced) {
             try {
                 sendShipUpdate();
             } catch (IOException | ExecutionException | InterruptedException e) {
@@ -1049,14 +1052,14 @@ public void handleDrawReservedTile (int slotIndex){
             switch (input) {
                 case "a" -> {
                     view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
-                    view.showcheckShipMenu();
+                    view.showCheckShipMenu();
                 }
                 case "b" -> {
                     if (myModel.getMyInfo().getShip().remainingTiles() > 0) {
                         view.askRemoveTile(myModel.getMyInfo().getShip());
                     } else {
                         System.out.println("OPTION DISABLED< YOU HAVE NO TILE");
-                        view.showcheckShipMenu();
+                        view.showCheckShipMenu();
                     }
 
                 }
@@ -1064,7 +1067,7 @@ public void handleDrawReservedTile (int slotIndex){
                 case "menu", "m", "?" -> view.handleChoiceForPhase(phase);
                 default -> {
                     view.showGenericMessage("Invalid option. Please try again.",false);
-                    view.showcheckShipMenu();
+                    view.showCheckShipMenu();
                 }
 
             }
@@ -1097,7 +1100,7 @@ public void handleDrawReservedTile (int slotIndex){
                     myModel.getMyInfo().setShip(response.getShip());
 
                 }
-                view.showcheckShipMenu();
+                view.showCheckShipMenu();
 
             } catch (ExecutionException | InterruptedException e) {
                 view.showGenericMessage("Errore durante il controllo della nave",true);
@@ -1115,7 +1118,7 @@ public void handleDrawReservedTile (int slotIndex){
             switch (string) {
                 case "a" -> {
                     view.showShip(myModel.getMyInfo().getShip(),myModel.getMyInfo().getNickName());
-                    view.showembarkCrewMenu();
+                    view.showEmbarkCrewMenu();
                 }
 
                 case "b" -> {
@@ -1131,7 +1134,7 @@ public void handleDrawReservedTile (int slotIndex){
                 case "menu", "m", "?" -> view.handleChoiceForPhase(phase);
                 default -> {
                     view.showGenericMessage("Invalid option. Please try again.",false);
-                    view.showembarkCrewMenu();
+                    view.showEmbarkCrewMenu();
                 }
 
             }

@@ -13,6 +13,7 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.DoubleCannon;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,22 +27,20 @@ public class GameControllerTest {
 
     private GameTestHelper.GameTestContext ctx;
     private GameController controller;
+    private ArrayList<Player> players;
 
-    private final String playerANickname = "A";
-    private final String playerBNickname = "B";
-    private final String playerCNickname = "C";
-
-    private final ArrayList<Player> players = new ArrayList<>(
-            List.of(
-                    new Player(playerANickname, 0, 1, false),
-                    new Player(playerBNickname, 0, 2, false),
-                    new Player(playerCNickname, 0, 3, false)
-            )
-    );
     @BeforeEach
     public void setup() {
-        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.emptyResponsesFor(players);
-        ctx = GameTestHelper.setupGame(responses, players);
+        ArrayList<Player> testPlayers = new ArrayList<>(
+                List.of(
+                        new Player("A", 0, 1, false),
+                        new Player("B", 0, 2, false),
+                        new Player("C", 0, 3, false)
+                )
+        );
+        this.players = testPlayers;
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.emptyResponsesFor(testPlayers);
+        ctx = GameTestHelper.setupGame(responses, testPlayers);
         controller = ctx.lobby.getGameController();
     }
 
@@ -294,8 +293,104 @@ public class GameControllerTest {
         assertNull(tile3_3New);
 
 
+        ShipPrintUtils.printShip(shipA);
+        diceRoll1 = 12;
+        destroyed3 = controller.reactToProjectile(playerA, projectile3, diceRoll1);
+
+        destroyed4 = controller.reactToProjectile(playerA, projectile4, diceRoll1);
+        assertNull(destroyed3);
+        assertNull(destroyed4);
 
     }
+
+    @Test
+    void testReactToProjectile_MeteorBig2() {
+
+        Player playerA = ctx.lobby.getGameController().getRankedPlayers().get(0);
+        Ship shipA = MockShipFactory.createHighFirePowerShipWithMultiDirection();
+
+        playerA.replaceShip(shipA);
+
+        ShipPrintUtils.printShip(shipA);
+
+        Projectile projectile1 = new Projectile(ProjectileType.Meteor, ProjectileDirection.UP, ProjectileSize.Little);
+
+        int diceRoll1 = 12;
+        Tile destroyed1 = controller.reactToProjectile(playerA, projectile1, diceRoll1);
+        assertNull(destroyed1);
+
+        diceRoll1 =4;
+        Projectile projectile2 = new Projectile(ProjectileType.Meteor, ProjectileDirection.DOWN, ProjectileSize.Big);
+        controller.reactToProjectile(playerA, projectile2, diceRoll1);
+        assertNull(shipA.getTileFromPosition(new Position(4,2)));
+        ShipPrintUtils.printShip(shipA);
+
+
+
+        shipA =MockShipFactory.createMockShip3();
+        playerA.replaceShip(shipA);
+
+        ShipPrintUtils.printShip(shipA);
+        controller.reactToProjectile(playerA, projectile2, diceRoll1);
+        ShipPrintUtils.printShip(shipA);
+
+
+        shipA = MockShipFactory.createMockShip4();
+        projectile1 =new Projectile(ProjectileType.Meteor, ProjectileDirection.LEFT, ProjectileSize.Big);
+        controller.reactToProjectile(playerA, projectile1, diceRoll1);
+//
+//        Position pos1_2 = new Position(1,2);
+//        Tile tile1_2 = shipA.getTileFromPosition(pos1_2);
+//
+//        diceRoll1 = 2;
+//        Projectile projectile2 = new Projectile(ProjectileType.Meteor, ProjectileDirection.LEFT, ProjectileSize.Little);
+//        Tile destroyed2 = controller.reactToProjectile(playerA, projectile2, diceRoll1);
+//        Tile tile1_2New = shipA.getTileFromPosition(pos1_2);
+//
+//        assertEquals(tile1_2,destroyed2);
+//        assertNull(tile1_2New);
+//
+//
+//
+//        shipA = MockShipFactory.createMockShipWithShield();
+//        playerA.replaceShip(shipA);
+//        diceRoll1 = 2;
+//        Projectile projectile3 = new Projectile(ProjectileType.Meteor, ProjectileDirection.RIGHT, ProjectileSize.Little);
+//
+//        ArrayList<Position> shields = shipA.getComponentPositionsFromName("Shield");
+//        Position shieldPosition1 = shields.get(0);
+//        Position shieldPosition2 = shields.get(1);
+//
+//        Position pos4_2 = new Position(4,2);
+//        Tile tile4_2 = shipA.getTileFromPosition(pos4_2);
+//        Tile destroyed3 = controller.reactToProjectile(playerA, projectile3, diceRoll1);
+//        Tile tile4_2New = shipA.getTileFromPosition(pos4_2);
+//
+//        assertEquals(tile4_2,destroyed3);
+//        assertNull(tile4_2New);
+//
+//
+//        Shield shield1 =  (Shield) shipA.getComponentFromPosition(shieldPosition1);
+//        shield1.setCharged(true);
+//        Tile destroyed4 = controller.reactToProjectile(playerA, projectile3, diceRoll1);
+//        assertNull(destroyed4);
+
+    }
+    @Test
+    void testKickPlayerFromGame(){
+
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.emptyResponsesFor(players);
+        GameTestHelper.GameTestContext gtc = GameTestHelper.setupGame(responses, players);
+
+        assertNotNull(gtc);
+        gtc.lobby.getGameController().kickPlayerFromGame("A");
+
+       assertEquals(2, gtc.lobby.getGameController().getRankedPlayers().size());
+
+
+
+    }
+
 
 
 }

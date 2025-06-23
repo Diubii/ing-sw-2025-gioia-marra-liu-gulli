@@ -62,6 +62,12 @@ public abstract class EpidemicEffect {
         if (context.getCurrentPlayer() != context.getCurrentRankedPlayers().getLast()) {
             broadcast(context, new ShipUpdate(ship,currentPlayer.getNickName()));
             //Eseguo ancora questo metodo con il giocatore successivo
+
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             context.nextPlayer();
             context.executePhase();
         } else {

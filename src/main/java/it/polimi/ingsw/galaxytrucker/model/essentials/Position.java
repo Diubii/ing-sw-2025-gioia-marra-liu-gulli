@@ -2,6 +2,7 @@ package it.polimi.ingsw.galaxytrucker.model.essentials;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents a position in a 2D Cartesian space.
@@ -56,10 +57,15 @@ public class Position implements Serializable {
         Position position = (Position) obj;
         return x == position.x && y == position.y;
     }
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
     @Override
 
     public String toString() {
         return "(" + x + "," + y + ")";
     }
+
+
 }

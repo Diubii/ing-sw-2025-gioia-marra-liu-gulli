@@ -43,6 +43,7 @@ public class GameTestHelper {
 
             try {
                 serverController.handleNicknameRequest(nicknameRequest, fakeClientHandler);
+                serverController.addClient(fakeClientHandler);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -81,6 +82,60 @@ public class GameTestHelper {
                 throw new RuntimeException(e);
             }
         });
+
+        LobbyManager lobby = serverController.getLobbyFromHandler(nicknameToHandlerMap.get(players.getFirst().getNickName()));
+        lobby.getGameController().getCardDeckTest().clear();
+
+        GameTestContext context = new GameTestContext();
+        context.serverController = serverController;
+        context.lobby = lobby;
+        context.nicknameToHandlerMap = nicknameToHandlerMap;
+        return context;
+    }
+    public static GameTestContext setupGameForBuildingPhase(Map<String, ArrayList<NetworkMessage>> responses, ArrayList<Player> players) {
+        final ServerController serverController;
+        int createdGameId = -1;
+        try {
+            serverController = new ServerController();
+            serverController.setSynchronousExecution(true);
+        } catch (RemoteException e) {
+            System.err.println("Couldn't export ServerController: " + e.getMessage() + ".");
+            return null;
+        }
+
+        HashMap<String, ClientHandler> nicknameToHandlerMap = new HashMap<>();
+
+        for (Player p : players) {
+            FakeClientHandler fakeClientHandler = new FakeClientHandler(serverController, responses.get(p.getNickName()));
+            NicknameRequest nicknameRequest = new NicknameRequest(p.getNickName());
+
+            try {
+                serverController.handleNicknameRequest(nicknameRequest, fakeClientHandler);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (p.equals(players.getFirst())) {
+                CreateRoomRequest createRoomRequest = new CreateRoomRequest(players.size(), false, p.getNickName());
+                try {
+
+                    serverController.handleCreateRoomRequest(createRoomRequest, fakeClientHandler);
+                    createdGameId = serverController.getLastCreatedGameId();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                JoinRoomRequest joinRoomRequest = new JoinRoomRequest(createdGameId, p.getNickName());
+                try {
+                    serverController.handleJoinRoomRequest(joinRoomRequest, fakeClientHandler);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            nicknameToHandlerMap.put(p.getNickName(), fakeClientHandler);
+        }
+
 
         LobbyManager lobby = serverController.getLobbyFromHandler(nicknameToHandlerMap.get(players.getFirst().getNickName()));
         lobby.getGameController().getCardDeckTest().clear();

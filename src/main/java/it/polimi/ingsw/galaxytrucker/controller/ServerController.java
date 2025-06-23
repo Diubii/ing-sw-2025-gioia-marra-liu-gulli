@@ -100,14 +100,14 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
 
-    /**
-     * Retrieves the list of game tiles currently managed by the server.
-     *
-     * @return An ArrayList of Tile objects representing the current game tiles.
-     */
-    public ArrayList<Tile> getGameTiles() {
-        return gameTiles;
-    }
+//    /**
+//     * Retrieves the list of game tiles currently managed by the server.
+//     *
+//     * @return An ArrayList of Tile objects representing the current game tiles.
+//     */
+//    public ArrayList<Tile> getGameTiles() {
+//        return gameTiles;
+//    }
 
     /**
      * Populates the list of game tiles by deserializing data from a JSON file.
@@ -193,11 +193,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         }
     }
 
-//    public ArrayList<String> getClientHandlerToNicknameMap() {
-//        synchronized (usedNicknames) {
-//            return usedNicknames;
-//        }
-//    }
 
     public MessageManager getMessageManager() {
         return messageManager;
@@ -215,17 +210,17 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         return lobbyManager;
     }
 
-    /**
-     * Retrieves the list of lobby information managed by the server.
-     * This method ensures thread-safe access to the lobby information list.
-     *
-     * @return An ArrayList containing instances of {@link LobbyInfo} that hold details about each lobby.
-     */
-    public ArrayList<LobbyInfo> getLobbyInfos() {
-        synchronized (lobbyInfos) {
-            return lobbyInfos;
-        }
-    }
+//    /**
+//     * Retrieves the list of lobby information managed by the server.
+//     * This method ensures thread-safe access to the lobby information list.
+//     *
+//     * @return An ArrayList containing instances of {@link LobbyInfo} that hold details about each lobby.
+//     */
+//    public ArrayList<LobbyInfo> getLobbyInfos() {
+//        synchronized (lobbyInfos) {
+//            return lobbyInfos;
+//        }
+//    }
 
 
     /*
@@ -365,7 +360,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      */
     public void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest message, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
-            JoinRoomOptionsResponse joinRoomOptionsResponse = new JoinRoomOptionsResponse(null, message.getID());
+            new JoinRoomOptionsResponse(null, message.getID());
+            JoinRoomOptionsResponse joinRoomOptionsResponse;
             synchronized (lobbyInfos) {
                 joinRoomOptionsResponse = new JoinRoomOptionsResponse(lobbyInfos, message.getID());
             }
@@ -587,9 +583,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         this.execute(() -> {
             //il client mi chiede una Tile, e devo restituirla
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
-            Tile myTile = null;
+            Tile myTile ;
             DrawTileResponse drawTileResponse;
-            Boolean flag = false;
             Player player = getPlayerFromClientHandler(clientHandler);
             Ship targetShip = player.getShip();
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
@@ -682,33 +677,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             }
             clientHandler.sendMessage(drawTileResponse);
-        });
-    }
-
-    /**
-     * Handles the request to fetch a player's ship and sends the corresponding ship update to the client.
-     * Retrieves the target player's ship using the provided nickname and constructs a {@link ShipUpdate}
-     * to communicate the relevant data to the client.
-     *
-     * @param message The {@link FetchShipRequest} containing the target player's nickname whose ship is requested.
-     * @param clientHandler The {@link ClientHandler} responsible for handling messages with the client initiating the request.
-     * @throws RemoteException If a remote communication error occurs while processing or sending the message.
-     */
-    @NeedsToBeCompleted
-    //Se player inserisce un Nickname non esiste? cosa ricevo
-    public void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler) throws RemoteException {
-        this.execute(() -> {
-            LobbyManager myGame = getLobbyFromHandler(clientHandler);
-
-            Player targetPlayer = myGame.getRealGame().getPlayer(message.getTargetNickname());
-            Ship targetShip;
-            ShipUpdate shipViewUpdate;
-
-            targetShip = targetPlayer.getShip();
-            shipViewUpdate = new ShipUpdate(targetShip, targetPlayer.getNickName());
-            shipViewUpdate.setShouldDisplay(true);
-
-            clientHandler.sendMessage(shipViewUpdate);
         });
     }
 
@@ -1066,14 +1034,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     broadCast(playerHandlers, shipUpdate);
                     clientHandler.sendMessage(placeTileResponse);
 
-
-//                } else {
-//                    PlaceTileResponse resp = new PlaceTileResponse(null, placeTileRequest.getID());
-//                    resp.setMessage("INVALID_POS");
-//                    clientHandler.sendMessage(resp);
-//                }
-
-
             }
 
         });
@@ -1091,47 +1051,27 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     @NeedsToBeCompleted
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
-            Tile tileToDiscard = discardTileRequest.getTile();
+
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
 
             //myGame.getTileBunch().getFaceUpTiles();
 
             String nickname = getNicknameFromClientHandler(clientHandler);
             Player myPlayer = myGame.getRealGame().getPlayer(nickname);
-            Ship myShip = myPlayer.getShip();
             myGame.getTileBunch().returnTile(discardTileRequest.getTile());
 
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
             broadCast(playerHandlers, new TileDiscardedUpdate(discardTileRequest.getTile()));
 
-//
+
             FaceUpTileUpdate faceUpTileUpdate = new FaceUpTileUpdate();
             faceUpTileUpdate.setFaceUpTiles(myGame.getTileBunch().getFaceUpTiles());
             broadCast(playerHandlers, faceUpTileUpdate);
-
-//            if(tileToDiscard.getId() == myShip.getLastTile().getId()) {
-//                myShip.removeTile(myShip.getLastTilePosition(),true);
-//                ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-//                broadCast(playerHandlers, shipUpdate);
-//            }
 
 
         });
     }
 
-    /**
-     * Handles the request to view adventure decks.
-     * Processes the incoming request from the client and performs the necessary actions
-     * to retrieve the adventure deck data, ensuring the response is sent back to the client.
-     *
-     * @param viewAdventureDecksRequest the request object containing details needed to view adventure decks
-     * @param clientHandler the handler responsible for managing client communication and responses
-     * @throws RemoteException if there is a communication-related error during the execution of the request
-     */
-    @NeedsToBeCompleted
-    public void handleViewAdventureDecksRequest(ViewAdventureDecksRequest viewAdventureDecksRequest, ClientHandler clientHandler) throws RemoteException {
-
-    }
 
     /**
      * Handles the initialization and update of the crew positions during the game setup phase. This method updates
@@ -1298,27 +1238,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                 synchronized (myShip) {
                     myShip.getLastTile().setFixed(true);
-//                    List<Slot> Slots = Arrays.stream(shipUpdate.getShipView().getShipBoard())
-//                            .flatMap(Arrays::stream)
-//                            .filter(Objects::nonNull)
-//                            .toList();
-//
-//                    //trovo la tile non fissata
-//
-//                    for (Slot slot : Slots) {
-//
-//                        Tile tempTile = slot.getTile();
-//
-//                        if (tempTile != null) {
-//
-//                            if (!tempTile.getFixed()) {
-//                                tempTile.setFixed(true);
-//                                break;
-//                            }
-//                        }
-//                    }
-
-
                 }
 
                 ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
@@ -1503,7 +1422,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     public void startTimer(int seconds, GameController gameController, ArrayList<ClientHandler> clients, boolean last, int index) {
         //mando a tutti la notifica di end_timer\
 
-        TimerInfo timer = new TimerInfo(index,0,true);
         GameMessage gameMessage = new GameMessage("Timer n. "+ index + " started");
         broadCast(clients, gameMessage);
 
@@ -1699,6 +1617,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      */
     public int getLastCreatedGameId() {
         return nextLobbyIndex - 1;
+    }
+
+
+    public ArrayList<Heartbeat> getHeartbeats() {
+        return heartbeats;
     }
 }
 

@@ -13,7 +13,6 @@ public abstract class CardFSM {
     private final ArrayList<Consumer<CardContext>> phases;
     private Consumer<CardContext> currentPhase;
     private int currentPhaseIndex = 0;
-    private boolean done = false;
 
     protected CardFSM() {
         phases = initPhases();
@@ -27,7 +26,8 @@ public abstract class CardFSM {
     public void execute(CardContext cardContext) {
         if (currentPhase != null) {
             currentPhase.accept(cardContext);
-        } else {
+        }
+        else {
             System.err.println("[CardFSM] No phase to execute.");
         }
     }
@@ -42,9 +42,7 @@ public abstract class CardFSM {
         if(currentPhaseIndex < phases.size()) {
             currentPhase = phases.get(currentPhaseIndex);
         }
-        else{
-            done = true;
-        }
+
     }
 
     public void skipToEndState(){
@@ -57,7 +55,4 @@ public abstract class CardFSM {
         currentPhase = phases.get(currentPhaseIndex);
     }
 
-    public boolean isDone() {
-        return done;
-    }
 }

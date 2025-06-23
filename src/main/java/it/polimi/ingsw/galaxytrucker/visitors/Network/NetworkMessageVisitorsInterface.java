@@ -28,7 +28,6 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(DrawTileRequest drawTileRequest);
 
-    T visit(FetchShipRequest fetchShipRequest);
 
     T visit(ShipUpdate shipUpdate);
 
@@ -55,8 +54,6 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(PlaceTileRequest placeTileRequest);
 
     T visit(FetchShipResponse fetchShipResponse);
-
-    T visit(ViewAdventureDecksRequest viewAdventureDecksRequest);
 
     T visit(EndTimerUpdate endTimerUpdate);
 

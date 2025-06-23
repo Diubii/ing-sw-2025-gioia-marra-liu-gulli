@@ -64,10 +64,6 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
         return NetworkMessageType.DrawTileResponse;
     }
 
-    @Override
-    public NetworkMessageType visit(FetchShipRequest fetchShipRequest) {
-        return NetworkMessageType.FetchShipResponse;
-    }
 
     @Override
     public NetworkMessageType visit(ShipUpdate shipUpdate) {
@@ -129,10 +125,6 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
         return NetworkMessageType.FetchShipRequest;
     }
 
-    @Override
-    public NetworkMessageType visit(ViewAdventureDecksRequest viewAdventureDecksRequest) {
-        return NetworkMessageType.ViewAdventureDeckResponse;
-    }
 
     @Override
     public NetworkMessageType visit(EndTimerUpdate endTimerUpdate) {
