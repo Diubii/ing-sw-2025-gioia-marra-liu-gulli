@@ -63,10 +63,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.DrawTileRequest;
     }
 
-    @Override
-    public NetworkMessageType visit(FetchShipRequest fetchShipRequest) {
-        return NetworkMessageType.FetchShipRequest;
-    }
+
 
     @Override
     public NetworkMessageType visit(ShipUpdate shipUpdate) {
@@ -100,10 +97,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.FinishBuildingRequest;
     }
 
-    @Override
-    public NetworkMessageType visit(ViewAdventureDecksRequest viewAdventureDecksRequest) {
-        return NetworkMessageType.ViewAdventureDeckRequest;
-    }
+
 
     @Override
     public NetworkMessageType visit(PlaceTileRequest placeTileRequest) {

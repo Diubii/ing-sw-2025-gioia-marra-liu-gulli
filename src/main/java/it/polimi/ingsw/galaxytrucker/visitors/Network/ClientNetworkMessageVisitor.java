@@ -64,11 +64,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     }
 
 
-    @Override
-    public Void visit(FetchShipRequest fetchShipRequest) {
 
-        return null;
-    }
 
     @Override
     public Void visit(CheckShipStatusRequest checkShipStatusRequest) {
@@ -101,11 +97,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
         return null;
     }
 
-    @Override
-    public Void visit(ViewAdventureDecksRequest viewAdventureDecksRequest) {
-        clientController.safeSendMessage(viewAdventureDecksRequest);
-        return null;
-    }
+
 
     @Override
     public Void visit(AdventureCardExampleResponse adventureCardExampleResponse) {

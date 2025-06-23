@@ -140,15 +140,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @Override
-    public Void visit(FetchShipRequest fetchShipRequest) {
-        try {
-            serverControllerHandles.handleFetchShipRequest(fetchShipRequest, clientHandler);
-        }catch (RemoteException e) {
-            System.err.println(e.getMessage());
-        }
-        return null;
-    }
 
     @Override
     public Void visit(FetchShipResponse fetchShipResponse) {
@@ -172,15 +163,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @Override
-    public Void visit(ViewAdventureDecksRequest viewAdventureDecksRequest) {
-        try {
-            serverControllerHandles.handleViewAdventureDecksRequest(viewAdventureDecksRequest, clientHandler);
-        } catch (RemoteException e) {
-            System.err.println(e.getMessage());
-        }
-        return null;
-    }
 
     @Override
     public Void visit(EndTimerUpdate endTimerUpdate) {

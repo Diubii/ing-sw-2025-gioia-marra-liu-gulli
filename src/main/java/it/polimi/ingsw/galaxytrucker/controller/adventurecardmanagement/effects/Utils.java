@@ -22,6 +22,7 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Ship
 import it.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
 
+import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -322,6 +323,11 @@ public abstract class Utils {
             DoubleEngine doubleEngine = (DoubleEngine) ship.getComponentFromPosition(pos);
             doubleEngine.setCharged(false);
         }
+
+    }
+
+    protected static void askTruck(){
+
 
     }
 

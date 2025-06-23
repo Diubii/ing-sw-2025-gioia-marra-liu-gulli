@@ -10,6 +10,7 @@ module it.polimi.ingsw.galaxytrucker {
     requires jdk.httpserver;
     requires jdk.accessibility;
     requires java.sql;
+    requires java.naming;
 
     opens it.polimi.ingsw.galaxytrucker.view.Gui.Elements to javafx.fxml;
     opens it.polimi.ingsw.galaxytrucker.model.essentials to com.fasterxml.jackson.databind;

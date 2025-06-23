@@ -21,7 +21,6 @@ public class CardContext {
     private Player currentPlayer;
     private ClientHandler currentPlayerHandler;
     private ArrayList<Player> currentRankedPlayers;
-    private ArrayList<Player> originRankedPlayers;
     private final CardFSM cardFSM;
     private final LobbyManager currentGame;
     private NetworkMessage incomingNetworkMessage;
@@ -80,18 +79,6 @@ public class CardContext {
         return getCurrentRankedPlayers().getLast().getNickName().equals(currentPlayer.getNickName());
     }
 
-    /**
-     * Assigns the previous player to the current one. If the current one before the assignment is the first one, it goes back to the last one.
-     */
-    public void previousPlayer() {
-        int i = currentRankedPlayers.indexOf(currentPlayer);
-        if (i == 0) {
-            this.currentPlayer = currentRankedPlayers.getLast();
-        } else {
-            this.currentPlayer = currentRankedPlayers.get(i - 1);
-        }
-        currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
-    }
 
     /**
      * Assigns the next player to the current one. If the current one before the assignment is the last one, it goes back to the first one.

@@ -16,7 +16,7 @@ public interface ServerControllerHandles extends Remote {
     void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest joiniRoomOptionsRequest, ClientHandler clientHandler) throws RemoteException;
     void handleJoinRoomRequest(JoinRoomRequest joinRoomRequest, ClientHandler clientHandler) throws RemoteException;
     void handleDrawTileRequest(DrawTileRequest drawTileRequest, ClientHandler clientHandler) throws RemoteException;
-    void handleFetchShipRequest(FetchShipRequest message, ClientHandler clientHandler) throws RemoteException;
+
     void handleCheckShipStatusRequest(CheckShipStatusRequest message, ClientHandler clientHandler) throws RemoteException;
     void handleAskPositionResponse(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException;
     void handleSelectPlanetResponse(SelectPlanetResponse selectPlanetResponse, ClientHandler clientHandler) throws RemoteException;
@@ -24,7 +24,6 @@ public interface ServerControllerHandles extends Remote {
     void handleFinishBuildingRequest2(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException;
     void handlePlaceTileRequest(PlaceTileRequest placeTileRequest, ClientHandler clientHandler) throws InvalidTilePosition, RemoteException;
     void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) throws RemoteException;
-    void handleViewAdventureDecksRequest(ViewAdventureDecksRequest viewAdventureDecksRequest, ClientHandler clientHandler) throws RemoteException;
     void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate, ClientHandler clientHandler) throws RemoteException;
     void handleActivateAdventureCardResponse(ActivateAdventureCardResponse activateAdventureCardResponse, ClientHandler clientHandler) throws RemoteException;
     void handleActivateComponentResponse(ActivateComponentResponse activateComponentResponse, ClientHandler clientHandler) throws RemoteException;

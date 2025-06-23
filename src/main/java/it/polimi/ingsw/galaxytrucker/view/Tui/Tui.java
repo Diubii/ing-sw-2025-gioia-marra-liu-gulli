@@ -3,13 +3,11 @@ package it.polimi.ingsw.galaxytrucker.view.Tui;
 import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import it.polimi.ingsw.galaxytrucker.enums.GameState;
 import it.polimi.ingsw.galaxytrucker.enums.TimerStatus;
 import it.polimi.ingsw.galaxytrucker.model.*;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
@@ -27,7 +25,6 @@ import it.polimi.ingsw.galaxytrucker.observer.Observer;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.*;
 import it.polimi.ingsw.galaxytrucker.view.View;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
-import javafx.util.Pair;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -396,10 +393,10 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void showPlayersLobby(PlayerInfo myinfo, ArrayList<PlayerInfo> infoPlayer) {
+    public void showPlayersLobby(PlayerInfo myInfo, ArrayList<PlayerInfo> infoPlayer) {
         System.out.println("Giocatori nella lobby: ");
         System.out.print("IO: ");
-        switch (myinfo.getColor()) {
+        switch (myInfo.getColor()) {
             case RED -> System.out.println(RED + "█" + RESET + " ");
             case GREEN -> System.out.println(GREEN + "█" + RESET + " ");
             case BLUE -> System.out.println(BLUE + "█" + RESET + " ");
@@ -447,8 +444,8 @@ public class Tui implements View, Observable {
     public void handleChoiceForPhase(GameState phase) {
         switch (phase) {
             case BUILDING_START -> showBuildingMenu();
-            case SHIP_CHECK -> showcheckShipMenu();
-            case CREW_INIT -> showembarkCrewMenu();
+            case SHIP_CHECK -> showCheckShipMenu();
+            case CREW_INIT -> showEmbarkCrewMenu();
             case FLIGHT -> showFlightMenu();
             default -> {
 //                out.println("Please wait. No input is required at this stage.");
@@ -914,13 +911,10 @@ public class Tui implements View, Observable {
 
     }
 
-    @Override
-    public void askFinishBuilding() {
 
-    }
 
     @Override
-    public void showcheckShipMenu() {
+    public void showCheckShipMenu() {
         enableInput();
         try {
             String input = readLine("\nChoose an option (a–c) or menu: ").trim().toLowerCase();
@@ -932,7 +926,7 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void showembarkCrewMenu() {
+    public void showEmbarkCrewMenu() {
         enableInput();
 
         try {
@@ -976,7 +970,7 @@ public class Tui implements View, Observable {
 
                     if (ship.remainingTiles() == 0) {
                         System.out.println("Your ship is a ghost, go back to the menuuuuuu");
-                        showcheckShipMenu();
+                        showCheckShipMenu();
                         return;
                     }
 
@@ -994,7 +988,7 @@ public class Tui implements View, Observable {
                     }
                     if (input2.equals("y")) {
                         menuManager.showCurrentMenu();
-                        showcheckShipMenu();
+                        showCheckShipMenu();
                         valid = true;
                     }
 
@@ -1009,7 +1003,7 @@ public class Tui implements View, Observable {
             disableInput();
         }
 
-        showcheckShipMenu();
+        showCheckShipMenu();
     }
 
 
@@ -1243,105 +1237,110 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
+    public void chooseCrew(Ship myShip)  {
 
         //salvo tutte le posizioni delle housing
 
         ArrayList<Position> housinPos = myShip.getComponentPositionsFromName("ModularHousingUnit");
+        int housingSize = housinPos.size()+1;
+        System.out.println("Hai " + housingSize + " cabine");
+
 
         int nBrownAliens = 0;
         int nPurpleAliens = 0;
 
         CrewInitUpdate crewInitUpdate = new CrewInitUpdate();
 
-        System.out.println("You have " + housinPos.size() + " Cabins to fill");
 
 
-        if (!housinPos.isEmpty()) {
-            enableInput();
-            try {
 
 
-                for (Position pos : housinPos) {
-
-                    Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
-
-                    if (tempSlot != null) {
-                        if (tempSlot.getTile() != null) {
-
-                            ArrayList<String> choiches = new ArrayList<>();
-
-                            ModularHousingUnit housing = (ModularHousingUnit) tempSlot.getTile().getMyComponent();
-
-                            if (Util.checkNearLFS(pos, housing.getAlienColor(), myShip)) {
-
-                                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.PURPLE) && nPurpleAliens == 0) {
-                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
-                                    choiches.add("purple");
-                                }
-
-                                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.BROWN) && nBrownAliens == 0) {
-                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
-                                    choiches.add("brown");
-
-                                }
-                            } else {
-                                CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
-                                choiches.add("human");
-                            }
-
-
-                            boolean correct = false;
-
-                            while (!correct) {
-                                StringBuilder prompt = new StringBuilder("Type ");
-                                for (String choice : choiches) {
-                                    prompt.append("(").append(choice).append(") ");
-                                }
-                                String choice = readLine(prompt.toString()).toLowerCase();
-
-                                switch (choice) {
-                                    case "purple": {
-                                        nPurpleAliens++;
-                                        correct = true;
-                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
-                                        break;
-                                    }
-
-                                    case "brown": {
-                                        nBrownAliens++;
-                                        correct = true;
-                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.BROWN));
-                                        System.out.println("You cannot add a brown alien to this cabin.");
-                                        break;
-                                    }
-
-                                    case "human": { //Si inseriscono due umani
-                                        correct = true;
-                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
-                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
-                                        break;
-                                    }
-                                    case "reset": {}
-                                    default: {
-                                        System.out.println("Invalid choice: " + choice);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } finally {
-                disableInput();
-            }
-        }
+//        if (!housinPos.isEmpty()) {
+//            enableInput();
+//            try {
+//
+//
+//                for (Position pos : housinPos) {
+//
+//                    Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
+//
+//                    if (tempSlot != null) {
+//                        if (tempSlot.getTile() != null) {
+//
+//                            ArrayList<String> choiches = new ArrayList<>();
+//
+//                            ModularHousingUnit housing = (ModularHousingUnit) tempSlot.getTile().getMyComponent();
+//
+//                            if (Util.checkNearLFS(pos, housing.getAlienColor(), myShip)) {
+//
+//                                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.PURPLE) && nPurpleAliens == 0) {
+//                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
+//                                    choiches.add("purple");
+//                                }
+//
+//                                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.BROWN) && nBrownAliens == 0) {
+//                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
+//                                    choiches.add("brown");
+//
+//                                }
+//                            } else {
+//                                CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
+//                                choiches.add("human");
+//                            }
+//
+//
+//                            boolean correct = false;
+//
+//                            while (!correct) {
+//                                StringBuilder prompt = new StringBuilder("Type ");
+//                                for (String choice : choiches) {
+//                                    prompt.append("(").append(choice).append(") ");
+//                                }
+//                                String choice = readLine(prompt.toString()).toLowerCase();
+//
+//                                switch (choice) {
+//                                    case "purple": {
+//                                        nPurpleAliens++;
+//                                        correct = true;
+//                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
+//                                        break;
+//                                    }
+//
+//                                    case "brown": {
+//                                        nBrownAliens++;
+//                                        correct = true;
+//                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.BROWN));
+//                                        System.out.println("You cannot add a brown alien to this cabin.");
+//                                        break;
+//                                    }
+//
+//                                    case "human": { //Si inseriscono due umani
+//                                        correct = true;
+//                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
+//                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
+//                                        break;
+//                                    }
+//                                    case "reset": {}
+//                                    default: {
+//                                        System.out.println("Invalid choice: " + choice);
+//                                        break;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            } finally {
+//                disableInput();
+//            }
+//        }
 
         //fine for
 
         notifyObservers(crewInitUpdate);
 
     }
+
 
     @Override
     public void askActivateAdventureCard() {

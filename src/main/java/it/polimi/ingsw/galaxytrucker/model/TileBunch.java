@@ -58,10 +58,8 @@ public class TileBunch {
         if (!faceUpTiles.isEmpty()) {
             for (Tile tile : faceUpTiles) {
                 if (tile.getId() == id) {
-
-                    Tile myTile = tile;
                     faceUpTiles.remove(tile);
-                    return myTile;
+                    return tile;
                 }
             }
         }
@@ -80,12 +78,6 @@ public class TileBunch {
         }
         return null;
 
-    }
-
-
-    public synchronized void removeTile(Tile tile) {
-        faceUpTiles.remove(tile);
-        tiles.remove(tile);
     }
 
     public synchronized void returnTile(Tile tile) {
