@@ -66,7 +66,7 @@ public class ClientController implements Observer {
     private Position tmpCurrentPosition;
     private final ClientPhaseController clientPhaseController = new ClientPhaseController(this);
     private Thread heartbeat;
-    private AtomicBoolean isConnectionAlive = new AtomicBoolean(false);
+    private final AtomicBoolean isConnectionAlive = new AtomicBoolean(false);
 
     public GameState getPhase() {
         return phase;
@@ -1601,6 +1601,7 @@ public void handleDrawReservedTile (int slotIndex){
                 view.forceReset();
                 view.showGenericMessage("Connessione al server persa, verrai riportato alla schermata di connessione.", true);
                 new Thread(() -> view.askServerInfo()).start();
+                heartbeat.interrupt();
             }
             return false;
         }
