@@ -10,6 +10,7 @@ import it.polimi.ingsw.galaxytrucker.model.*;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
+import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
@@ -252,14 +253,10 @@ public class Tui implements View, Observable {
 
     public void askNickname() {
 
-        try {
-            String nickname = readLine("Enter your nickname: ");
-            if (checkReset(nickname)) return;
+        String nickname = readLine("Enter your nickname: ");
+        if (checkReset(nickname)) return;
 
-            clientController.handleNicknameInput(nickname);
-        } catch (InterruptedException | ExecutionException | IOException e) {
-            System.err.println("Error reading nickname: " + e.getMessage());
-        }
+        clientController.handleNicknameInput(nickname);
     }
 
     public void askJoinOrCreateRoom() {
@@ -959,6 +956,7 @@ public class Tui implements View, Observable {
                     Position pos = new Position(pos1.getX() - 4, pos1.getY() - 5);
 
                     if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getX()][pos.getY()].getTile() == null) {
+
                         throw new IllegalArgumentException("Invalid Position " + pos);
 
                     }
@@ -1013,7 +1011,7 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
+    public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) {
         String inputStr;
         int chosenPos = -1;
 
@@ -1048,7 +1046,7 @@ public class Tui implements View, Observable {
             } while (!valid);
 
             AskPositionResponse askPositionResponse = new AskPositionResponse(id, chosenPos);
-            clientController.getClient().sendMessage(askPositionResponse);
+            clientController.safeSendMessage(askPositionResponse);
         } finally {
             disableInput();
         }
@@ -1457,7 +1455,7 @@ public class Tui implements View, Observable {
                     String input = readLine("Seleziona una merce da caricare (1-" + goods.size() + ", oppure 0 per saltare il caricamento merci): ");
                     if(checkReset(input)) return;
                     if (input.equals("0")) {
-                        showGenericMessage("Hai scelto di non caricare nessu+na merce. ",false);
+                        showGenericMessage("Hai scelto di non caricare nessuna merce. ",false);
                         disableInput();
                         askLoadGoodChoice();
 
@@ -1603,6 +1601,7 @@ public class Tui implements View, Observable {
                     }
                 } else if (input.equals("reset")) {
                     System.out.println(); // No-op for now
+                    valid = true;
                 } else {
                     System.out.println("Input non valido");
                 }
@@ -1773,14 +1772,12 @@ public class Tui implements View, Observable {
         String input;
         do {
             input = readLine(prompt).trim().toLowerCase();
-            if ("y".equals(input)) {
-                try {
-                    onYesAction.run();
-                    validInput = true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+            if (input.equalsIgnoreCase("y")) {
+                onYesAction.run();
+                validInput = true;
+            }
+            else if(input.equalsIgnoreCase("reset")) {
+                return;
             } else {
                 System.out.println("Input non valido. Inserisci solo 'y' per confermare.");
             }

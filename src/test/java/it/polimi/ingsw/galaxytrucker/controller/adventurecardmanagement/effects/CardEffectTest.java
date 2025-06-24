@@ -1,5 +1,6 @@
 package it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
+import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import it.polimi.ingsw.galaxytrucker.model.*;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.*;
@@ -18,9 +19,8 @@ import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +33,7 @@ class CardEffectTest {
     private final String playerCNickname = "C";
 
     private final ArrayList<Player> players = new ArrayList<>(
-            List.of(
+            Arrays.asList(
                     new Player(playerANickname, 0, 1, false),
                     new Player(playerBNickname, 0, 2, false),
                     new Player(playerCNickname, 0, 3, false)
@@ -48,6 +48,20 @@ class CardEffectTest {
         System.out.println("Carta pescata: " + card.getName());
 
         return card;
+    }
+
+    private void setPlayersShipClientSideAndServerSide(ArrayList<Player> players, ArrayList<Ship> ships) {
+        final HashMap<String, ClientController> ntccmap = GameTestHelper.GameTestContext.nicknameToClientControllerMap;
+
+        assertEquals(players.size(), ntccmap.size());
+        assertEquals(players.size(), ships.size());
+
+        for(int i=0; i<players.size(); i++) {
+            if(ships.get(i) == null) continue;
+
+            players.get(i).replaceShip(ships.get(i));
+            ntccmap.get(players.get(i).getNickName()).setShip(ships.get(i));
+        }
     }
 
 
@@ -203,6 +217,14 @@ class CardEffectTest {
         Player second =rankedPlayers.get(1);
         Player third = rankedPlayers.get(2);
 
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip(),
+                        null,
+                        null
+                )
+        ));
+
         int positionFirstPlayer = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(first.getColor());
         System.out.println("Player 'A' position : "  + positionFirstPlayer );
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forAbandonedStation_A(rankedPlayers, abandonedStationCard);
@@ -341,12 +363,16 @@ class CardEffectTest {
 
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
         Player playerA = ctx.lobby.getGameController().getRankedPlayers().getFirst();
-        playerA.replaceShip(MockShipFactory.createMockShip());
         Player playerB = ctx.lobby.getGameController().getRankedPlayers().get(1);
-        playerB.replaceShip(MockShipFactory.createMockShip2());
         Player playerC = ctx.lobby.getGameController().getRankedPlayers().get(2);
 
-
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip(),
+                        MockShipFactory.createMockShip2(),
+                        null
+                )
+        ));
 
         FlightBoard flightBoard = ctx.lobby.getRealGame().getFlightBoard();
         int positionPlayerA = flightBoard.getPlayerPosition(playerA.getColor());
@@ -429,11 +455,19 @@ class CardEffectTest {
         Epidemic epidemic = (Epidemic) card;
 
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
-        Player first = ctx.lobby.getGameController().getRankedPlayers().getFirst();
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
 
-        first.replaceShip(MockShipFactory.createShipWithConnectedHousingUnits());
+        Player first = rankedPlayers.getFirst();
 
-        Ship shipA = first.getShip();
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createShipWithConnectedHousingUnits(),
+                        null,
+                        null
+                )
+        ));
+
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
         try {
@@ -446,7 +480,7 @@ class CardEffectTest {
         }
 
         first = ctx.lobby.getGameController().getRankedPlayers().getFirst();
-        shipA = first.getShip();
+        Ship shipA = first.getShip();
 
         int crewNumberA = shipA.getnCrew();
         System.out.println("Crew number: " + crewNumberA);
@@ -468,7 +502,6 @@ class CardEffectTest {
 
     }
 
-
     /**
      * Tests the Epidemic card effect when one of the connected housing units has zero crew members.
      *
@@ -489,11 +522,18 @@ class CardEffectTest {
 
         Epidemic epidemic = (Epidemic) card;
 
-
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
-        Player first = ctx.lobby.getGameController().getRankedPlayers().getFirst();
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
 
-        first.replaceShip(MockShipFactory.createShipWithConnectedHousingUnits());
+        Player first = rankedPlayers.getFirst();
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createShipWithConnectedHousingUnits(),
+                        null,
+                        null
+                )
+        ));
 
         Ship shipA = first.getShip();
         Position pos4_2 = new Position(4,2);
@@ -525,7 +565,6 @@ class CardEffectTest {
         assertEquals(0, hP4_2.getNCrewMembers());
 
     }
-
 
     /**
      * Tests the effect of the "Stardust" (Polvere di stelle) card on player positions.
@@ -563,11 +602,20 @@ class CardEffectTest {
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
 
-        Player first = ctx.lobby.getGameController().getRankedPlayers().getFirst();
-        first.replaceShip(MockShipFactory.createMockShip());
-        Player second = ctx.lobby.getGameController().getRankedPlayers().get(1);
-        second.replaceShip(MockShipFactory.createMockShip2());
-        Player third = ctx.lobby.getGameController().getRankedPlayers().get(2);
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
+
+        Player first = rankedPlayers.getFirst();
+        Player second = rankedPlayers.get(1);
+        Player third = rankedPlayers.get(2);
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip(),
+                        MockShipFactory.createMockShip2(),
+                        null //1
+                )
+        ));
+
         int positionFirstPlayer = 0;
         int positionSecondPlayer = 0;
         int positionThirdPlayer = 0;
@@ -587,9 +635,6 @@ class CardEffectTest {
         } catch (java.rmi.RemoteException e) {
             throw new RuntimeException(e);
         }
-        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
-
-
 
         positionFirstPlayer = flightBoard.getPlayerPosition(first.getColor());
         positionSecondPlayer = flightBoard.getPlayerPosition(second.getColor());
@@ -610,7 +655,6 @@ class CardEffectTest {
 
     }
 
-
     @Test
     void testPlanetsEffect_sendsCorrectPlanetListToPlayer(){
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Pianeti", 1);
@@ -628,7 +672,7 @@ class CardEffectTest {
 
         cardContext.setCurrentPlayer(currentPlayer);
 
-        FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(currentPlayer.getNickName());
+        FakeClientHandler handler = (FakeClientHandler) GameTestHelper.GameTestContext.nicknameToHandlerMap.get(currentPlayer.getNickName());
         handler.clearSentMessages();
 
         PlanetsEffect.sendSelectPlanetRequest(cardContext);
@@ -667,7 +711,7 @@ class CardEffectTest {
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forPlanet_NormalConditions(rankedPlayers, planetCard);
         responses.forEach((nick, responseList) -> {
-            FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
+            FakeClientHandler handler = (FakeClientHandler) GameTestHelper.GameTestContext.nicknameToHandlerMap.get(nick);
             handler.setMockResponses(responseList);
         });
 
@@ -698,7 +742,6 @@ class CardEffectTest {
 
     }
 
-
     @Test
     void testPirates_NormalConditions() {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Pirati", 1);
@@ -713,9 +756,14 @@ class CardEffectTest {
         Player playerA = rankedPlayers.get(0);
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
-        playerA.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
-        playerB.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection()); //power 3.5~5
-        playerC.replaceShip(MockShipFactory.createMockShip());//1
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createHighFirePowerShip(), //5~7
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection(), //power 3.5~5
+                        MockShipFactory.createMockShip() //1
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forPirates(rankedPlayers);
         responses.forEach((nick, responseList) -> {
@@ -762,19 +810,21 @@ class CardEffectTest {
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
 
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
-        Player playerA = rankedPlayers.get(0);
-        Player playerB = rankedPlayers.get(1);
-        Player playerC = rankedPlayers.get(2);
-        playerA.replaceShip(MockShipFactory.createMockShip());//1
-        playerB.replaceShip(MockShipFactory.createMockShip()); //power 1
-        playerC.replaceShip(MockShipFactory.createMockShip());//1
+        Player playerA = rankedPlayers.getFirst();
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip(), //1
+                        MockShipFactory.createMockShip(), //power 1
+                        MockShipFactory.createMockShip()  //1
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forPirates_AllPlayerLost(rankedPlayers);
         responses.forEach((nick, responseList) -> {
             FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
             handler.setMockResponses(responseList);
         });
-
 
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
@@ -795,12 +845,15 @@ class CardEffectTest {
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
 
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
-        Player playerA = rankedPlayers.get(0);
-        Player playerB = rankedPlayers.get(1);
-        Player playerC = rankedPlayers.get(2);
-        playerA.replaceShip(MockShipFactory.createEasyDestroyedShip());//1
-        playerB.replaceShip(MockShipFactory.createMockShip());
-        playerC.replaceShip(MockShipFactory.createMockShip());
+        Player playerA = rankedPlayers.getFirst();
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createEasyDestroyedShip(), //1
+                        MockShipFactory.createMockShip(),
+                        MockShipFactory.createMockShip()
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forPirates_TestTruck(rankedPlayers);
         responses.forEach((nick, responseList) -> {
@@ -828,11 +881,16 @@ class CardEffectTest {
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
 
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
-        Player playerA = rankedPlayers.get(0);
+        Player playerA = rankedPlayers.getFirst();
 //        Player playerB = rankedPlayers.get(1);
 //        Player playerC = rankedPlayers.get(2);
-
-        playerA.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2()); //power 5.5~8
+            setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                    Arrays.asList(
+                            MockShipFactory.createHighFirePowerShipWithMultiDirection2(), //power 5.5~8
+                            null,
+                            null
+                    )
+            ));
 //        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
 //        playerC.replaceShip(MockShipFactory.createMockShip());//1
 
@@ -875,9 +933,13 @@ class CardEffectTest {
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
 
-        playerA.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2()); //power 5.5~8
-        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
-        playerC.replaceShip(MockShipFactory.createMockShip());//1
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2(), //power 5.5~8
+                        MockShipFactory.createHighFirePowerShip(),//5~7
+                        MockShipFactory.createMockShip() //1
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSlavers_AllPlayersWereDefeated(rankedPlayers);
         responses.forEach((nick, responseList) -> {
@@ -965,9 +1027,13 @@ class CardEffectTest {
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
 
-        playerA.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2()); //power 5.5~8
-        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
-        playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//power 5.5~8
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2(), //power 5.5~8
+                        MockShipFactory.createHighFirePowerShip(),//5~7
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2() //power 5.5~8
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSlavers_PlayerC_DefeatedEnemy(rankedPlayers);
         responses.forEach((nick, responseList) -> {
@@ -1040,7 +1106,7 @@ class CardEffectTest {
     }
 
     @Test
-    void testSmugglers_PlayerA_DefeatedEnemy() throws RemoteException {
+    void testSmugglers_PlayerA_DefeatedEnemy() {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Contrabbandieri", 1);
         AdventureCard card = cards.getFirst();
         assertNotNull(card);
@@ -1050,13 +1116,17 @@ class CardEffectTest {
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
 
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
-        Player playerA = rankedPlayers.get(0);
-        Player playerB = rankedPlayers.get(1);
-        Player playerC = rankedPlayers.get(2);
+        Player playerA = rankedPlayers.getFirst();
 
-        playerA.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2()); //power 5.5~8
-        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
-        playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//power 5.5~8
+        final HashMap<String, ClientController> ntccmap = GameTestHelper.GameTestContext.nicknameToClientControllerMap;
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2(), //power 5.5~8
+                        MockShipFactory.createHighFirePowerShip(), //5~7
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2()//power 5.5~8
+                )
+        ));
 
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSmugglers_PlayerA_DefeatedEnemy(rankedPlayers);
@@ -1065,14 +1135,15 @@ class CardEffectTest {
             handler.setMockResponses(responseList);
         });
 
-
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(playerA.getNickName())
-        );
+
         FlightBoard flightBoard =  ctx.lobby.getRealGame().getFlightBoard();
+
+        ClientController leaderClientController = ntccmap.get(playerA.getNickName());
+        leaderClientController.getView().showFlightBoard(flightBoard, leaderClientController.getMyModel().getPlayerInfos(), leaderClientController.getMyModel().getMyInfo());
+        leaderClientController.sendDrawAdventureCardRequest();
+
         int posA = flightBoard.getPlayerPosition(playerA.getColor());
 
         assertEquals(5,posA);
@@ -1093,10 +1164,13 @@ class CardEffectTest {
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
 
-        playerA.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection()); //power 4~6
-        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
-        playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//power 5.5~8
-
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection(), //power 4~6
+                        MockShipFactory.createHighFirePowerShip(), //5~7
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2() //power 5.5~8
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSmugglers_PlayerA_TieCondition(rankedPlayers);
         responses.forEach((nick, responseList) -> {
@@ -1133,10 +1207,13 @@ class CardEffectTest {
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
 
-        playerA.replaceShip(MockShipFactory.createMockShip()); //power 1
-        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
-        playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//power 5.5~8
-
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip(), //crew: 6  Engine Power: {0,2}  Fire Power:1.0
+                        MockShipFactory.createHighFirePowerShip(), // crew 4  Engine Power: {0,2}  Fire Power:5.0 ~ 7.0
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2() //crew 2 Engine Power: {0,2}  Fire Power:3.5~5.0
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forSmugglers_PlayerA_SmugglersWin(rankedPlayers);
         responses.forEach((nick, responseList) -> {
@@ -1175,9 +1252,13 @@ class CardEffectTest {
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
 
-        playerA.replaceShip(MockShipFactory.createMockShip()); //power 1
-        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());//5~7
-        playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//power 5.5~8
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip(), //power 1
+                        MockShipFactory.createHighFirePowerShip(), //5~7
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2()//power 5.5~8
+                )
+        ));
 
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forMeteorSwarm(rankedPlayers);
@@ -1217,6 +1298,13 @@ class CardEffectTest {
         playerB.replaceShip(MockShipFactory.createHighFirePowerShip());// crew 4  Engine Power: {0,2}  Fire Power:5.0 ~ 7.0
         playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//crew 2 Engine Power: {0,2}  Fire Power:3.5~5.0
 
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip_CombatZone(), //crew: 6  Engine Power: {0,2}  Fire Power:1.0
+                        MockShipFactory.createHighFirePowerShip(), // crew 4  Engine Power: {0,2}  Fire Power:5.0 ~ 7.0
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2()//crew 2 Engine Power: {0,2}  Fire Power:3.5~5.0
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forCombatZone(rankedPlayers);
         responses.forEach((nick, responseList) -> {
@@ -1253,10 +1341,13 @@ class CardEffectTest {
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
 
-        playerA.replaceShip(MockShipFactory.createMockShip()); //crew: 6  Engine Power: {0,2}  Fire Power:1.0
-        playerB.replaceShip(MockShipFactory.createHighFirePowerShip());// crew 4  Engine Power: {0,2}  Fire Power:5.0 ~ 7.0
-        playerC.replaceShip(MockShipFactory.createHighFirePowerShipWithMultiDirection2());//crew 2 Engine Power: {0,2}  Fire Power:3.5~5.0
-
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip(), //crew: 6  Engine Power: {0,2}  Fire Power:1.0
+                        MockShipFactory.createHighFirePowerShip(), // crew 4  Engine Power: {0,2}  Fire Power:5.0 ~ 7.0
+                        MockShipFactory.createHighFirePowerShipWithMultiDirection2() //crew 2 Engine Power: {0,2}  Fire Power:3.5~5.0
+                )
+        ));
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forCombatZone(rankedPlayers);
         responses.forEach((nick, responseList) -> {

@@ -106,31 +106,31 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(JoinRoomResponse joinRoomResponse) {
-        clientController.completeFuture(joinRoomResponse);
+        clientController.handleJoinRoomResponse(joinRoomResponse);
         return null;
     }
 
     @Override
     public Void visit(NicknameResponse nicknameResponse) {
-        clientController.completeFuture(nicknameResponse);
+        clientController.handleNicknameResponse(nicknameResponse);
         return null;
     }
 
     @Override
     public Void visit(JoinRoomOptionsResponse joinRoomOptionsResponse) {
-        clientController.completeFuture(joinRoomOptionsResponse);
+        clientController.handleJoinRoomOptionsResponse(joinRoomOptionsResponse);
         return null;
     }
 
     @Override
     public Void visit(DrawTileResponse drawTileResponse) {
-        clientController.completeFuture(drawTileResponse);
+        clientController.handleDrawTileResponse(drawTileResponse);
         return null;
     }
 
     @Override
     public Void visit(PlaceTileResponse placeTileResponse) {
-        clientController.completeFuture(placeTileResponse);
+        clientController.handlePlaceTileResponse(placeTileResponse);
         return null;
     }
 
@@ -144,7 +144,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(CheckShipStatusResponse checkShipStatusResponse) {
-        clientController.completeFuture(checkShipStatusResponse);
+        clientController.handleCheckShipStatusResponse(checkShipStatusResponse);
         return null;
     }
 
@@ -180,12 +180,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(CrewInitUpdate crewInitUpdate) {
-
-        try {
-            clientController.handleCrewInitUpdate(crewInitUpdate);
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        clientController.handleCrewInitUpdate(crewInitUpdate);
         return null;
     }
 
@@ -382,7 +377,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(TimerInfoResponse timerInfoResponse) {
-         clientController.completeFuture(timerInfoResponse);
+         clientController.handleTimerInfoResponse(timerInfoResponse);
          return null;
     }
 }

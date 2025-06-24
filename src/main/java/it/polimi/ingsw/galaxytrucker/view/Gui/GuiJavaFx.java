@@ -644,16 +644,8 @@ public class GuiJavaFx implements View {
 
     public void confirmCrew(){
         //Senda l'update
-        try {
-            controller.handleCrewInitUpdate(crewInitUpdate);
-            System.out.println("CrewInitSent");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        controller.handleCrewInitUpdate(crewInitUpdate);
+        System.out.println("CrewInitSent");
     }
 
     @Override
@@ -746,7 +738,7 @@ public class GuiJavaFx implements View {
 
 
     @Override
-    public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) throws ExecutionException, InterruptedException, IOException {
+    public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) {
 
         Platform.runLater(() -> {
             //FINE CERTA DI FASE BUILDING ANCHE DETTATA DAL SERVER IN CASO FINE TIMER:

@@ -1,39 +1,66 @@
 package it.polimi.ingsw.galaxytrucker.model.adventurecards;
 
+import it.polimi.ingsw.galaxytrucker.controller.ClientController;
+import it.polimi.ingsw.galaxytrucker.controller.FakeClientController;
 import it.polimi.ingsw.galaxytrucker.controller.GameController;
 import it.polimi.ingsw.galaxytrucker.controller.ServerController;
 import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import it.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
+import it.polimi.ingsw.galaxytrucker.view.Tui.FakeTUI;
+import it.polimi.ingsw.galaxytrucker.view.Tui.Tui;
+import it.polimi.ingsw.galaxytrucker.view.View;
+import it.polimi.ingsw.galaxytrucker.visitors.Network.ClientNetworkMessageVisitor;
 import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
 import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageNameVisitor;
 import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitor;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class FakeClientHandler implements ClientHandler {
-    private final ServerController controller;
+    private final ServerController serverController;
+    private final FakeClientController fakeClientController;
     private final ArrayList<NetworkMessage> mockResponses;
     private final NetworkMessageVisitor serverControllerNetworkMessageVisitor;
+    private final ClientNetworkMessageVisitor clientNetworkMessageVisitor;
     private final NetworkMessageCouplingVisitor serverControllerNetworkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
     private final NetworkMessageNameVisitor serverControllerNetworkMessageNameVisitor = new NetworkMessageNameVisitor();
     private final ArrayList<NetworkMessage> sentMessages = new ArrayList<>();
     private final UUID clientID;
 
 
-    public FakeClientHandler(ServerController controller, ArrayList<NetworkMessage> mockResponses) {
+    public FakeClientHandler(ServerController serverController, ArrayList<NetworkMessage> mockResponses) {
         clientID = UUID.randomUUID();
-        this.controller = controller;
-        serverControllerNetworkMessageVisitor = new NetworkMessageVisitor(controller, this);
-        this.mockResponses = new ArrayList<>(mockResponses);
-    }
+        this.serverController = serverController;
 
+        FakeClientController fakeClientController = new FakeClientController(null, true, serverController, this);
+
+        PrintStream out = new PrintStream(OutputStream.nullOutputStream()); //Non fa printare nulla
+        View view = new FakeTUI(System.out, true, fakeClientController);
+        fakeClientController.setView(view);
+
+        this.fakeClientController = fakeClientController;
+
+        clientNetworkMessageVisitor = new ClientNetworkMessageVisitor(fakeClientController);
+        serverControllerNetworkMessageVisitor = new NetworkMessageVisitor(this.serverController, this);
+
+        if(mockResponses == null)
+            this.mockResponses = new ArrayList<>();
+        else
+            this.mockResponses = new ArrayList<>(mockResponses);
+    }
 
     public void setMockResponses(ArrayList<NetworkMessage> responses) {
         this.mockResponses.clear();
         this.mockResponses.addAll(responses);
+    }
+
+    public FakeClientController getFakeClientController() {
+        return fakeClientController;
     }
 
     @Override
@@ -43,8 +70,10 @@ public class FakeClientHandler implements ClientHandler {
 
     @Override
     public void sendMessage(NetworkMessage message) {
+        message.accept(clientNetworkMessageVisitor);
+
         sentMessages.add(message);
-        LobbyManager game = controller.getLobbyFromHandler(this);
+        LobbyManager game = serverController.getLobbyFromHandler(this);
         if (game == null) return;
 
         GameController gameController = game.getGameController();
@@ -53,7 +82,7 @@ public class FakeClientHandler implements ClientHandler {
         CardContext currentCardContext = gameController.getCurrentCardContext();
         if (currentCardContext == null) return;
 
-        Integer expectedNetworkMessagesOfTheSameType = controller.getLobbyFromHandler(this).getGameController().getCurrentCardContext().getExpectedNumberOfNetworkMessagesPerType().get(message.accept(serverControllerNetworkMessageCouplingVisitor));
+        Integer expectedNetworkMessagesOfTheSameType = serverController.getLobbyFromHandler(this).getGameController().getCurrentCardContext().getExpectedNumberOfNetworkMessagesPerType().get(message.accept(serverControllerNetworkMessageCouplingVisitor));
 
         if (expectedNetworkMessagesOfTheSameType == null || expectedNetworkMessagesOfTheSameType == 0) return;
 
@@ -73,7 +102,6 @@ public class FakeClientHandler implements ClientHandler {
         else{
             System.out.println("[FakeClientHandler] Couldn't find response related to " + message.accept(serverControllerNetworkMessageNameVisitor) + ".");
         }
-
     }
     public ArrayList<NetworkMessage> getSentMessages() {
         return new ArrayList<>(sentMessages);

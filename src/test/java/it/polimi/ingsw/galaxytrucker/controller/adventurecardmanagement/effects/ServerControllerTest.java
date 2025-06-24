@@ -1,5 +1,6 @@
 package it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
+import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.controller.ServerController;
 import it.polimi.ingsw.galaxytrucker.model.Player;
 import it.polimi.ingsw.galaxytrucker.model.Ship;
@@ -61,8 +62,8 @@ public class ServerControllerTest {
 
     @Test
     public void testAddRemoveAndGetClients() {
-        FakeClientHandler client1 = new FakeClientHandler(serverController, new ArrayList<>());
-        FakeClientHandler client2 = new FakeClientHandler(serverController, new ArrayList<>());
+        FakeClientHandler client1 = new FakeClientHandler(serverController, null);
+        FakeClientHandler client2 = new FakeClientHandler(serverController, null);
 
         serverController.addClient(client1);
         serverController.addClient(client2);
@@ -327,6 +328,7 @@ public class ServerControllerTest {
     }
     @Test
     void testTimer() throws RemoteException {
+        setUp();
         AskTimerInfoRequest askTimerInfoRequest = new AskTimerInfoRequest();
         serverController.handleAskTimerInfoRequest(askTimerInfoRequest, handler1);
         FlipTimerRequest flipTimerRequest = new FlipTimerRequest();
@@ -335,6 +337,8 @@ public class ServerControllerTest {
         ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
         clientHandlers.add(handler1);
         clientHandlers.add(handler2);
+
+
 
         serverController.startTimer(10,context.lobby.getGameController(),clientHandlers,false,0);
 

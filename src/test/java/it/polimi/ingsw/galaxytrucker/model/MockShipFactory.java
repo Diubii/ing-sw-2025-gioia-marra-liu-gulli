@@ -7,6 +7,7 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.TileRegistry;
+import it.polimi.ingsw.galaxytrucker.model.essentials.components.CentralHousingUnit;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
@@ -632,6 +633,4 @@ public class MockShipFactory {
 
         return ship;
     }
-
-
 }

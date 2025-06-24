@@ -87,16 +87,7 @@ public class LoginConnectController extends GenericSceneController {
             return;
         }
         //Se ha successo si manda Nickname
-        try {
-            controller.handleNicknameInput(TxfNickname.getText().trim());
-        } catch (IOException ex) {
-            TxtError.setText("IOException.");
-        } catch (ExecutionException ex) {
-            TxtError.setText("ExecutionException.");
-        } catch (InterruptedException ex) {
-            TxtError.setText("InterruptedException.");
-        }
-
+        controller.handleNicknameInput(TxfNickname.getText().trim());
 
 
     }

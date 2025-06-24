@@ -19,7 +19,6 @@ public class NicknameRequest extends NetworkMessage implements Serializable {
     /**
      * Instantiates a new Nickname request.
      */
-// ✅ Costruttore senza argomenti richiesto per la deserializzazione
     public NicknameRequest() {
         super(); // o un default valido
     }
@@ -29,7 +28,6 @@ public class NicknameRequest extends NetworkMessage implements Serializable {
      *
      * @param nickname the nickname
      */
-// ✅ Costruttore che usi per creare il messaggio nel client
     public NicknameRequest(String nickname) {
         super();
         this.nickname = nickname;

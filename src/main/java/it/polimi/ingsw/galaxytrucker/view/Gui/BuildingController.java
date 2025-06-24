@@ -161,8 +161,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
-    public void showTimerInfo(){
-
+    public void showTimerInfo() {
         ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
         List<Label> timerLabels = List.of(lblTimer1,lblTimer2,lblTimer3);
         if (timerInfos != null) {
@@ -175,10 +174,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
                 timerLabels.get(i).setText(Integer.toString(timerInfos.get(i).getValue()));
             }
         }
-
     }
 
-    public void flipTimer(){
+    public void flipTimer() {
         ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
         boolean oneActive = false;
         for (TimerInfo timerInfo : timerInfos) {
@@ -192,11 +190,11 @@ public class BuildingController extends GenericGamePhaseSceneController {
         }
         showTimerInfo();
     }
+
     @Override
     public String pageName() {
         return "BuildingPage";
     }
-
 
     @Override
     public void ShowGenericMessage(String message) {
@@ -454,17 +452,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
      */
     public void viewMazzo(int num){
         //Non fa un tubo, va bene per la Tui ma qui no
-        if(clientController.hasTileInHand() == false && clientController.viewAdventureCardDeck(num)){
+        if(!clientController.hasTileInHand() && clientController.viewAdventureCardDeck(num)){
             Platform.runLater(() -> {
-                try {
-                    clientController.sendShipUpdate();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (ExecutionException e) {
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                clientController.sendShipUpdate();
                 //C'è altro oltre al layout di default (Altri menu left aperti)
                 if(StackLeftMenu.getChildren().size() > 1 ){
                     StackLeftMenu.getChildren().removeLast();

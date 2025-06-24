@@ -911,8 +911,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 if (takenPos.contains(realPos)) {
                     validChoice = false;
                 } else {
-                    myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos, getPlayerFromClientHandler(clientHandler
-                    ));
+                    myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos, getPlayerFromClientHandler(clientHandler));
                     myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
                 }
 
@@ -1246,8 +1245,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 Player myPlayer = game.getRealGame().getPlayer(nickname);
                 Ship myShip = myPlayer.getShip();
 
-                synchronized (myShip) {
-                    myShip.getLastTile().setFixed(true);
+                if(myShip.getLastTile() != null) {
+                    synchronized (myShip) {
+                        myShip.getLastTile().setFixed(true);
+                    }
                 }
 
                 ShipUpdate update = new ShipUpdate(myShip, myPlayer.getNickName());
@@ -1257,9 +1258,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             }
 
             if (game.getGameController().getGameState() == GameState.FLIGHT) {
-                game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(shipUpdate);
-                tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
-
+                if(game.getGameController().getCurrentCardContext() != null) {
+                    game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(shipUpdate);
+                    tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
+                }
             }
         });
     }
