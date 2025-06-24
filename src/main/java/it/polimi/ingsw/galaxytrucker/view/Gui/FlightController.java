@@ -74,6 +74,8 @@ public class FlightController extends GenericGamePhaseSceneController {
     private Boolean isManagingGoodsTime=false;
     private Boolean battInHand =false;
     private Position inHandBatteryPosition;
+    private Boolean readyForNextTurn=false;
+    private Boolean leaderHasToDraw=false;
 
 
     SMdiscardCrewController discardCrewController;
@@ -150,6 +152,7 @@ public class FlightController extends GenericGamePhaseSceneController {
         //Inizializza il menu di inizio/Fine Turno
         Platform.runLater(() -> {
             //C'è altro oltre al layout di default (Altri menu left aperti)
+            readyForNextTurn = false;
             if(subMenu.getChildren().size() > 0 ){
                 subMenu.getChildren().removeLast();
             }
@@ -161,7 +164,7 @@ public class FlightController extends GenericGamePhaseSceneController {
                 root = secondloader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 SMavanzaTurnoController pageController = secondloader.getController();
-                pageController.initialize(clientController,subMenu);
+                pageController.initialize(clientController,subMenu,this);
                 root.setMaxWidth(Double.MAX_VALUE);
                 root.setMaxHeight(Double.MAX_VALUE);
                 //3-impostare la nuova root alla scena principale
@@ -173,6 +176,12 @@ public class FlightController extends GenericGamePhaseSceneController {
         });
     }
 
+    public void setReadyForNextTurn() {
+        this.readyForNextTurn = true;
+        if(leaderHasToDraw){
+            askDrawCard();
+        }
+    }
 
     public void showPickedGood(){
         //Mostra il good attualmente in mano
@@ -394,11 +403,16 @@ public class FlightController extends GenericGamePhaseSceneController {
     }
 
     public void askDrawCard(){
-        cardView.setImage(new Image(getClass().getResource("/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/cards/deck.png").toExternalForm()));
-        cardView.setOnMouseClicked(event -> {
-            DrawAdventureCardRequest request = new DrawAdventureCardRequest();
-            clientController.safeSendMessage(request);
-        });
+        leaderHasToDraw = true;
+        if(readyForNextTurn){
+            cardView.setImage(new Image(getClass().getResource("/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/cards/deck.png").toExternalForm()));
+            cardView.setOnMouseClicked(event -> {
+                DrawAdventureCardRequest request = new DrawAdventureCardRequest();
+                clientController.safeSendMessage(request);
+            });
+            leaderHasToDraw = false;
+            readyForNextTurn = false;
+        }
     }
 
     public void updateBoard(){

@@ -59,6 +59,8 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private StackPane  mainStackPane;
     @FXML private HBox learningMatchOverlay;
     @FXML private HBox learningMatchOverlay2;
+    @FXML private HBox endBuildingOverlay;
+    @FXML private HBox endBuildingOverlay2;
     @FXML private ImageView inHandTileImage;
     @FXML private Pane overlayPane;
     @FXML private ImageView asideTile1;
@@ -135,7 +137,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IoException nel caricare i file");
         }
 
 
@@ -365,6 +367,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
         BtnFinishBuilding.setDisable(true);
         finishedBuilding = true;
         showWaitOtherPlayers(false);
+        if(mymodel.isLearningMatch() == false){
+            endBuildingOverlay.setVisible(true);
+            endBuildingOverlay2.setVisible(true);
+        }
     }
 
     /**

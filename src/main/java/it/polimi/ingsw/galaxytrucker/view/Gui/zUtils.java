@@ -216,11 +216,12 @@ public class zUtils {
                                     if (clientController.getCurrentTileInHand() != null) {
                                         try {
                                             if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() == null) {
+
                                                 clientController.setCurrentPos(fX, fY);
                                                 clientController.handleTilePlacement();
                                             }
-                                        } catch (ExecutionException | InvalidTilePosition e) {
-                                            e.printStackTrace();
+                                        } catch ( Exception e ) {
+                                            System.out.println("Posizione non valida");
                                         }
                                     } else {
                                         if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && !clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed()) {
