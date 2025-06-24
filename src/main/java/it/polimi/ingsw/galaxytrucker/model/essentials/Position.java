@@ -67,5 +67,9 @@ public class Position implements Serializable {
         return "(" + x + "," + y + ")";
     }
 
+    public String toOffsetString() {
+        return "(" + (x + 4) + "," + (y + 5) + ")";
+    }
+
 
 }

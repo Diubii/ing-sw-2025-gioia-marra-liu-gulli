@@ -291,7 +291,7 @@ class ShipTest {
     }
 
     @Test
-    void truncateShip() {
+    void testTruncateShip() {
 
         Ship ship = MockShipFactory.createMockShip();
         ShipPrintUtils.printShip(ship);
@@ -307,6 +307,8 @@ class ShipTest {
 
         }
 
+
+
         System.out.println("Next Test");
         System.out.println();
         ship = MockShipFactory.createEasyDestroyedShip();
@@ -321,6 +323,29 @@ class ShipTest {
         }
 
 
+        System.out.println("Next Test");
+        System.out.println();
+        ship = MockShipFactory.createEasyDestroyedShip();
+        ShipPrintUtils.printShip(ship);
+
+        ship.removeTile(new Position(2,1), false);
+        Troncons = ship.getTronc();
+
+        for (Ship ship1: Troncons){
+            ShipPrintUtils.printShip(ship1);
+
+        }
+
+    }
+
+
+    @Test
+    void testRemainingTiles(){
+
+        Ship ship  = MockShipFactory.createMockShip();
+        ShipPrintUtils.printShip(ship);
+        int remainingTiles = ship.remainingTiles();
+        assertEquals(7, remainingTiles);
 
 
 

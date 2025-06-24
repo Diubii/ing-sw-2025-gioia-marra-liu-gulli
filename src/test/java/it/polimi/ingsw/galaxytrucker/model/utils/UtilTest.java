@@ -8,30 +8,45 @@ import it.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import it.polimi.ingsw.galaxytrucker.model.essentials.TileRegistry;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
+import it.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.LifeSupportSystem;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UtilTest {
 
+    private static final Logger log = LoggerFactory.getLogger(UtilTest.class);
+
     @Test
-    void createLvl1Deck() throws IOException {
+    void testCreateLvl1Deck() throws IOException {
 
-        CardDeck dexk = Util.createLvl1Deck();
+            CardDeck deck = Util.createLvl1Deck();
+            assertNotNull(deck);
+            assertFalse(deck.getCards().isEmpty());
+            assertTrue(deck.getCards().stream().allMatch(card -> card.getLevel() == 1));
 
-
-        System.out.println(dexk.pop().getName());
     }
 
     @Test
     void createLvl2Deck() {
+            CardDeck deck = Util.createLvl2Deck();
+            assertNotNull(deck);
+            assertFalse(deck.getCards().isEmpty());
+            assertTrue(deck.getCards().stream().allMatch(card -> card.getLevel() == 2));
+
     }
 
     @Test
@@ -81,6 +96,44 @@ class UtilTest {
         assertTrue(Util.inBoundaries(6, 4));
         assertFalse(Util.inBoundaries(-1, 3));
         assertFalse(Util.inBoundaries(7, 3));
+    }
+
+
+    @Test
+    void testEngineWellConnected() {
+        //test 1 rotation != 0
+        Ship ship = MockShipFactory.createMockShipForCheckShip();
+        ShipPrintUtils.printShip(ship);
+        Slot slotToCheck = ship.getShipBoard()[4][1];
+        Tile tileToCheck = slotToCheck.getTile();
+
+        Boolean wellConnected  = Util.EngineWellConnected(tileToCheck,ship,slotToCheck);
+        assertEquals(false,wellConnected );
+
+        //test2 rotation == 0  !wellConnected
+        slotToCheck = ship.getShipBoard()[2][2];
+        tileToCheck = slotToCheck.getTile();
+
+        wellConnected = Util.EngineWellConnected(tileToCheck,ship,slotToCheck);
+        assertEquals(false,wellConnected);
+
+        //test3 sud in boundaries == true
+        slotToCheck =ship.getShipBoard()[2][4];
+        tileToCheck = slotToCheck.getTile();
+
+        wellConnected = Util.EngineWellConnected(tileToCheck,ship,slotToCheck);
+        assertEquals(true,wellConnected);
+
+        //test 4  sud == null
+        slotToCheck = ship.getShipBoard()[1][1];
+        tileToCheck = slotToCheck.getTile();
+
+        wellConnected = Util.EngineWellConnected(tileToCheck,ship,slotToCheck);
+        assertEquals(true,wellConnected);
+
+
+
+
     }
 
     @Test
@@ -140,4 +193,32 @@ class UtilTest {
 
 
     }
+
+
+    @Test
+    public void testVisitTile_simpleConnectedComponent() {
+        Ship ship = new Ship(true);
+
+        List<Tile> Cannons = TileRegistry.getClonedTilesOfType("Cannon");
+        Tile tileA = Cannons.get(2);
+        tileA.rotate(90);
+
+        Tile tileB = TileRegistry.getFirstTileOfType("Engine");
+
+        ship.putTile(tileA,new Position(4,3));
+        ship.putTile(tileB,new Position(3,3));
+        ShipPrintUtils.printShip(ship);
+        Slot slotA = ship.getShipBoard()[4][3];
+
+
+        ArrayList<Integer> visited = new ArrayList<>();
+        Queue<Position> broken = new LinkedList<>();
+        Util.visitTile(tileA, visited, slotA, new ArrayList<>(), broken, ship);
+
+
+        assertTrue(visited.contains(tileA.getId()));
+        assertTrue(visited.contains(tileB.getId()));
+        assertTrue(broken.isEmpty());
+    }
+
 }

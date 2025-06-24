@@ -248,6 +248,7 @@ public class Tile implements Serializable,Cloneable {
     public void rotate(int addRotation) {
         Rotation = (Rotation + addRotation) % 360;
         myComponent.setRotation(Rotation);
+        setRotation(Rotation);
         int numRotation = ((addRotation % 360) + 360) % 360 / 90;
         for (int i = 0; i < numRotation; i++) {
             rotateSides90();

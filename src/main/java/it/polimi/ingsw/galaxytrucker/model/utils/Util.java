@@ -517,11 +517,22 @@ public class Util {
                 int s = positions.size();
                 for (int i = 0; i < s; i++) {
 
-                    if (inBoundaries(positions.get(i).getX(), positions.get(i).getY()) && myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile() != null && compatible(myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
-                        Tile tempTile = myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()].getTile();
-                        System.out.println("STO PER VISITARE : " + positions.get(i).getX() + positions.get(i).getY());
-                        visitTile(tempTile, tilesID, myShip.getShipBoard()[positions.get(i).getX()][positions.get(i).getY()], invalidPositions, newBrokenPos, myShip);
+                    Position neighborPos =positions.get(i);
+                    int x = neighborPos.getX();
+                    int y = neighborPos.getY();
 
+                    if (inBoundaries(x, y) && myShip.getShipBoard()[x][y].getTile() != null && compatible(myShip.getShipBoard()[x][y].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
+                        Tile tempTile = myShip.getShipBoard()[x][y].getTile();
+
+                        System.out.println("Checking side " + i + " of tile " + tile.getId() +
+                                " vs side " + ((i + 2) % 4) + " of neighbor tile " + tempTile.getId());
+
+                        System.out.println("Tile side: " + tile.getSides().get(i) +
+                                " | Neighbor side: " + tempTile.getSides().get((i + 2) % 4));
+
+
+                        System.out.println("STO PER VISITARE : " + neighborPos);
+                        visitTile(tempTile, tilesID, myShip.getShipBoard()[x][y], invalidPositions, newBrokenPos, myShip);
 
                     }
 //                    System.out.println("[2]I: " + i + " " + positions.size());
@@ -609,34 +620,32 @@ public class Util {
     public static ArrayList<Position> getAdjacentPositions(Position pos) {
         ArrayList<Position> adjacent = new ArrayList<>();
         adjacent.add(new Position(pos.getX(), pos.getY() - 1)); // North
-        adjacent.add(new Position(pos.getX() - 1, pos.getY())); // West
-        adjacent.add(new Position(pos.getX(), pos.getY() + 1)); // South
         adjacent.add(new Position(pos.getX() + 1, pos.getY())); // East
+        adjacent.add(new Position(pos.getX(), pos.getY() + 1)); // South
+        adjacent.add(new Position(pos.getX() -1, pos.getY())); // West
         return adjacent;
     }
 
     /**
      * Checks if two connectors are compatible with each other.
      *
-     * @param connector1 The first connector to check
-     * @param connector2 The second connector to check
+     * @param a The first connector to check
+     * @param b The second connector to check
      * @return true if the connectors are compatible, false otherwise
      */
-    public static Boolean compatible(Connector connector1, Connector connector2) {
-        if (connector1 == null || connector2 == null) return false;
+    public static boolean compatible(Connector a, Connector b) {
+        if (a == null || b == null) return false;
 
-        if (connector1 == Connector.EMPTY && connector2 == Connector.EMPTY)
+        // EMPTY only connects with EMPTY
+        if (a == Connector.EMPTY || b == Connector.EMPTY)
+            return a == Connector.EMPTY && b == Connector.EMPTY;
+
+        // UNIVERSAL connects with anything except EMPTY
+        if (a == Connector.UNIVERSAL || b == Connector.UNIVERSAL)
             return true;
 
-        if (connector1 == Connector.UNIVERSAL || connector2 == Connector.UNIVERSAL) {
-            // compatibility if the other is SINGLE, DOUBLE or UNIVERSAL
-            return connector1 == connector2 ||
-                    connector1 == Connector.SINGLE || connector2 == Connector.SINGLE ||
-                    connector1 == Connector.DOUBLE || connector2 == Connector.DOUBLE;
-        }
-
-        // Match SINGLE with SINGLE, DOUBLE with DOUBLE
-        return connector1 == connector2;
+        // Otherwise, both must be equal (SINGLE ↔ SINGLE, DOUBLE ↔ DOUBLE)
+        return a == b;
     }
 
 

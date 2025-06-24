@@ -958,16 +958,13 @@ public class Tui implements View, Observable {
 
                     Position pos = new Position(pos1.getX() - 4, pos1.getY() - 5);
 
-                    if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getY()][pos.getX()].getTile() == null) {
-
+                    if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos) || ship.getShipBoard()[pos.getX()][pos.getY()].getTile() == null) {
                         throw new IllegalArgumentException("Invalid Position " + pos);
 
                     }
 
 
                     Tile tile = ship.getShipBoard()[pos.getX()][pos.getY()].getTile();
-
-
                     clientController.getMyModel().addTileToRemove(tile.getId());
                     ship.removeTile(pos, true);
 

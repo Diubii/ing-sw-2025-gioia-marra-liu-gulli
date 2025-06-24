@@ -33,10 +33,8 @@ public class Ship implements Serializable {
     private  Tile[] asideTiles = new Tile[2];
     private int nExposedConnector;
     private int destroyedTiles;
-    private int nBatterieLeft;
+
     private int nCrew;
-    private int purpleAlien;
-    private int brownAlien;
     private int nGoods;
     private ArrayList<Pair<Good, Pair<Position, Slot>>> listOfGoods;
     private ArrayList<Good> listNotLoadedGoods;
@@ -174,10 +172,6 @@ public class Ship implements Serializable {
         return (int) getComponentPositionsFromName("ModularHousingUnit").stream().filter(p -> ((ModularHousingUnit) shipBoard[p.getX()][p.getY()].getTile().getMyComponent()).getNBrownAlien() > 0).count();
     }
 
-    public Boolean getLearningMatch() {
-        return learningMatch;
-    }
-
     public int getnCrew() {
         this.nCrew =
                 getComponentPositionsFromName("ModularHousingUnit").stream()
@@ -268,6 +262,7 @@ public class Ship implements Serializable {
 
             try {
                 if (tile != null) {
+
                     shipBoard[pos.getX()][pos.getY()].putTile(tile);
                     updateSets(pos, tile);
                 } else throw new IllegalArgumentException("Tile is null");
@@ -544,18 +539,6 @@ public class Ship implements Serializable {
 
     }
 
-    public void setCrew(Boolean isAlien, AlienColor color, Tile tile) {
-        ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tile.getMyComponent();
-        if (isAlien) {
-            if (color == AlienColor.BROWN) {
-                modularHousingUnit.addBrownAlien();
-            } else modularHousingUnit.addPurpleAlien();
-        } else {
-
-            modularHousingUnit.addHumanCrew();
-        }
-
-    }
 
 
     public ArrayList<Ship> getTronc() {
@@ -565,12 +548,6 @@ public class Ship implements Serializable {
         while (!brokenPositions.isEmpty()) {
 
             Position temp = brokenPositions.poll();
-
-
-            ListIterator<Ship> iterator = tronconi.listIterator();
-//        ArrayList<Slot[][]> targetSlot = new ArrayList<>();
-
-
             System.out.println("TRONCONI SIZE: " + tronconi.size());
             int size = tronconi.size();
             boolean bigger = true;
@@ -600,7 +577,8 @@ public class Ship implements Serializable {
                 for (Slot slot : Slots) {
 
                     if (slot.getPosition().equals(temp) && slot.getLastAction()) {
-                        System.out.println("TILE DA RIM " + slot.getPosition());
+                        Position viewPos = new Position(slot.getPosition().getX()+4, slot.getPosition().getY()+5);
+                        System.out.println("TILE DA RIM " + viewPos);
 
                         toRemove.add(board); // Segna la board per la rimozione
                         try {
@@ -626,11 +604,11 @@ public class Ship implements Serializable {
 
                 // Rimuove gli elementi segnati
                 tronconi.removeAll(toRemove);
-                System.out.println("[1]NEW : SIZE" + tronconi.size());
+                System.out.println("[1]NEW : SIZE " + tronconi.size());
 
                 // Aggiunge i nuovi elementi
                 tronconi.addAll(toAdd);
-                System.out.println("[2]NEW : SIZE" + tronconi.size());
+                System.out.println("[2]NEW : SIZE " + tronconi.size());
 
                 if (size == tronconi.size()) {
                     bigger = false;
@@ -667,12 +645,13 @@ public class Ship implements Serializable {
 
         // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
         if (!invalidPositions.contains(up) && Util.inBoundaries(up.getX(), up.getY())) {
-            System.out.println("VALIDA UP: " + up);
+
+            System.out.println("VALIDA UP: " + up.toOffsetString());
             if (shipBoard[up.getX()][up.getY()] != null && shipBoard[up.getX()][up.getY()].getTile() != null) {
                 System.out.println("ID: " + shipBoard[up.getX()][up.getY()].getTile().getId());
 
                 if (shipBoard[up.getX()][up.getY()].getTile().getWellConnected()) {
-//                    System.out.println("OK");
+                    System.out.println("UP OK");
 
                     villagers.add(new Pair<>(ProjectileDirection.UP, shipBoard[up.getX()][up.getY()]));
 
@@ -687,13 +666,13 @@ public class Ship implements Serializable {
         Position left = new Position(pos.getX() - 1, pos.getY());
 
         if (!invalidPositions.contains(left) && Util.inBoundaries(left.getX(), left.getY())) {
-            System.out.println("VALIDA KLEFT : " + left);
+            System.out.println("VALIDA LEFT : " + left.toOffsetString());
 
             if (shipBoard[left.getX()][left.getY()] != null && shipBoard[left.getX()][left.getY()].getTile() != null) {
                 System.out.println("ID: " + shipBoard[left.getX()][left.getY()].getTile().getId());
 
                 if (shipBoard[left.getX()][left.getY()].getTile().getWellConnected()) {
-                    System.out.println("OK");
+                    System.out.println("LEFT OK");
 
                     villagers.add(new Pair<>(ProjectileDirection.LEFT, shipBoard[left.getX()][left.getY()]));
 
@@ -708,12 +687,13 @@ public class Ship implements Serializable {
         Position right = new Position(pos.getX() + 1, pos.getY());
 
         if (!invalidPositions.contains(right) && Util.inBoundaries(right.getX(), right.getY())) {
-            System.out.println("VALIDA RIGHT: " + right);
+            System.out.println("VALIDA RIGHT: " + right.toOffsetString());
 
             if (shipBoard[right.getX()][right.getY()] != null && shipBoard[right.getX()][right.getY()].getTile() != null) {
 //                System.out.println("1");
                 if (shipBoard[right.getX()][right.getY()].getTile().getWellConnected()) {
                     System.out.println("ID: " + shipBoard[right.getX()][right.getY()].getTile().getId());
+                    System.out.println("RIGHT OK");
 
                     villagers.add(new Pair<>(ProjectileDirection.RIGHT, shipBoard[right.getX()][right.getY()]));
 
@@ -728,12 +708,13 @@ public class Ship implements Serializable {
         Position down = new Position(pos.getX(), pos.getY() + 1);
 
         if (!invalidPositions.contains(down) && Util.inBoundaries(down.getX(), down.getY())) {
-            System.out.println("VALIDA DOWN: " + down);
+            System.out.println("VALIDA DOWN: " + down.toOffsetString());
             if (shipBoard[down.getX()][down.getY()] != null && shipBoard[down.getX()][down.getY()].getTile() != null) {
                 System.out.println("ID: " + shipBoard[down.getX()][down.getY()].getTile().getId());
 
                 if (shipBoard[down.getX()][down.getY()].getTile().getWellConnected()) {
 //                    System.out.println("OK");
+                    System.out.println("DOWN OK");
 
                     villagers.add(new Pair<>(ProjectileDirection.DOWN, shipBoard[down.getX()][down.getY()]));
 
@@ -831,31 +812,6 @@ public class Ship implements Serializable {
         return finalShips; // Se non ci sono sezioni da separare, restituisce null
     }
 
-    public Set<ProjectileDirection> getProtectedSides() {
-
-        Set<ProjectileDirection> sides = new HashSet<>();
-
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 5; j++) {
-                Tile tempTile = shipBoard[i][j].getTile();
-                Slot tempSlot = shipBoard[i][j];
-                if (!invalidPositions.contains(tempSlot.getPosition()) && Util.inBoundaries(i, j)) {
-                    if (tempTile != null) {
-                        if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("Shield")) {
-
-                            Shield tempShield = (Shield) tempTile.getMyComponent();
-                            if (tempShield.isCharged()) sides.addAll(tempShield.getProtectedSides());
-
-                        }
-                    }
-                }
-            }
-        }
-
-
-        return sides;
-
-    }
 
     public Boolean activateShield(Position shieldPos, Position batteryPos) {
 
@@ -942,11 +898,10 @@ public class Ship implements Serializable {
             if (tile != null) {
                 remainingTiles++;
             }
-            return remainingTiles;
         }
 
 
-        return 0;
+        return remainingTiles;
     }
 
     public Tile[] getAsideTiles() {
@@ -1180,29 +1135,6 @@ public class Ship implements Serializable {
         return firePower;
     }
 
-    public int getHumanCrewNumber() {
-
-        int number = 0;
-
-        ArrayList<Position> positions = new ArrayList<>(getComponentPositionsFromName("ModularHousingUnit"));
-        positions.addAll(getComponentPositionsFromName("CentralHousingUnit"));
-
-        for (Position pos : positions) {
-            Tile tempTile = getTileFromPosition(pos);
-            if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("ModularHousingUnit")) {
-                ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tempTile.getMyComponent();
-                if (!modularHousingUnit.getAlienColor().equals(AlienColor.EMPTY))
-                    number += modularHousingUnit.getNCrewMembers();
-
-            } else if (tempTile.getMyComponent().accept(new ComponentNameVisitor()).equals("CentralHousingUnit")) {
-                CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tempTile.getMyComponent();
-                number += centralHousingUnit.getNCrewMembers();
-            }
-        }
-
-        return number;
-
-    }
 
     public ArrayList<Good> getGoodsOnShipBoard() {
         ArrayList<Good> goods = new ArrayList<>();
@@ -1220,8 +1152,5 @@ public class Ship implements Serializable {
         return goods;
     }
 
-    public void setLearningMatch(Boolean isLearningMatch) {
-        this.learningMatch = isLearningMatch;
-    }
 
 }

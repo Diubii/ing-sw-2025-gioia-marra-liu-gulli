@@ -254,6 +254,7 @@ public class MockShipFactory {
 
         Tile cannon = getRequiredTile(tiles, "Cannon", 0);
         Tile engine = getRequiredTile(tiles, "Engine", 10);
+        engine.rotate(90);
         Tile battery = getRequiredTile(tiles, "BatterySlot", 0);
         Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
         Tile modularHousingUnit = getRequiredTile(tiles, "ModularHousingUnit", 0);
@@ -285,6 +286,10 @@ public class MockShipFactory {
         if(modularHousingUnit != null) ship.putTile(modularHousingUnit, new Position(2, 1));
         if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
+        if(engine != null) ship.putTile(engine, new Position(4, 1));
+        ship.putTile(doubleEngine, new Position(2, 4));
+        ship.putTile(doubleEngine, new Position(1, 1));
+
 
         return ship;
     }
