@@ -44,10 +44,7 @@ import javax.sound.sampled.Clip;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -581,6 +578,12 @@ public class GuiJavaFx implements View {
         int nBrownAlien = mymodel.getMyInfo().getShip().getNBrownAlien();
         int nPurpleAlien= mymodel.getMyInfo().getShip().getNPurpleAlien();
 
+        //debug
+
+       System.out.println("CABIN AT " + x + " " + y + " has brown ? ->" +  Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()));
+        System.out.println("CABIN AT " + x + " " + y + " has purple ? ->" +  Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip()));
+
+
         //modificare nella SHIP Locale
         if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()) && Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
             //Vicino a entrambi
@@ -637,13 +640,8 @@ public class GuiJavaFx implements View {
 
 
         Position position = new Position(x,y);
-        for(int i=0; i< crewInitUpdate.getCrewPos().size() ; i++){
-            if(crewInitUpdate.getCrewPos().get(i).getKey().equals(position)){
-                crewInitUpdate.getCrewPos().remove(i);
-            }
-        }
+        crewInitUpdate.getCrewPos().removeIf(current -> current.getKey().equals(position));
         crewInitUpdate.addCrewPos( new Pair<>(position,currentHousingUnit.getAlienColor()));
-
     }
 
     public void confirmCrew(){

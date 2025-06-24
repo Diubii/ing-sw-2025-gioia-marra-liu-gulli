@@ -11,6 +11,8 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import it.polimi.ingsw.galaxytrucker.model.essentials.components.LifeSupportSystem;
+import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 import javafx.util.Pair;
 
@@ -149,7 +151,7 @@ public class Util {
 //         cardsToTest.add(list.get(19)); //AbandonedStation
 
 
-//        cardsToTest.add(list.get(31)); //Planets
+        cardsToTest.add(list.get(31)); //Planets
         //Si blocca sempre sembra
 //        cardsToTest.add(list.get(15)); //Zona di guerra
 
@@ -161,7 +163,7 @@ public class Util {
 
 
 //        cardsToTest.add(list.get(3)); //Stardust
-        cardsToTest.add(list.get(24)); //Epidemic
+        //cardsToTest.add(list.get(24)); //Epidemic
 
         return new CardDeck(cardsToTest, true);
 
@@ -203,8 +205,13 @@ public class Util {
         boolean wellConnected = true;
         ArrayList<Position> tempIP = P.getInvalidPositions();
 
+        // Posizioni adiacenti alla tile corrente
+        //Position nord = new Position(S.getPosition().getY() - 1, S.getPosition().getX());
         Position sud = new Position(S.getPosition().getX(), S.getPosition().getY() + 1);
+        //Position est = new Position(S.getPosition().getY(), S.getPosition().getX() + 1);
+        //Position ovest = new Position(S.getPosition().getY(), S.getPosition().getX() - 1);
 
+        // Controlla la connessione del motore in base alla rotazione della tile
         if (T.getRotation() == 0) {
             if (!tempIP.contains(sud) && inBoundaries(sud.getX(), sud.getY()) && P.getShipBoard()[sud.getX()][sud.getY()].getTile() != null) {
                 wellConnected = false;
@@ -257,30 +264,110 @@ public class Util {
     }
 
     /**
-     * Verifies if a certain life support system is present near the specified position.
+     * Verifies if a ModularHousingUnit is connected to a LifeSupportSystem of the specified color,
+     * ensuring both adjacency and connector compatibility.
      *
-     * @param color The color of the life support system to check
-     * @param T     The tile on which the check is performed
-     * @param P     The ship in which the search is being conducted
-     * @param S     The reference slot within the ship
-     * @return {@code true} if the life support system is well connected, {@code false} otherwise
+     * @param color The color of the LifeSupportSystem to check for connection
+     * @param tile  The tile containing the ModularHousingUnit
+     * @param ship  The ship where the check is performed
+     * @param slot  The slot in which the tile is located
+     * @return true if a valid connection to a LifeSupportSystem of the given color exists, false otherwise
      */
-    public static Boolean CheckLifeSupportSystem(AlienColor color, Tile T, Ship P, Slot S) {
-        Boolean wellConnected = true;
-        ArrayList<Pair<Position, Tile>> connectedTiles = new ArrayList<>(P.getConnectedTiles(S.getPosition()));
-        for (Pair<Position, Tile> pair : connectedTiles) {
-            Component component = pair.getValue().getMyComponent();
+    public static boolean CheckLifeSupportSystem(AlienColor color, Tile tile, Ship ship, Slot slot) {
+        Position currentPos = slot.getPosition();
+        List<Connector> currentConnectors = tile.getSides();
 
-            if (component != null && wellConnectedTiles(T.getSides(), pair.getValue().getSides(), S.getPosition(), pair.getKey())){
-                if (component.accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && color.equals(AlienColor.PURPLE)){
-                    return true;
-                }  if (component.accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && color.equals(AlienColor.BROWN)){
-                    return true;
+        // Retrieve all tiles connected to the current position
+        ArrayList<Pair<Position, Tile>> connectedTiles = new ArrayList<>(ship.getConnectedTiles(currentPos));
+
+        // Iterate through each connected tile to find a matching LifeSupportSystem
+        for (Pair<Position, Tile> pair : connectedTiles) {
+            Tile connectedTile = pair.getValue();
+            Component component = connectedTile.getMyComponent();
+
+            // Check if this tile contains a LifeSupportSystem of the required color
+            if (component != null && (component.accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") || component.accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") )) {
+                LifeSupportSystem lifeSupportSystem = (LifeSupportSystem) component;
+                if (lifeSupportSystem.getColor() == color) {
+                    // Get connectors from the connected tile
+                    List<Connector> supportConnectors = connectedTile.getSides();
+//                    Collections.reverse(supportConnectors);
+//                    Collections.reverse(currentConnectors);
+
+                    ShipPrintUtils.printShip(ship);
+
+                    // Check if the two tiles are properly connected using their positions and connectors
+                    if (areTilesConnected(pair.getKey(), supportConnectors, currentPos, currentConnectors)) {
+                        return true; // Found a compatible connection
+                    }
                 }
             }
         }
 
-        return  false;
+        return false; // No compatible LifeSupportSystem connection found
+    }
+
+
+// ... existing code ...
+    /**
+     * Verifies if two tiles are connected through compatible connectors.
+     *
+     * @param pos1     position of the first tile
+     * @param conns1   connectors of the first tile (already rotated): [UP, RIGHT, DOWN, LEFT]
+     * @param pos2     position of the second tile
+     * @param conns2   connectors of the second tile (already rotated): [UP, RIGHT, DOWN, LEFT]
+     * @return true if the tiles are adjacent and their connectors are compatible
+     */
+    public static boolean areTilesConnected(Position pos1, List<Connector> conns1, Position pos2, List<Connector> conns2) {
+        int dx = pos2.getX() - pos1.getX();
+        int dy = pos2.getY() - pos1.getY();
+
+        System.out.println("[DEBUG] Checking connection between:");
+        System.out.println("  Tile1 Pos: " + pos1 + ", Connectors: " + conns1);
+        System.out.println("  Tile2 Pos: " + pos2 + ", Connectors: " + conns2);
+
+        // Check adjacency: only one direction change allowed
+        if (Math.abs(dx) + Math.abs(dy) != 1 || conns1.isEmpty() || conns2.isEmpty()) {
+            System.out.println("  -> Not adjacent or empty connectors.");
+            return false;
+        }
+
+        // Right / Left connection
+        if (dx == 1) { // pos2 is to the right of pos1 (Tile2 is on the RIGHT of Tile1)
+            System.out.println("  -> Testing RIGHT-LEFT connection");
+            System.out.println("     Connector1 (RIGHT): " + conns1.get(1)); // RIGHT connector of Tile1
+            System.out.println("     Connector2 (LEFT): " + conns2.get(3));  // LEFT connector of Tile2
+            boolean result = compatible(conns1.get(1), conns2.get(3)) && conns1.get(1) != Connector.EMPTY && conns2.get(3) != Connector.EMPTY;
+            System.out.println("     Result: " + result);
+            return result;
+        } else if (dx == -1) { // pos2 is to the left of pos1 (Tile2 is on the LEFT of Tile1)
+            System.out.println("  -> Testing LEFT-RIGHT connection");
+            System.out.println("     Connector1 (LEFT): " + conns1.get(3));  // LEFT connector of Tile1
+            System.out.println("     Connector2 (RIGHT): " + conns2.get(1)); // RIGHT connector of Tile2
+            boolean result = compatible(conns1.get(3), conns2.get(1)) && conns1.get(3) != Connector.EMPTY && conns2.get(1) != Connector.EMPTY;
+            System.out.println("     Result: " + result);
+            return result;
+        }
+
+        // Up / Down connection
+        if (dy == 1) { // pos2 is below pos1 (Tile2 is BELOW Tile1)
+            System.out.println("  -> Testing DOWN-UP connection");
+            System.out.println("     Connector1 (DOWN): " + conns1.get(2)); // DOWN connector of Tile1
+            System.out.println("     Connector2 (UP): " + conns2.get(0));    // UP connector of Tile2
+            boolean result = compatible(conns1.get(2), conns2.get(0)) && conns1.get(2) != Connector.EMPTY && conns2.get(0) != Connector.EMPTY;
+            System.out.println("     Result: " + result);
+            return result;
+        } else if (dy == -1) { // pos2 is above pos1 (Tile2 is ABOVE Tile1)
+            System.out.println("  -> Testing UP-DOWN connection");
+            System.out.println("     Connector1 (UP): " + conns1.get(0));    // UP connector of Tile1
+            System.out.println("     Connector2 (DOWN): " + conns2.get(2));  // DOWN connector of Tile2
+            boolean result = compatible(conns1.get(0), conns2.get(2)) && conns1.get(0) != Connector.EMPTY && conns2.get(2) != Connector.EMPTY;
+            System.out.println("     Result: " + result);
+            return result;
+        }
+
+        System.out.println("  -> No valid direction found.");
+        return false;
     }
 
 
@@ -437,6 +524,9 @@ public class Util {
 
 
                     }
+//                    System.out.println("[2]I: " + i + " " + positions.size());
+
+
                 }
 
             }
@@ -533,21 +623,21 @@ public class Util {
      * @return true if the connectors are compatible, false otherwise
      */
     public static Boolean compatible(Connector connector1, Connector connector2) {
-        //cases with null
-        if (connector1 == null && connector2 != null) return true;
-        if (connector1 == null || connector2 == null) return true;
+        if (connector1 == null || connector2 == null) return false;
 
-        //with one empty connector
-        if (connector1.equals(Connector.EMPTY) && !connector2.equals(Connector.EMPTY)) return false;
-        if (connector2.equals(Connector.EMPTY) && !connector1.equals(Connector.EMPTY)) return false;
+        if (connector1 == Connector.EMPTY && connector2 == Connector.EMPTY)
+            return true;
 
-        //they are identical
-        if (connector1.equals(connector2)) return true;
+        if (connector1 == Connector.UNIVERSAL || connector2 == Connector.UNIVERSAL) {
+            // compatibility if the other is SINGLE, DOUBLE or UNIVERSAL
+            return connector1 == connector2 ||
+                    connector1 == Connector.SINGLE || connector2 == Connector.SINGLE ||
+                    connector1 == Connector.DOUBLE || connector2 == Connector.DOUBLE;
+        }
 
-        //with one universal connector
-        if (connector1.equals(Connector.UNIVERSAL) && !connector2.equals(Connector.EMPTY)) return true;
-        if (connector2.equals(Connector.UNIVERSAL) && !connector1.equals(Connector.EMPTY)) return true;
-
-        return false;
+        // Match SINGLE with SINGLE, DOUBLE with DOUBLE
+        return connector1 == connector2;
     }
+
+
 }

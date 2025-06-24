@@ -745,7 +745,17 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                         myGame.getGameController().nextState();
 
 
+                        //aggiungo gia ora la crew per la cabina centrale
+
+                        Tile centralTile = ship.getTileFromPosition(new Position(3,2));
+                        CentralHousingUnit  centralHousingUnit = (CentralHousingUnit) centralTile.getMyComponent();
+                        centralHousingUnit.setHumanCrewNumber(2);
+
+                        ShipUpdate shipUpdate2 = new ShipUpdate(ship, player.getNickName());
+
+
                         PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.CREW_INIT);
+                        broadCast(playerHandlers, shipUpdate2);
                         broadCast(playerHandlers, phaseUpdate);
                     }
                 }

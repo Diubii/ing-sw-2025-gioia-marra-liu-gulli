@@ -1124,7 +1124,11 @@ public class ClientController implements Observer {
             return;
         }
 
-        currentTileInHand.setRotation(0);
+        //get current rotation
+
+        int initRotation = currentTileInHand.getRotation();
+
+        currentTileInHand.rotate(-initRotation);
         DiscardTileRequest request = new DiscardTileRequest(currentTileInHand);
 
         if(!safeSendMessage(request)) return;
@@ -1797,6 +1801,11 @@ public class ClientController implements Observer {
      * @throws InterruptedException the interrupted exception
      */
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate) throws IOException, ExecutionException, InterruptedException {
+
+        //aggiungo quelle per le cabine centrali
+
+//        crewInitUpdate.addCrewPos(new Pair<>(new Position(3,2), AlienColor.EMPTY));
+
         safeSendMessage(crewInitUpdate);
     }
 

@@ -87,7 +87,7 @@ public class GameController {
     }
 
     public void startFlight() throws ExecutionException, InterruptedException, IOException {
-        cardDeckTest = Util.createTestDeck();
+        cardDeckTest = Util.createLearningDeck();
         game.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
 //        handleTurnBeforeDrawnCard();
     }

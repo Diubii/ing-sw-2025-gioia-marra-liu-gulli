@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.Objects;
 
 public class BuildingController extends GenericGamePhaseSceneController {
 
@@ -162,14 +163,15 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
         ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
         List<Label> timerLabels = List.of(lblTimer1,lblTimer2,lblTimer3);
-        for(int i = 0; i<timerInfos.size();i++){
-            if(timerInfos.get(i).isFlipped()){
-                timerLabels.get(i).setTextFill(Color.ORANGERED);
+        if (timerInfos != null) {
+            for (int i = 0; i < timerInfos.size(); i++) {
+                if (timerInfos.get(i).isFlipped()) {
+                    timerLabels.get(i).setTextFill(Color.ORANGERED);
+                } else {
+                    timerLabels.get(i).setTextFill(Color.WHITE);
+                }
+                timerLabels.get(i).setText(Integer.toString(timerInfos.get(i).getValue()));
             }
-            else{
-                timerLabels.get(i).setTextFill(Color.WHITE);
-            }
-            timerLabels.get(i).setText( Integer.toString(timerInfos.get(i).getValue()));
         }
 
     }
@@ -220,10 +222,16 @@ public class BuildingController extends GenericGamePhaseSceneController {
          mymodel.getFaceUpTiles().forEach(tile -> {
              String tileIdVal = String.valueOf(tile.getId());
              String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-             Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+             Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
              ImageView imgView = new ImageView(img);
+
+
              imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
              imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
+
+             // Imposta rotazione in base alla tile
+             imgView.setRotate(tile.getRotation()); // supponendo che getRotation() restituisca 0/90/180/270
+
              imgView.setOnMouseClicked(event -> {
                  if(clientController.getCurrentTileInHand() == null){
                      clientController.handleChooseFaceUpTile(tile);
@@ -265,7 +273,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         if(finishedBuilding && clientController.getPhase() != GameState.CREW_INIT && clientController.getPhase() != GameState.SHIP_CHECK ) {
             editable= false;
         }
-        if(currPhaseDone == true){
+        if(currPhaseDone){
             editable = false;
         }
 
@@ -482,7 +490,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     public void showDrawnTile(Tile tile){
         String tileIdVal = String.valueOf(tile.getId());
         String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-        Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+        Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
 
         inHandTileImage.setImage(img);
         inHandTileImage.setRotate(tile.getRotation());
@@ -513,7 +521,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
      */
     public void handlePickedAsideTile(int pos){
        //Se ho già finito di costruire non tocco più
-        if(finishedBuilding == false) {
+        if(!finishedBuilding) {
            if (clientController.getCurrentTileInHand() != null) {
                //Se ho in mano ed è vuota metto li
                if (clientController.getReservedTiles()[pos] == null) {

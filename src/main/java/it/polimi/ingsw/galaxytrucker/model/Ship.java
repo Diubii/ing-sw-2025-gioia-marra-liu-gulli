@@ -1113,10 +1113,9 @@ public class Ship implements Serializable {
         int positionDown = position.getY() + 1;
         int positionLeft = position.getX() - 1;
 
-        Tile tile = getTileFromPosition(position);
 
 
-        if (positionUp >= 0) {
+        if (positionUp >= 0 ) {
             Tile tileUp = shipBoard[positionX][positionUp].getTile();
             if (tileUp != null) {
                 connectedTilesWithPosition.add(new Pair<>(new Position(positionX, positionUp), tileUp));
@@ -1156,7 +1155,7 @@ public class Ship implements Serializable {
         ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
         ArrayList<Pair<Position,Tile>> connected = getConnectedTiles(position);
         return getConnectedTiles(position).stream()
-                .filter(p -> (p.getValue().getMyComponent().accept(componentNameVisitor).equals("CentralHousingUnit") || p.getValue().getMyComponent().accept(componentNameVisitor).equals("ModularHousingUnit")))
+                .filter(p -> (p.getValue().getMyComponent() != null &&   ( p.getValue().getMyComponent().accept(componentNameVisitor).equals("CentralHousingUnit") || p.getValue().getMyComponent().accept(componentNameVisitor).equals("ModularHousingUnit"))))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

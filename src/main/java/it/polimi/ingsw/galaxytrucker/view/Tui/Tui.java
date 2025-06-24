@@ -1242,98 +1242,93 @@ public class Tui implements View, Observable {
         //salvo tutte le posizioni delle housing
 
         ArrayList<Position> housinPos = myShip.getComponentPositionsFromName("ModularHousingUnit");
-        int housingSize = housinPos.size()+1;
-        System.out.println("Hai " + housingSize + " cabine");
-
 
         int nBrownAliens = 0;
         int nPurpleAliens = 0;
 
         CrewInitUpdate crewInitUpdate = new CrewInitUpdate();
 
+        System.out.println("You have " + housinPos.size() + " Cabins to fill");
+
+
+        if (!housinPos.isEmpty()) {
+            enableInput();
+            try {
+
+
+                for (Position pos : housinPos) {
+
+                    Slot tempSlot = myShip.getShipBoard()[pos.getX()][pos.getY()];
+
+                    if (tempSlot != null) {
+                        if (tempSlot.getTile() != null) {
+
+                            ArrayList<String> choices = new ArrayList<>();
+
+                            ModularHousingUnit housing = (ModularHousingUnit) tempSlot.getTile().getMyComponent();
+
+                            if (Util.checkNearLFS(pos, AlienColor.PURPLE, myShip) || Util.checkNearLFS(pos, AlienColor.BROWN, myShip)) {
+
+                                if (Util.checkNearLFS(pos, AlienColor.PURPLE, myShip) && nPurpleAliens == 0) {
+                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
+                                    choices.add("purple");
+                                }
+
+                                if (Util.checkNearLFS(pos, AlienColor.BROWN, myShip) && nBrownAliens == 0) {
+                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
+                                    choices.add("brown");
+
+                                }
+                            }
+                            CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
+                            choices.add("human");
 
 
 
+                            boolean correct = false;
 
-//        if (!housinPos.isEmpty()) {
-//            enableInput();
-//            try {
-//
-//
-//                for (Position pos : housinPos) {
-//
-//                    Slot tempSlot = myShip.getShipBoard()[pos.getY()][pos.getX()];
-//
-//                    if (tempSlot != null) {
-//                        if (tempSlot.getTile() != null) {
-//
-//                            ArrayList<String> choiches = new ArrayList<>();
-//
-//                            ModularHousingUnit housing = (ModularHousingUnit) tempSlot.getTile().getMyComponent();
-//
-//                            if (Util.checkNearLFS(pos, housing.getAlienColor(), myShip)) {
-//
-//                                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("PurpleLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.PURPLE) && nPurpleAliens == 0) {
-//                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.PURPLE);
-//                                    choiches.add("purple");
-//                                }
-//
-//                                if (tempSlot.getTile().getMyComponent().accept(new ComponentNameVisitor()).equals("BrownLifeSupportSystem") && housing.getAlienColor().equals(AlienColor.BROWN) && nBrownAliens == 0) {
-//                                    CabinUnitAscii.printCabinUnitWithFigures(1, true, AlienColor.BROWN);
-//                                    choiches.add("brown");
-//
-//                                }
-//                            } else {
-//                                CabinUnitAscii.printCabinUnitWithFigures(2, false, AlienColor.EMPTY);
-//                                choiches.add("human");
-//                            }
-//
-//
-//                            boolean correct = false;
-//
-//                            while (!correct) {
-//                                StringBuilder prompt = new StringBuilder("Type ");
-//                                for (String choice : choiches) {
-//                                    prompt.append("(").append(choice).append(") ");
-//                                }
-//                                String choice = readLine(prompt.toString()).toLowerCase();
-//
-//                                switch (choice) {
-//                                    case "purple": {
-//                                        nPurpleAliens++;
-//                                        correct = true;
-//                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
-//                                        break;
-//                                    }
-//
-//                                    case "brown": {
-//                                        nBrownAliens++;
-//                                        correct = true;
-//                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.BROWN));
-//                                        System.out.println("You cannot add a brown alien to this cabin.");
-//                                        break;
-//                                    }
-//
-//                                    case "human": { //Si inseriscono due umani
-//                                        correct = true;
-//                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
-//                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
-//                                        break;
-//                                    }
-//                                    case "reset": {}
-//                                    default: {
-//                                        System.out.println("Invalid choice: " + choice);
-//                                        break;
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            } finally {
-//                disableInput();
-//            }
-//        }
+                            while (!correct) {
+                                StringBuilder prompt = new StringBuilder("Type ");
+                                for (String choice : choices) {
+                                    prompt.append("(").append(choice).append(") ");
+                                }
+                                String choice = readLine(prompt.toString()).toLowerCase();
+
+                                switch (choice) {
+                                    case "purple": {
+                                        nPurpleAliens++;
+                                        correct = true;
+                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.PURPLE));
+                                        break;
+                                    }
+
+                                    case "brown": {
+                                        nBrownAliens++;
+                                        correct = true;
+                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.BROWN));
+                                        break;
+                                    }
+
+                                    case "human": { //Si inseriscono due umani
+                                        correct = true;
+                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
+                                        crewInitUpdate.addCrewPos(new Pair<>(pos, AlienColor.EMPTY));
+                                        break;
+                                    }
+                                    case "reset": {}
+                                    default: {
+                                        System.out.println("Invalid choice: " + choice);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } finally {
+                disableInput();
+            }
+        }
 
         //fine for
 

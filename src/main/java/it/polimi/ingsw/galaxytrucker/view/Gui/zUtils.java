@@ -19,6 +19,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class zUtils {
@@ -58,7 +59,7 @@ public class zUtils {
                     //Load corresponding tile image
                     String tileIdVal = String.valueOf(tile.getId());
                     String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-                    img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+                    img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
 
                     rotation = tile.getRotation();
                     ImageView imageView = new ImageView(img);
@@ -79,7 +80,7 @@ public class zUtils {
                 else if(clientController.getMyShip().getInvalidPositions().contains(new Position(x,y))){
                     //INVALID POSIITON
                     String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web157.jpg";
-                    img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+                    img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
                     ImageView imageView = new ImageView(img);
 
                     stackPane.getChildren().add(imageView);
@@ -94,7 +95,7 @@ public class zUtils {
                 else{
                     //EMPTY VALID POSITION
                     String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/empty.jpg";
-                    img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+                    img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
                     ImageView imageView = new ImageView(img);
 
                     stackPane.getChildren().add(imageView);
@@ -116,20 +117,22 @@ public class zUtils {
                 if(editable){
                     //Click on whole tile has different effect depending on phase and other settings
                     stackPane.setOnMouseClicked(event -> {
-                        if(event.getClickCount() == 1 && event.getButton() == MouseButton.PRIMARY ) {
+                        if( event.getClickCount() == 1 && event.getButton() == MouseButton.PRIMARY  ) {
 
                             switch (clientController.getPhase()) {
                                 case SHIP_CHECK:
 
-                                    clientController.getMyModel().addTileToRemove(tile.getId());
-                                    ship.removeTile(pos, true);
-                                    showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController,activatableComponent);
+                                    if (tile != null) {
+                                        clientController.getMyModel().addTileToRemove(tile.getId());
+                                        ship.removeTile(pos, true);
+                                        showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);
 
+                                    }
                                     break;
                                 case CREW_INIT:
 
                                     //Only if a cab has a Life support system connected
-                                    if (tile != null && tile.getMyComponent().accept(namevisitor) == "ModularHousingUnit" &&
+                                    if (tile != null && Objects.equals(tile.getMyComponent().accept(namevisitor), "ModularHousingUnit") &&
                                             (Util.checkNearLFS(new Position(fX, fY), AlienColor.BROWN, ship) ||
                                                     Util.checkNearLFS(new Position(fX, fY), AlienColor.PURPLE, ship))) {
 
@@ -146,19 +149,19 @@ public class zUtils {
 
                                     //For activating component
                                     if(activatableComponent != null) {
-                                        if(tile.getMyComponent().accept(namevisitor).equals("DoubleEngine") && tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if( tile != null && tile.getMyComponent() != null && tile.getMyComponent().accept(namevisitor).equals("DoubleEngine") && tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((DoubleEngine)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));
                                             showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);
                                         }
-                                        if(tile.getMyComponent().accept(namevisitor).equals("DoubleCannon") &&tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if(tile != null && tile.getMyComponent() != null && tile.getMyComponent().accept(namevisitor).equals("DoubleCannon") &&tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((DoubleCannon)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));
                                             showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);
                                         }
-                                        if(tile.getMyComponent().accept(namevisitor).equals("Shield") &&tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
+                                        if( tile != null && tile.getMyComponent() != null && tile.getMyComponent().accept(namevisitor).equals("Shield") &&tile.getMyComponent().accept(namevisitor).equals(activatableComponent.name()) && flightController.getInHandBattery() == true && tile.getMyComponent().isCharged() == false){
                                             ((Shield)tile.getMyComponent()).setCharged(true);
                                             flightController.useInHandBattery();
                                             flightController.addActivatedPosition( new Position(fX,fY));
@@ -166,7 +169,7 @@ public class zUtils {
                                         }
 
                                         //Metto batteria in mano
-                                        if(tile.getMyComponent().accept(namevisitor).equals("BatterySlot")) {
+                                        if( tile != null && tile.getMyComponent() != null && tile.getMyComponent().accept(namevisitor).equals("BatterySlot")) {
                                             if(((BatterySlot)tile.getMyComponent()).getBatteriesLeft() > 0 && flightController.getInHandBattery() == false){
                                                 ((BatterySlot)tile.getMyComponent()).removeBattery();
                                                 flightController.showBattery(new Position(fX,fY));
@@ -180,7 +183,7 @@ public class zUtils {
                                     //CABS: for discarding crew
 
                                     if(flightController.getIsDiscardingCrewTime()){
-                                        if(tile.getMyComponent().accept(namevisitor).equals("ModularHousingUnit")){
+                                        if( tile != null && tile.getMyComponent() != null && tile.getMyComponent().accept(namevisitor).equals("ModularHousingUnit")){
                                             ModularHousingUnit modularHousingUnit = (ModularHousingUnit) tile.getMyComponent();
                                             if(modularHousingUnit.getNCrewMembers() > 0){
                                                 //Aggiorno model locale
@@ -195,7 +198,7 @@ public class zUtils {
                                                 showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController,activatableComponent);
 
                                             }
-                                        } else if(tile.getMyComponent().accept(namevisitor).equals("CentralHousingUnit")){
+                                        } else if(tile != null && tile.getMyComponent() != null && tile.getMyComponent().accept(namevisitor).equals("CentralHousingUnit")){
                                             CentralHousingUnit centralHousingUnit = (CentralHousingUnit) tile.getMyComponent();
                                             if(centralHousingUnit.getNCrewMembers() > 0){
                                                 //Aggiorno model locale
@@ -216,13 +219,11 @@ public class zUtils {
                                                 clientController.setCurrentPos(fX, fY);
                                                 clientController.handleTilePlacement();
                                             }
-                                        } catch (ExecutionException e) {
-                                            e.printStackTrace();
-                                        } catch (InvalidTilePosition e) {
+                                        } catch (ExecutionException | InvalidTilePosition e) {
                                             e.printStackTrace();
                                         }
                                     } else {
-                                        if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed() == false) {
+                                        if (clientController.getMyShip().getShipBoard()[fX][fY].getTile() != null && !clientController.getMyShip().getShipBoard()[fX][fY].getTile().getFixed()) {
                                             clientController.reclaimTile();
                                         }
                                     }

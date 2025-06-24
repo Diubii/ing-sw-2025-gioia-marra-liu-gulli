@@ -6,6 +6,7 @@ import it.polimi.ingsw.galaxytrucker.model.MockShipFactory;
 import it.polimi.ingsw.galaxytrucker.model.Ship;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.LifeSupportSystem;
@@ -90,61 +91,53 @@ class UtilTest {
     }
 
     @Test
-    void engineWellConnected() {
+
+    void testCompatible() {
+        var connector1 = Connector.UNIVERSAL;
+        var connector2 = Connector.UNIVERSAL;
+        assertTrue(Util.compatible(connector1, connector2));
+        connector2 = Connector.SINGLE;
+        assertTrue(Util.compatible(connector1, connector2));
+        connector2 = Connector.EMPTY;
+        assertFalse(Util.compatible(connector1, connector2));
+        connector2 = Connector.DOUBLE;
+        assertTrue(Util.compatible(connector1, connector2));
+        connector2 = Connector.SINGLE;
+        assertTrue(Util.compatible(connector1, connector2));
+
     }
 
-    @Test
-    void cannonWellConnected() {
-    }
 
     @Test
-    void checkLifeSupportSystem() {
+
+    void testCheckNearLFS(){
+
         Ship ship = MockShipFactory.createMockShip();
+        ShipPrintUtils.printShip(ship);
+        LifeSupportSystem lifeSupportSystem = new LifeSupportSystem(AlienColor.PURPLE);
+        LifeSupportSystem BrownlifeSupportSystem = new LifeSupportSystem(AlienColor.BROWN);
+
 
         ArrayList<Connector> connectors = new ArrayList<>();
-        connectors.add(Connector.UNIVERSAL);
-        connectors.add(Connector.UNIVERSAL);
-        connectors.add(Connector.UNIVERSAL);
+        connectors.add(Connector.EMPTY);
+        connectors.add(Connector.EMPTY);
+        connectors.add(Connector.EMPTY);
         connectors.add(Connector.UNIVERSAL);
 
+        Tile myTile = new Tile(0,0,connectors,lifeSupportSystem);
+        Tile myTile2 = new Tile(0,0,connectors,BrownlifeSupportSystem);
 
-        LifeSupportSystem lifeSupportSystem = new LifeSupportSystem(AlienColor.PURPLE);
-
-        Tile tile = new Tile(0,0,connectors,lifeSupportSystem);
-
-        ship.putTile(tile, new Position(4,1));
+        ship.putTile(myTile,new Position(5,2));
+//        ship.putTile(myTile2,new Position(4,3));
 
 
         ShipPrintUtils.printShip(ship);
 
+        //4,2 si trova la cabin
+
         assertTrue(Util.checkNearLFS(new Position(4,2), AlienColor.PURPLE, ship));
-    }
+        assertTrue(Util.wellConnectedConnectors(ship, ship.getShipBoard()[][], myTile));
 
-    @Test
-    void wellConnectedConnectors() {
-    }
 
-    @Test
-    void wellConnectedTiles() {
-    }
-
-    @Test
-    void checkNearLFS() {
-    }
-
-    @Test
-    void checkShipStructure() {
-    }
-
-    @Test
-    void inBoundaries() {
-    }
-
-    @Test
-    void getAdjacentPositions() {
-    }
-
-    @Test
-    void compatible() {
     }
 }
