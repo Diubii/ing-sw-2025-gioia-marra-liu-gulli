@@ -69,7 +69,7 @@ public abstract class PlanetsEffect {
             context.executePhase();
         }
         else{ //Se tutti hanno scelto o i pianeti sono tutti occupati
-            if(landedPlayers.get(game).size() == 0){
+            if(landedPlayers.get(game).isEmpty()){
                 context.goToEndPhase();
                 context.executePhase();
                 return;

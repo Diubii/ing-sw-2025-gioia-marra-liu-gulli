@@ -136,7 +136,7 @@ class UtilTest {
         //4,2 si trova la cabin
 
         assertTrue(Util.checkNearLFS(new Position(4,2), AlienColor.PURPLE, ship));
-        assertTrue(Util.wellConnectedConnectors(ship, ship.getShipBoard()[][], myTile));
+//        assertTrue(Util.wellConnectedConnectors(ship, ship.getShipBoard()[][], myTile));
 
 
     }
