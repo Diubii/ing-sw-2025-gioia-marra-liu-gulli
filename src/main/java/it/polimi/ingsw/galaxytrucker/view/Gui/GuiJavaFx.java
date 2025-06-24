@@ -56,8 +56,6 @@ public class GuiJavaFx implements View {
     private  Scene primaryScene;
     //Controller
     private ClientController controller;
-    //Model
-    private ClientModel mymodel;
     //The current controller of the main node tree displayed
     private GenericSceneController actualPageController;
 
@@ -65,7 +63,7 @@ public class GuiJavaFx implements View {
     private Boolean firstTimeMainMenu = true;
 
     //Config variable to disable feature music and other setting during testing
-    private final static Boolean testing = false;
+    private final static Boolean testing = true;
 
 
 
@@ -87,7 +85,6 @@ public class GuiJavaFx implements View {
     }
 
     public void initializeController(ClientController controller) {
-        this.mymodel= controller.getMyModel();
         this.controller = controller;
         primaryScene.setOnKeyPressed(event -> {
             if(controller.getCurrentTileInHand() != null) {
@@ -219,7 +216,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 MainMenuController pageController = loader.getController();
-                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.initialSetup(this,controller,controller.getMyModel(),primaryStage,musicManager);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
                 primaryScene.setRoot(root);
@@ -247,7 +244,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 CreateLobbyController pageController = loader.getController();
-                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.initialSetup(this,controller,controller.getMyModel(),primaryStage,musicManager);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
                 primaryScene.setRoot(root);
@@ -276,7 +273,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 ListLobbyController pageController = loader.getController();
-                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.initialSetup(this,controller,controller.getMyModel(),primaryStage,musicManager);
                 pageController.UpdateLobbyList(lobbies);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
@@ -308,7 +305,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 LobbyController pageController = loader.getController();
-                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.initialSetup(this,controller,controller.getMyModel(),primaryStage,musicManager);
                 pageController.updatePlayersList(app);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
@@ -332,7 +329,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 LobbyController pageController = loader.getController();
-                pageController.initialSetup(this,controller,mymodel,primaryStage,musicManager);
+                pageController.initialSetup(this,controller,controller.getMyModel(),primaryStage,musicManager);
                 pageController.updatePlayersList(playerInfo);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
@@ -357,7 +354,7 @@ public class GuiJavaFx implements View {
                 showBuildingMenu();
                 //Thread per aggiornare timer una volta al secondo
                 Thread timerThread = new Thread(() -> {
-                    while (controller.getPhase().equals(GameState.BUILDING_TIMER) || controller.getPhase().equals(GameState.BUILDING_START) ) {
+                    while (actualPageController.pageName() == "BuildingPage" && controller.getPhase().equals(GameState.BUILDING_TIMER) || controller.getPhase().equals(GameState.BUILDING_START) ) {
                         // Aggiorna la GUI
                         Platform.runLater(() -> showTimerInfos());
 
@@ -376,7 +373,7 @@ public class GuiJavaFx implements View {
             case BUILDING_TIMER:
             case CREW_INIT:
                 try {
-                    chooseCrew(mymodel.getMyInfo().getShip());
+                    chooseCrew(controller.getMyModel().getMyInfo().getShip());
                 } catch (ExecutionException e) {
                     throw new RuntimeException(e);
                 } catch (InterruptedException e) {
@@ -400,6 +397,7 @@ public class GuiJavaFx implements View {
     public void showBuildingMenu() {
         System.out.println("DEBUG: showBuildingMenu");
         if(!actualPageController.pageName().equals("BuildingPage")){
+            System.out.println("Debug: rifaccio il building menu");
             Platform.runLater(() -> {
                 Parent root;
                 FXMLLoader loader;
@@ -409,10 +407,10 @@ public class GuiJavaFx implements View {
                     root = loader.load();
                     //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                     BuildingController pageController = loader.getController();
-                    pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
+                    pageController.initialSetup(this, controller, controller.getMyModel(), primaryStage, musicManager);
                     actualPageController = pageController;
                     //Impostare tutto il rendering iniziale
-                    for (PlayerInfo playerInfo : mymodel.getPlayerInfos()) {
+                    for (PlayerInfo playerInfo : controller.getMyModel().getPlayerInfos()) {
                         showShip(playerInfo.getShip(), playerInfo.getNickName());
                     }
                     //3-impostare la nuova root alla scena principale
@@ -550,7 +548,7 @@ public class GuiJavaFx implements View {
         crewInitUpdate = new CrewInitUpdate();
         //metti già 2 umani a tutte le posizioni non vicine a LFS
         ComponentNameVisitor namevisitor = new ComponentNameVisitor();
-        Slot[][] shipboard =  mymodel.getMyInfo().getShip().getShipBoard();
+        Slot[][] shipboard =  controller.getMyModel().getMyInfo().getShip().getShipBoard();
 
         //Go over each Slot of the grid
         for (int x = 0; x < shipboard.length; x++) {
@@ -568,24 +566,24 @@ public class GuiJavaFx implements View {
             }
         }
 
-        showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+        showShip(controller.getMyModel().getMyInfo().getShip(), controller.getMyModel().getMyInfo().getNickName());
 
     }
 
     public void editPositionCrew(int x,int y){
-        ModularHousingUnit currentHousingUnit = ((ModularHousingUnit) mymodel.getMyInfo().getShip().getShipBoard()[x][y].getTile().getMyComponent());
+        ModularHousingUnit currentHousingUnit = ((ModularHousingUnit) controller.getMyModel().getMyInfo().getShip().getShipBoard()[x][y].getTile().getMyComponent());
 
-        int nBrownAlien = mymodel.getMyInfo().getShip().getNBrownAlien();
-        int nPurpleAlien= mymodel.getMyInfo().getShip().getNPurpleAlien();
+        int nBrownAlien = controller.getMyModel().getMyInfo().getShip().getNBrownAlien();
+        int nPurpleAlien= controller.getMyModel().getMyInfo().getShip().getNPurpleAlien();
 
         //debug
 
-       System.out.println("CABIN AT " + x + " " + y + " has brown ? ->" +  Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()));
-        System.out.println("CABIN AT " + x + " " + y + " has purple ? ->" +  Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip()));
+       System.out.println("CABIN AT " + x + " " + y + " has brown ? ->" +  Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,controller.getMyModel().getMyInfo().getShip()));
+        System.out.println("CABIN AT " + x + " " + y + " has purple ? ->" +  Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,controller.getMyModel().getMyInfo().getShip()));
 
 
         //modificare nella SHIP Locale
-        if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip()) && Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
+        if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,controller.getMyModel().getMyInfo().getShip()) && Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,controller.getMyModel().getMyInfo().getShip())){
             //Vicino a entrambi
             if(currentHousingUnit.getNPurpleAlien() == 0 && currentHousingUnit.getNBrownAlien() == 0 && nPurpleAlien == 0){
                 //Ci sono umani vado a viola
@@ -608,7 +606,7 @@ public class GuiJavaFx implements View {
                 currentHousingUnit.addHumanCrew();
             }
         }
-        else if(Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,mymodel.getMyInfo().getShip())){
+        else if(Util.checkNearLFS(new Position(x,y), AlienColor.PURPLE,controller.getMyModel().getMyInfo().getShip())){
             //Vicino a viola
             if(currentHousingUnit.getNPurpleAlien() == 0 && nPurpleAlien == 0){
                 currentHousingUnit.removeAllCrew();
@@ -620,7 +618,7 @@ public class GuiJavaFx implements View {
             }
 
         }
-        else if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,mymodel.getMyInfo().getShip())){
+        else if(Util.checkNearLFS(new Position(x,y), AlienColor.BROWN,controller.getMyModel().getMyInfo().getShip())){
             //Vicino a marrone
             if(currentHousingUnit.getNBrownAlien() == 0 && nBrownAlien == 0){
                 currentHousingUnit.removeAllCrew();
@@ -715,7 +713,7 @@ public class GuiJavaFx implements View {
                     root = loader.load();
                     //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                     FlightController pageController = loader.getController();
-                    pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
+                    pageController.initialSetup(this, controller, controller.getMyModel(), primaryStage, musicManager);
                     actualPageController = pageController;
                     //3-impostare la nuova root alla scena principale
                     primaryScene.setRoot(root);
@@ -890,7 +888,7 @@ public class GuiJavaFx implements View {
                 root = loader.load();
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 ScoresController pageController = loader.getController();
-                pageController.initialSetup(this, controller, mymodel, primaryStage, musicManager);
+                pageController.initialSetup(this, controller, controller.getMyModel(), primaryStage, musicManager);
                 pageController.updateScores(scores);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
@@ -914,7 +912,9 @@ public class GuiJavaFx implements View {
     @Override
     public void showTimerInfos() {
         Platform.runLater(() -> {
-            ((BuildingController) actualPageController).showTimerInfo();
+            if(actualPageController.pageName() == "BuildingPage"){
+                ((BuildingController) actualPageController).showTimerInfo();
+            }
         });
     }
 
