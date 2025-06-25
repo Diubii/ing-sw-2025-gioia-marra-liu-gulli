@@ -48,6 +48,11 @@ public class CreateLobbyController extends GenericSceneController {
         return "CreateLobbyPage";
     }
 
+    /**
+     * Takes from the interface the required info to ask the client controller to handle
+     * the creation of a new room. The client controller will a message to the servercontroller.
+     * @param e
+     */
     public void confirm(ActionEvent e) {
         Toggle selectedToggleNumber = Nplayers.getSelectedToggle();
         Toggle selectedToggleMatch = MatchType.getSelectedToggle();

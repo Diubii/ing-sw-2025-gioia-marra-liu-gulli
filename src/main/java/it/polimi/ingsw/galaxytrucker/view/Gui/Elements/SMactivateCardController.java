@@ -14,12 +14,18 @@ public class SMactivateCardController {
         this.container = container;
     }
 
+    /**
+     * Tells the clientController to send to the server a message to activate the card
+     */
     public void activate(){
         clientController.sendActivateAdventureCardResponse(true);
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         container.getChildren().clear();
     }
 
+    /**
+     * Tells the clientController to send to the server a message to pass the card to the next player
+     */
     public void pass(){
         clientController.sendActivateAdventureCardResponse(false);
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");

@@ -161,7 +161,11 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
-    public void showTimerInfo() {
+    /**
+     * Shows the update timers status
+     */
+    public void showTimerInfo(){
+
         ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
         List<Label> timerLabels = List.of(lblTimer1,lblTimer2,lblTimer3);
         if (timerInfos != null) {
@@ -174,9 +178,13 @@ public class BuildingController extends GenericGamePhaseSceneController {
                 timerLabels.get(i).setText(Integer.toString(timerInfos.get(i).getValue()));
             }
         }
+
     }
 
-    public void flipTimer() {
+    /**
+     * asks the client controler to send a flip timer request
+     */
+    public void flipTimer(){
         ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
         boolean oneActive = false;
         for (TimerInfo timerInfo : timerInfos) {
@@ -190,11 +198,12 @@ public class BuildingController extends GenericGamePhaseSceneController {
         }
         showTimerInfo();
     }
-
     @Override
     public String pageName() {
         return "BuildingPage";
     }
+
+
 
     @Override
     public void ShowGenericMessage(String message) {
@@ -216,35 +225,42 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * Takes faceUp tiles from model and redraws them
      */
     public void updateFaceUpTiles(){
-        listaTiles.getChildren().clear();
-        System.out.println("Building controller DEBUG: showFaceUpTiles");
-        //Todo handle resizing maybe?
-         mymodel.getFaceUpTiles().forEach(tile -> {
-             String tileIdVal = String.valueOf(tile.getId());
-             String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-             Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
-             ImageView imgView = new ImageView(img);
+
+        Platform.runLater(()->{
+            listaTiles.getChildren().clear();
+            System.out.println("Building controller DEBUG: showFaceUpTiles");
+            mymodel.getFaceUpTiles().forEach(tile -> {
+                String tileIdVal = String.valueOf(tile.getId());
+                String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+                Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
+                ImageView imgView = new ImageView(img);
 
 
-             imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
-             imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
+                imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
+                imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
 
-             // Imposta rotazione in base alla tile
-             imgView.setRotate(tile.getRotation()); // supponendo che getRotation() restituisca 0/90/180/270
+                // Imposta rotazione in base alla tile
+                imgView.setRotate(tile.getRotation()); // supponendo che getRotation() restituisca 0/90/180/270
 
-             imgView.setOnMouseClicked(event -> {
-                 if(clientController.getCurrentTileInHand() == null){
-                     clientController.handleChooseFaceUpTile(tile);
-                 }
-                 // Puoi fare qualsiasi altra azione qui
-             });
+                imgView.setOnMouseClicked(event -> {
+                    if(clientController.getCurrentTileInHand() == null){
+                        clientController.handleChooseFaceUpTile(tile);
+                    }
+                    // Puoi fare qualsiasi altra azione qui
+                });
 
-             listaTiles.getChildren().add(imgView);
-         });
+                listaTiles.getChildren().add(imgView);
+            });
+
+        });
 
     }
 
 
+    /**
+     * Asks the client controller to draw a random tile
+     * @param actionEvent
+     */
     public void pescaRandom(ActionEvent actionEvent){
         if(clientController.getCurrentTileInHand() == null){
             clientController.handleDrawFaceDownTile();
@@ -267,7 +283,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
      */
     @Override
     public void showShip(Ship ship, String Nickname) {
-        Boolean details =false;
+        Boolean details;
         Boolean editable = true;
         //Se ho finito e non sono oltre la fase di building non più editabile
         if(finishedBuilding && clientController.getPhase() != GameState.CREW_INIT && clientController.getPhase() != GameState.SHIP_CHECK ) {
@@ -279,27 +295,40 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
         if(clientController.getPhase() == GameState.CREW_INIT){
             details = true;
+        } else {
+            details = false;
         }
 
-        for( int i = 0; i<shipControllers.size(); i++){
+        Boolean finalEditable = editable;
+        Platform.runLater(()->{
 
-            if(shipControllers.get(i).getNicknameOfPlayer().equals(Nickname)) {
+            for( int i = 0; i<shipControllers.size(); i++){
 
-                if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
+                if(shipControllers.get(i).getNicknameOfPlayer().equals(Nickname)) {
 
-                    zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController,editable,details,null,null);
+                    if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
 
-                } else {
-                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null,null);
+
+                                zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController, finalEditable,details,null,null);
+
+                    } else {
+
+                        zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null,null);
+                    }
                 }
             }
-        }
+
+        });
 
         //potrebbe essere uno ship update con questa modifica
         updateSetAsideTiles();
 
     }
 
+    /**
+     * Provides the user the list of possible ships to choose in the event of a split of his ship
+     * @param tronconi
+     */
     @Override
     public void chooseTroncone(ArrayList<Ship> tronconi) {
         //Fa uscire sotto menu in cui creo una shipView con radioButton per ogni ship
@@ -324,6 +353,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
         });
     }
 
+    /**
+     * Adds an overlay on the center menu to let the user know he is waiting other players
+     * @param clearLast
+     */
     @Override
     public void showWaitOtherPlayers(Boolean clearLast) {
         System.out.println("debug: showWaitOtherPlayers");
@@ -354,6 +387,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
     }
 
 
+    /**
+     * Activated when the finish building button is pressed asks the client controller to handle this choice
+     * @param e
+     */
     public void finishBuilding(ActionEvent e){
         //Disable di tutto ciò che è interagibile aparte la clessidra in teoria
         clientController.handleBuildingMenuChoice("i");
@@ -361,6 +398,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     }
 
+    /**
+     * Changes the interface and this class setup to reflect that the building phase is over
+     */
     public void handleFinishBuilding(){
         BtnFinishBuilding.setDisable(true);
         finishedBuilding = true;
@@ -452,9 +492,11 @@ public class BuildingController extends GenericGamePhaseSceneController {
      */
     public void viewMazzo(int num){
         //Non fa un tubo, va bene per la Tui ma qui no
-        if(!clientController.hasTileInHand() && clientController.viewAdventureCardDeck(num)){
+        if(clientController.hasTileInHand() == false && clientController.viewAdventureCardDeck(num)){
             Platform.runLater(() -> {
+
                 clientController.sendShipUpdate();
+
                 //C'è altro oltre al layout di default (Altri menu left aperti)
                 if(StackLeftMenu.getChildren().size() > 1 ){
                     StackLeftMenu.getChildren().removeLast();
@@ -484,15 +526,18 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * @param tile
      */
     public void showDrawnTile(Tile tile){
-        String tileIdVal = String.valueOf(tile.getId());
-        String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-        Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
 
-        inHandTileImage.setImage(img);
-        inHandTileImage.setRotate(tile.getRotation());
-        inHandTileImage.setVisible(true);
-        inHandTileImage.setFitHeight(100.00);
-        inHandTileImage.setFitWidth(100.00);
+        Platform.runLater(()->{
+            String tileIdVal = String.valueOf(tile.getId());
+            String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+            Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
+
+            inHandTileImage.setImage(img);
+            inHandTileImage.setRotate(tile.getRotation());
+            inHandTileImage.setVisible(true);
+            inHandTileImage.setFitHeight(100.00);
+            inHandTileImage.setFitWidth(100.00);
+        });
 
     }
 
@@ -536,23 +581,27 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * Redraws setAside tiles slots
      */
     public void updateSetAsideTiles(){
-        List<ImageView> imageViews = List.of(asideTile1,asideTile2);
-        for(int i =0; i< clientController.getMyShip().getAsideTiles().length; i++){
-            if(clientController.getMyShip().getAsideTiles()[i] != null){
-                String tileIdVal = String.valueOf(clientController.getMyShip().getAsideTiles()[i].getId());
-                String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-                Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
-                imageViews.get(i).setImage(img);
-                imageViews.get(i).setRotate(clientController.getMyShip().getAsideTiles()[i].getRotation());
-            }
-            else{
-                String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/empty.jpg";
-                Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
-                imageViews.get(i).setImage(img);
-            }
+
+        Platform.runLater(()->{
+            List<ImageView> imageViews = List.of(asideTile1,asideTile2);
+            for(int i =0; i< clientController.getMyShip().getAsideTiles().length; i++){
+                if(clientController.getMyShip().getAsideTiles()[i] != null){
+                    String tileIdVal = String.valueOf(clientController.getMyShip().getAsideTiles()[i].getId());
+                    String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+                    Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+                    imageViews.get(i).setImage(img);
+                    imageViews.get(i).setRotate(clientController.getMyShip().getAsideTiles()[i].getRotation());
+                }
+                else{
+                    String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/empty.jpg";
+                    Image img = new Image(zUtils.class.getResource(imagePath).toExternalForm());
+                    imageViews.get(i).setImage(img);
+                }
 
 
-        }
+            }
+        });
+
 
 
     }

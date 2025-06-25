@@ -16,6 +16,14 @@ public class SingleLobbyInfoController {
     @FXML private Button btnJoin;
     private Image imgType;
 
+    /**
+     * Sets the lobby Row with the specified data
+     * @param ID
+     * @param host
+     * @param playerNum
+     * @param maxPlayers
+     * @param isLearningMatch
+     */
     public void setData(int ID, String host, int playerNum, int maxPlayers, Boolean isLearningMatch) {
         txtId.setText(Integer.toString(ID));
         txtHost.setText("Host: "+host);

@@ -40,12 +40,6 @@ public class MusicManager {
         }
     }
 
-    public void restartBackgroundMusic() {
-        if (backgroundClip != null) {
-            backgroundClip.setFramePosition(0);
-            backgroundClip.start();
-        }
-    }
 
     public boolean isPlaying() {
         return backgroundClip != null && backgroundClip.isRunning();

@@ -68,6 +68,10 @@ public class FlightBoardController {
 
     }
 
+    /**
+     * Shows the flightboard in the container
+     * @param flightBoard
+     */
     public void updateBoard(FlightBoard flightBoard) {
 
         System.out.println("Debug: FlightBoardController.updateBoard");
@@ -118,7 +122,7 @@ public class FlightBoardController {
 
     }
 
-    public void clearStack(int col, int row) {
+    private void clearStack(int col, int row) {
         for (Node node : grid.getChildren()) {
             if (GridPane.getColumnIndex(node) != null && GridPane.getRowIndex(node) != null) {
                 int nodeCol = GridPane.getColumnIndex(node);
@@ -132,7 +136,7 @@ public class FlightBoardController {
         }
     }
 
-    public void addImageAt(int col, int row, Image image) {
+    private void addImageAt(int col, int row, Image image) {
         for (Node node : grid.getChildren()) {
             if (GridPane.getColumnIndex(node) != null && GridPane.getRowIndex(node) != null) {
                 int nodeCol = GridPane.getColumnIndex(node);

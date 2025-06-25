@@ -16,6 +16,13 @@ public class SMplanetChoiceController {
 
     @FXML private VBox buttonsContainer;
 
+    /**
+     * Adds one button for each planet with an event to triggher the response from the client to the server
+     * containing the choice
+     * @param clientController
+     * @param container
+     * @param planetChoices
+     */
     public void initialize(ClientController clientController, HBox container, HashMap<Integer, Planet> planetChoices){
         this.container = container;
         this.clientController = clientController;
@@ -35,6 +42,9 @@ public class SMplanetChoiceController {
         }
     }
 
+    /**
+     * Asks the client controller to send the choice of not stopping to the server
+     */
     public void noStop(){
         //Non mi fermo sui pianeti.
         clientController.sendSelectPlanetResponse(null, -1);

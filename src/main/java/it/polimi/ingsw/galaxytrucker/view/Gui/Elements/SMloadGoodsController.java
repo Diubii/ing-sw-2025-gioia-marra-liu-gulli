@@ -34,6 +34,10 @@ public class SMloadGoodsController {
 
     }
 
+    /**
+     * Ends the good loading phase and tells the clientController and Flight controller to handle it and
+     * send the required updates to the server.
+     */
     public void fineLoad(){
         clientController.handleLoadGoodChoice("f");
         flightController.endManagingGoodTime();
@@ -42,6 +46,9 @@ public class SMloadGoodsController {
 
     }
 
+    /**
+     * Adds the good currently inHand to the discarded goods list
+     */
     public void dropGood() {
         //Se c'è in mano lo mette nella lista
         if(flightController.getCurrentInHandGood() != null){

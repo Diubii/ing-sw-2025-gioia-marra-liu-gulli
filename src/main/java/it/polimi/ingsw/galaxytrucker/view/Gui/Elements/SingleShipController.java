@@ -22,10 +22,18 @@ public class SingleShipController {
         Platform.runLater(() -> adjustGridPaneSize(aspectRatio));
     }
 
+    /**
+     * Returns the GridPane used to represent the ship
+     * @return
+     */
     public GridPane getShipGrid() {
         return shipGrid;
     }
 
+    /**
+     * Returns the Nickname of the currently displayed ship
+     * @return
+     */
     public String getNicknameOfPlayer() {
         return nicknameOfPlayer;
     }
