@@ -110,8 +110,7 @@ public abstract class PlanetsEffect {
 
         LobbyManager game = context.getCurrentGame();
 
-        finishedPlayer.putIfAbsent(context.getCurrentGame(),0);
-        finishedPlayer.compute(game, (k, finishedPlayerIndex) -> finishedPlayerIndex + 1);
+        finishedPlayer.compute(game, (k, v) -> v == null ? 1 : v + 1);
 
         broadcast(context,shipUpdate);
 
@@ -138,7 +137,13 @@ public abstract class PlanetsEffect {
         }
 
         //Execute CommonEffects::end
+        resetState(context.getCurrentGame());
         context.nextPhase();
         context.executePhase();
+    }
+    private static void resetState(LobbyManager game) {
+        landedPlayers.remove(game);
+        landedPlayerIndex.remove(game);
+        finishedPlayer.remove(game);
     }
 }

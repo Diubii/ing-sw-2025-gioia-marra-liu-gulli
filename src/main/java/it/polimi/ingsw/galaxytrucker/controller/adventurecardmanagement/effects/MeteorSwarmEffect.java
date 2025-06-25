@@ -169,16 +169,15 @@ public abstract class MeteorSwarmEffect {
 
         int indexTrunk = askTrunkResponse.getTrunkIndex();
         ArrayList<Player> rankedPlayers =context.getCurrentRankedPlayers();
-        Player currentPlayer = null;
 
-        for (Player player : rankedPlayers) {
-            if(Objects.equals(askTrunkResponse.getPlayerNickname(), player.getNickName())){
-                currentPlayer = player;
-            }
-        }
+        Player currentPlayer = rankedPlayers.stream()
+                .filter(p -> p.getNickName().equals(askTrunkResponse.getPlayerNickname()))
+                .findFirst()
+                .orElse(null);
 
         if(currentPlayer == null){
             System.out.println("Player " + askTrunkResponse.getPlayerNickname() + " not found");
+            resetState(game);
             return;
         }
 
@@ -188,8 +187,7 @@ public abstract class MeteorSwarmEffect {
         //invio a tutti la nuova nave
         broadcast(context, new ShipUpdate(newShip, currentPlayer.getNickName() ));
 
-        askTrunkReceived.putIfAbsent(game,0);
-        askTrunkReceived.put(game,askTrunkReceived.get(game)+1);
+        askTrunkReceived.merge(game, 1, Integer::sum);
 
         if(askTrunkReceived.get(game)==needToAskTrunkReq.get(game).size()){
             goToEndPhaseOrReset(context);

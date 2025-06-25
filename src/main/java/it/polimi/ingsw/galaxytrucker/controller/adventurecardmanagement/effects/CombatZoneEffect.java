@@ -35,6 +35,8 @@ public abstract class CombatZoneEffect {
     //PHASE 1
     private final static HashMap<LobbyManager, Pair<Integer, Player>> minCrewMembersCheckPairs = new HashMap<>();
     private final static HashMap<LobbyManager,Integer> levelCombatZone = new HashMap<>();
+    private final static HashMap<LobbyManager, Pair<Integer, Player>> minEnginePowerCheckPairs = new HashMap<>();
+    private final static HashMap<LobbyManager, Pair<Float, Player>> minFirePowerCheckPairs = new HashMap<>();
 
 
     public static void checkLevel(CardContext context) {
@@ -80,8 +82,6 @@ public abstract class CombatZoneEffect {
                 context.nextPhase();
                 context.executePhase();
 
-                //Cleanup
-                minCrewMembersCheckPairs.remove(context.getCurrentGame());
                 return;
             }
             else{
@@ -92,7 +92,6 @@ public abstract class CombatZoneEffect {
                 context.setCurrentPlayer(context.getCurrentRankedPlayers().getFirst());
                 context.nextPhase(7);
                 context.executePhase();
-                minCrewMembersCheckPairs.remove(context.getCurrentGame());
 
                 return;
 
@@ -105,7 +104,7 @@ public abstract class CombatZoneEffect {
 
 
     //PHASE 2
-    private final static HashMap<LobbyManager, Pair<Integer, Player>> minEnginePowerCheckPairs = new HashMap<>();
+
 
     public static void sendDoubleEnginesActivationRequest(CardContext context) {
 
@@ -235,7 +234,7 @@ public abstract class CombatZoneEffect {
     }
 
     //PHASE 3
-    private final static HashMap<LobbyManager, Pair<Float, Player>> minFirePowerCheckPairs = new HashMap<>();
+
 
     public static void sendDoubleCannonsActivationRequest(CardContext context) {
 
@@ -334,7 +333,7 @@ public abstract class CombatZoneEffect {
 
         if (projectileIndex == combatZone.getProjectiles().size()) {
 
-            projectileIndexes.remove(lobbyManager);
+            resetState(lobbyManager);
             context.goToEndPhase();
             context.executePhase();
             return;
@@ -471,5 +470,14 @@ public abstract class CombatZoneEffect {
                 map.put(context.getCurrentGame(), new Pair<>(current, player));
             }
         }
+    }
+    private static void resetState(LobbyManager game) {
+        projectileIndexes.remove(game);
+        trunksPerGame.remove(game);
+        minCrewMembersCheckPairs.remove(game);
+        levelCombatZone.remove(game);
+        minFirePowerCheckPairs.remove(game);
+        minEnginePowerCheckPairs.remove(game);
+
     }
 }

@@ -820,9 +820,8 @@ public class ClientController implements Observer {
      *
      * @param x the x
      * @param y the y
-     * @throws ExecutionException the execution exception
      */
-    public void setCurrentPos(int x, int y) throws ExecutionException {
+    public void setCurrentPos(int x, int y)  {
         Position pos = new Position(x, y);
         Ship ship = myModel.getMyInfo().getShip();
 
@@ -839,7 +838,7 @@ public class ClientController implements Observer {
      *
      * @throws InvalidTilePosition if position is invalid
      */
-    public void handleTilePlacement() throws InvalidTilePosition {
+    public void handleTilePlacement() {
         if (currentTileInHand == null) {
             view.showGenericMessage("No tile selected.", false);
             view.showBuildingMenu();

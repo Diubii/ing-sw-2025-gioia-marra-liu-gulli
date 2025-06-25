@@ -170,6 +170,7 @@ public class PiratesEffect {
             rewardTaken.remove(game);
             projectileVictimIndexes.remove(game);
             broadcastGameMessage(context,"Nessuno è stato sconfitto, nessuno subirà l'attacco dei cannoni. L'effetto della carta è terminato");
+            resetState(game);
             context.goToEndPhase();
             context.executePhase();
             return;
@@ -186,6 +187,7 @@ public class PiratesEffect {
             rewardTaken.remove(game);
             projectileVictimIndexes.remove(game);
 
+            resetState(game);
             context.goToEndPhase();
             context.executePhase();
             return;
@@ -304,4 +306,12 @@ public class PiratesEffect {
         context.executePhase();
     }
     //fare  player.sendMessage(new YourTurnEnd());
+    private static void resetState(LobbyManager game) {
+        losersPerGame.remove(game);
+        projectileIndexes.remove(game);
+        trunksPerGame.remove(game);
+        rewardTaken.remove(game);
+        projectileVictimIndexes.remove(game);
+        currentDiceRoll.remove(game);
+    }
 }

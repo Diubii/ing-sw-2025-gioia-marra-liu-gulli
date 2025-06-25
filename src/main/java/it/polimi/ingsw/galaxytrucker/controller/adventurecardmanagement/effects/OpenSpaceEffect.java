@@ -73,14 +73,17 @@ public abstract class OpenSpaceEffect {
         //Cleanup
 
 
-        playerToPowerMapPerGame.get(game).clear();
+      resetState(game);
+        context.nextPhase();
+        context.executePhase();
+    }
+
+    private static void resetState(LobbyManager game) {
+
         playerToPowerMapPerGame.remove(game);
-
-
         //Execute CommonEffects::end
         originRankedPlayers.remove(game);
         playerIndex.remove(game);
-        context.nextPhase();
-        context.executePhase();
+
     }
 }
