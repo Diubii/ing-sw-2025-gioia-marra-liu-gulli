@@ -5,7 +5,7 @@ Prova finale del corso di ingegneria del software - Galaxy Trucker in Java.
 ### Componenti del Gruppo:
 
 - Filippo Gulli 
-- Daniele Liu
+- Daniele Junjie Liu
 - Alessandro Giuseppe Gioia
 - Mattia Marra
 
