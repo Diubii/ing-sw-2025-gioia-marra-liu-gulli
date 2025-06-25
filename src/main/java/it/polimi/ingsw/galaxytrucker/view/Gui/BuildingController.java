@@ -232,35 +232,30 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * Takes faceUp tiles from model and redraws them
      */
     public void updateFaceUpTiles(){
-
-        Platform.runLater(()->{
-            listaTiles.getChildren().clear();
-            System.out.println("Building controller DEBUG: showFaceUpTiles");
-            mymodel.getFaceUpTiles().forEach(tile -> {
-                String tileIdVal = String.valueOf(tile.getId());
-                String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-                Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
-                ImageView imgView = new ImageView(img);
+        listaTiles.getChildren().clear();
+        System.out.println("Building controller DEBUG: showFaceUpTiles");
+        mymodel.getFaceUpTiles().forEach(tile -> {
+            String tileIdVal = String.valueOf(tile.getId());
+            String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+            Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
+            ImageView imgView = new ImageView(img);
 
 
-                imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
-                imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
+            imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
+            imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
 
-                // Imposta rotazione in base alla tile
-                imgView.setRotate(tile.getRotation()); // supponendo che getRotation() restituisca 0/90/180/270
+            // Imposta rotazione in base alla tile
+            imgView.setRotate(tile.getRotation()); // supponendo che getRotation() restituisca 0/90/180/270
 
-                imgView.setOnMouseClicked(event -> {
-                    if(clientController.getCurrentTileInHand() == null){
-                        clientController.handleChooseFaceUpTile(tile);
-                    }
-                    // Puoi fare qualsiasi altra azione qui
-                });
-
-                listaTiles.getChildren().add(imgView);
+            imgView.setOnMouseClicked(event -> {
+                if(clientController.getCurrentTileInHand() == null){
+                    clientController.handleChooseFaceUpTile(tile);
+                }
+                // Puoi fare qualsiasi altra azione qui
             });
 
+            listaTiles.getChildren().add(imgView);
         });
-
     }
 
 
