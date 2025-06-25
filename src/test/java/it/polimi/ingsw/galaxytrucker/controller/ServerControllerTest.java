@@ -6,6 +6,7 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.TileRegistry;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
+import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DrawTileResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.PlaceTileResponse;
@@ -18,6 +19,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +29,7 @@ public class ServerControllerTest {
     FakeClientHandler handler1, handler2;
     ServerController serverController;
     GameTestHelper.GameTestContext context;
+    ClientController clientController1, clientController2;
 
     @BeforeEach
     void setUp() {
@@ -42,9 +45,29 @@ public class ServerControllerTest {
         responses.put("TestPlayer2", new ArrayList<>());
 
         context = GameTestHelper.setupGameForBuildingPhase(responses, players);
-        handler1 = (FakeClientHandler) context.nicknameToHandlerMap.get("TestPlayer");
-        handler2 = (FakeClientHandler) context.nicknameToHandlerMap.get("TestPlayer2");
+        handler1 = (FakeClientHandler) GameTestHelper.GameTestContext.nicknameToHandlerMap.get("TestPlayer");
+        handler2 = (FakeClientHandler) GameTestHelper.GameTestContext.nicknameToHandlerMap.get("TestPlayer2");
+        clientController1 =  GameTestHelper.GameTestContext.nicknameToClientControllerMap.get("TestPlayer");
+        clientController2 =  GameTestHelper.GameTestContext.nicknameToClientControllerMap.get("TestPlayer2");
+
         serverController = context.serverController;
+    }
+
+
+    @Test
+    void testHandleServerInfo(){
+        System.out.println(clientController1.getPhase());
+        SERVER_INFO fakeServerInfo = new SERVER_INFO("localhost",5000);
+        clientController1.handleServerInfo(fakeServerInfo);
+
+    }
+
+    @Test
+    void testHandleNicknameInput(){
+
+        SERVER_INFO fakeServerInfo = new SERVER_INFO("localhost",5000);
+        clientController1.handleNicknameInput("TestPlayer.>");
+
     }
 
 
@@ -290,6 +313,8 @@ public class ServerControllerTest {
 
     @Test
     void testHandleEarlyLandingRequest(){
+
+        serverController.removeClient(handler1);
         player1 = new Player("TestPlayer", 0, 1, true);
         player2 = new Player("TestPlayer2", 0, 2, true);
 
@@ -347,6 +372,6 @@ public class ServerControllerTest {
         serverController.handleHeartbeatRequest(heartbeatRequest, clientHandler);
 
     }
-
+     
 
 }

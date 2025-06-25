@@ -120,6 +120,32 @@ public class MockResponsesFactory {
                 )));
         return responses;
     }
+    public static Map<String, ArrayList<NetworkMessage>> forAbandonedStation_Abis(ArrayList<Player> players,  AbandonedStation card) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+        Player playerA = players.get(0);
+        Ship newShipA = playerA.getShip();
+        ArrayList<Good> goodsToLoad  = card.getGoods();
+        ArrayList<Position> normalPositions = new ArrayList<>();
+        ArrayList<Position> specialPositions = new ArrayList<>();
+        normalPositions.add(new Position(2, 3));
+        normalPositions.add(new Position(2, 3));
+        loadGoodsIntoShip(newShipA, goodsToLoad, normalPositions, specialPositions);
+
+        responses.put("A", new ArrayList<>(
+                List.of(
+                        new ActivateAdventureCardResponse(false),
+                        new ShipUpdate(newShipA, "A")
+                )));
+        responses.put("B", new ArrayList<>(
+                List.of(
+                        new ActivateAdventureCardResponse(false)
+                )));
+        responses.put("C", new ArrayList<>(
+                List.of(new ActivateAdventureCardResponse(false)
+                )));
+        return responses;
+    }
+
 
     public static Map<String, ArrayList<NetworkMessage>> forOpenSpace() {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();

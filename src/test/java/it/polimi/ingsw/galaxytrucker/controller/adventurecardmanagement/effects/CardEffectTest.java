@@ -269,6 +269,55 @@ class CardEffectTest {
 
     }
 
+    @Test
+    void testAbandonedStation_Abis() {
+        List<AdventureCard> cards = CardTestUtils.loadCardsByType("Stazione abbandonata", 2);
+        AdventureCard card = cards.getFirst();
+        assertNotNull(card);
+        assertEquals("Stazione abbandonata", card.getName());
+        System.out.println("Carta pescata: " + card.getName());
+        assertTrue(card instanceof AbandonedStation);
+
+        AbandonedStation abandonedStationCard = (AbandonedStation) card;
+
+        GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
+
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
+        Player first = rankedPlayers.getFirst();
+        first.replaceShip(MockShipFactory.createMockShip()); //per test a non serve
+        Player second =rankedPlayers.get(1);
+        Player third = rankedPlayers.get(2);
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createMockShip(),
+                        MockShipFactory.createMockShip(),
+                        MockShipFactory.createMockShip()
+                )
+        ));
+
+        int positionFirstPlayer = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(first.getColor());
+        System.out.println("Player 'A' position : "  + positionFirstPlayer );
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forAbandonedStation_Abis(rankedPlayers, abandonedStationCard);
+        responses.forEach((nick, responseList) -> {
+            FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
+            handler.setMockResponses(responseList);
+        });
+
+        ctx.lobby.getGameController().getCardDeckTest().clear();
+        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(first.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
 
     /**
      * Tests the behavior of the "Abandoned Station" adventure card when none of the players
