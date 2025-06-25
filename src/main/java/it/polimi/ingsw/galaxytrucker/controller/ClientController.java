@@ -877,7 +877,7 @@ public class ClientController implements Observer {
                 resetCurrentPos();
                 currentTileInHand = null;
                 isPlaced = true;
-                //view.showTile(currentTileInHand);
+                view.showTile(null);
             }
             default -> {
                 //Rida tile in mano se non era valido
@@ -897,11 +897,13 @@ public class ClientController implements Observer {
             return;
         }
 
+
         PlaceTileRequest request = new PlaceTileRequest(currentTileInHand, slotIndex);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
         safeSendMessage(request);
+
     }
 
 
