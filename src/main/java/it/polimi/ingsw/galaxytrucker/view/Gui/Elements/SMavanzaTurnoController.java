@@ -17,6 +17,9 @@ public class SMavanzaTurnoController {
         this.flightController = flightController;
     }
 
+    /**
+     * Tells the client controller to signal the server that the player wants to land early
+     */
     public void landEarly(){
       clientController.handleEarlyLandingRequest();
       GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
@@ -24,6 +27,9 @@ public class SMavanzaTurnoController {
       flightController.setReadyForNextTurn();
     }
 
+    /**
+     * Tells the client controller to signal the server that the player is ready for the next turn
+     */
     public void nextTurn(){
         clientController.handleReadyTurnRequest();
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");

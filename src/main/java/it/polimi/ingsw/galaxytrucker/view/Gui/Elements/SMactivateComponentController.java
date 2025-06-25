@@ -33,15 +33,26 @@ public class SMactivateComponentController {
         batteryPositions = new ArrayList<>();
     }
 
+    /**
+     * Adds the position to the message that will be sent to the server to execute the activation of that component
+     * @param position
+     */
     public void addComponentPosition(Position position){
         componentPositions.add(position);
     }
 
 
+    /**
+     * Adds the position of a batterySlot that has been used to activate a component
+     * @param position
+     */
     public void addBatteryPosition(Position position){
         batteryPositions.add(position);
     }
 
+    /**
+     * At the end of the activation process asks the client controller to send the server the response about what the player chose to activate
+     */
     public void sendPositions(){
         clientController.handleActivateComponentResponse(activatableComponent, componentPositions, batteryPositions);
         flightController.resetInHandBattery();

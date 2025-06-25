@@ -84,6 +84,10 @@ public class GuiJavaFx implements View {
 
     }
 
+    /**
+     * Connects Mouse and Keyboard events to the clientController for rotating Tiles
+     * @param controller
+     */
     public void initializeController(ClientController controller) {
         this.controller = controller;
         primaryScene.setOnKeyPressed(event -> {
@@ -104,11 +108,11 @@ public class GuiJavaFx implements View {
             }
         });
     }
-
     @Override
     public Boolean autoShowUpdates() {
         return true;
     }
+
 
     public static void playWavSoundEffect(String sound){
         try {
@@ -129,6 +133,11 @@ public class GuiJavaFx implements View {
         }
     }
 
+    /**
+     * Shows a custom dialog for asking a Yes or No input to the user.
+     * @param message
+     * @return
+     */
     public Boolean ShowCustomConfirmDialog( String message) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/galaxytrucker/GuiPages/Dialogs/ConfirmDialog.fxml"));
@@ -154,6 +163,9 @@ public class GuiJavaFx implements View {
         }
     }
 
+    /**
+     * Closes the app
+     */
     public void CloseApplication(){
         musicManager.stopBackgroundMusic();
         primaryStage.close();
@@ -161,32 +173,39 @@ public class GuiJavaFx implements View {
         System.exit(0);
     }
 
+
     //<editor-fold desc="FOLD: LoginConnect">
+
+    /**
+     * Shows the interface to "login" and connect to the server
+     */
     public void askServerInfo() {
+        if(actualPageController == null || actualPageController.pageName() != "LoginConnectPage"){
+            Platform.runLater(() -> {
+                System.out.println("DEBUG: askServerInfo");
 
+                Parent root;
+                FXMLLoader loader;
+                try {
+                    //1-Prima caricare FXML
+                    loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/galaxytrucker/GuiPages/LoginConnect.fxml"));
+                    root = loader.load();
+                    //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
+                    LoginConnectController pageController = loader.getController();
+                    pageController.initialSetupSmall(this,primaryStage,musicManager);
+                    actualPageController = pageController;
+                    //3-impostare la nuova root alla scena principale
+                    primaryScene.setRoot(root);
 
-        Platform.runLater(() -> {
-            System.out.println("DEBUG: askServerInfo");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            Parent root;
-            FXMLLoader loader;
-            try {
-                //1-Prima caricare FXML
-                loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/galaxytrucker/GuiPages/LoginConnect.fxml"));
-                root = loader.load();
-                //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
-                LoginConnectController pageController = loader.getController();
-                pageController.initialSetupSmall(this,primaryStage,musicManager);
-                actualPageController = pageController;
-                //3-impostare la nuova root alla scena principale
-                primaryScene.setRoot(root);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        });
+            });
+        }
     }
+
+
     @Override
     public void askNickname() {
         System.out.println("DEBUG: askNickname");
@@ -203,7 +222,9 @@ public class GuiJavaFx implements View {
     }
 
 
-
+    /**
+     * Shows the main Menu with the options to create a Lobby or Join one
+     */
     @Override
     public void askJoinOrCreateRoom() {
         System.out.println("DEBUG: askJoinOrCreateRoom");
@@ -232,6 +253,9 @@ public class GuiJavaFx implements View {
         });
     }
 
+    /**
+     * Shows the interface to create a new Lobby
+     */
     @Override
     public void askCreateRoom() {
         System.out.println("DEBUG: askJoinOrCreateRoom");
@@ -261,6 +285,10 @@ public class GuiJavaFx implements View {
     }
 
 
+    /**
+     * Show the interface that displays the list of lobbies of the server
+     * @param lobbies
+     */
     @Override
     public void showLobbies(List<LobbyInfo> lobbies) {
         System.out.println("DEBUG: showLobbies");
@@ -290,7 +318,10 @@ public class GuiJavaFx implements View {
     }
 
 
-
+    /**
+     * Shows a message that the player joined
+     * @param playerInfo
+     */
     @Override
     public void showPlayerJoined(PlayerInfo playerInfo) {
         System.out.println("DEBUG: showPlayerJoined");
@@ -314,9 +345,14 @@ public class GuiJavaFx implements View {
                 e.printStackTrace();
             }
         });
-        showGenericMessage("Player joined: " + playerInfo,false);
+        showGenericMessage("Player joined: " + playerInfo.getNickName(),false);
     }
 
+    /**
+     * Shows the lobby interface with the specified list of players
+     * @param myInfo
+     * @param playerInfo
+     */
     @Override
     public void showPlayersLobby( PlayerInfo myInfo,ArrayList<PlayerInfo> playerInfo) {
         System.out.println("DEBUG: showPlayersLobby");
@@ -330,6 +366,9 @@ public class GuiJavaFx implements View {
                 //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                 LobbyController pageController = loader.getController();
                 pageController.initialSetup(this,controller,controller.getMyModel(),primaryStage,musicManager);
+                if(playerInfo.size() == 0){
+                    playerInfo.add(myInfo);
+                }
                 pageController.updatePlayersList(playerInfo);
                 actualPageController = pageController;
                 //3-impostare la nuova root alla scena principale
@@ -345,6 +384,11 @@ public class GuiJavaFx implements View {
         //Gestite con sottomenu prefatti e controller di quelle pagine specifici
     }
 
+    /**
+     * Handles updates of the game phase changing the interface or signaling interface controllers to
+     * modify their appearence. Starts a Thread for the Timer functionality to update their status every second.
+     * @param update
+     */
     @Override
     public void handlePhaseUpdate(PhaseUpdate update) {
         System.out.println("DEBUG: handlePhaseUpdate "+update.getState().name());
@@ -393,6 +437,9 @@ public class GuiJavaFx implements View {
         }
     }
 
+    /**
+     * Shows the interface for the Building Phase
+     */
     @Override
     public void showBuildingMenu() {
         System.out.println("DEBUG: showBuildingMenu");
@@ -427,6 +474,9 @@ public class GuiJavaFx implements View {
         showFaceUpTiles();
     }
 
+    /**
+     * Asks the BuildingController to update the tiles with the current model
+     */
     @Override
     public void showFaceUpTiles() {
         System.out.println("DEBUG: showFaceUpTiles");
@@ -465,8 +515,11 @@ public class GuiJavaFx implements View {
         //Gestito con eventi di click
     }
 
+    /**
+     * Signals the Building Controller to show/update the tile currently in hand
+     * @param tile
+     */
     @Override
-    //Todo: rinominare a showInHandTile?
     public void showTile(Tile tile) {
         //Associare al cursore per poi poter rilasciare su nave in pratica
         //Chiamato solo per la inHandTile
@@ -543,6 +596,9 @@ public class GuiJavaFx implements View {
 
     private CrewInitUpdate crewInitUpdate;
     @Override
+    /**
+     * Sets up the CrewInitUpdate
+     */
     public void chooseCrew(Ship myShip) throws ExecutionException, InterruptedException, IOException {
         //Inizializza il crew init update
         crewInitUpdate = new CrewInitUpdate();
@@ -570,6 +626,11 @@ public class GuiJavaFx implements View {
 
     }
 
+    /**
+     * Edits the position in the CrewInitUpdate based on the defined rotations of possible crews
+     * @param x
+     * @param y
+     */
     public void editPositionCrew(int x,int y){
         ModularHousingUnit currentHousingUnit = ((ModularHousingUnit) controller.getMyModel().getMyInfo().getShip().getShipBoard()[x][y].getTile().getMyComponent());
 
@@ -642,6 +703,9 @@ public class GuiJavaFx implements View {
         crewInitUpdate.addCrewPos( new Pair<>(position,currentHousingUnit.getAlienColor()));
     }
 
+    /**
+     * Asks the clientController to send the CrewInitUpdate
+     */
     public void confirmCrew(){
         //Senda l'update
         controller.handleCrewInitUpdate(crewInitUpdate);

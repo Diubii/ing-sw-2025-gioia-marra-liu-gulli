@@ -21,7 +21,10 @@ public class SMLoadCrewController {
     }
 
 
-    //Solo pulsante che manda a controller della view principale
+    /**
+     * Triggers the GuiJavaFx to prepare the crewInit update
+     * and ask the client controller to send it to the server.
+     */
     public void confermaCrew(){
         guiJavaFx.confirmCrew();
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");

@@ -14,6 +14,11 @@ public class SMCheckShipController {
 
     }
 
+    /**
+     * Tells the client controller to send the server a request to Check the ship,
+     * the server will check the current ship in the remote model and respond.
+     * @param actionEvent
+     */
     public void checkShip(ActionEvent actionEvent) {
         clientController.handleCheckShipChoice("c");
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");

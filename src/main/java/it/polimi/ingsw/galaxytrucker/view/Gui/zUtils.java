@@ -29,10 +29,10 @@ public class zUtils {
      * Stackpane
      *    -> ImageView for the tile image
      *    -> AnchorPane
-     *            -> Image for storage slots batteries ...
+     *       -> Image for storage slots batteries ...
      * To handle the tile orientation the stackpane is rotated
      * and each subimage that needs it like crew or goods is counterrotated accordingly
-     *
+     * Rigs every cell with che instructions to handle the event of mouse click in every scenario of the game.
      * @param ship
      * @param griglia
      */

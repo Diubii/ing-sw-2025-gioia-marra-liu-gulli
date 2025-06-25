@@ -64,6 +64,9 @@ public class SMtronconiController {
         }
     }
 
+    /**
+     * Sends the server the id of the chosen ship
+     */
     public void confirmChoice(){
         if(shipToggleGroup.getSelectedToggle() != null){
             container.getChildren().removeLast();

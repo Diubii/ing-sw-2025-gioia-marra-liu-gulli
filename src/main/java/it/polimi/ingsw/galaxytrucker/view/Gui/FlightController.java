@@ -415,10 +415,14 @@ public class FlightController extends GenericGamePhaseSceneController {
         }
     }
 
+    /**
+     * Tells the FlightBoard controller to update based on the current model
+     */
     public void updateBoard(){
         System.out.println("Flight controller: UpdateBoard");
         flightBoardController.updateBoard(clientController.getMyModel().getFlightBoard());
     }
+
 
     public void showCurrentAdventureCard(){
         int id = mymodel.getCurrentAdventureCard().getID();
@@ -507,6 +511,10 @@ public class FlightController extends GenericGamePhaseSceneController {
 
     }
 
+    /**
+     * Provides the user the list of possible ships to choose in the event of a split of his ship
+     * @param tronconi
+     */
     @Override
     public void chooseTroncone(ArrayList<Ship> tronconi) {
         //Fa uscire sotto menu in cui creo una shipView con radioButton per ogni ship

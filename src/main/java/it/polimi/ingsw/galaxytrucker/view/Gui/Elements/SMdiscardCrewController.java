@@ -30,6 +30,12 @@ public class SMdiscardCrewController {
         lblConteggio.setText("0/"+Integer.toString(total));
     }
 
+    /**
+     * Adds the position of the ship where the user chose to discard a crew memeber to a collection,
+     * if the required amount of discarded crew is reached sends the server a message with the positions
+     * of the discarded crew.
+     * @param position
+     */
     public void add(Position position) {
         //se uguali termina e manda update
         housingPositions.add(position);
