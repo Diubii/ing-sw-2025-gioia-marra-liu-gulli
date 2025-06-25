@@ -29,10 +29,7 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
         return NetworkMessageType.NicknameResponse;
     }
 
-    @Override
-    public NetworkMessageType visit(AdventureCardExampleResponse adventureCardExampleResponse) {
-        return null;
-    }
+
 
     @Override
     public NetworkMessageType visit(JoinRoomResponse joinRoomResponse) {
@@ -105,10 +102,6 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
         return null;
     }
 
-    @Override
-    public NetworkMessageType visit(TileDrawnUpdate tileDrawnUpdate) {
-        return null;
-    }
 
     @Override
     public NetworkMessageType visit(TileDiscardedUpdate tileDiscardedUpdate) {
@@ -120,10 +113,7 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
         return NetworkMessageType.PlaceTileResponse;
     }
 
-    @Override
-    public NetworkMessageType visit(FetchShipResponse fetchShipResponse) {
-        return NetworkMessageType.FetchShipRequest;
-    }
+
 
 
     @Override
@@ -226,15 +216,8 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
         return NetworkMessageType.DiscardCrewMembersRequest;
     }
 
-    @Override
-    public NetworkMessageType visit(SellGoodsRequest sellGoodsRequest) {
-        return NetworkMessageType.SellGoodsResponse;
-    }
 
-    @Override
-    public NetworkMessageType visit(SellGoodsResponse sellGoodsResponse) {
-        return NetworkMessageType.SellGoodsRequest;
-    }
+
 
     @Override
     public NetworkMessageType visit(GameMessage gameMessage) {
@@ -256,10 +239,6 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
         return null;
     }
 
-    @Override
-    public NetworkMessageType visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest) {
-        return null;
-    }
 
     @Override
     public NetworkMessageType visit(EarlyLandingRequest earlyLandingRequest) {

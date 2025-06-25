@@ -111,6 +111,9 @@ public abstract class MeteorSwarmEffect {
             ArrayList<Ship> troncs = player.getShip().getTronc();
             if(troncs.size()!=1){
 
+                System.out.println();
+                System.out.println("asktroc need");
+
                 needToAskTrunkReq.get(game).add(player);
                 trunkOptions
                         .computeIfAbsent(game, g -> new HashMap<>())
@@ -193,13 +196,18 @@ public abstract class MeteorSwarmEffect {
             context.resetFSM();
             context.executePhase();
         } else { //Finito
-            projectileCounters.remove(game);
-            diceRolls.remove(game);
-
+            resetState(context.getCurrentGame());
             //Execute CommonEffects::end
             context.goToEndPhase();
             context.executePhase();
         }
     }
 
+    private static void resetState(LobbyManager game) {
+        projectileCounters.remove(game);
+        diceRolls.remove(game);
+        needToAskTrunkReq.remove(game);
+        trunkOptions.remove(game);
+        askTrunkReceived.remove(game);
+    }
 }

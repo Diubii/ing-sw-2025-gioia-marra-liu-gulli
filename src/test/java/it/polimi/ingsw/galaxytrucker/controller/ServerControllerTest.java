@@ -1,35 +1,23 @@
-package it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
+package it.polimi.ingsw.galaxytrucker.controller;
 
-import it.polimi.ingsw.galaxytrucker.controller.ClientController;
-import it.polimi.ingsw.galaxytrucker.controller.ServerController;
 import it.polimi.ingsw.galaxytrucker.model.Player;
-import it.polimi.ingsw.galaxytrucker.model.Ship;
-import it.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.FakeClientHandler;
-import it.polimi.ingsw.galaxytrucker.model.adventurecards.Planets;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.TileRegistry;
-import it.polimi.ingsw.galaxytrucker.network.Heartbeat;
-import it.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
-import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskTrunkResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DrawTileResponse;
-import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.JoinRoomOptionsResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.PlaceTileResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 import it.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -312,6 +300,7 @@ public class ServerControllerTest {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
         responses.put("TestPlayer", new ArrayList<>());
         responses.put("TestPlayer2", new ArrayList<>());
+        serverController.getMessageManager();
 
         context = GameTestHelper.setupGame(responses,players);
         ClientHandler clientHandler1 = context.nicknameToHandlerMap.get("TestPlayer");
@@ -323,6 +312,7 @@ public class ServerControllerTest {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+
 
 
     }

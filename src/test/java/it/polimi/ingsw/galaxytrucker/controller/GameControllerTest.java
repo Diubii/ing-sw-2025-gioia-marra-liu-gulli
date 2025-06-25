@@ -1,6 +1,6 @@
-package it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
+package it.polimi.ingsw.galaxytrucker.controller;
 
-import it.polimi.ingsw.galaxytrucker.controller.GameController;
+import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.MockResponsesFactory;
 import it.polimi.ingsw.galaxytrucker.enums.ProjectileDirection;
 import it.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
 import it.polimi.ingsw.galaxytrucker.enums.ProjectileType;

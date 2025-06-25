@@ -126,11 +126,11 @@ public class GameController {
     public void handleTurn() {
         AdventureCard drawnAdventureCard = getCardDeckTest().pop();
 
-//        if(getPlayingPlayers().size() == 1){
-//            while(drawnAdventureCard.getName().equals("Zona Guerra")){
-//                drawnAdventureCard = getCardDeckTest().pop();
-//            }
-//        }
+        if(getPlayingPlayers().size() == 1){
+            while(drawnAdventureCard.getName().equals("Zona Guerra")){
+                drawnAdventureCard = getCardDeckTest().pop();
+            }
+        }
 
         DrawnAdventureCardUpdate drawnAdventureCardUpdate = new DrawnAdventureCardUpdate(drawnAdventureCard);
         game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(drawnAdventureCardUpdate)); //Mando drawnAdventureCardUpdate a tutti i player

@@ -73,6 +73,18 @@ class MockShipFactoryTest {
         System.out.println("export component " + ship.getnExposedConnector() );
 
     }
+
+    @Test
+    void testCreateShipCreateHighFirePowerShip2()  {
+        Ship ship = MockShipFactory.createHighFirePowerShip2();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
+
+    }
     @Test
     void testCreateMockShipForCheckShip()  {
         Ship ship = MockShipFactory.createMockShipForCheckShip();
@@ -123,6 +135,18 @@ class MockShipFactoryTest {
     @Test
     void  testCreateEasyDestroyedShip()  {
         Ship ship = MockShipFactory.createEasyDestroyedShip();
+        System.out.println(ship);
+        ShipPrintUtils.printShip(ship);
+        System.out.println("nCrew "+ship.getnCrew());
+        System.out.println("min Engine power " + ship.calculateEnginePower());
+        System.out.println("min fire power "  + ship.calculateFirePower());
+        System.out.println("export component " + ship.getnExposedConnector() );
+
+    }
+
+    @Test
+    void  testCreateEasyDestroyedShip2()  {
+        Ship ship = MockShipFactory.createEasyDestroyedShip2();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
         System.out.println("nCrew "+ship.getnCrew());

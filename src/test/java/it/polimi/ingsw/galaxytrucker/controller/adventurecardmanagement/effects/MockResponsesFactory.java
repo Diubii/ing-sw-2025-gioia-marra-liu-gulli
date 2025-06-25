@@ -577,6 +577,34 @@ public class MockResponsesFactory {
         return responses;
     }
 
+    public static Map<String, ArrayList<NetworkMessage>> forSmugglers_PlayerA_DefeatedEnemyB(ArrayList<Player> players) {
+        Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
+
+        int i=0;
+        Player playerA = players.get(i);
+        Ship shipA = playerA.getShip();
+        ArrayList<Position>  centralHousingUnit = shipA.getComponentPositionsFromName("CentralHousingUnit");
+        ArrayList<Position>  discardCrewPositionsA = new ArrayList<>();
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+        discardCrewPositionsA.add(centralHousingUnit.get(0));
+
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+
+                        new CollectRewardsResponse(false),
+                        new ShipUpdate(shipA,playerA.getNickName())
+
+                )));
+
+
+        return responses;
+    }
+
     public static Map<String, ArrayList<NetworkMessage>> forSmugglers_PlayerA_TieCondition(ArrayList<Player> players) {
         Map<String, ArrayList<NetworkMessage>> responses = new HashMap<>();
 
@@ -745,7 +773,10 @@ public class MockResponsesFactory {
                 List.of(
                         new ActivateComponentResponse(ActivatableComponent.DoubleEngine,
                                 players.get(i).getShip().getComponentPositionsFromName("DoubleEngine"),
-                                players.get(i).getShip().getComponentPositionsFromName("Battery"))
+                                players.get(i).getShip().getComponentPositionsFromName("Battery")),
+                        new AskTrunkResponse(0,playerANickname),
+                        new AskTrunkResponse(0,playerANickname),
+                        new AskTrunkResponse(0,playerANickname)
                         //new DiscardCrewMembersResponse()
                 )));
 
@@ -757,7 +788,14 @@ public class MockResponsesFactory {
                                 players.get(i).getShip().getComponentPositionsFromName("Battery")),
                         new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
                                 players.get(i).getShip().getComponentPositionsFromName("DoubleCannon"),
-                                players.get(i).getShip().getComponentPositionsFromName("Battery"))
+                                players.get(i).getShip().getComponentPositionsFromName("Battery")),
+                        new DiscardCrewMembersResponse(
+                                players.get(i).getShip().getComponentPositionsFromName("CentralHousingUnit")
+                        ),
+                        new AskTrunkResponse(0,playerBNickname),
+                        new AskTrunkResponse(0,playerBNickname),
+                        new AskTrunkResponse(0,playerBNickname)
+
 
                 )));
 
@@ -770,7 +808,11 @@ public class MockResponsesFactory {
                         new DiscardCrewMembersResponse(players.get(i).getShip().getComponentPositionsFromName("CentralHousingUnit")),
                         new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
                                 players.get(i).getShip().getComponentPositionsFromName("DoubleCannon"),
-                                players.get(i).getShip().getComponentPositionsFromName("Battery"))
+                                players.get(i).getShip().getComponentPositionsFromName("Battery")),
+                        new AskTrunkResponse(0,playerBNickname),
+                        new AskTrunkResponse(0,playerBNickname),
+                        new AskTrunkResponse(0,playerBNickname)
+
                                 )));
         return responses;
     }

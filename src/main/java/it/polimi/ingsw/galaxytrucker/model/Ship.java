@@ -333,8 +333,8 @@ public class Ship implements Serializable {
         //ComponentNameVisitor visitor = new ComponentNameVisitor();
         //if (tile != null && tile.getMyComponent() != null) {
 
-        Position viewPos = new Position(pos.getX()+4, pos.getY()+5);
-        System.out.println("STO ELIMIMANDO" + viewPos);
+
+        System.out.println("STO ELIMIMANDO" + pos.toOffsetString());
 
         if (!isNormalRemove) {
             brokenPositions.add(pos);

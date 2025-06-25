@@ -1,33 +1,17 @@
-package it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
+package it.polimi.ingsw.galaxytrucker.controller;
 
-import it.polimi.ingsw.galaxytrucker.controller.ClientController;
-import it.polimi.ingsw.galaxytrucker.controller.FakeClientController;
-import it.polimi.ingsw.galaxytrucker.controller.ServerController;
 import it.polimi.ingsw.galaxytrucker.model.Player;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.FakeClientHandler;
-import it.polimi.ingsw.galaxytrucker.model.game.Game;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskPositionResponse;
-import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.JoinRoomResponse;
-import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.NicknameResponse;
-import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.AskPositionUpdate;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.CrewInitUpdate;
 import it.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
-import it.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
-import it.polimi.ingsw.galaxytrucker.view.Tui.FakeTUI;
-import it.polimi.ingsw.galaxytrucker.view.Tui.Tui;
-import it.polimi.ingsw.galaxytrucker.view.View;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameTestHelper {

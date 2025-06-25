@@ -121,7 +121,7 @@ public class ComponentPrintVisitor implements ComponentVisitorInterface<String[]
                 case RED -> sb.append(RED).append("█").append(RESET);
                 case BLUE -> sb.append(BLUE).append("█").append(RESET);
                 case GREEN -> sb.append(GREEN).append("█").append(RESET);
-                case YELLOW -> sb.append(BRIGHT_YELLOW).append("█").append(RESET);
+                case YELLOW -> sb.append(YELLOW).append("█").append(RESET);
             }
 
         }

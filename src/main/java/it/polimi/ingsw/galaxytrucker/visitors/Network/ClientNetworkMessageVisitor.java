@@ -91,18 +91,10 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
         return null;
     }
 
-    @Override
-    public Void visit(FetchShipResponse fetchShipResponse) {
-        clientController.completeFuture(fetchShipResponse);
-        return null;
-    }
 
 
 
-    @Override
-    public Void visit(AdventureCardExampleResponse adventureCardExampleResponse) {
-        return null;
-    }
+
 
     @Override
     public Void visit(JoinRoomResponse joinRoomResponse) {
@@ -145,12 +137,6 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
     @Override
     public Void visit(CheckShipStatusResponse checkShipStatusResponse) {
         clientController.handleCheckShipStatusResponse(checkShipStatusResponse);
-        return null;
-    }
-
-    @Override
-    public Void visit(TileDrawnUpdate tileDrawnUpdate) {
-//        clientController.handleTileDrawnUpdate(tileDrawnUpdate);
         return null;
     }
 
@@ -279,15 +265,9 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
         return null;
     }
 
-    @Override
-    public Void visit(SellGoodsRequest sellGoodsRequest) {
-        return null;
-    }
 
-    @Override
-    public Void visit(SellGoodsResponse sellGoodsResponse) {
-        return null;
-    }
+
+
 
     @Override
     public Void visit(GameMessage gameMessage) {
@@ -307,10 +287,7 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
         return null;
     }
 
-    @Override
-    public Void visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest) {
-        return null;
-    }
+
 
     @Override
     public Void visit(HeartbeatRequest heartbeatRequest) {

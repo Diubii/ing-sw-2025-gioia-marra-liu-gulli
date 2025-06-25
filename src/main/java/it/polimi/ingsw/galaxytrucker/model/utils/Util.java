@@ -244,7 +244,7 @@ public class Util {
                 }
                 break;
             case 90:
-                if (!tempIP.contains(ovest) && inBoundaries(ovest.getX(), ovest.getY()) && P.getShipBoard()[ovest.getX()][ovest.getY()].getTile() != null) {
+                if (!tempIP.contains(est) && inBoundaries(est.getX(), est.getY()) && P.getShipBoard()[est.getX()][est.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;
@@ -254,7 +254,7 @@ public class Util {
                 }
                 break;
             case 270:
-                if (!tempIP.contains(est) && inBoundaries(est.getX(), est.getY()) && P.getShipBoard()[est.getX()][est.getY()].getTile() != null) {
+                if (!tempIP.contains(ovest) && inBoundaries(ovest.getX(), ovest.getY()) && P.getShipBoard()[ovest.getX()][ovest.getY()].getTile() != null) {
                     wellConnected = false;
                 }
                 break;

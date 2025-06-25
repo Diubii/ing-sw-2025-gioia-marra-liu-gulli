@@ -511,13 +511,13 @@ public class ClientController implements Observer {
      * Sends the current ship state to the server for update.
      */
     public void sendShipUpdate() {
-        //if(myModel.getMyInfo().getShip().getLastTile()!=null) {
+        if(myModel.getMyInfo().getShip().getLastTile()!=null) {
             ShipUpdate update = new ShipUpdate(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
             currentPosition = null;
             currentTileInHand = null;
             update.setOnlyFix(true);
             safeSendMessage(update);
-        //}
+        }
     }
 
 
@@ -827,8 +827,8 @@ public class ClientController implements Observer {
         Ship ship = myModel.getMyInfo().getShip();
 
         if (!Util.inBoundaries(pos.getX(), pos.getY()) || ship.getInvalidPositions().contains(pos)) {
-            Position toShowPosition = new Position(pos.getX() + 4, pos.getY() + 5);
-            throw new IllegalArgumentException("Invalid Position" + toShowPosition);
+
+            throw new IllegalArgumentException("Invalid Position" + pos.toOffsetString());
         }
 
         currentPosition = pos;

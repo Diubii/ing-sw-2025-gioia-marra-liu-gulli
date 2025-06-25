@@ -28,10 +28,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.NicknameRequest;
     }
 
-    @Override
-    public NetworkMessageType visit(AdventureCardExampleResponse response) {
-        return NetworkMessageType.AdventureCardExampleResponse;
-    }
+
 
     @Override
     public NetworkMessageType visit(JoinRoomResponse response) {
@@ -150,10 +147,7 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.TileDiscardedUpdate;
     }
 
-    @Override
-    public NetworkMessageType visit(TileDrawnUpdate tileDrawnUpdate) {
-        return NetworkMessageType.TileDrawnUpdate;
-    }
+
 
     @Override
     public NetworkMessageType visit(EndTimerUpdate endTimerUpdate) {
@@ -165,10 +159,6 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.PhaseUpdate;
     }
 
-    @Override
-    public NetworkMessageType visit(FetchShipResponse fetchShipResponse) {
-        return NetworkMessageType.FetchShipResponse;
-    }
 
     @Override
     public NetworkMessageType visit(DrawnAdventureCardUpdate drawnAdventureCardUpdate) {
@@ -230,15 +220,9 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.DiscardCrewMembersResponse;
     }
 
-    @Override
-    public NetworkMessageType visit(SellGoodsRequest sellGoodsRequest) {
-        return NetworkMessageType.SellGoodsRequest;
-    }
 
-    @Override
-    public NetworkMessageType visit(SellGoodsResponse sellGoodsResponse) {
-        return NetworkMessageType.SellGoodsResponse;
-    }
+
+
 
     @Override
     public NetworkMessageType visit(GameMessage gameMessage) {
@@ -261,10 +245,6 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.HeartbeatRequest;
     }
 
-    @Override
-    public NetworkMessageType visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest) {
-        return NetworkMessageType.DrawAdventureCardRequest;
-    }
 
     @Override
     public NetworkMessageType visit(EarlyLandingRequest earlyLandingRequest) {

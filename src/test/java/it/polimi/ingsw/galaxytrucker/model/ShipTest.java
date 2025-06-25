@@ -336,6 +336,33 @@ class ShipTest {
 
         }
 
+        System.out.println("Next Test");
+        System.out.println();
+        ship = MockShipFactory.createEasyDestroyedShip();
+        ShipPrintUtils.printShip(ship);
+
+        ship.removeTile(new Position(3,2), false);
+        Troncons = ship.getTronc();
+
+        for (Ship ship1: Troncons){
+            ShipPrintUtils.printShip(ship1);
+
+        }
+
+
+
+        System.out.println("Next Test");
+        System.out.println();
+        ship = MockShipFactory.createEasyDestroyedShip();
+        ShipPrintUtils.printShip(ship);
+
+        ship.removeTile(new Position(2,2), false);
+        Troncons = ship.getTronc();
+
+        for (Ship ship1: Troncons){
+            ShipPrintUtils.printShip(ship1);
+
+        }
     }
 
 

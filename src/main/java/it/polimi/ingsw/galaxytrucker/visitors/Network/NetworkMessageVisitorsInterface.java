@@ -14,8 +14,6 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(NicknameRequest nicknameRequest);
 
-    T visit(AdventureCardExampleResponse adventureCardExampleResponse);
-
     T visit(JoinRoomResponse joinRoomResponse);
 
     T visit(NicknameResponse nicknameResponse);
@@ -28,11 +26,9 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(DrawTileRequest drawTileRequest);
 
-
     T visit(ShipUpdate shipUpdate);
 
     T visit(SERVER_INFO serverInfo);
-
 
     T visit(CheckShipStatusResponse checkShipStatusResponse);
 
@@ -46,14 +42,9 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(PlayerKickedUpdate playerKickedUpdate);
 
-
-    T visit(TileDrawnUpdate tileDrawnUpdate);
-
     T visit(TileDiscardedUpdate tileDiscardedUpdate);
 
     T visit(PlaceTileRequest placeTileRequest);
-
-    T visit(FetchShipResponse fetchShipResponse);
 
     T visit(EndTimerUpdate endTimerUpdate);
 
@@ -72,7 +63,6 @@ public interface NetworkMessageVisitorsInterface<T> {
     T visit(DecksUpdate decksUpdate);
 
     T visit(FlightBoardUpdate flightBoardUpdate);
-
 
     T visit(FaceUpTileUpdate faceUpTileUpdate);
 
@@ -96,10 +86,6 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(DiscardCrewMembersResponse discardCrewMembersResponse);
 
-    T visit(SellGoodsRequest sellGoodsRequest);
-
-    T visit(SellGoodsResponse sellGoodsResponse);
-
     T visit(GameMessage gameMessage);
 
     T visit(HeartbeatRequest heartbeatRequest);
@@ -108,20 +94,19 @@ public interface NetworkMessageVisitorsInterface<T> {
 
     T visit(EndTurnUpdate endTurnUpdate);
 
-    T visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest);
-
     T visit(EarlyLandingRequest earlyLandingRequest);
 
     T visit(ReadyTurnRequest readyTurnRequest);
 
     T visit(CollectRewardsRequest collectRewardsRequest);
+
     T visit(CollectRewardsResponse collectRewardsResponse);
 
     T visit(AskTrunkRequest askTrunkRequest);
+
     T visit(AskTrunkResponse askTrunkResponse);
 
     T visit(GameEndUpdate gameEndUpdate);
-
 
     T visit(AskTimerInfoRequest askTimerInfoRequest);
 

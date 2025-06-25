@@ -116,13 +116,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-
-    @Override
-    public Void visit(TileDrawnUpdate tileDrawnUpdate) {
-        return null;
-    }
-
-
     //PlaceTile
 
     @Override
@@ -141,10 +134,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
 
-    @Override
-    public Void visit(FetchShipResponse fetchShipResponse) {
-        return null;
-    }
+
 
     //Discard
     @Override
@@ -202,11 +192,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
     }
 
 
-    @Override
-    public Void visit(AdventureCardExampleResponse adventureCardExampleResponse) {
-        return null;
-        //controllo se c'e una pending di questo tipo
-    }
+
 
 
     @Override
@@ -343,16 +329,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @Override
-    public Void visit(SellGoodsRequest sellGoodsRequest) {
-        return null;
-    }
-
-    @NeedsToBeCompleted
-    @Override
-    public Void visit(SellGoodsResponse sellGoodsResponse) {
-        return null;
-    }
 
     @Override
     public Void visit(GameMessage gameMessage) {
@@ -374,10 +350,6 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @Override
-    public Void visit(AskDrawAdventureCardRequest askDrawAdventureCardRequest) {
-        return null;
-    }
 
     @Override
     public Void visit(PlayerLostUpdate playerLostUpdate) {
