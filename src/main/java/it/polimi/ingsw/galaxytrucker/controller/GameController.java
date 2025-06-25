@@ -115,7 +115,7 @@ public class GameController {
             miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), cardDeckTest.getSize());
             rankedPlayersIterator = rankedPlayers.iterator();
         } else {
-            miu = new MatchInfoUpdate("", game.getRealGame().getFlightDeck().getSize());
+            miu = new MatchInfoUpdate("", 0);
         }
 
         game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(miu));

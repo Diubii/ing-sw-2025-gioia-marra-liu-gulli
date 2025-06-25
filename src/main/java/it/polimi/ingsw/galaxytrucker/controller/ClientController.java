@@ -1479,7 +1479,7 @@ public class ClientController implements Observer {
     public void handlePlayerKickedUpdate(PlayerKickedUpdate playerKickedUpdate) {
         if (playerKickedUpdate.getNickname().equals(this.getNickname())) {
             view.showGenericMessage("You've been kicked from the game!", false);
-            System.err.println("QUESTO!!!");
+            //System.err.println("QUESTO!!!");
         } else {
             view.showGenericMessage(playerKickedUpdate.getNickname() + " got kicked out of the game!", false);
         }
