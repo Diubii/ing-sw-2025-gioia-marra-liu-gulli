@@ -33,17 +33,17 @@ e bisogna assicurarsi che venga utilizzata per l'esecuzione la versione corretta
   - Per il Server  
 
   
-    java -Dfile.encoding=UTF-8 -jar GalaxyTrucker-Server.jar
+    `java -Dfile.encoding=UTF-8 -jar GalaxyTrucker-Server.jar`
 
   - Per la Tui (Interfaccia testuale)
 
 
-    java -Dfile.encoding=UTF-8 -jar GalaxyTrucker-TUI.jar
+    `java -Dfile.encoding=UTF-8 -jar GalaxyTrucker-TUI.jar`
 
   - Per la Gui (Interfaccia Grafica)
 
 
-    javaw --module-path extra\openjfx\javafx-controls;extra\openjfx\javafx-fxml;extra\openjfx\javafx-graphics;extra\openjfx\javafx-base ^ --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base ^ -jar GalaxyTrucker-GUI.jar
+    `javaw --module-path extra\openjfx\javafx-controls;extra\openjfx\javafx-fxml;extra\openjfx\javafx-graphics;extra\openjfx\javafx-base --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base -jar GalaxyTrucker-GUI.jar`
 
 abbiamo incluso nel progetto nella cartella dei Jar JavaFx per semplificare la procedura di avvio.
 
