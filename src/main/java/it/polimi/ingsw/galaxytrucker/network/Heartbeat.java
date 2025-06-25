@@ -21,7 +21,7 @@ public class Heartbeat extends Thread {
     public Heartbeat(ServerController serverController, ClientHandler clientHandler) {
         this.serverController = serverController;
         this.clientHandler = clientHandler;
-        this.setPriority(Thread.MAX_PRIORITY);
+        //this.setPriority(Thread.MAX_PRIORITY);
     }
 
     public ClientHandler getClientHandler() {

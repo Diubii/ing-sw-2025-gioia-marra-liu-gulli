@@ -410,7 +410,7 @@ public class GuiJavaFx implements View {
                     }
                 });
 
-                timerThread.setDaemon(true);
+                timerThread.setDaemon(false);
                 timerThread.start();
 
             break;

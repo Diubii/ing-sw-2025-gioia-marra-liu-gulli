@@ -47,8 +47,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -79,7 +78,7 @@ public class ClientController implements Observer {
     private Position currentPosition;
     private Position tmpCurrentPosition;
     private final ClientPhaseController clientPhaseController = new ClientPhaseController(this);
-    private Thread heartbeat;
+    //private Thread heartbeat;
     private final AtomicBoolean isConnectionAlive = new AtomicBoolean(false);
 
 
@@ -162,7 +161,14 @@ public class ClientController implements Observer {
         message.accept(messageVisitor);
     }
 
-
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r);
+        t.setName("HeartbeatThread");
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.setDaemon(false);
+        return t;
+    });
+    private ScheduledFuture<?> heartbeatTask;
     /**
      * Connects the client to the specified server using either Socket or RMI.
      * Starts the heartbeat to ensure connection remains alive.
@@ -184,25 +190,16 @@ public class ClientController implements Observer {
         }
 
         isConnectionAlive.set(true);
-        heartbeat = getHeartbeatThread();
-        heartbeat.start();
+        heartbeatTask = scheduler.scheduleAtFixedRate(getHeartbeatTask(), 0, 1, TimeUnit.SECONDS); //Invia subito e poi ogni secondo
     }
 
-    private Thread getHeartbeatThread() {
-        Thread heartbeat = new Thread(() -> {
+    private Runnable getHeartbeatTask() {
+        return (() -> {
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
-            while (true) {
-                try {
-                    if (!safeSendMessage(heartbeatRequest)) return;
-                    //System.out.println("[ClientController] Sent heartbeat.");
-                    Thread.sleep(Duration.ofSeconds(1));
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
+            safeSendMessage(heartbeatRequest);
+            //System.out.println("Sent heartbeat: " + System.currentTimeMillis());
+                //System.out.println("[ClientController] Sent heartbeat.");
         });
-        heartbeat.setPriority(Thread.MAX_PRIORITY);
-        return heartbeat;
     }
 
     /**
@@ -1482,6 +1479,7 @@ public class ClientController implements Observer {
     public void handlePlayerKickedUpdate(PlayerKickedUpdate playerKickedUpdate) {
         if (playerKickedUpdate.getNickname().equals(this.getNickname())) {
             view.showGenericMessage("You've been kicked from the game!", false);
+            System.err.println("QUESTO!!!");
         } else {
             view.showGenericMessage(playerKickedUpdate.getNickname() + " got kicked out of the game!", false);
         }
@@ -1830,12 +1828,16 @@ public class ClientController implements Observer {
             return true;
         } catch (IOException e) {
             if (isConnectionAlive.getAndSet(false)) {
+
+                if(heartbeatTask != null && !heartbeatTask.isCancelled()) {
+                    heartbeatTask.cancel(true);
+                }
+
                 myModel = new ClientModel();
                 MenuManager.clearConsole();
                 view.forceReset();
                 view.showGenericMessage("Connessione al server persa, verrai riportato alla schermata di connessione.", true);
                 new Thread(() -> view.askServerInfo()).start();
-                heartbeat.interrupt();
             }
             return false;
         }
