@@ -7,7 +7,7 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 public class ComponentNameVisitor implements ComponentVisitorInterface<String> {
     @Override
     public String visit(Component component) {
-        return "";
+        return "Component";
     }
 
     @Override

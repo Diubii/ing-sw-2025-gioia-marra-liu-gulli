@@ -14,6 +14,7 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.Act
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.AskTrunkRequest;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskTrunkResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
+import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.util.ArrayList;
@@ -88,6 +89,8 @@ public abstract class MeteorSwarmEffect {
 
     public static void unleashTheMeteorSwarm(CardContext context) {
         System.out.println("UnleashTheMeteorSwarm");
+
+
         LobbyManager game = context.getCurrentGame();
         MeteorSwarm meteorSwarm = (MeteorSwarm) context.getAdventureCard();
 
@@ -95,9 +98,16 @@ public abstract class MeteorSwarmEffect {
         Projectile projectile = meteorSwarm.getMeteors().get(projectileIndex);
 
 
+
         int diceRoll = diceRolls.get(game);
         needToAskTrunkReq.putIfAbsent(game,new ArrayList<>());
+
         for (Player player : context.getCurrentRankedPlayers()) {
+            //
+            System.out.println("Before attack " + player.getNickName());
+            ShipPrintUtils.printShip(player.getShip());
+
+
              Tile removedTile= game.getGameController().reactToProjectile(player, projectile, diceRoll);
              if (removedTile != null) {
                  ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
@@ -120,6 +130,11 @@ public abstract class MeteorSwarmEffect {
                         .put(player, troncs);
             }
 
+            //
+            System.out.println("After attack" + player.getNickName());
+            ShipPrintUtils.printShip(player.getShip());
+
+
             ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
             broadcast(context, shipUpdate);
         }
@@ -136,15 +151,15 @@ public abstract class MeteorSwarmEffect {
         System.out.println("AskTrunkReq");
         LobbyManager game = context.getCurrentGame();
         ArrayList<Player> players = needToAskTrunkReq.get(game);
-
+        context.nextPhase();
         for (Player player : players) {
             ArrayList<Ship> troncs = trunkOptions.get(game).get(player);
             AskTrunkRequest askTrunkRequest = new AskTrunkRequest(troncs);
 
-            System.out.println("Player: "+player.getNickName()+"askTrunkRequest ");
+            System.out.println("Player: "+player.getNickName()+"  askTrunkRequest ");
             sendMessage(context, player, askTrunkRequest);
         }
-        context.nextPhase();
+
     }
 
     public static void receivedTrunkRepo(CardContext context) {

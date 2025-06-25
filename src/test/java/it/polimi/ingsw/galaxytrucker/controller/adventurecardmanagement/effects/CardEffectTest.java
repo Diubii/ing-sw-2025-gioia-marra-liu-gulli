@@ -1281,45 +1281,7 @@ class CardEffectTest {
 
     }
 
-    @Test
-    void testMeteorSwarm2( ) throws RemoteException {
-        List<AdventureCard> cards = CardTestUtils.loadCardsByType("Meteoriti", 3);
-        AdventureCard card = cards.get(2);
-        assertNotNull(card);
-        assertTrue(card instanceof MeteorSwarm);
-        MeteorSwarm meteorSwarm = (MeteorSwarm) card;
 
-        GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
-
-        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
-        Player playerA = rankedPlayers.get(0);
-        Player playerB = rankedPlayers.get(1);
-        Player playerC = rankedPlayers.get(2);
-
-        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
-                Arrays.asList(
-                        MockShipFactory.createEasyDestroyedShip2(),
-                        MockShipFactory.createEasyDestroyedShip2(),
-                        MockShipFactory.createEasyDestroyedShip2()
-                )
-        ));
-
-
-        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forCombatZone(rankedPlayers);
-        responses.forEach((nick, responseList) -> {
-            FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
-            handler.setMockResponses(responseList);
-        });
-
-
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
-        ctx.serverController.handleDrawAdventureCardRequest(
-                new DrawAdventureCardRequest(),
-                ctx.nicknameToHandlerMap.get(playerA.getNickName())
-        );
-
-    }
 
     @Test
     void testMeteorSwarm( ) throws RemoteException {
@@ -1361,7 +1323,45 @@ class CardEffectTest {
 
     }
 
+    @Test
+    void testMeteorSwarm2_TestTruck( ) throws RemoteException {
+        List<AdventureCard> cards = CardTestUtils.loadCardsByType("Meteoriti", 3);
+        AdventureCard card = cards.get(2);
+        assertNotNull(card);
+        assertTrue(card instanceof MeteorSwarm);
+        MeteorSwarm meteorSwarm = (MeteorSwarm) card;
 
+        GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
+
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
+        Player playerA = rankedPlayers.get(0);
+        Player playerB = rankedPlayers.get(1);
+        Player playerC = rankedPlayers.get(2);
+
+        setPlayersShipClientSideAndServerSide(rankedPlayers, new ArrayList<>(
+                Arrays.asList(
+                        MockShipFactory.createEasyDestroyedShip2(),
+                        MockShipFactory.createEasyDestroyedShip2(),
+                        MockShipFactory.createEasyDestroyedShip2()
+                )
+        ));
+
+
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forCombatZone(rankedPlayers);
+        responses.forEach((nick, responseList) -> {
+            FakeClientHandler handler = (FakeClientHandler) ctx.nicknameToHandlerMap.get(nick);
+            handler.setMockResponses(responseList);
+        });
+
+
+        ctx.lobby.getGameController().getCardDeckTest().clear();
+        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.serverController.handleDrawAdventureCardRequest(
+                new DrawAdventureCardRequest(),
+                ctx.nicknameToHandlerMap.get(playerA.getNickName())
+        );
+
+    }
     @Test
     void testCombatZone() {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Zona Guerra", 3);

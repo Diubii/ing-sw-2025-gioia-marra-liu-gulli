@@ -544,6 +544,14 @@ public class MockShipFactory {
         Tile centralHousing = getRequiredTile(tiles, "CentralHousingUnit", 0);
         Tile doubleCannon3 = getRequiredTile(tiles, "DoubleCannon", 1);
         Tile battery2 = getRequiredTile(tiles, "BatterySlot", 1);
+        Tile battery6 = getRequiredTile(tiles, "BatterySlot", 5);
+
+        Tile component3 = getRequiredTile(tiles, "Component", 2);
+        component3.rotate(90);
+
+        Tile component4 = getRequiredTile(tiles, "Component", 3);
+
+        Tile component2 = getRequiredTile(tiles, "Component", 1);
 
 
         Tile genericCargoHold = getRequiredTile(tiles, "GenericCargoHolds", 0);
@@ -554,26 +562,25 @@ public class MockShipFactory {
 
 
 
-
-
         cannon.rotate(270);
         doubleCannon2.rotate(90);
         cannon2.rotate(180);
 
-        if(doubleCannon2 != null )ship.putTile(doubleCannon2, new Position(5, 2));
+        if(doubleCannon2 != null )ship.putTile(doubleCannon2, new Position(6, 2));
 
         if(centralHousing != null) ship.putTile(centralHousing, new Position(3, 2));
-        if(battery != null) ship.putTile(battery, new Position(2, 2));
+        if(battery != null) ship.putTile(battery, new Position(0, 2));
 
-        if(cannon != null) ship.putTile(cannon, new Position(1, 2));
-        if(doubleCannon != null) ship.putTile(doubleCannon, new Position(2, 1));
+        if(component3 != null) ship.putTile(component3, new Position(2, 2));
+        if(component4 != null) ship.putTile(component4, new Position(2, 1));
+        if(component2 != null) ship.putTile(component2, new Position(5, 2));
+        if(doubleCannon != null) ship.putTile(doubleCannon, new Position(2, 0));
         if(cannon3 != null) ship.putTile(cannon3, new Position(4, 2));
 
 
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
         if(battery2!= null) ship.putTile(battery2, new Position(2, 4));
-        if(doubleEngine != null) ship.putTile(doubleEngine, new Position(0, 2));
-        if(cannon4!= null) ship.putTile(cannon4, new Position(6, 2));
+        if(battery6!=null) ship.putTile(battery6, new Position(1, 2));
 
 
         return ship;

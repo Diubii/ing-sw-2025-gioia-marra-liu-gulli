@@ -34,7 +34,7 @@ public class GameController {
     private CardDeck cardDeckTest = new CardDeck(true);
     private Iterator<Player> rankedPlayersIterator;
     private CardContext currentCardContext;
-
+    private boolean gameAlreadyEnded;
     /**
      * Returns the current card context in use by the game controller.
      *
@@ -150,7 +150,9 @@ public class GameController {
         if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty() || cardDeck.getSize() == 0) {
             etu.setEndGame(true);
             game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(etu));
-            handleEndGame();
+            if(!gameAlreadyEnded) {
+                handleEndGame();
+            }
             return;
         }
         else{
@@ -248,7 +250,9 @@ public class GameController {
 
         if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
-            handleEndGame();
+            if(!gameAlreadyEnded) {
+                handleEndGame();
+            }
 //            completeCardDrawn();
         }
     }

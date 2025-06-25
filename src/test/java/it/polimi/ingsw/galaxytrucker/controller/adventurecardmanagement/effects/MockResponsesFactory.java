@@ -601,6 +601,19 @@ public class MockResponsesFactory {
 
                 )));
 
+        i++;
+        responses.put(players.get(i).getNickName(), new ArrayList<>(
+                List.of(
+                        new ActivateComponentResponse(
+                                ActivatableComponent.DoubleCannon,
+                                new ArrayList<>(),
+                                new ArrayList<>()
+                        ),
+
+                        new CollectRewardsResponse(true),
+                        new ShipUpdate(shipA,playerA.getNickName())
+
+                )));
 
         return responses;
     }
@@ -623,6 +636,7 @@ public class MockResponsesFactory {
                                 new ArrayList<>(),
                                 new ArrayList<>()
                         )
+
 
                 )));
         i++;
