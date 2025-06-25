@@ -333,7 +333,7 @@ public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInter
 
 
         for(int i=0; i< component.getnMaxContainers();i++){
-            System.out.println("Dimensione goods: "+component.getGoods().size());
+            System.out.println("Dimensione goods in cargoHold: "+component.getGoods().size());
             if( i < component.getGoods().size()){
                 System.out.println("Sto assegnando una merce");
                 switch (component.getGoods().get(i).getColor()){

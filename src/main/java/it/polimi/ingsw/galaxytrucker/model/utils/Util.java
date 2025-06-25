@@ -131,6 +131,11 @@ public class Util {
         //TUTTE LE 11 TIPOLOGIE DI CARTE
 
         //sembra ok
+
+        cardsToTest.add(list.get(12)); //Planets
+        cardsToTest.add(list.get(13)); //Planets
+        cardsToTest.add(list.get(14)); //Planets
+        cardsToTest.add(list.get(31)); //Planets
 //        cardsToTest.add(list.get(1)); //Contrabbandieri
 //        cardsToTest.add(list.get(10)); //Meteoriti
 //        cardsToTest.add(list.get(3)); //Stardust
@@ -146,12 +151,12 @@ public class Util {
 //
 //
          cardsToTest.add(list.get(4)); //Open Space
-        cardsToTest .add(list.get(5));
+        cardsToTest .add(list.get(5));//openspace
+
         cardsToTest .add(list.get(6));
 //         cardsToTest.add(list.get(19)); //AbandonedStation
 
 
-        cardsToTest.add(list.get(31)); //Planets
         //Si blocca sempre sembra
 //        cardsToTest.add(list.get(15)); //Zona di guerra
 

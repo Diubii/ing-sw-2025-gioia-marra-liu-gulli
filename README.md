@@ -22,7 +22,8 @@ Prova finale del corso di ingegneria del software - Galaxy Trucker in Java.
 
 ### Istruzioni di Avvio:
 
-Per avviare il gioco è necessario avere installata sul proprio dispositivo una versione di Java successiva alla 23
+Per avviare il gioco è necessario avere installata sul proprio dispositivo una versione di Java JDK superiore alla 23
+e bisogna assicurarsi che venga utilizzata per l'esecuzione la versione corretta in caso ne sia installata più di una.
 
 
 #### Avvio tramite Jar
@@ -48,7 +49,7 @@ abbiamo incluso nel progetto nella cartella dei Jar JavaFx per semplificare la p
 
 #### Avvio semplificato
 
-1. Scaricare il gioco: è possibile scaricare la cartella con gli eseguibili al [LINK](cdn.oci.diubi.dev/GalaxyTrucker-Jars.zip) cdn.oci.diubi.dev/GalaxyTrucker-Jars.zip
+1. Scaricare il gioco: è possibile scaricare la cartella con gli eseguibili al [LINK](https://cdn.oci.diubi.dev/GalaxyTrucker-Jars.zip) 
 2. Decomprimere la cartella appena scaricata
 3. Navigando nella cartella extra è possibile avviare Server, Tui o Gui semplicemente facendo click doppio. 
 

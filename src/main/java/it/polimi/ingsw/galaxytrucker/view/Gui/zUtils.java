@@ -12,6 +12,8 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 import it.polimi.ingsw.galaxytrucker.model.utils.Util;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentGuiDetailsRotationVisitor;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -42,6 +44,27 @@ public class zUtils {
         griglia.getChildren().clear();
         Slot[][] shipboard =  ship.getShipBoard();
 
+        int cornice = 30;
+        //Cornice
+        for(int i = 1; i < 8; i++){
+            StackPane stackPane = new StackPane();
+            stackPane.alignmentProperty().setValue(Pos.CENTER);
+            Label l = new Label(String.valueOf(i+3));
+            l.prefHeightProperty().setValue(cornice);
+            l.setStyle("-fx-text-fill: white;");
+            stackPane.getChildren().add(l);
+            griglia.add(stackPane, i, 0);
+        }
+        for(int i = 1; i < 6; i++) {
+            StackPane stackPane = new StackPane();
+            stackPane.alignmentProperty().setValue(Pos.CENTER);
+            Label l = new Label(String.valueOf(i + 4));
+            l.maxWidth(cornice);
+            l.setStyle("-fx-text-fill: white;");
+            stackPane.maxWidth(cornice);
+            stackPane.getChildren().add(l);
+            griglia.add(stackPane, 0, i);
+        }
         //Go over each Slot of the grid
         for (int x = 0; x < shipboard.length; x++) {
             for (int y = 0; y < shipboard[x].length; y++) {
@@ -66,8 +89,8 @@ public class zUtils {
 
                     stackPane.getChildren().add(imageView);
 
-                    imageView.fitWidthProperty().bind(griglia.prefWidthProperty().divide(7));
-                    imageView.fitHeightProperty().bind(griglia.prefHeightProperty().divide(5));
+                    imageView.fitWidthProperty().bind(griglia.prefWidthProperty().subtract(cornice).divide(7));
+                    imageView.fitHeightProperty().bind(griglia.prefHeightProperty().subtract(cornice).divide(5));
 
                     //DetailRotationVisitor handles all of the "pieces" on the tiles, all the indicators
                     if(viewDetails) {
@@ -87,8 +110,8 @@ public class zUtils {
                     imageView.setPreserveRatio(false);
                     imageView.setSmooth(true);
 
-                    imageView.fitWidthProperty().bind(griglia.prefWidthProperty().divide(7));
-                    imageView.fitHeightProperty().bind(griglia.prefHeightProperty().divide(5));
+                    imageView.fitWidthProperty().bind(griglia.prefWidthProperty().subtract(cornice).divide(7));
+                    imageView.fitHeightProperty().bind(griglia.prefHeightProperty().subtract(cornice).divide(5));
 
 
                 }
@@ -102,8 +125,8 @@ public class zUtils {
                     imageView.setPreserveRatio(false);
                     imageView.setSmooth(true);
 
-                    imageView.fitWidthProperty().bind(griglia.prefWidthProperty().divide(7));
-                    imageView.fitHeightProperty().bind(griglia.prefHeightProperty().divide(5));
+                    imageView.fitWidthProperty().bind(griglia.prefWidthProperty().subtract(cornice).divide(7));
+                    imageView.fitHeightProperty().bind(griglia.prefHeightProperty().subtract(cornice).divide(5));
                 }
 
                 GridPane.setHgrow(stackPane, Priority.ALWAYS);
@@ -237,7 +260,7 @@ public class zUtils {
                     });
                 }
 
-                griglia.add(stackPane, x, y);
+                griglia.add(stackPane, x+1, y+1);
 
             }
         }

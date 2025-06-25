@@ -60,7 +60,6 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private HBox learningMatchOverlay;
     @FXML private HBox learningMatchOverlay2;
     @FXML private HBox endBuildingOverlay;
-    @FXML private HBox endBuildingOverlay2;
     @FXML private ImageView inHandTileImage;
     @FXML private Pane overlayPane;
     @FXML private ImageView asideTile1;
@@ -187,15 +186,23 @@ public class BuildingController extends GenericGamePhaseSceneController {
     public void flipTimer(){
         ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
         boolean oneActive = false;
+        int numFlipped = 0;
         for (TimerInfo timerInfo : timerInfos) {
             if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
                 oneActive = true;
-                break;
+            }
+            if(timerInfo.isFlipped()){
+                numFlipped++;
             }
         }
-        if(!oneActive) {
+        if(!oneActive && (numFlipped != 2 || finishedBuilding)) {
             clientController.sendFlipRequest(timerInfos);
+            GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         }
+        else{
+            GuiJavaFx.playWavSoundEffect("error.wav");
+        }
+
         showTimerInfo();
     }
     @Override
@@ -407,7 +414,6 @@ public class BuildingController extends GenericGamePhaseSceneController {
         showWaitOtherPlayers(false);
         if(mymodel.isLearningMatch() == false){
             endBuildingOverlay.setVisible(true);
-            endBuildingOverlay2.setVisible(true);
         }
     }
 
