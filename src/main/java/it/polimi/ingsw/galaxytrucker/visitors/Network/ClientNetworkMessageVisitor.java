@@ -6,8 +6,7 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+
 
 
 public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterface<Void> {

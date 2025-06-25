@@ -12,15 +12,15 @@ public class PlayerScore implements Serializable {
     private final String nickName;
     private final int bestLookingShipScore;
     private final int finishOrderScore;
-    private final int goodRewardScore;
+    private final double goodRewardScore;
     private final int lossesScore;
     private final int credits;
-    private final int totalScore;
+    private final double totalScore;
 
     public PlayerScore(String nickName,
                        int bestLookingShipScore,
                        int finishOrderScore,
-                       int goodRewardScore,
+                       double goodRewardScore,
                        int lossesScore,
                        int credits) {
 
@@ -45,7 +45,7 @@ public class PlayerScore implements Serializable {
     public int getFinishOrderScore() {
         return finishOrderScore;
     }
-    public int getGoodRewardScore() {
+    public double getGoodRewardScore() {
         return goodRewardScore;
     }
     public int getLossesScore() {
@@ -54,7 +54,7 @@ public class PlayerScore implements Serializable {
     public int getCredits() {
         return credits;
     }
-    public int getTotalScore() {
+    public double getTotalScore() {
         return totalScore;
     }
 

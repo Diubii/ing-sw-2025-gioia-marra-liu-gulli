@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MockShipFactoryTest {
 
     @Test
-     void testFindTilesByComponentType() throws IOException {
+     void testFindTilesByComponentType()  {
         List<Tile> batteryTiles = MockShipFactory.findTilesByComponentType("BatterySlot");
 
         assertNotNull(batteryTiles);
@@ -26,7 +26,7 @@ class MockShipFactoryTest {
     }
 
     @Test
-        void testCreateMockShip() throws IOException {
+        void testCreateMockShip()  {
         Ship ship = MockShipFactory.createMockShip();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
@@ -167,7 +167,7 @@ class MockShipFactoryTest {
 
     }
     @Test
-    void testCreateMockShip3() throws IOException {
+    void testCreateMockShip3()  {
         Ship ship = MockShipFactory.createMockShip3();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);
@@ -179,7 +179,7 @@ class MockShipFactoryTest {
     }
 
     @Test
-    void testCreateMockShip4() throws IOException {
+    void testCreateMockShip4() {
         Ship ship = MockShipFactory.createMockShip4();
         System.out.println(ship);
         ShipPrintUtils.printShip(ship);

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+
 import java.util.concurrent.ExecutionException;
 
 public class GameController {
@@ -182,7 +182,7 @@ public class GameController {
                 .map(player -> {
                     int bestLooking = (player.getShip().getnExposedConnector() == minExposed && getRankedPlayers().contains(player)) ? 2 : 0;
                     int finishOrder = calculateFinishOrderScore(player);
-                    int reward = calculateGoodRewardScore(player);
+                    double reward = calculateGoodRewardScore(player);
                     int losses = calculateLossesScore(player);
                     int credits = player.getNCredits();
 
@@ -195,7 +195,7 @@ public class GameController {
                             credits
                     );
                 })
-                .sorted(Comparator.comparingInt(PlayerScore::getTotalScore).reversed())
+                .sorted(Comparator.comparingDouble(PlayerScore::getTotalScore).reversed())
                 .toList();
     }
     private int calculateFinishOrderScore(Player player) {
@@ -212,21 +212,22 @@ public class GameController {
         }
 
     }
-    private int calculateGoodRewardScore(Player player) {
+    private float calculateGoodRewardScore(Player player) {
         ArrayList<Good> goods = player.getShip().getGoodsOnShipBoard();
-        int score = 0;
-        for(Good good : goods){
+        float score = 0.0f;
+
+        for (Good good : goods) {
             score += good.getValue();
         }
-        double tmpScore = 0;
-        if(PlayerState.Spectating == player.getPlayerState()){
-            tmpScore = score * 0.5;
-            return (int) Math.ceil(tmpScore);
+
+        if (PlayerState.Spectating.equals(player.getPlayerState())) {
+            float tmpScore = score * 0.5f;
+            return (float) Math.ceil(tmpScore);
         }
 
         return score;
-
     }
+
     private int calculateLossesScore(Player player) {
         int score = 0;
         int LossesScore = player.getShip().getDestroyedTiles();
