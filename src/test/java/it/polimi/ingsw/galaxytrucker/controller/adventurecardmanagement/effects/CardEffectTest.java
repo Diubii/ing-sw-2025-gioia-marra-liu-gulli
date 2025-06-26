@@ -38,16 +38,7 @@ class CardEffectTest {
                     new Player(playerCNickname, 0, 3, false)
             )
     );
-    private AdventureCard loadAndAddCard(String name, int index, int nCard) {
-        List<AdventureCard> cards = CardTestUtils.loadCardsByType(name, nCard);
-        AdventureCard card = cards.get(index);
 
-        assertNotNull(card, "Card should not be null");
-        assertEquals(name, card.getName(), "Card name mismatch");
-        System.out.println("Carta pescata: " + card.getName());
-
-        return card;
-    }
 
     private void setPlayersShipClientSideAndServerSide(ArrayList<Player> players, ArrayList<Ship> ships) {
         final HashMap<String, ClientController> ntccmap = GameTestHelper.GameTestContext.nicknameToClientControllerMap;
@@ -204,7 +195,7 @@ class CardEffectTest {
         assertNotNull(card);
         assertEquals("Stazione abbandonata", card.getName());
         System.out.println("Carta pescata: " + card.getName());
-        assertTrue(card instanceof AbandonedStation);
+        assertInstanceOf(AbandonedStation.class, card);
 
         AbandonedStation abandonedStationCard = (AbandonedStation) card;
 

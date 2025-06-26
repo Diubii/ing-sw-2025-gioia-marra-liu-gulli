@@ -151,6 +151,7 @@ public class GameController {
             etu.setEndGame(true);
             game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(etu));
             if(!gameAlreadyEnded) {
+                gameAlreadyEnded = true;
                 handleEndGame();
             }
             return;
@@ -251,6 +252,7 @@ public class GameController {
         if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty()) {
             //se non ho piu giocatori completo la cardDrawn ed entro nel ramo else in handleTurn
             if(!gameAlreadyEnded) {
+                gameAlreadyEnded = true;
                 handleEndGame();
             }
 //            completeCardDrawn();

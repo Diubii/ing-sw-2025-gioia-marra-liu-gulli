@@ -22,7 +22,6 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Ship
 import it.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
 
-import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -326,10 +325,15 @@ public abstract class Utils {
 
     }
 
-    protected static void askTruck(){
-
-
+    public static void addDestroyedTilesInTrunc(Player player, ArrayList<Ship> trucks)  {
+        int removed = 0;
+        for (Ship ship : trucks) {
+            removed += ship.remainingTiles();
+        }
+        player.getShip().addDestroyedTiles(removed);
     }
+
+
 
 
 

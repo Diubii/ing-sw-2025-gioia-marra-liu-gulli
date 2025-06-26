@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameTestHelper {
@@ -47,9 +48,20 @@ public class GameTestHelper {
             clientController.handleNicknameInput(p.getNickName());
 
             if (p.equals(players.getFirst())) {
+                try {
+                    clientController.handleCreateOrJoinChoice("a");
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
                 clientController.handleCreateChoice(maxPlayers, learningFlight);
                 createdGameId = serverController.getLastCreatedGameId();
             } else {
+
+                try {
+                    clientController.handleCreateOrJoinChoice("b");
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
                 clientController.handleJoinChoice(createdGameId);
             }
 

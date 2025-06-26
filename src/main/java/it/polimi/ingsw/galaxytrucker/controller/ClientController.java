@@ -92,14 +92,6 @@ public class ClientController implements Observer {
     }
 
 
-    /**
-     * Sets the game phase.
-     *
-     * @param phase the game state to set
-     */
-    public void setPhase(GameState phase) {
-        this.phase = phase;
-    }
 
     private GameState phase = GameState.LOBBY;
     private boolean isPlaced = false;
@@ -624,9 +616,6 @@ public class ClientController implements Observer {
                     view.showGenericMessage("You are not allowed to spy on this deck!", false);
                 }
             }
-
-
-//
         } else {
             view.showGenericMessage("No card decks found.", false);
         }
@@ -836,7 +825,7 @@ public class ClientController implements Observer {
      * @throws InvalidTilePosition if position is invalid
      */
     public void handleTilePlacement() {
-        if (currentTileInHand == null) {
+        if (currentTileInHand == null ) {
             view.showGenericMessage("No tile selected.", false);
             view.showBuildingMenu();
             return;

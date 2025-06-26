@@ -380,7 +380,11 @@ public class MockResponsesFactory {
                                 batteryPosChosen),
                         new ActivateComponentResponse(ActivatableComponent.Shield,
                                 shieldChosen,
-                                batteryPosChosen)
+                                batteryPosChosen),
+                        new AskTrunkResponse(0,playerBNickname),
+                        new AskTrunkResponse(0,playerBNickname),
+                        new AskTrunkResponse(0,playerBNickname)
+
 
                 )));
 
@@ -399,7 +403,11 @@ public class MockResponsesFactory {
                                 batteryPosChosen),
                         new ActivateComponentResponse(ActivatableComponent.Shield,
                                 shieldChosen,
-                                batteryPosChosen)
+                                batteryPosChosen),
+                        new AskTrunkResponse(0,playerCNickname),
+                        new AskTrunkResponse(0,playerCNickname),
+                        new AskTrunkResponse(0,playerCNickname)
+
 
                 )));
         return responses;

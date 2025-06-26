@@ -375,7 +375,6 @@ class ShipTest {
         assertEquals(7, remainingTiles);
 
 
-
     }
 
     @Test

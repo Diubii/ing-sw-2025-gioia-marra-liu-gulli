@@ -136,17 +136,17 @@ public class Util {
         cardsToTest.add(list.get(13)); //Planets
         cardsToTest.add(list.get(14)); //Planets
         cardsToTest.add(list.get(31)); //Planets
-//        cardsToTest.add(list.get(1)); //Contrabbandieri
-//        cardsToTest.add(list.get(10)); //Meteoriti
-//        cardsToTest.add(list.get(3)); //Stardust
-//
-//
-//        cardsToTest.add(list.get(0)); //Schiavisti
-//
-//        cardsToTest.add(list.get(2)); //Pirati
-//
-//        cardsToTest.add(list.get(24)); //Epidemic
-//        cardsToTest.add(list.get(16)); //AbandonedShip
+        cardsToTest.add(list.get(1)); //Contrabbandieri
+        cardsToTest.add(list.get(10)); //Meteoriti
+        cardsToTest.add(list.get(3)); //Stardust
+
+
+        cardsToTest.add(list.get(0)); //Schiavisti
+
+        cardsToTest.add(list.get(2)); //Pirati
+
+        cardsToTest.add(list.get(24)); //Epidemic
+        cardsToTest.add(list.get(16)); //AbandonedShip
 //
 //
 //

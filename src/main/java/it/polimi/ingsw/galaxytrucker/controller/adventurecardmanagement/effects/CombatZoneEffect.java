@@ -423,8 +423,12 @@ public abstract class CombatZoneEffect {
         int indexTrunk = askTrunkResponse.getTrunkIndex();
         Player player = context.getCurrentPlayer();
 
-        Ship newShip = trunksPerGame.get(game).get(indexTrunk);
-        player.replaceShip(newShip);
+        ArrayList<Ship> trunks = trunksPerGame.get(game);
+        if (trunks != null && indexTrunk >= 0 && indexTrunk < trunks.size()) {
+            Ship newShip = trunks.remove(indexTrunk);
+            player.replaceShip(newShip);
+            addDestroyedTilesInTrunc(player,trunks);
+        }
 
         //invio a tutti la nuova nave
         broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));

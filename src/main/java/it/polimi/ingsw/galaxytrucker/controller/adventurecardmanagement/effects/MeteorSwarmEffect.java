@@ -181,15 +181,24 @@ public abstract class MeteorSwarmEffect {
             return;
         }
 
-        Ship newShip = trunkOptions.get(game).get(currentPlayer).get(indexTrunk);
-        currentPlayer.replaceShip(newShip);
+        Ship newShip;
+        ArrayList<Ship> trunks = trunkOptions.get(game).get(currentPlayer);
+        if (trunks != null && indexTrunk >= 0 && indexTrunk < trunks.size()) {
+             newShip = trunks.remove(indexTrunk);
+            currentPlayer.replaceShip(newShip);
+            broadcast(context, new ShipUpdate(newShip, currentPlayer.getNickName() ));
+            addDestroyedTilesInTrunc(currentPlayer, trunks);
+        }
+
 
         //invio a tutti la nuova nave
-        broadcast(context, new ShipUpdate(newShip, currentPlayer.getNickName() ));
 
         askTrunkReceived.merge(game, 1, Integer::sum);
 
         if(askTrunkReceived.get(game)==needToAskTrunkReq.get(game).size()){
+            needToAskTrunkReq.remove(game);
+            trunkOptions.remove(game);
+            askTrunkReceived.remove(game);
             goToEndPhaseOrReset(context);
         }
         //FSM management
