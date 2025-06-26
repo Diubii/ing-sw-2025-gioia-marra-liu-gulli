@@ -410,7 +410,7 @@ public class GuiJavaFx implements View {
                     }
                 });
 
-                timerThread.setDaemon(true);
+                timerThread.setDaemon(false);
                 timerThread.start();
 
             break;
@@ -480,9 +480,7 @@ public class GuiJavaFx implements View {
     @Override
     public void showFaceUpTiles() {
         System.out.println("DEBUG: showFaceUpTiles");
-        Platform.runLater(() -> {
-            ((BuildingController) actualPageController).updateFaceUpTiles();
-        });
+        Platform.runLater(() -> ((BuildingController) actualPageController).updateFaceUpTiles());
     }
 
     @Override

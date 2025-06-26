@@ -62,25 +62,13 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                         </HBox>
-                        <HBox fx:id="endBuildingOverlay" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="61.0" prefWidth="252.0" styleClass="OverlayPanel" stylesheets="@style.css" visible="false">
-                           <children>
-                              <Label text="Fase costruzione terminata" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </HBox>
                      </children>
                   </StackPane>
                   <StackPane fx:id="StackLeftMenu" prefHeight="374.0" prefWidth="334.0" VBox.vgrow="ALWAYS">
                      <children>
                         <HBox prefHeight="375.0" prefWidth="307.0" style="-fx-background-color: Navy;">
                            <children>
-                              <VBox prefHeight="363.0" prefWidth="175.0" style="-fx-background-color: DARKBLUE;" HBox.hgrow="ALWAYS">
+                              <VBox prefHeight="363.0" prefWidth="175.0" style="-fx-background-color: navy;" HBox.hgrow="ALWAYS">
                                  <children>
                                     <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                                        <children>
@@ -221,7 +209,7 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </HBox>
-                                    <HBox fx:id="endBuildingOverlay2" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" styleClass="OverlayPanel" stylesheets="@style.css" visible="false">
+                                    <HBox fx:id="endBuildingOverlay" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" styleClass="OverlayPanel" stylesheets="@style.css" visible="false">
                                        <children>
                                           <Label text="Fase Costruzione Terminata" textFill="WHITE">
                                              <font>
@@ -267,6 +255,9 @@
                      <children>
                         <StackPane fx:id="myShipZone" prefHeight="299.0" prefWidth="365.0" HBox.hgrow="ALWAYS" />
                      </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
                   </HBox>
                   <HBox prefHeight="31.0" prefWidth="365.0" />
                </children>

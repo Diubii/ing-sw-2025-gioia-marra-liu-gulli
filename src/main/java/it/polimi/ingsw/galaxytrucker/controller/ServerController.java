@@ -1240,6 +1240,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     public void handleShipUpdate(ShipUpdate shipUpdate, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
             LobbyManager game = getLobbyFromHandler(clientHandler);
+
+
+
+
             if (shipUpdate.getOnlyFix()) {
                 String nickname = getNicknameFromClientHandler(clientHandler);
                 Player myPlayer = game.getRealGame().getPlayer(nickname);
@@ -1257,8 +1261,15 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 broadCast(playerHandlers, update);
             }
 
+
             if (game.getGameController().getGameState() == GameState.FLIGHT) {
                 if(game.getGameController().getCurrentCardContext() != null) {
+
+                    //Caricamento merci
+                    String nickname = getNicknameFromClientHandler(clientHandler);
+                    Player myPlayer = game.getRealGame().getPlayer(nickname);
+                    myPlayer.replaceShip(shipUpdate.getShipView());
+
                     game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(shipUpdate);
                     tryExecutePhaseAfterMessage(game, shipUpdate.accept(networkMessageNameVisitor));
                 }
