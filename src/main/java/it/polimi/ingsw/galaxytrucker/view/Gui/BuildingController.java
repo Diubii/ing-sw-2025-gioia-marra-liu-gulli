@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BuildingController extends GenericGamePhaseSceneController {
 
@@ -69,6 +70,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private Label lblTimer1;
     @FXML private Label lblTimer2;
     @FXML private Label lblTimer3;
+
 
 
     private ArrayList<SingleShipController> shipControllers;
@@ -171,9 +173,9 @@ public class BuildingController extends GenericGamePhaseSceneController {
      */
     public void showTimerInfo(){
 
+        ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
+        List<Label> timerLabels = List.of(lblTimer1,lblTimer2,lblTimer3);
         Platform.runLater(()->{
-            ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
-            List<Label> timerLabels = List.of(lblTimer1,lblTimer2,lblTimer3);
             if (timerInfos != null) {
                 for (int i = 0; i < timerInfos.size(); i++) {
                     if (timerInfos.get(i).isFlipped()) {
@@ -193,7 +195,6 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * asks the client controler to send a flip timer request
      */
     public void flipTimer(){
-        Platform.runLater(()->{
             ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
             boolean oneActive = false;
             int numFlipped = 0;
@@ -214,7 +215,6 @@ public class BuildingController extends GenericGamePhaseSceneController {
             }
 
             showTimerInfo();
-        });
 
     }
     @Override
@@ -244,30 +244,36 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * Takes faceUp tiles from model and redraws them
      */
     public void updateFaceUpTiles(){
-        listaTiles.getChildren().clear();
-        System.out.println("Building controller DEBUG: showFaceUpTiles");
-        mymodel.getFaceUpTiles().forEach(tile -> {
-            String tileIdVal = String.valueOf(tile.getId());
-            String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-            Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
-            ImageView imgView = new ImageView(img);
+        Platform.runLater(()->{
+            listaTiles.getChildren().clear();
+            System.out.println("Building controller DEBUG: showFaceUpTiles");
+            try{
+                 mymodel.getFaceUpTiles().forEach(tile -> {
+                    String tileIdVal = String.valueOf(tile.getId());
+                    String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+                    Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
+                    ImageView imgView = new ImageView(img);
 
 
-            imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
-            imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
+                    imgView.fitHeightProperty().bind(scrollListaTiles.widthProperty().divide(4.5));
+                    imgView.fitWidthProperty().bind(imgView.fitHeightProperty());
 
-            // Imposta rotazione in base alla tile
-            imgView.setRotate(tile.getRotation()); // supponendo che getRotation() restituisca 0/90/180/270
+                    // Imposta rotazione in base alla tile Non serve tutte resettate tanto
+                    imgView.setRotate(tile.getRotation());
 
-            imgView.setOnMouseClicked(event -> {
-                if(clientController.getCurrentTileInHand() == null){
-                    clientController.handleChooseFaceUpTile(tile);
-                }
-                // Puoi fare qualsiasi altra azione qui
-            });
+                    imgView.setOnMouseClicked(event -> {
+                        if(clientController.getCurrentTileInHand() == null){
+                            clientController.handleChooseFaceUpTile(tile);
+                        }
+                    });
 
-            listaTiles.getChildren().add(imgView);
+                    listaTiles.getChildren().add(imgView);
+                 });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
+
     }
 
 
