@@ -82,6 +82,8 @@ public class GuiJavaFx implements View {
             }
         });
 
+
+
     }
 
     /**
@@ -442,10 +444,11 @@ public class GuiJavaFx implements View {
      */
     @Override
     public void showBuildingMenu() {
-        System.out.println("DEBUG: showBuildingMenu");
-        if(!actualPageController.pageName().equals("BuildingPage")){
-            System.out.println("Debug: rifaccio il building menu");
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+             System.out.println("DEBUG: showBuildingMenu");
+             if(!actualPageController.pageName().equals("BuildingPage")){
+                System.out.println("Debug: rifaccio il building menu");
+
                 Parent root;
                 FXMLLoader loader;
                 try {
@@ -465,8 +468,9 @@ public class GuiJavaFx implements View {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            });
-        }
+
+            }
+        });
     }
 
     @Override
@@ -524,13 +528,15 @@ public class GuiJavaFx implements View {
         if(tile != null) {
             System.out.println("DEBUG: showTile");
             Platform.runLater(() -> {
-                        //Gestisce il controller della pagina building:
-                        ((BuildingController) actualPageController).showDrawnTile(tile);
-                    });
-            showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName(),false);
+                //Gestisce il controller della pagina building:
+                ((BuildingController) actualPageController).showDrawnTile(tile);
+                 showGenericMessage("Tile: " + tile.getId() + ", Type: " + tile.getMyComponent().getClass().getSimpleName(),false);
+            });
         }
         else{
-            ((BuildingController) actualPageController).hideZonaPescata();
+            Platform.runLater(() -> {
+                ((BuildingController) actualPageController).hideZonaPescata();
+            });
         }
     }
 

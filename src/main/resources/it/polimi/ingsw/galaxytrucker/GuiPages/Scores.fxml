@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.galaxytrucker.view.Gui.ScoresController">
    <children>
       <HBox prefHeight="0.0" prefWidth="644.0" style="-fx-background-color: DARKBLUE;" VBox.vgrow="ALWAYS" />
@@ -59,11 +66,11 @@
                                           <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                                        </image>
                                     </ImageView>
-                                    <Text fx:id="nome1" fill="WHITE" layoutX="107.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="safsdfsd" wrappingWidth="200.0">
+                                    <Label fx:id="nome1" layoutX="98.0" layoutY="10.0" prefHeight="46.0" prefWidth="246.0" text="Label" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="31.0" />
                                        </font>
-                                    </Text>
+                                    </Label>
                                     <Label fx:id="bellezza1" layoutX="365.0" layoutY="26.0" text="Label" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
@@ -132,16 +139,16 @@
                               </AnchorPane>
                               <AnchorPane layoutX="107.0" layoutY="290.0" prefHeight="65.0" prefWidth="1022.0" styleClass="scroll-pane" stylesheets="@style.css">
                                  <children>
+                                    <Label fx:id="nome2" layoutX="97.0" layoutY="13.0" prefHeight="46.0" prefWidth="246.0" text="Label" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="31.0" />
+                                       </font>
+                                    </Label>
                                     <ImageView fx:id="avatar2" fitHeight="49.0" fitWidth="99.0" layoutX="20.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png" />
                                        </image>
                                     </ImageView>
-                                    <Text fx:id="nome2" fill="WHITE" layoutX="107.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="safsdfsd" wrappingWidth="200.0">
-                                       <font>
-                                          <Font name="System Bold" size="31.0" />
-                                       </font>
-                                    </Text>
                                     <Label fx:id="bellezza2" layoutX="365.0" layoutY="26.0" text="Label" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
@@ -177,11 +184,11 @@
                               <AnchorPane layoutX="107.0" layoutY="363.0" prefHeight="65.0" prefWidth="1022.0" styleClass="scroll-pane" stylesheets="@style.css">
                                  <children>
                                     <ImageView fx:id="avatar3" fitHeight="49.0" fitWidth="99.0" layoutX="20.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" />
-                                    <Text fx:id="nome3" fill="WHITE" layoutX="107.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="200.0">
+                                    <Label fx:id="nome3" layoutX="93.0" layoutY="10.0" prefHeight="46.0" prefWidth="246.0" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="31.0" />
                                        </font>
-                                    </Text>
+                                    </Label>
                                     <Label fx:id="bellezza3" layoutX="365.0" layoutY="26.0" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
@@ -217,11 +224,11 @@
                               <AnchorPane layoutX="107.0" layoutY="443.0" prefHeight="65.0" prefWidth="1022.0" styleClass="scroll-pane" stylesheets="@style.css">
                                  <children>
                                     <ImageView fx:id="avatar4" fitHeight="49.0" fitWidth="99.0" layoutX="20.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" />
-                                    <Text fx:id="nome4" fill="WHITE" layoutX="107.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="200.0">
+                                    <Label fx:id="nome4" layoutX="90.0" layoutY="10.0" prefHeight="46.0" prefWidth="246.0" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="31.0" />
                                        </font>
-                                    </Text>
+                                    </Label>
                                     <Label fx:id="bellezza4" layoutX="365.0" layoutY="26.0" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />

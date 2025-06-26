@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BuildingController extends GenericGamePhaseSceneController {
 
@@ -71,6 +72,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     @FXML private Label lblTimer3;
 
 
+
     private ArrayList<SingleShipController> shipControllers;
     private Boolean finishedBuilding;
     private Boolean currPhaseDone;
@@ -88,7 +90,12 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
         shipControllers = new ArrayList<>();
 
-
+        //Forza ricalcolo layout
+       /* primaryStage.iconifiedProperty().addListener((obs, wasMinimized, isNowMinimized) -> {
+            if (!isNowMinimized) {
+                Platform.runLater(() -> mainStackPane.layout());
+            }
+        });*/
 
         //Mettere tutti sottoElementi
         //Se learning match niente deck da spiare
@@ -153,9 +160,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
         });
 
         mainStackPane.setOnMouseMoved(event -> {
-            inHandTileImage.setLayoutX(event.getX() - inHandTileImage.getFitWidth() / 2);
-            inHandTileImage.setLayoutY(event.getY() - inHandTileImage.getFitHeight() / 2);
-
+            Platform.runLater(()->{
+                inHandTileImage.setLayoutX(event.getX() - inHandTileImage.getFitWidth() / 2);
+                inHandTileImage.setLayoutY(event.getY() - inHandTileImage.getFitHeight() / 2);
+            });
         });
 
     }
@@ -167,16 +175,19 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
         ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
         List<Label> timerLabels = List.of(lblTimer1,lblTimer2,lblTimer3);
-        if (timerInfos != null) {
-            for (int i = 0; i < timerInfos.size(); i++) {
-                if (timerInfos.get(i).isFlipped()) {
-                    timerLabels.get(i).setTextFill(Color.ORANGERED);
-                } else {
-                    timerLabels.get(i).setTextFill(Color.WHITE);
+        Platform.runLater(()->{
+            if (timerInfos != null) {
+                for (int i = 0; i < timerInfos.size(); i++) {
+                    if (timerInfos.get(i).isFlipped()) {
+                        timerLabels.get(i).setTextFill(Color.ORANGERED);
+                    } else {
+                        timerLabels.get(i).setTextFill(Color.WHITE);
+                    }
+                    timerLabels.get(i).setText(Integer.toString(timerInfos.get(i).getValue()));
                 }
-                timerLabels.get(i).setText(Integer.toString(timerInfos.get(i).getValue()));
             }
-        }
+        });
+
 
     }
 
@@ -184,26 +195,27 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * asks the client controler to send a flip timer request
      */
     public void flipTimer(){
-        ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
-        boolean oneActive = false;
-        int numFlipped = 0;
-        for (TimerInfo timerInfo : timerInfos) {
-            if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
-                oneActive = true;
+            ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
+            boolean oneActive = false;
+            int numFlipped = 0;
+            for (TimerInfo timerInfo : timerInfos) {
+                if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
+                    oneActive = true;
+                }
+                if(timerInfo.isFlipped()){
+                    numFlipped++;
+                }
             }
-            if(timerInfo.isFlipped()){
-                numFlipped++;
+            if(!oneActive && (numFlipped != 2 || finishedBuilding)) {
+                clientController.sendFlipRequest(timerInfos);
+                GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
             }
-        }
-        if(!oneActive && (numFlipped != 2 || finishedBuilding)) {
-            clientController.sendFlipRequest(timerInfos);
-            GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
-        }
-        else{
-            GuiJavaFx.playWavSoundEffect("error.wav");
-        }
+            else{
+                GuiJavaFx.playWavSoundEffect("error.wav");
+            }
 
-        showTimerInfo();
+            showTimerInfo();
+
     }
     @Override
     public String pageName() {
@@ -232,30 +244,36 @@ public class BuildingController extends GenericGamePhaseSceneController {
      * Takes faceUp tiles from model and redraws them
      */
     public void updateFaceUpTiles(){
-        listaTiles.getChildren().clear();
-        System.out.println("Building controller DEBUG: showFaceUpTiles");
-        mymodel.getFaceUpTiles().forEach(tile -> {
-            String tileIdVal = String.valueOf(tile.getId());
-            String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-            Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
-            ImageView imgView = new ImageView(img);
+        Platform.runLater(()->{
+            listaTiles.getChildren().clear();
+            System.out.println("Building controller DEBUG: showFaceUpTiles");
+            try{
+                 mymodel.getFaceUpTiles().forEach(tile -> {
+                    String tileIdVal = String.valueOf(tile.getId());
+                    String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+                    Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
+                    ImageView imgView = new ImageView(img);
 
 
-            imgView.fitWidthProperty().bind(listaTiles.widthProperty().divide(4.5));
-            imgView.fitHeightProperty().bind(listaTiles.widthProperty().divide(4.5));
+                    imgView.fitHeightProperty().bind(scrollListaTiles.widthProperty().divide(4.5));
+                    imgView.fitWidthProperty().bind(imgView.fitHeightProperty());
 
-            // Imposta rotazione in base alla tile
-            imgView.setRotate(tile.getRotation()); // supponendo che getRotation() restituisca 0/90/180/270
+                    // Imposta rotazione in base alla tile Non serve tutte resettate tanto
+                    imgView.setRotate(tile.getRotation());
 
-            imgView.setOnMouseClicked(event -> {
-                if(clientController.getCurrentTileInHand() == null){
-                    clientController.handleChooseFaceUpTile(tile);
-                }
-                // Puoi fare qualsiasi altra azione qui
-            });
+                    imgView.setOnMouseClicked(event -> {
+                        if(clientController.getCurrentTileInHand() == null){
+                            clientController.handleChooseFaceUpTile(tile);
+                        }
+                    });
 
-            listaTiles.getChildren().add(imgView);
+                    listaTiles.getChildren().add(imgView);
+                 });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
+
     }
 
 
@@ -301,26 +319,23 @@ public class BuildingController extends GenericGamePhaseSceneController {
             details = false;
         }
 
-        Boolean finalEditable = editable;
-        Platform.runLater(()->{
 
-            for( int i = 0; i<shipControllers.size(); i++){
+        for( int i = 0; i<shipControllers.size(); i++){
 
-                if(shipControllers.get(i).getNicknameOfPlayer().equals(Nickname)) {
+            if(shipControllers.get(i).getNicknameOfPlayer().equals(Nickname)) {
 
-                    if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
+                if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
 
 
-                                zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController, finalEditable,details,null,null);
+                            zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController, editable,details,null,null);
 
-                    } else {
+                } else {
 
-                        zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null,null);
-                    }
+                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null,null);
                 }
             }
+        }
 
-        });
 
         //potrebbe essere uno ship update con questa modifica
         updateSetAsideTiles();
@@ -528,17 +543,15 @@ public class BuildingController extends GenericGamePhaseSceneController {
      */
     public void showDrawnTile(Tile tile){
 
-        Platform.runLater(()->{
-            String tileIdVal = String.valueOf(tile.getId());
-            String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
-            Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
+        String tileIdVal = String.valueOf(tile.getId());
+        String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
+        Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
 
-            inHandTileImage.setImage(img);
-            inHandTileImage.setRotate(tile.getRotation());
-            inHandTileImage.setVisible(true);
-            inHandTileImage.setFitHeight(100.00);
-            inHandTileImage.setFitWidth(100.00);
-        });
+        inHandTileImage.setImage(img);
+        inHandTileImage.setRotate(tile.getRotation());
+        inHandTileImage.setVisible(true);
+        inHandTileImage.setFitHeight(100.00);
+        inHandTileImage.setFitWidth(100.00);
 
     }
 
