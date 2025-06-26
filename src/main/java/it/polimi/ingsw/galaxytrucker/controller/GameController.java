@@ -115,7 +115,7 @@ public class GameController {
             miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), cardDeckTest.getSize());
             rankedPlayersIterator = rankedPlayers.iterator();
         } else {
-            miu = new MatchInfoUpdate("", game.getRealGame().getFlightDeck().getSize());
+            miu = new MatchInfoUpdate("", 0);
         }
 
         game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(miu));
@@ -437,7 +437,7 @@ public class GameController {
     public ArrayList<Player> getRankedPlayers() {
 
 //        return new ArrayList<>(getPlayingPlayers().stream().sorted(Comparator.comparingInt(Player::getPlacement)).toList()); //Shallow copy, i players non sono clonati quindi vengono mantenuti i riferimenti //Prendiamo i giocatori che stanno giocando
-ArrayList<Color> rankedColors = game.getRealGame().getFlightBoard().getRankedPlayers();
+        ArrayList<Color> rankedColors = game.getRealGame().getFlightBoard().getRankedPlayers();
         ArrayList<Player> rankedPlayers = new ArrayList<>();
         for (Color color : rankedColors) {
             String nickname = game.getNicknameFromColor(color);

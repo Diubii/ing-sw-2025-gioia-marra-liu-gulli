@@ -279,14 +279,16 @@ public class MockResponsesFactory {
                                 doubleCannonPosChosen,
                                 batteryPosChosen),
 
+
                         new ActivateComponentResponse(ActivatableComponent.Shield,
                                 doubleCannonPosChosen,
                                 batteryPosChosen),
                         new ActivateComponentResponse(ActivatableComponent.Shield,
                                 doubleCannonPosChosen,
-                                batteryPosChosen)
-
-
+                                batteryPosChosen),
+                        new AskTrunkResponse(0,players.get(i).getNickName()),
+                        new AskTrunkResponse(0,players.get(i).getNickName()),
+                         new AskTrunkResponse(0,players.get(i).getNickName())
                 )));
 
         i++;
@@ -304,7 +306,10 @@ public class MockResponsesFactory {
                                 batteryPosChosen),
                         new ActivateComponentResponse(ActivatableComponent.Shield,
                                 shieldChosen,
-                                batteryPosChosen)
+                                batteryPosChosen),
+                        new AskTrunkResponse(0,players.get(i).getNickName()),
+                        new AskTrunkResponse(0,players.get(i).getNickName()),
+                        new AskTrunkResponse(0,players.get(i).getNickName())
 
                 )));
 
@@ -323,7 +328,10 @@ public class MockResponsesFactory {
                                 batteryPosChosen),
                         new ActivateComponentResponse(ActivatableComponent.Shield,
                                 shieldChosen,
-                                batteryPosChosen)
+                                batteryPosChosen),
+                        new AskTrunkResponse(0,players.get(i).getNickName()),
+                        new AskTrunkResponse(0,players.get(i).getNickName()),
+                        new AskTrunkResponse(0,players.get(i).getNickName())
                 )));
         return responses;
     }
@@ -849,9 +857,9 @@ public class MockResponsesFactory {
                         new ActivateComponentResponse(ActivatableComponent.DoubleCannon,
                                 players.get(i).getShip().getComponentPositionsFromName("DoubleCannon"),
                                 players.get(i).getShip().getComponentPositionsFromName("Battery")),
-                        new AskTrunkResponse(0,playerBNickname),
-                        new AskTrunkResponse(0,playerBNickname),
-                        new AskTrunkResponse(0,playerBNickname)
+                        new AskTrunkResponse(0,playerCNickname),
+                        new AskTrunkResponse(0,playerCNickname),
+                        new AskTrunkResponse(0,playerCNickname)
 
                                 )));
         return responses;
