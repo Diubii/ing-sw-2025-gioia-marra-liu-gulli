@@ -26,10 +26,10 @@ public class ScoresController extends GenericSceneController {
     @FXML private ImageView avatar2;
     @FXML private ImageView avatar3;
     @FXML private ImageView avatar4;
-    @FXML private Text nome1;
-    @FXML private Text nome2;
-    @FXML private Text nome3;
-    @FXML private Text nome4;
+    @FXML private Label nome1;
+    @FXML private Label nome2;
+    @FXML private Label nome3;
+    @FXML private Label nome4;
     @FXML private Label bellezza1;
     @FXML private Label bellezza2;
     @FXML private Label bellezza3;
@@ -70,7 +70,7 @@ public class ScoresController extends GenericSceneController {
 
     public void updateScores(ArrayList<PlayerScore> scores){
         List<ImageView> avatars = List.of(avatar1,avatar2, avatar3, avatar4);
-        List<Text> names = List.of(nome1,nome2, nome3, nome4);
+        List<Label> names = List.of(nome1,nome2, nome3, nome4);
         List<Label> bellezze = List.of(bellezza1,bellezza2, bellezza3, bellezza4);
         List<Label> ordine = List.of(ordine1,ordine2, ordine3, ordine4);
         List<Label> perdite = List.of(perdite1,perdite2, perdite3, perdite4);

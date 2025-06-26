@@ -14,11 +14,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="mainStackPane" prefHeight="400.0" prefWidth="623.0" style="-fx-background-color: #00f7ff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.galaxytrucker.view.Gui.BuildingController">
+<StackPane fx:id="mainStackPane" minHeight="800.0" minWidth="900.0" prefHeight="400.0" prefWidth="623.0" style="-fx-background-color: #00f7ff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.galaxytrucker.view.Gui.BuildingController">
    <children>
       <HBox style="-fx-background-color: ORANGE;">
          <children>
-            <VBox prefHeight="400.0" prefWidth="6.0" HBox.hgrow="ALWAYS">
+            <VBox minHeight="800.0" minWidth="200.0" prefHeight="400.0" prefWidth="6.0" HBox.hgrow="ALWAYS">
                <children>
                   <StackPane prefHeight="54.0" prefWidth="252.0" style="-fx-background-color: navy;">
                      <children>
@@ -154,7 +154,7 @@
                   </StackPane>
                </children>
             </VBox>
-            <VBox prefHeight="400.0" prefWidth="109.0" style="-fx-background-color: navy;" HBox.hgrow="ALWAYS">
+            <VBox minHeight="800.0" minWidth="300.0" prefHeight="400.0" prefWidth="109.0" style="-fx-background-color: navy;" HBox.hgrow="ALWAYS">
                <children>
                   <HBox prefHeight="77.0" prefWidth="245.0" styleClass="OverlayPanel" stylesheets="@style.css">
                      <children>
