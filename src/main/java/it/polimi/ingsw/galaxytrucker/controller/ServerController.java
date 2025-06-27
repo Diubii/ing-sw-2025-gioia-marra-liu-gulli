@@ -1437,17 +1437,19 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
 
-            ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
-            TimerInfo timer = timerInfos.stream().filter(t -> !t.isFlipped()).findFirst().orElse(null);
+            synchronized (myGame.timerLock) {
+                ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
+                TimerInfo timer = timerInfos.stream().filter(t -> !t.isFlipped()).findFirst().orElse(null);
 
-            if (timer == null) return;
+                if (timer == null) return;
 
 //        timer.setTimerStatus(TimerStatus.STARTED);
-            timer.setFlipped(true);
+                timer.setFlipped(true);
 
-            boolean lastTimer = (timer.getIndex() == myGame.getRealGame().getTimerInfos().size() - 1);
+                boolean lastTimer = (timer.getIndex() == myGame.getRealGame().getTimerInfos().size() - 1);
 
-            startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()), lastTimer, timer.getIndex());
+                startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()), lastTimer, timer.getIndex());
+            }
         });
     }
 

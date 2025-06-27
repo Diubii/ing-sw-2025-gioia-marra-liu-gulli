@@ -31,7 +31,7 @@ public class LobbyManager {
     private ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> pendingResponses;
     public final Object positionLock = new Object();
     public final Object checkShipLock = new Object();
-
+    public final Object timerLock = new Object();
     //locks
 
     final public Object lock5 = new Object();
