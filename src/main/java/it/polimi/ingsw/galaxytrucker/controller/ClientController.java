@@ -30,7 +30,6 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkingUtils;
 import it.polimi.ingsw.galaxytrucker.observer.Observer;
-import it.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 import it.polimi.ingsw.galaxytrucker.view.Tui.MenuManager;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
@@ -44,11 +43,9 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.NotBoundException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -695,6 +692,12 @@ public class ClientController implements Observer {
         myModel.getTimerInfos().clear();
         myModel.getTimerInfos().addAll(timerInfoResponse.getTimerInfoList());
         view.showTimerInfos(myModel.getTimerInfos());
+
+        //se e' l'ultima e non ho gia scelto la posizione
+
+        if (timerInfoResponse.getLast()) {
+            handlePhaseUpdate(new PhaseUpdate(GameState.BUILDING_END));
+        }
     }
 
     public boolean canFlipHourglass(){

@@ -18,6 +18,8 @@ public class TimerInfoResponse extends NetworkMessage implements Serializable {
 
     private final ArrayList<TimerInfo> timerInfoList; // List of TimerInfo objects
 
+    private Boolean isLast = false;
+
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
@@ -46,5 +48,13 @@ public class TimerInfoResponse extends NetworkMessage implements Serializable {
 
     public ArrayList<TimerInfo> getTimerInfoList() {
         return timerInfoList;
+    }
+
+    public Boolean getLast() {
+        return isLast;
+    }
+
+    public void setLast(Boolean last) {
+        isLast = last;
     }
 }
