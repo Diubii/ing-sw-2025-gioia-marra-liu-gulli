@@ -260,7 +260,7 @@ public abstract class Utils {
 
     }
 
-    protected void removeBatteries(CardContext context,Player player, int batteryToDiscard) {
+       protected static void removeBatteries(CardContext context,Player player, int batteryToDiscard) {
         if (batteryToDiscard <= 0) return;
         Ship ship = player.getShip();
 
