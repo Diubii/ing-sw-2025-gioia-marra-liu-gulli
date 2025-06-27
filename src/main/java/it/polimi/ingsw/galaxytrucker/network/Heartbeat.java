@@ -12,7 +12,7 @@ public class Heartbeat extends Thread {
     private final ServerController serverController;
     private final ClientHandler clientHandler;
 
-    private final static Duration sleepDuration = Duration.ofSeconds(5);
+    private final static Duration sleepDuration = Duration.ofSeconds(15);
     private boolean canBeInterrupted = true;
 
 

@@ -327,51 +327,51 @@ public class Util {
         int dx = pos2.getX() - pos1.getX();
         int dy = pos2.getY() - pos1.getY();
 
-        System.out.println("[DEBUG] Checking connection between:");
-        System.out.println("  Tile1 Pos: " + pos1 + ", Connectors: " + conns1);
-        System.out.println("  Tile2 Pos: " + pos2 + ", Connectors: " + conns2);
+//        System.out.println("[DEBUG] Checking connection between:");
+//        System.out.println("  Tile1 Pos: " + pos1 + ", Connectors: " + conns1);
+//        System.out.println("  Tile2 Pos: " + pos2 + ", Connectors: " + conns2);
 
         // Check adjacency: only one direction change allowed
         if (Math.abs(dx) + Math.abs(dy) != 1 || conns1.isEmpty() || conns2.isEmpty()) {
-            System.out.println("  -> Not adjacent or empty connectors.");
+//            System.out.println("  -> Not adjacent or empty connectors.");
             return false;
         }
 
         // Right / Left connection
         if (dx == 1) { // pos2 is to the right of pos1 (Tile2 is on the RIGHT of Tile1)
-            System.out.println("  -> Testing RIGHT-LEFT connection");
-            System.out.println("     Connector1 (RIGHT): " + conns1.get(1)); // RIGHT connector of Tile1
-            System.out.println("     Connector2 (LEFT): " + conns2.get(3));  // LEFT connector of Tile2
+//            System.out.println("  -> Testing RIGHT-LEFT connection");
+//            System.out.println("     Connector1 (RIGHT): " + conns1.get(1)); // RIGHT connector of Tile1
+//            System.out.println("     Connector2 (LEFT): " + conns2.get(3));  // LEFT connector of Tile2
             boolean result = compatible(conns1.get(1), conns2.get(3)) && conns1.get(1) != Connector.EMPTY && conns2.get(3) != Connector.EMPTY;
-            System.out.println("     Result: " + result);
+//            System.out.println("     Result: " + result);
             return result;
         } else if (dx == -1) { // pos2 is to the left of pos1 (Tile2 is on the LEFT of Tile1)
-            System.out.println("  -> Testing LEFT-RIGHT connection");
-            System.out.println("     Connector1 (LEFT): " + conns1.get(3));  // LEFT connector of Tile1
-            System.out.println("     Connector2 (RIGHT): " + conns2.get(1)); // RIGHT connector of Tile2
+//            System.out.println("  -> Testing LEFT-RIGHT connection");
+//            System.out.println("     Connector1 (LEFT): " + conns1.get(3));  // LEFT connector of Tile1
+//            System.out.println("     Connector2 (RIGHT): " + conns2.get(1)); // RIGHT connector of Tile2
             boolean result = compatible(conns1.get(3), conns2.get(1)) && conns1.get(3) != Connector.EMPTY && conns2.get(1) != Connector.EMPTY;
-            System.out.println("     Result: " + result);
+//            System.out.println("     Result: " + result);
             return result;
         }
 
         // Up / Down connection
         if (dy == 1) { // pos2 is below pos1 (Tile2 is BELOW Tile1)
-            System.out.println("  -> Testing DOWN-UP connection");
-            System.out.println("     Connector1 (DOWN): " + conns1.get(2)); // DOWN connector of Tile1
-            System.out.println("     Connector2 (UP): " + conns2.get(0));    // UP connector of Tile2
+//            System.out.println("  -> Testing DOWN-UP connection");
+//            System.out.println("     Connector1 (DOWN): " + conns1.get(2)); // DOWN connector of Tile1
+//            System.out.println("     Connector2 (UP): " + conns2.get(0));    // UP connector of Tile2
             boolean result = compatible(conns1.get(2), conns2.get(0)) && conns1.get(2) != Connector.EMPTY && conns2.get(0) != Connector.EMPTY;
-            System.out.println("     Result: " + result);
+//            System.out.println("     Result: " + result);
             return result;
         } else if (dy == -1) { // pos2 is above pos1 (Tile2 is ABOVE Tile1)
-            System.out.println("  -> Testing UP-DOWN connection");
-            System.out.println("     Connector1 (UP): " + conns1.get(0));    // UP connector of Tile1
-            System.out.println("     Connector2 (DOWN): " + conns2.get(2));  // DOWN connector of Tile2
+//            System.out.println("  -> Testing UP-DOWN connection");
+//            System.out.println("     Connector1 (UP): " + conns1.get(0));    // UP connector of Tile1
+//            System.out.println("     Connector2 (DOWN): " + conns2.get(2));  // DOWN connector of Tile2
             boolean result = compatible(conns1.get(0), conns2.get(2)) && conns1.get(0) != Connector.EMPTY && conns2.get(2) != Connector.EMPTY;
-            System.out.println("     Result: " + result);
+//            System.out.println("     Result: " + result);
             return result;
         }
-
-        System.out.println("  -> No valid direction found.");
+//
+//        System.out.println("  -> No valid direction found.");
         return false;
     }
 
@@ -529,14 +529,14 @@ public class Util {
                     if (inBoundaries(x, y) && myShip.getShipBoard()[x][y].getTile() != null && compatible(myShip.getShipBoard()[x][y].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
                         Tile tempTile = myShip.getShipBoard()[x][y].getTile();
 
-                        System.out.println("Checking side " + i + " of tile " + tile.getId() +
-                                " vs side " + ((i + 2) % 4) + " of neighbor tile " + tempTile.getId());
-
-                        System.out.println("Tile side: " + tile.getSides().get(i) +
-                                " | Neighbor side: " + tempTile.getSides().get((i + 2) % 4));
-
-
-                        System.out.println("STO PER VISITARE : " + neighborPos);
+//                        System.out.println("Checking side " + i + " of tile " + tile.getId() +
+//                                " vs side " + ((i + 2) % 4) + " of neighbor tile " + tempTile.getId());
+//
+//                        System.out.println("Tile side: " + tile.getSides().get(i) +
+//                                " | Neighbor side: " + tempTile.getSides().get((i + 2) % 4));
+//
+//
+//                        System.out.println("STO PER VISITARE : " + neighborPos);
                         visitTile(tempTile, tilesID, myShip.getShipBoard()[x][y], invalidPositions, newBrokenPos, myShip);
 
                     }

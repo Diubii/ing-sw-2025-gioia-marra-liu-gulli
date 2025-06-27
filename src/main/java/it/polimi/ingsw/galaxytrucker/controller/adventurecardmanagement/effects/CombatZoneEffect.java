@@ -400,22 +400,26 @@ public abstract class CombatZoneEffect {
         broadcastGameMessage(context,player.getNickName() + "  sta per essere colpito da un " + projectile.getType().name() +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + viewDiceRoll + "!");
 
         System.out.println("Stai per essere colpito da un " + projectile.getType().name()  +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + viewDiceRoll + "!");
+        sleepSafe(200);
 
         projectileIndexes.put(game, projectileIndex + 1);
 
+        broadcastShipUpdate(context,player);
         Tile removedTile = game.getGameController().reactToProjectile(player, projectile, diceRoll);
 //        ShipPrintUtils.printShip(playerShip);
 
         if (removedTile != null) {
             ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
-            sendGameMessage(context, player, " Purtroppo, sei stato colpito e hai perso un  "+removedTile.getMyComponent().accept(componentNameVisitor));
+            broadcastGameMessage(context, "Purtroppo, " + player.getNickName() + " è stato colpito e ha perso un " + removedTile.getMyComponent().accept(componentNameVisitor));
+        } else {
+            broadcastGameMessage(context, "Congratulazioni, " + player.getNickName() + " è riuscito a schivare l'attacco!");
         }
-        else{
-            sendGameMessage(context, player, "  Congratulazioni, sei riuscito a schivare l'attacco!");
-        }
-        resetShield(player);
-        broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
         sleepSafe(600);
+
+
+        resetShield(player);
+        broadcastShipUpdate(context,player);
+
 
         if (removedTile != null) {
             ArrayList<Ship> tronconi;
