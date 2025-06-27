@@ -701,12 +701,21 @@ public class ClientController implements Observer {
         boolean oneActive = false;
         int numFlipped = 0;
 
-        for (TimerInfo timerInfo : myModel.getTimerInfos()) {
-            if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
-                oneActive = true;
+        synchronized (myModel.getTimerInfos()) {
+            if (myModel.getTimerInfos().isEmpty()) {
+                return false;
             }
-            if(timerInfo.isFlipped()){
-                numFlipped++;
+        }
+
+
+        synchronized (myModel.getTimerInfos()) {
+            for (TimerInfo timerInfo : myModel.getTimerInfos()) {
+                if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
+                    oneActive = true;
+                }
+                if (timerInfo.isFlipped()) {
+                    numFlipped++;
+                }
             }
         }
 
