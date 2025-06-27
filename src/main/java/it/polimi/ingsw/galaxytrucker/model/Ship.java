@@ -620,6 +620,8 @@ public class Ship implements Serializable {
         }
         for(Ship ship : tronconi) {
             ship.cloneStateFrom(this);
+            ship.addDestroyedTiles(this.remainingTiles() - ship.remainingTiles());
+
         }
         //ho finito di processare le posizioni
         return tronconi;
