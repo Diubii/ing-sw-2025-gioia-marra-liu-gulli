@@ -81,7 +81,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
     private Boolean finishedBuilding;
     private Boolean currPhaseDone;
 
-    public void initialSetup(GuiJavaFx mainViewController, ClientController clientController,ClientModel mymodel, Stage primaryStage, MusicManager musicManager) {
+    public void initialSetup(GuiJavaFx mainViewController, ClientController clientController, ClientModel myModel, Stage primaryStage, MusicManager musicManager) {
         this.mainViewController = mainViewController;
         this.clientController = clientController;
         this.myModel = myModel;
