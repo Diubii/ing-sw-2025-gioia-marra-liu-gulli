@@ -18,6 +18,7 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.Co
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
+import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -266,9 +267,17 @@ public class PiratesEffect {
 
         Tile destroyedTile = game.getGameController().reactToProjectile(player, projectile, diceRoll);
 //        ShipPrintUtils.printShip(playerShip);
-        resetShield(player);
+        if (destroyedTile != null) {
+            ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+            sendGameMessage(context, player, " Purtroppo, sei stato colpito e hai perso un  "+destroyedTile.getMyComponent().accept(componentNameVisitor));
+        }
+        else{
+            sendGameMessage(context, player, "  Congratulazioni, sei riuscito a schivare l'attacco!");
+        }
 
+        resetShield(player);
         broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
+        sleepSafe(600);
 
         if (destroyedTile != null) {
             ArrayList<Ship> tronconi;

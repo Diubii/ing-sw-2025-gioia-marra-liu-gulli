@@ -124,6 +124,11 @@ public abstract class MeteorSwarmEffect {
              }
             resetShield(player);
             resetDoubleCannon(player);
+
+            broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
+
+            sleepSafe(600);
+
             ArrayList<Ship> troncs = player.getShip().getTronc();
             if(troncs.size()!=1){
 
