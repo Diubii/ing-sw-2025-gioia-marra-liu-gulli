@@ -7,6 +7,7 @@ import it.polimi.ingsw.galaxytrucker.model.adventurecards.Planets;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.SelectPlanetRequest;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.SelectPlanetResponse;
+import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.SelectedPlanetUpdate;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 
@@ -23,7 +24,7 @@ public abstract class PlanetsEffect {
 
     public static void sendSelectPlanetRequest(CardContext context) {
         Player player =context.getCurrentPlayer();
-        System.out.println(player.getNickName() + " DEBUG: PlanetsEffect sendSelectPlanetRequest");
+//        System.out.println(player.getNickName() + " DEBUG: PlanetsEffect sendSelectPlanetRequest");
         Planets planets = (Planets) context.getAdventureCard();
             HashMap<Integer, Planet> notOccupiedPlanets = new HashMap<>();
 
@@ -35,13 +36,17 @@ public abstract class PlanetsEffect {
 
             SelectPlanetRequest selectPlanetRequest = new SelectPlanetRequest(notOccupiedPlanets);
             context.nextPhase();
+
+            broadcastGameMessage(context, "Il giocatore " + player.getNickName() + " sta scegliendo un pianeta...");
+            sleepSafe(100);
+
             sendMessage(context, context.getCurrentPlayer(), selectPlanetRequest);
     }
 
     public static void receivedSelectPlanetResponse(CardContext context) {
         LobbyManager game = context.getCurrentGame();
         Player player =context.getCurrentPlayer();
-        System.out.println(player.getNickName() + " DEBUG: PlanetsEffect receivedSelectPlanetResponse");
+//        System.out.println(player.getNickName() + " DEBUG: PlanetsEffect receivedSelectPlanetResponse");
         Planets planets = (Planets) context.getAdventureCard();
         SelectPlanetResponse selectPlanetResponse = (SelectPlanetResponse) context.getIncomingNetworkMessage();
         Planet selectedPlanet = selectPlanetResponse.getSelectedPlanet();
@@ -92,7 +97,8 @@ public abstract class PlanetsEffect {
         ArrayList<Player>  landedPlayersList= landedPlayers.get(game);
         context.nextPhase();
       for( Player p : landedPlayersList){
-          System.out.println("ShipUpdate send Player  "+ p.getNickName());
+//          System.out.println("ShipUpdate send Player  "+ p.getNickName());
+
           ShipUpdate shipUpdate =new ShipUpdate(p.getShip(),p.getNickName());
           shipUpdate.setLoadMerci(true);
           sendMessage(context,p,shipUpdate);
@@ -106,7 +112,7 @@ public abstract class PlanetsEffect {
 
         ShipUpdate shipUpdate = (ShipUpdate) context.getIncomingNetworkMessage();
 
-        System.out.println(shipUpdate.getNickName() + " DEBUG: PlanetsEffect receiveShipUpdate");
+//        System.out.println(shipUpdate.getNickName() + " DEBUG: PlanetsEffect receiveShipUpdate");
 
         LobbyManager game = context.getCurrentGame();
 
@@ -125,7 +131,7 @@ public abstract class PlanetsEffect {
 
 
     public static void movePlayers(CardContext context) {
-        System.out.println( " DEBUG: PlanetsEffect movePlayers");
+//        System.out.println( " DEBUG: PlanetsEffect movePlayers");
         ArrayList<Player> currentGameLandedPlayers = landedPlayers.get(context.getCurrentGame());
         if(currentGameLandedPlayers != null) {
             Planets planets = (Planets) context.getAdventureCard();

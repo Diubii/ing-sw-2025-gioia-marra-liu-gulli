@@ -3,8 +3,10 @@ package it.polimi.ingsw.galaxytrucker.controller;
 import it.polimi.ingsw.galaxytrucker.model.Player;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.FakeClientHandler;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
+import it.polimi.ingsw.galaxytrucker.network.client.Client;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DrawTileRequest;
+import it.polimi.ingsw.galaxytrucker.view.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +26,7 @@ public class ClientControllerTest {
     ServerController serverController;
     GameTestHelper.GameTestContext context;
     ClientController clientController1, clientController2;
+    Client client1,client2;
 
     @BeforeEach
     void setUp() {
@@ -43,6 +46,8 @@ public class ClientControllerTest {
         handler2 = (FakeClientHandler) GameTestHelper.GameTestContext.nicknameToHandlerMap.get("TestPlayer2");
         clientController1 =  GameTestHelper.GameTestContext.nicknameToClientControllerMap.get("TestPlayer");
         clientController2 =  GameTestHelper.GameTestContext.nicknameToClientControllerMap.get("TestPlayer2");
+        client1 = clientController1.getClient();
+        client2 = clientController2.getClient();
 
         serverController = context.serverController;
     }
@@ -60,7 +65,7 @@ public class ClientControllerTest {
         clientController1.handleDrawFaceDownTile();
         clientController1.showTileInHand();
         clientController1.rotateCurrentTile(90);
-        clientController1.handleTilePlacement();
+
 
 
         clientController1.handleDrawFaceDownTile();
@@ -79,10 +84,20 @@ public class ClientControllerTest {
 
     @Test
     void testViewAdventureCardDeck(){
+
+
         clientController1.viewAdventureCardDeck(0);
         clientController1.viewAdventureCardDeck(3);
         clientController1.viewAdventureCardDeck(4);
+
     }
+
+
+
+
+
+
+
 
 
 

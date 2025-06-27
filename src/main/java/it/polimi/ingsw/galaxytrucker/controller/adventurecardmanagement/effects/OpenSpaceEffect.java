@@ -17,12 +17,12 @@ public abstract class OpenSpaceEffect {
     private final static HashMap<LobbyManager, Integer> playerIndex= new HashMap<>();
 
     public static void doubleEnginesActivated(CardContext context) {
-        System.out.println("DEBUG: OpenSpaceEffect.doubleEnginesActivated()");
+//        System.out.println("DEBUG: OpenSpaceEffect.doubleEnginesActivated()");
         LobbyManager game = context.getCurrentGame();
         Player player = context.getCurrentPlayer();
 
         int playerEnginePower = player.getShip().calculateEnginePower();
-        System.out.println("DEBUG: playerEnginePower = " + playerEnginePower);
+//        System.out.println("DEBUG: playerEnginePower = " + playerEnginePower);
         HashMap<String, Integer> playerToPowerMap;
 
 
@@ -58,14 +58,18 @@ public abstract class OpenSpaceEffect {
     }
 
     public static void finalCheck(CardContext context) {
-        System.out.println("DEBUG: OpenSpaceEffect.finalCheck()");
+//        System.out.println("DEBUG: OpenSpaceEffect.finalCheck()");
         LobbyManager game = context.getCurrentGame();
 
         HashMap<String, Integer> playerToPowerMap = playerToPowerMapPerGame.get(game);
 
         playerToPowerMap.forEach((nickname, power) -> {
             if (power == 0) {
-                System.out.println("DEBUG " + nickname + " removed from game");
+
+                broadcastGameMessage(context, "Il giocatore " + nickname + " è stato eliminato per potenza motrice pari a zero!");
+                sleepSafe(600);
+
+//                System.out.println("DEBUG " + nickname + " removed from game");
                 game.getGameController().removePlayerFromGame(nickname, PlayerLostReason.ZeroEnginePower);
             }
         });

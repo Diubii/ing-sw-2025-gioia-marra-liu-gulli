@@ -21,7 +21,8 @@ public class SlaversEffect {
         Slavers slavers = (Slavers) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
 
-        System.out.println(player.getNickName() +"  entered firePowerCheck");
+
+//        System.out.println(player.getNickName() +"  entered firePowerCheck");
 
         Float playerFirePower = player.getShip().calculateFirePower();
         float slaversFirePower = (float) slavers.getFirePower();
@@ -35,6 +36,8 @@ public class SlaversEffect {
             game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
             GameMessage info = new GameMessage(); info.setMessage(player.getNickName() + " has less FirePower than the Slavers!");
             broadcastExcept(context, info, player);
+
+            sleepSafe(600);
             //gestisco la sua sconfitta
 
 
@@ -53,6 +56,8 @@ public class SlaversEffect {
             GameMessage info = new GameMessage(); info.setMessage(player.getNickName() + " has defeated the Slavers!");
             broadcastExcept(context, info, player);
 
+            sleepSafe(600);
+
             //chiedo se vuole accettare la ricompensa o no, in caso l'accettasse lo muovo indietro e aggiorno i crediti
             CollectRewardsRequest collectRewardsRequest = new CollectRewardsRequest();
 
@@ -65,8 +70,13 @@ public class SlaversEffect {
             return;
         }
         else if (slaversFirePower == playerFirePower){
-            System.out.println("Debug" + player.getNickName() +" slaversFirePower == playerFirePower");
+//            System.out.println("Debug" + player.getNickName() +" slaversFirePower == playerFirePower");
             GameMessage personalMessage = new GameMessage("The Slavers are not going to haunt you!"); //personalMessage.setIsTurn(true);
+
+            GameMessage info = new GameMessage(); info.setMessage("Il giocatore" +player.getNickName() +" ha pareggiato con gli schiavisti");
+            broadcastExcept(context, info, player);
+             sleepSafe(600);
+
             game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
 
             context.previousPhase();
@@ -79,13 +89,11 @@ public class SlaversEffect {
     public static void receivedDiscardCrewMembersResponse(CardContext context){
         Slavers slavers = (Slavers) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
-        System.out.println(player.getNickName() +"  entered receivedDiscardCrewMembersResponse");
+//        System.out.println(player.getNickName() +"  entered receivedDiscardCrewMembersResponse");
         DiscardCrewMembersResponse discardCrewMembersResponse = (DiscardCrewMembersResponse) context.getIncomingNetworkMessage();
 
-        discardCrewMembers(player, discardCrewMembersResponse, discardCrewMembersResponse.getHousingPositions().size());
+        discardCrewMembers(context, player, discardCrewMembersResponse, discardCrewMembersResponse.getHousingPositions().size());
 
-        //Broadcasto nuova nave
-        broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
 
 
         if(context.currentPlayerIsLast()){
@@ -107,15 +115,17 @@ public class SlaversEffect {
         CollectRewardsResponse collectRewardsResponse = (CollectRewardsResponse) context.getIncomingNetworkMessage();
         Player player = context.getCurrentPlayer();
         Slavers slavers = (Slavers) context.getAdventureCard();
-        System.out.println(player.getNickName() +"  entered receivedRewardsCollectionResponse");
+//        System.out.println(player.getNickName() +"  entered receivedRewardsCollectionResponse");
         if(collectRewardsResponse.doesWantToCollect()) {
             broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " chose to collect the rewards!"), player);
+            sleepSafe(600);
 
             player.addCredits(slavers.getCredits());
             movePlayer(context, player, -slavers.getDaysLost());
         }
         else{
             broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " chose NOT to collect the rewards!"), player);
+            sleepSafe(600);
         }
 
         context.goToEndPhase();
