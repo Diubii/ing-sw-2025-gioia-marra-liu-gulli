@@ -38,16 +38,7 @@ class CardEffectTest {
                     new Player(playerCNickname, 0, 3, false)
             )
     );
-    private AdventureCard loadAndAddCard(String name, int index, int nCard) {
-        List<AdventureCard> cards = CardTestUtils.loadCardsByType(name, nCard);
-        AdventureCard card = cards.get(index);
 
-        assertNotNull(card, "Card should not be null");
-        assertEquals(name, card.getName(), "Card name mismatch");
-        System.out.println("Carta pescata: " + card.getName());
-
-        return card;
-    }
 
     private void setPlayersShipClientSideAndServerSide(ArrayList<Player> players, ArrayList<Ship> ships) {
         final HashMap<String, ClientController> ntccmap = GameTestHelper.GameTestContext.nicknameToClientControllerMap;
@@ -142,7 +133,9 @@ class CardEffectTest {
      * <p>Responses are simulated using {@link MockResponsesFactory#forAbandonedShip_B()}.
      */
     @Test
-    void testAbandonedShip_B() {
+    void
+
+    testAbandonedShip_B() {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Nave abbandonata", 2);
         AdventureCard card = cards.get(1);
         assertNotNull(card);
@@ -204,7 +197,7 @@ class CardEffectTest {
         assertNotNull(card);
         assertEquals("Stazione abbandonata", card.getName());
         System.out.println("Carta pescata: " + card.getName());
-        assertTrue(card instanceof AbandonedStation);
+        assertInstanceOf(AbandonedStation.class, card);
 
         AbandonedStation abandonedStationCard = (AbandonedStation) card;
 
@@ -757,6 +750,13 @@ class CardEffectTest {
         Player playerB = rankedPlayers.get(1);
         Player playerC = rankedPlayers.get(2);
 
+        FlightBoard flightBoard = ctx.lobby.getRealGame().getFlightBoard();
+        int PosA = flightBoard.getPlayerPosition(playerA.getColor());
+        System.out.println(PosA);
+
+
+
+
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forPlanet_NormalConditions(rankedPlayers, planetCard);
         responses.forEach((nick, responseList) -> {
             FakeClientHandler handler = (FakeClientHandler) GameTestHelper.GameTestContext.nicknameToHandlerMap.get(nick);
@@ -766,6 +766,7 @@ class CardEffectTest {
 
         ctx.lobby.getGameController().getCardDeckTest().clear();
         ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -786,6 +787,82 @@ class CardEffectTest {
         assertEquals(3,posA);
         assertEquals(0,posB);
         assertEquals(22,posC);
+
+
+    }
+
+    @Test
+    void testPlanetsEffect_NormalConditions2Card() {
+        List<AdventureCard> cards = CardTestUtils.loadCardsByType("Pianeti", 2);
+        AdventureCard card = cards.getFirst();
+        AdventureCard card2 = cards.getLast();
+        assertNotNull(card);
+        assertNotNull(card2);
+        assertTrue(card instanceof Planets);
+        assertTrue(card2 instanceof Planets);
+        Planets planetCard = (Planets) card;
+        Planets planetCard2 = (Planets) card2;
+
+        GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(MockResponsesFactory.emptyResponsesFor(players), players);
+
+        ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
+        Player playerA = rankedPlayers.get(0);
+        Player playerB = rankedPlayers.get(1);
+        Player playerC = rankedPlayers.get(2);
+
+        Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forPlanet_NormalConditions(rankedPlayers, planetCard);
+        responses.forEach((nick, responseList) -> {
+            FakeClientHandler handler = (FakeClientHandler) GameTestHelper.GameTestContext.nicknameToHandlerMap.get(nick);
+            handler.setMockResponses(responseList);
+        });
+
+
+         FlightBoard flightBoard = ctx.lobby.getRealGame().getFlightBoard();
+         int PosA = flightBoard.getPlayerPosition(playerA.getColor());
+         System.out.println(PosA);
+
+
+        ctx.lobby.getGameController().getCardDeckTest().clear();
+
+        ctx.lobby.getGameController().getCardDeckTest().addCard(card2);
+        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(playerA.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        Ship updatedShipA = playerA.getShip();
+        assertNotNull(updatedShipA);
+
+
+        int posA = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(playerA.getColor());
+        int posB = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(playerB.getColor());
+        int posC = ctx.lobby.getRealGame().getFlightBoard().getPlayerPosition(playerC.getColor());
+
+        assertEquals(3,posA);
+        assertEquals(0,posB);
+        assertEquals(22,posC);
+
+
+        responses.forEach((nick, responseList) -> {
+            FakeClientHandler handler = (FakeClientHandler) GameTestHelper.GameTestContext.nicknameToHandlerMap.get(nick);
+            handler.setMockResponses(responseList);
+        });
+        try {
+            ctx.serverController.handleDrawAdventureCardRequest(
+                    new DrawAdventureCardRequest(),
+                    ctx.nicknameToHandlerMap.get(playerA.getNickName())
+            );
+        } catch (java.rmi.RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
 
 
     }

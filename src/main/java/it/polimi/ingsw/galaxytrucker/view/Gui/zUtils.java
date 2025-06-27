@@ -43,8 +43,8 @@ public class zUtils {
         //Empty the grid from previous configuration
         griglia.getChildren().clear();
         Slot[][] shipboard =  ship.getShipBoard();
+        int cornice=30;
 
-        int cornice = 30;
         //Cornice
         for(int i = 1; i < 8; i++){
             StackPane stackPane = new StackPane();

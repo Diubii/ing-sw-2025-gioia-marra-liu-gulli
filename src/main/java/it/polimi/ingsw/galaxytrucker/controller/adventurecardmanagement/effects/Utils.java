@@ -22,7 +22,6 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Ship
 import it.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
 
-import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,14 +46,17 @@ public abstract class Utils {
         FlightBoard flightBoard = game.getRealGame().getFlightBoard();
         flightBoard.movePlayer(game.getPlayerColors().get(player.getNickName()), steps, player);
         FlightBoardUpdate fbu = new FlightBoardUpdate(flightBoard);
+
         String direction = steps < 0 ? "backwards" : "forwards";
         String message = "Player " + player.getNickName() + " moved " + Math.abs(steps) + " steps " + direction + "!";
         broadcast(context, new GameMessage(message));
         broadcast(context, fbu);
+        sleepSafe(600);
+
         context.setCurrentRankedPlayers(context.getCurrentGame().getGameController().getRankedPlayers()); //Aggiorno i currentRankedPlayers del context
     }
 
-    protected static void discardCrewMembers(Player player, DiscardCrewMembersResponse discardCrewMembersResponse, int numberOfCrewMembersToBeDiscarded) {
+    protected static void discardCrewMembers(CardContext context,Player player, DiscardCrewMembersResponse discardCrewMembersResponse, int numberOfCrewMembersToBeDiscarded) {
         for (Position position : discardCrewMembersResponse.getHousingPositions()) { //Per ogni posizione (assumo posizioni duplicate per scartare più volte dalla stessa housing unit)
             Component housingUnit = player.getShip().getComponentFromPosition(position); //Prendo la housingUnit dalla position data
 
@@ -64,6 +66,14 @@ public abstract class Utils {
                 numberOfCrewMembersToBeDiscarded--;
             }
         }
+
+        ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
+        broadcast(context, shipUpdate);
+
+        String message = "Player " + player.getNickName() + " ha perso " +numberOfCrewMembersToBeDiscarded + " crew members!";
+        broadcast(context, new GameMessage(message));
+        sleepSafe(600);
+
     }
 
     /**
@@ -107,10 +117,6 @@ public abstract class Utils {
         lobbyManager.getPlayerHandlers().values().forEach(ch -> { if(ch != excludedPlayerClientHandler) ch.sendMessage(message); });
     }
 
-    protected static void broadcastExcept(CardContext context, NetworkMessage message, ClientHandler excludedPlayerClientHandler) {
-        LobbyManager lobbyManager = context.getCurrentGame();
-        lobbyManager.getPlayerHandlers().values().forEach(ch -> { if(ch != excludedPlayerClientHandler) ch.sendMessage(message); });
-    }
 
     /**
      * Checks if a player has a shield orientated the same way of the incoming projectile. Does not check for same row/column.
@@ -326,10 +332,23 @@ public abstract class Utils {
 
     }
 
-    protected static void askTruck(){
-
-
+    public static void addDestroyedTilesInTrunc(Player player, ArrayList<Ship> trucks)  {
+        int removed = 0;
+        for (Ship ship : trucks) {
+            removed += ship.remainingTiles();
+        }
+        player.getShip().addDestroyedTiles(removed);
     }
+
+    public static void sleepSafe(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+
 
 
 

@@ -618,6 +618,9 @@ public class Ship implements Serializable {
 
 
         }
+        for(Ship ship : tronconi) {
+            ship.cloneStateFrom(this);
+        }
         //ho finito di processare le posizioni
         return tronconi;
 
@@ -885,23 +888,26 @@ public class Ship implements Serializable {
 
         return false;
     }
-
+    /**
+     * Returns the number of tiles placed in valid (non-invalid) positions.
+     */
     public int remainingTiles() {
-        int remainingTiles = 0;
-        List<Tile> tiles = Arrays.stream(this.getShipBoard())
-                .flatMap(Arrays::stream).map(Slot::getTile)
-                .filter(Objects::nonNull)
-                .toList();
 
 
-        for (Tile tile : tiles) {
-            if (tile != null) {
-                remainingTiles++;
+            int count = 0;
+            for (int i = 0; i < shipboardMaxX; i++) {
+                for (int j = 0; j < shipboardMaxY; j++) {
+                    Position pos = new Position(i, j);
+                    if (!invalidPositions.contains(pos) && Util.inBoundaries(i, j)) {
+                        Tile tile = shipBoard[i][j].getTile();
+                        if (tile != null) {
+                            count++;
+                        }
+                    }
+                }
             }
-        }
+            return count;
 
-
-        return remainingTiles;
     }
 
     public Tile[] getAsideTiles() {
@@ -1150,6 +1156,18 @@ public class Ship implements Serializable {
         }
 
         return goods;
+    }
+
+    public void addDestroyedTiles(int destroyedTile)
+    {
+        this.destroyedTiles= destroyedTile+destroyedTiles;
+    }
+
+    private void cloneStateFrom(Ship source) {
+        this.destroyedTiles = source.getDestroyedTiles();
+        this.listOfGoods = new ArrayList<>(source.listOfGoods);
+        this.listNotLoadedGoods = new ArrayList<>(source.listNotLoadedGoods);
+        this.nExposedConnector = source.nExposedConnector;
     }
 
 

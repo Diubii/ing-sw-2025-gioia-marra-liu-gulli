@@ -22,11 +22,14 @@ public class SmugglersEffect {
         Smugglers smugglers = (Smugglers) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
 
+        broadcastGameMessage(context, "Il giocatore " + player.getNickName() + " sta affrontando i Contrabbandieri!");
+        sleepSafe(600);
+
         float smugglerFirePower = smugglers.getFirePower();
         float playerFirePower =  player.getShip().calculateFirePower();
         resetDoubleCannon(player);
 
-        System.out.println( player.getNickName() + "  Debug: Fire Power Check");
+//        System.out.println( player.getNickName() + "  Debug: Fire Power Check");
         ShipUpdate shipUpdate = new ShipUpdate(player.getShip(),player.getNickName());
         broadcast(context, shipUpdate);
 
@@ -42,7 +45,7 @@ public class SmugglersEffect {
         }
         else  {
             context.previousPhase();
-            handleTie( game, player);
+            handleTie( context,game, player);
 
         }
 //(smugglerFirePower > playerFirePower) ||(smugglerFirePower == playerFirePower)
@@ -63,6 +66,7 @@ public class SmugglersEffect {
 
         GameMessage broadcast = new GameMessage(player.getNickName() + " has less FirePower than the Smugglers!");
         broadcastExcept(context, broadcast, player);
+        sleepSafe(600);
 
         ArrayList<Good> removedGoods = getAndRemoveMostValuableGoods(context, player, smugglers.getPenalty());
         int goodsCount = removedGoods.size();
@@ -89,29 +93,37 @@ public class SmugglersEffect {
 
         GameMessage broadcast = new GameMessage(player.getNickName() + " has defeated the Smugglers!");
         broadcastExcept(context, broadcast, player);
+        sleepSafe(600);
 
         CollectRewardsRequest rewardRequest = new CollectRewardsRequest();
         sendMessage(context, player, rewardRequest);
     }
 
-    private static void handleTie( LobbyManager game, Player player) {
+    private static void handleTie( CardContext context,LobbyManager game, Player player) {
         game.getPlayerHandlers().get(player.getNickName())
                 .sendMessage(new GameMessage("The Smugglers are not going to haunt you!"));
+
+        GameMessage broadcast = new GameMessage(  "Il giocatore "+player.getNickName()+ " ha pareggiato con i Contrabbandieri.");
+                broadcastExcept(context,broadcast,player);
+                sleepSafe(600);
     }
     public static void receivedRewardsCollectionResponse(CardContext context){
 
         CollectRewardsResponse collectRewardsResponse = (CollectRewardsResponse) context.getIncomingNetworkMessage();
         Player player = context.getCurrentPlayer();
-        System.out.println(player.getNickName() + "  Debug: Received rewards collection response");
+//        System.out.println(player.getNickName() + "  Debug: Received rewards collection response");
 
         if(collectRewardsResponse.doesWantToCollect()) {
-            broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " chose to collect the rewards!"), player);
+            broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " scegle di accettare la ricompensa!"), player);
             context.nextPhase();
+            sleepSafe(600);
             sendMessage(context, player, new ShipUpdate(player.getShip(), player.getNickName()));
+
 
         }
         else{
-            broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " chose NOT to collect the rewards!"), player);
+            broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " scegle di  non accettare la ricompensa."), player);
+            sleepSafe(600);
 
             if(context.currentPlayerIsLast()){
                 //Execute CommonEffects::end
@@ -128,7 +140,7 @@ public class SmugglersEffect {
 
     public static void receivedShipUpdate(CardContext context){
         Player currentPlayer = context.getCurrentPlayer();
-        System.out.println(currentPlayer.getNickName() + "  Debug: Received ship update response");
+//        System.out.println(currentPlayer.getNickName() + "  Debug: Received ship update response");
 
         Smugglers smugglers = (Smugglers) context.getAdventureCard();
         movePlayer(context, context.getCurrentPlayer(), -smugglers.getDaysLost());

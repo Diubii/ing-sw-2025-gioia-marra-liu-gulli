@@ -16,7 +16,6 @@ public interface ServerControllerHandles extends Remote {
     void handleJoinRoomOptionsRequest(JoiniRoomOptionsRequest joiniRoomOptionsRequest, ClientHandler clientHandler) throws RemoteException;
     void handleJoinRoomRequest(JoinRoomRequest joinRoomRequest, ClientHandler clientHandler) throws RemoteException;
     void handleDrawTileRequest(DrawTileRequest drawTileRequest, ClientHandler clientHandler) throws RemoteException;
-
     void handleCheckShipStatusRequest(CheckShipStatusRequest message, ClientHandler clientHandler) throws RemoteException;
     void handleAskPositionResponse(AskPositionResponse askPositionResponse, ClientHandler clientHandler) throws RemoteException;
     void handleSelectPlanetResponse(SelectPlanetResponse selectPlanetResponse, ClientHandler clientHandler) throws RemoteException;
