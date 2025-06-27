@@ -39,7 +39,7 @@ public abstract class MeteorSwarmEffect {
 
     public static void sendActivateComponentRequests(CardContext context) {
 
-        System.out.println("Sending ActivateComponentRequests");
+//        System.out.println("Sending ActivateComponentRequests");
         LobbyManager game = context.getCurrentGame();
         MeteorSwarm meteorSwarm = (MeteorSwarm) context.getAdventureCard();
 
@@ -49,7 +49,8 @@ public abstract class MeteorSwarmEffect {
         int viewDiceRoll = rand.nextInt(2, 13);
         int diceRoll = getCorrectedDiceRoll(viewDiceRoll,projectile.getDirection());
         broadcastGameMessage(context, "Stai per essere colpito da un " + projectile.getType().name() + "  "+ projectile.getSize() +" " +projectile.getDirection().name() + ", indice " + viewDiceRoll + "!");
-        System.out.println("Stai per essere colpito da un " + projectile.getType().name() + "  "+ projectile.getSize() +" " +projectile.getDirection().name() + ", indice " + viewDiceRoll + "!");
+//        System.out.println("Stai per essere colpito da un " + projectile.getType().name() + "  "+ projectile.getSize() +" " +projectile.getDirection().name() + ", indice " + viewDiceRoll + "!");
+        sleepSafe(600);
 
         diceRolls.put(game,diceRoll); //Inserisco nei diceRolls l'actual index
 
@@ -58,9 +59,10 @@ public abstract class MeteorSwarmEffect {
 
         if (projectile.getSize() == ProjectileSize.Little) {
             for (Player player : context.getCurrentRankedPlayers()) {
-                System.out.println(projectileCounters.get(game) +"  Little  " + player.getNickName());
+//                System.out.println(projectileCounters.get(game) +"  Little  " + player.getNickName());
                 if (player.getShip().getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll) != null && playerCanDefendThemselvesWithAShield(player, projectile)) {
                     sendGameMessage(context, player, "Puoi difenderti con uno scudo!");
+                    sleepSafe(600);
                     context.nextPhase();
                     sendMessage(context, player, activateShieldsRequest);
                     return;
@@ -68,27 +70,31 @@ public abstract class MeteorSwarmEffect {
             }
         } else if (projectile.getSize() == ProjectileSize.Big) {
             for (Player player : context.getCurrentRankedPlayers()) {
-                System.out.println( projectileCounters.get(game) +"  Big  " + player.getNickName());
+//                System.out.println( projectileCounters.get(game) +"  Big  " + player.getNickName());
 
                 if (player.getShip().getFirstComponentFromDirectionAndIndex(projectile.getDirection(), diceRoll) != null) {
                     if (playerCanDefendThemselvesWithASingleCannon(player, projectile, diceRoll)) { //Prima controllo se si può difendere con un cannone singolo
                         sendGameMessage(context, player, "Ti proteggerà un cannone singolo!");
+                        sleepSafe(600);
+
                     } else if (playerCanDefendThemselvesWithADoubleCannon(player, projectile, diceRoll)) { //Altrimenti faccio ricorso a un eventuale cannone doppio
                         sendGameMessage(context, player, "Puoi difenderti con un cannone doppio!");
+                        sleepSafe(600);
                         context.nextPhase();
                         sendMessage(context, player, activateDoubleCannonsRequest);
+
                         return;
                     }
                 }
             }
         }
-      System.out.println("end");
+//      System.out.println("end");
         context.nextPhase();
         context.executePhase();
     }
 
     public static void unleashTheMeteorSwarm(CardContext context) {
-        System.out.println("UnleashTheMeteorSwarm");
+//        System.out.println("UnleashTheMeteorSwarm");
 
 
         LobbyManager game = context.getCurrentGame();
@@ -104,8 +110,8 @@ public abstract class MeteorSwarmEffect {
 
         for (Player player : context.getCurrentRankedPlayers()) {
             //
-            System.out.println("Before attack " + player.getNickName());
-            ShipPrintUtils.printShip(player.getShip());
+//            System.out.println("Before attack " + player.getNickName());
+//            ShipPrintUtils.printShip(player.getShip());
 
 
              Tile removedTile= game.getGameController().reactToProjectile(player, projectile, diceRoll);
@@ -118,11 +124,16 @@ public abstract class MeteorSwarmEffect {
              }
             resetShield(player);
             resetDoubleCannon(player);
+
+            broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
+
+            sleepSafe(600);
+
             ArrayList<Ship> troncs = player.getShip().getTronc();
             if(troncs.size()!=1){
 
-                System.out.println();
-                System.out.println("asktroc need");
+//                System.out.println();
+//                System.out.println("asktroc need");
 
                 needToAskTrunkReq.get(game).add(player);
                 trunkOptions
@@ -131,8 +142,8 @@ public abstract class MeteorSwarmEffect {
             }
 
             //
-            System.out.println("After attack" + player.getNickName());
-            ShipPrintUtils.printShip(player.getShip());
+//            System.out.println("After attack" + player.getNickName());
+//            ShipPrintUtils.printShip(player.getShip());
 
 
             ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
@@ -145,10 +156,12 @@ public abstract class MeteorSwarmEffect {
             return;
         }
 
+        broadcastGameMessage(context, "Tutti gli attacchi meteorici di questo turno sono stati risolti.");
+        sleepSafe(300);
         goToEndPhaseOrReset(context);
     }
     public static void askTrunkReq(CardContext context) {
-        System.out.println("AskTrunkReq");
+//        System.out.println("AskTrunkReq");
         LobbyManager game = context.getCurrentGame();
         ArrayList<Player> players = needToAskTrunkReq.get(game);
         context.nextPhase();
@@ -156,14 +169,14 @@ public abstract class MeteorSwarmEffect {
             ArrayList<Ship> troncs = trunkOptions.get(game).get(player);
             AskTrunkRequest askTrunkRequest = new AskTrunkRequest(troncs);
 
-            System.out.println("Player: "+player.getNickName()+"  askTrunkRequest ");
+//            System.out.println("Player: "+player.getNickName()+"  askTrunkRequest ");
             sendMessage(context, player, askTrunkRequest);
         }
 
     }
 
     public static void receivedTrunkRepo(CardContext context) {
-        System.out.println("ReceivedTrunkRepo");
+//        System.out.println("ReceivedTrunkRepo");
         LobbyManager game = context.getCurrentGame();
         AskTrunkResponse askTrunkResponse = (AskTrunkResponse) context.getIncomingNetworkMessage();
 
@@ -176,7 +189,7 @@ public abstract class MeteorSwarmEffect {
                 .orElse(null);
 
         if(currentPlayer == null){
-            System.out.println("Player " + askTrunkResponse.getPlayerNickname() + " not found");
+//            System.out.println("Player " + askTrunkResponse.getPlayerNickname() + " not found");
             resetState(game);
             return;
         }
@@ -208,7 +221,7 @@ public abstract class MeteorSwarmEffect {
     }
 
     private static void goToEndPhaseOrReset(CardContext context) {
-        System.out.println("GoToEndPhase Or Reset");
+//        System.out.println("GoToEndPhase Or Reset");
         LobbyManager game = context.getCurrentGame();
         MeteorSwarm meteorSwarm = (MeteorSwarm) context.getAdventureCard();
         int projectileIndex = projectileCounters.computeIfAbsent(game, _ -> 0);

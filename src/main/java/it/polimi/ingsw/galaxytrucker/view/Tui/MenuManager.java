@@ -18,6 +18,7 @@ public class MenuManager {
         switch (phase) {
 
             case BUILDING_START -> currentMenu = MenuText.BUILDING_MENU;
+            case BUILDING_END -> currentMenu = MenuText.FINISHED_BUILDING_MENU;
             case SHIP_CHECK -> currentMenu = MenuText.CHECK_SHIP_MENU;
             case CREW_INIT -> currentMenu = MenuText.EMBARK_CREW_MENU;
             case FLIGHT ->  currentMenu = MenuText.FLIGHT_MENU;
@@ -29,6 +30,7 @@ public class MenuManager {
     public void showCurrentMenu() {
         switch (currentMenu) {
             case BUILDING_MENU -> showBuildingMenu();
+            case FINISHED_BUILDING_MENU -> showFinishedBuildingMenu();
             case CHECK_SHIP_MENU -> showCheckShipMenu();
             case EMBARK_CREW_MENU -> showEmbarkCrewMenu();
             case FLIGHT_MENU -> showFlightMenu();
@@ -53,6 +55,18 @@ public class MenuManager {
         out.println("g. Place tile");
         out.println("h. Discard tile");
         out.println("i. Finish building");
+        if (!learningMatch) {
+            out.println("j. See Timers Status/ Flip Timer");
+        }
+        out.println("m. show menu");
+    }
+
+    public void showFinishedBuildingMenu() {
+        clearConsole();
+        out.println("\n Finished Building Phase Menu:");
+        out.println("a. select the ship you want to view");
+        out.println("b. Show Adventure card deck");
+        out.println("c. Show face-up tiles on table");
         if (!learningMatch) {
             out.println("j. See Timers Status/ Flip Timer");
         }

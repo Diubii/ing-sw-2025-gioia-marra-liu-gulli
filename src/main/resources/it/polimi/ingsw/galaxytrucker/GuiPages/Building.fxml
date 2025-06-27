@@ -209,6 +209,18 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </HBox>
+                                    <HBox fx:id="endBuildingOverlay" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" styleClass="OverlayPanel" stylesheets="@style.css" visible="false">
+                                       <children>
+                                          <Label text="Fase Costruzione Terminata" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </HBox>
                                  </children>
                               </StackPane>
                            </children></VBox>

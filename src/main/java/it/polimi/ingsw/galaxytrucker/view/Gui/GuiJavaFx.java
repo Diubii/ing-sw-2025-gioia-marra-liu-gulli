@@ -8,12 +8,14 @@ import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import it.polimi.ingsw.galaxytrucker.enums.GameState;
+import it.polimi.ingsw.galaxytrucker.enums.ViewType;
 import it.polimi.ingsw.galaxytrucker.model.*;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
+import it.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import it.polimi.ingsw.galaxytrucker.model.utils.Util;
 import it.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
@@ -44,6 +46,7 @@ import javax.sound.sampled.Clip;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -110,11 +113,16 @@ public class GuiJavaFx implements View {
             }
         });
     }
+
     @Override
     public Boolean autoShowUpdates() {
         return true;
     }
 
+    @Override
+    public ViewType getViewType() {
+        return ViewType.GUI;
+    }
 
     public static void playWavSoundEffect(String sound){
         try {
@@ -398,36 +406,16 @@ public class GuiJavaFx implements View {
         switch (update.getState()){
             case BUILDING_START:
                 showBuildingMenu();
-                //Thread per aggiornare timer una volta al secondo
-                Thread timerThread = new Thread(() -> {
-                    while (actualPageController.pageName() == "BuildingPage" && controller.getPhase().equals(GameState.BUILDING_TIMER) || controller.getPhase().equals(GameState.BUILDING_START) ) {
-                        // Aggiorna la GUI
-                        Platform.runLater(() -> showTimerInfos());
-
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
-                    }
-                });
-
-                timerThread.setDaemon(false);
-                timerThread.start();
-
             break;
             case BUILDING_TIMER:
             case CREW_INIT:
                 try {
                     chooseCrew(controller.getMyModel().getMyInfo().getShip());
-                } catch (ExecutionException e) {
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
+                } catch (ExecutionException | InterruptedException | IOException e) {
                     throw new RuntimeException(e);
                 }
             case BUILDING_END:
+
             case SHIP_CHECK:
                 ((BuildingController)actualPageController).updateBuildingPageInterface(update.getState());
             break;
@@ -485,6 +473,11 @@ public class GuiJavaFx implements View {
     public void showFaceUpTiles() {
         System.out.println("DEBUG: showFaceUpTiles");
         Platform.runLater(() -> ((BuildingController) actualPageController).updateFaceUpTiles());
+    }
+
+    @Override
+    public void showFinishedBuildingMenu() {
+        showBuildingMenu();
     }
 
     @Override
@@ -970,10 +963,10 @@ public class GuiJavaFx implements View {
 
     @NeedsToBeChecked
     @Override
-    public void showTimerInfos() {
+    public void showTimerInfos(ArrayList<TimerInfo> timerInfos) {
         Platform.runLater(() -> {
-            if(actualPageController.pageName() == "BuildingPage"){
-                ((BuildingController) actualPageController).showTimerInfo();
+            if(actualPageController.pageName().equals("BuildingPage")){
+                ((BuildingController) actualPageController).showTimerInfo(timerInfos);
             }
         });
     }

@@ -29,8 +29,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BuildingController extends GenericGamePhaseSceneController {
@@ -38,7 +42,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
     private GuiJavaFx mainViewController;
     private ClientController clientController;  // Riferimento al controller del client
-    private ClientModel mymodel;
+    private ClientModel myModel;
     private Stage primaryStage;
     private MusicManager musicManager;
 
@@ -77,10 +81,10 @@ public class BuildingController extends GenericGamePhaseSceneController {
     private Boolean finishedBuilding;
     private Boolean currPhaseDone;
 
-    public void initialSetup(GuiJavaFx mainViewController, ClientController clientController,ClientModel mymodel, Stage primaryStage, MusicManager musicManager) {
+    public void initialSetup(GuiJavaFx mainViewController, ClientController clientController, ClientModel myModel, Stage primaryStage, MusicManager musicManager) {
         this.mainViewController = mainViewController;
         this.clientController = clientController;
-        this.mymodel = mymodel;
+        this.myModel = myModel;
         this.primaryStage = primaryStage;
         this.musicManager = musicManager;
         finishedBuilding = false;
@@ -99,7 +103,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
         //Mettere tutti sottoElementi
         //Se learning match niente deck da spiare
-        if(mymodel.isLearningMatch()){
+        if(myModel.isLearningMatch()){
             learningMatchOverlay.visibleProperty().set(true);
             learningMatchOverlay2.visibleProperty().set(true);
         }
@@ -111,14 +115,14 @@ public class BuildingController extends GenericGamePhaseSceneController {
         try {
 
             j = 0;
-            for(int i = 0; i< mymodel.getPlayerInfos().size(); i++){
+            for(int i = 0; i< myModel.getPlayerInfos().size(); i++){
 
-                if(mymodel.getPlayerInfos().get(i).getNickName().equals(mymodel.getMyInfo().getNickName())){
+                if(myModel.getPlayerInfos().get(i).getNickName().equals(myModel.getMyInfo().getNickName())){
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/it/polimi/ingsw/galaxytrucker/GuiPages/Elements/SingleShip.fxml"));
                     Parent shipNode = loader.load();
 
                     SingleShipController controller = loader.getController();
-                    controller.initialize(mymodel.getMyInfo().getNickName(),myShipZone);
+                    controller.initialize(myModel.getMyInfo().getNickName(),myShipZone);
                     shipControllers.add(controller);
 
                     myShipZone.getChildren().add(shipNode);
@@ -128,11 +132,11 @@ public class BuildingController extends GenericGamePhaseSceneController {
                     Parent shipNode = loader.load();
 
                     SingleShipController controller = loader.getController();
-                    controller.initialize(mymodel.getPlayerInfos().get(i).getNickName(),shipZones.get(j));
+                    controller.initialize(myModel.getPlayerInfos().get(i).getNickName(),shipZones.get(j));
                     shipControllers.add(controller);
                     shipZones.get(j).getChildren().add(shipNode);
-                    names.get(j).setText(mymodel.getPlayerInfos().get(i).getNickName());
-                    switch (mymodel.getPlayerInfos().get(i).getColor()){
+                    names.get(j).setText(myModel.getPlayerInfos().get(i).getNickName());
+                    switch (myModel.getPlayerInfos().get(i).getColor()){
                         case RED ->  avatars.get(j).setImage(new Image(getClass().getResource("/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarRosso.png").toExternalForm()));
                         case YELLOW ->  avatars.get(j).setImage(new Image(getClass().getResource("/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarGiallo.png").toExternalForm()));
                         case BLUE ->  avatars.get(j).setImage(new Image(getClass().getResource("/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/pedineSegnalini/AvatarBlu.png").toExternalForm()));
@@ -171,9 +175,8 @@ public class BuildingController extends GenericGamePhaseSceneController {
     /**
      * Shows the update timers status
      */
-    public void showTimerInfo(){
+    public void showTimerInfo(ArrayList<TimerInfo> timerInfos){
 
-        ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
         List<Label> timerLabels = List.of(lblTimer1,lblTimer2,lblTimer3);
         Platform.runLater(()->{
             if (timerInfos != null) {
@@ -192,37 +195,22 @@ public class BuildingController extends GenericGamePhaseSceneController {
     }
 
     /**
-     * asks the client controler to send a flip timer request
+     * Asks the client controller to send a flip timer request
      */
     public void flipTimer(){
-            ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
-            boolean oneActive = false;
-            int numFlipped = 0;
-            for (TimerInfo timerInfo : timerInfos) {
-                if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
-                    oneActive = true;
-                }
-                if(timerInfo.isFlipped()){
-                    numFlipped++;
-                }
-            }
-            if(!oneActive && (numFlipped != 2 || finishedBuilding)) {
-                clientController.sendFlipRequest(timerInfos);
-                GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
-            }
-            else{
-                GuiJavaFx.playWavSoundEffect("error.wav");
-            }
-
-            showTimerInfo();
-
+        if(clientController.canFlipHourglass()) {
+            clientController.sendFlipRequest();
+            GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
+        }
+        else{
+            GuiJavaFx.playWavSoundEffect("error.wav");
+        }
     }
+
     @Override
     public String pageName() {
         return "BuildingPage";
     }
-
-
 
     @Override
     public void ShowGenericMessage(String message) {
@@ -248,7 +236,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
             listaTiles.getChildren().clear();
             System.out.println("Building controller DEBUG: showFaceUpTiles");
             try{
-                 mymodel.getFaceUpTiles().forEach(tile -> {
+                 myModel.getFaceUpTiles().forEach(tile -> {
                     String tileIdVal = String.valueOf(tile.getId());
                     String imagePath = "/it/polimi/ingsw/galaxytrucker/galaxy_trucker_imgs/tiles/GT-new_tiles_16_for web".concat(tileIdVal).concat(".jpg");
                     Image img = new Image(Objects.requireNonNull(zUtils.class.getResource(imagePath)).toExternalForm());
@@ -324,18 +312,17 @@ public class BuildingController extends GenericGamePhaseSceneController {
 
             if(shipControllers.get(i).getNicknameOfPlayer().equals(Nickname)) {
 
-                if (mymodel.getMyInfo().getNickName().equals(Nickname)) {
+                if (myModel.getMyInfo().getNickName().equals(Nickname)) {
 
 
-                            zUtils.showShipInGrid(mymodel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController, editable,details,null,null);
+                            zUtils.showShipInGrid(myModel.getMyInfo().getShip(), shipControllers.get(i).getShipGrid(), clientController, editable,details,null,null);
 
                 } else {
 
-                    zUtils.showShipInGrid(mymodel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null,null);
+                    zUtils.showShipInGrid(myModel.getPlayerInfoByNickname(Nickname).getShip(), shipControllers.get(i).getShipGrid(),clientController,false,details,null,null);
                 }
             }
         }
-
 
         //potrebbe essere uno ship update con questa modifica
         updateSetAsideTiles();
@@ -363,7 +350,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                 root.setMaxHeight(Double.MAX_VALUE);
                 //3-impostare la nuova root alla scena principale
                 StackCenterMenu.getChildren().add(root);
-                showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+                showShip(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -383,7 +370,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         if(StackCenterMenu.getChildren().size() < 2){
             //metto nave non editabile
             currPhaseDone = true;
-            showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+            showShip(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
             VBox root = null;
             FXMLLoader loader;
             try {
@@ -422,7 +409,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
         BtnFinishBuilding.setDisable(true);
         finishedBuilding = true;
         showWaitOtherPlayers(false);
-        if(mymodel.isLearningMatch() == false){
+        if(!myModel.isLearningMatch()){
             endBuildingOverlay.setVisible(true);
         }
     }
@@ -452,7 +439,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                         root.setMaxHeight(Double.MAX_VALUE);
                         //3-impostare la nuova root alla scena principale
                         StackCenterMenu.getChildren().add(root);
-                        showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+                        showShip(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -480,7 +467,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    showShip(mymodel.getMyInfo().getShip(), mymodel.getMyInfo().getNickName());
+                    showShip(myModel.getMyInfo().getShip(), myModel.getMyInfo().getNickName());
                 });
             break;
 
@@ -525,7 +512,7 @@ public class BuildingController extends GenericGamePhaseSceneController {
                     root = loader.load();
                     //2-Poi imposare il Cotnroller se ne ha bisogno passando ad esempio il controller principale o lo stage o altro
                     SMSpiedCardsController pageController = loader.getController();
-                    pageController.initialize(mymodel.getCardDecks().get(num),StackLeftMenu);
+                    pageController.initialize(myModel.getCardDecks().get(num),StackLeftMenu);
                     root.setMaxWidth(Double.MAX_VALUE);
                     root.setMaxHeight(Double.MAX_VALUE);
                     //3-impostare la nuova root alla scena principale

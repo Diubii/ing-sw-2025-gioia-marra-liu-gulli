@@ -1,4 +1,8 @@
 @echo off
+
+::UTF-8
+chcp 65001 > nul
+
 set JARPATH=..
 set JARNAME=GalaxyTrucker-TUI.jar
-java -jar %JARPATH%\%JARNAME%
+java -Dfile.encoding=UTF-8 -jar %JARPATH%\%JARNAME%

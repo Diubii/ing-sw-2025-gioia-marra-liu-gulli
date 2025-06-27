@@ -30,6 +30,7 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkingUtils;
 import it.polimi.ingsw.galaxytrucker.observer.Observer;
+import it.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 import it.polimi.ingsw.galaxytrucker.view.Tui.MenuManager;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.CardPrintUtils;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
@@ -47,6 +48,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -294,7 +296,7 @@ public class ClientController implements Observer {
      * @param isLearningMatch true if learning match
      */
     public void handleCreateChoice(int maxPlayers, boolean isLearningMatch) {
-        CreateRoomRequest request = new CreateRoomRequest(maxPlayers, isLearningMatch, getNickname());
+        CreateRoomRequest request = new CreateRoomRequest(maxPlayers, isLearningMatch, getNickname(), view.getViewType() == ViewType.GUI);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
 
@@ -354,7 +356,7 @@ public class ClientController implements Observer {
      * @param roomId room ID to join
      */
     public void handleJoinChoice(int roomId) {
-        JoinRoomRequest request = new JoinRoomRequest(roomId, getNickname());
+        JoinRoomRequest request = new JoinRoomRequest(roomId, getNickname(), view.getViewType() == ViewType.GUI);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
         safeSendMessage(request);
@@ -382,7 +384,7 @@ public class ClientController implements Observer {
      */
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
 
-        System.out.println("Ricevuto phase update in clientController: " + phaseUpdate.getState().toString());
+        //System.out.println("Ricevuto phase update in clientController: " + phaseUpdate.getState().toString());
         phase = phaseUpdate.getState();
 
         if (phase.equals(GameState.FLIGHT)) myModel.setPlayerState(PlayerState.Playing);
@@ -484,7 +486,7 @@ public class ClientController implements Observer {
                 safeSendMessage(finishBuildingRequest);
             }
 
-            case "j" -> new Thread(() -> view.showTimerInfos()).start();
+            case "j" -> sendAskTimerInfoRequest();
             case "reset" -> {}
             default ->
                 new Thread(() -> {
@@ -493,6 +495,46 @@ public class ClientController implements Observer {
                 }).start();
         }
 
+    }
+
+    public void handleFinishedBuildingMenuChoice(String input){
+        switch (input) {
+            case "menu", "?", "m" -> {
+                view.toShowCurrentMenu();
+                view.handleChoiceForPhase(phase);
+            }
+            case "a" -> view.askFetchShip();
+            case "b" -> {
+                if (!myModel.isLearningMatch()) {
+
+                    if (isPlaced || currentTileInHand == null) {
+                        sendShipUpdate();
+                        view.askViewAdventureDecks();
+                    } else {
+                        view.showGenericMessage("Hai una tile in mano, per favore posizionala prima.", false);
+                        view.showFinishedBuildingMenu();
+                    }
+
+                } else {
+                    view.showGenericMessage("You are not allowed to spy on the learningMatch!", false);
+                    view.showFinishedBuildingMenu();
+                }
+
+            }
+            case "c" -> {
+
+                view.askShowFaceUpTiles();
+                view.showFinishedBuildingMenu();
+            }
+
+            case "j" -> sendAskTimerInfoRequest();
+            case "reset" -> {}
+            default ->
+                    new Thread(() -> {
+                        view.showGenericMessage("Invalid option \"" + input + "\". Please try again.",false);
+                        view.showFinishedBuildingMenu();
+                    }).start();
+        }
     }
 
 
@@ -642,27 +684,33 @@ public class ClientController implements Observer {
     }
 
     /**
-     * Get synch timer infos array list.
-     *
-     * @return the array list
+     * Sends an {@link AskTimerInfoRequest}
      */
-    public ArrayList<TimerInfo> getSynchTimerInfos(){
-
+    public void sendAskTimerInfoRequest(){
         AskTimerInfoRequest askTimerInfoRequest = new AskTimerInfoRequest();
-        if (!safeSendMessage(askTimerInfoRequest)) return null;
-        completableFuture = new CompletableFuture<>();
-        final TimerInfoResponse timerInfoResponse;
-        try {
-            timerInfoResponse = (TimerInfoResponse) completableFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error while retrieving TimerInfoResponse: " + e.getMessage());
-            return null;
-        }
-        return timerInfoResponse.getTimerInfoList();
+        safeSendMessage(askTimerInfoRequest);
     }
 
     public void handleTimerInfoResponse(TimerInfoResponse timerInfoResponse) {
-        completableFuture.complete(timerInfoResponse);
+        myModel.getTimerInfos().clear();
+        myModel.getTimerInfos().addAll(timerInfoResponse.getTimerInfoList());
+        view.showTimerInfos(myModel.getTimerInfos());
+    }
+
+    public boolean canFlipHourglass(){
+        boolean oneActive = false;
+        int numFlipped = 0;
+
+        for (TimerInfo timerInfo : myModel.getTimerInfos()) {
+            if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
+                oneActive = true;
+            }
+            if(timerInfo.isFlipped()){
+                numFlipped++;
+            }
+        }
+
+        return !oneActive && (numFlipped != 2 || clientPhaseController.getPhase().equals(PLAYER_PHASE.FINISH_BUILDING));
     }
 
     /**
@@ -821,8 +869,6 @@ public class ClientController implements Observer {
 
     /**
      * Sends a PlaceTileRequest to the server to place the current tile.
-     *
-     * @throws InvalidTilePosition if position is invalid
      */
     public void handleTilePlacement() {
         if (currentTileInHand == null ) {
@@ -1021,7 +1067,7 @@ public class ClientController implements Observer {
     /**
      * Gets is socket.
      *
-     * @return the is socket
+     * @return <code>true</code> if the chosen communication protocol is socket.
      */
     public boolean getIsSocket() {
         return isSocket;
@@ -1029,7 +1075,7 @@ public class ClientController implements Observer {
 
 
     /**
-     * Handle check ship choice.
+     * Handles check ship choice.
      *
      * @param input the input
      */
@@ -1066,7 +1112,7 @@ public class ClientController implements Observer {
 
 
     /**
-     * Handle check ship request.
+     * Handles check ship request.
      */
     public void handleCheckShipRequest() {
         CheckShipStatusRequest checkShipStatusRequest = new CheckShipStatusRequest();
@@ -1091,7 +1137,7 @@ public class ClientController implements Observer {
     }
 
     /**
-     * Handle embark crew menu.
+     * Handles embark crew menu.
      *
      * @param string the string
      */
@@ -1132,14 +1178,14 @@ public class ClientController implements Observer {
      */
     public void handleEndTurnUpdate(EndTurnUpdate update) {
 
-        view.showGenericMessage("turn ended", false);
+        view.showGenericMessage("Turn ended", false);
         if (update.isEndGame()) {
             view.showGenericMessage("Game ended", false);
             return;
         }
         view.toShowCurrentMenu();
         if (myModel.getPlayerState() != PlayerState.Spectating) {
-            view.showGenericMessage("Il turno e' finito !", false);
+            view.showGenericMessage("Il turno è finito!", false);
             view.showFlightMenu();
         } else {
             handleReadyTurnRequest();
@@ -1197,7 +1243,7 @@ public class ClientController implements Observer {
 
 
     /**
-     * Handle game message.
+     * Handles game message.
      *
      * @param gameMessage the game message
      */
@@ -1207,7 +1253,7 @@ public class ClientController implements Observer {
     }
 
     /**
-     * Handle match info update.
+     * Handles match info update.
      *
      * @param matchInfoUpdate the match info update
      */
@@ -1230,7 +1276,7 @@ public class ClientController implements Observer {
     }
 
     /**
-     * Send draw adventure card request.
+     * Sends draw adventure card request.
      */
     public void sendDrawAdventureCardRequest() {
         DrawAdventureCardRequest request = new DrawAdventureCardRequest();
@@ -1238,7 +1284,7 @@ public class ClientController implements Observer {
     }
 
     /**
-     * Handle drawn adventure card update.
+     * Handles drawn adventure card update.
      *
      * @param drawnAdventureCardUpdate the drawn adventure card update
      */
@@ -1249,7 +1295,7 @@ public class ClientController implements Observer {
     }
 
     /**
-     * Handle activate adventure card request.
+     * Handles activate adventure card request.
      *
      * @param ignoredActivateAdventureCardRequest the ignored activate adventure card request
      */
@@ -1260,7 +1306,7 @@ public class ClientController implements Observer {
     /**
      * Send activate adventure card response.
      *
-     * @param confirm the confirm
+     * @param confirm the confirmation
      */
     public void sendActivateAdventureCardResponse(boolean confirm) {
         ActivateAdventureCardResponse response = new ActivateAdventureCardResponse(confirm);
@@ -1473,7 +1519,7 @@ public class ClientController implements Observer {
             view.showGenericMessage(playerKickedUpdate.getNickname() + " got kicked out of the game!", false);
         }
 
-        view.showGenericMessage("As " + playerKickedUpdate.getNickname() + " left the game, the game has ended prematurely and you'll have to start over.", false);
+        view.showGenericMessage("As " + playerKickedUpdate.getNickname() + " left the game, it has ended prematurely and you'll have search for another one.", true);
         backToMainMenu();
     }
 
@@ -1756,50 +1802,10 @@ public class ClientController implements Observer {
     }
 
     /**
-     * Complete future.
-     *
-     * @param message the message
-     */
-//update per generic message
-    public void completeFuture(NetworkMessage message) {
-        int responseId = message.getID();
-        if (completableFuture == null) {
-            view.showGenericMessage("⚠️ CompletableFuture is null when receiving response with ID: " + responseId, false);
-            return;
-        }
-
-        if (!pair.getKey().equals(responseId)) {
-            view.showGenericMessage("⚠️ ID mismatch! Expected: " + pair.getKey() + ", but got: " + responseId, false);
-            return;
-        }
-        if (completableFuture != null && pair.getKey().equals(message.getID())) {
-            completableFuture.complete(message);
-            completableFuture = null;
-        } else {
-            System.err.println("⚠️ Cannot complete future: ID mismatch or future was null");
-
-        }
-    }
-
-    /**
      * Sends a FlipTimerRequest for the first available OFF timer.
-     *
-     * @param timerInfos list of all timers
      */
-    public void sendFlipRequest(ArrayList<TimerInfo> timerInfos) {
-        //trovo quello che si puo flippare
-
-        int index = 0;
-
-        for (TimerInfo timerInfo : timerInfos) {
-            if (timerInfo.getTimerStatus().equals(TimerStatus.OFF)) {
-                index = timerInfo.getIndex();
-                break;
-            }
-        }
-
+    public void sendFlipRequest() {
         FlipTimerRequest flipTimerRequest = new FlipTimerRequest();
-        flipTimerRequest.setTimerIndex(index);
         safeSendMessage(flipTimerRequest);
     }
 

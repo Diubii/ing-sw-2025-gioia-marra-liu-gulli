@@ -12,7 +12,7 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.broadcast;
+import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.*;
 
 public abstract class EpidemicEffect {
 
@@ -20,6 +20,11 @@ public abstract class EpidemicEffect {
         ArrayList<Position> housings = new ArrayList<>();
         Player currentPlayer = context.getCurrentPlayer();
         Ship ship = context.getCurrentPlayer().getShip();
+
+        //
+        broadcastGameMessage(context,"Il giocatore "+ currentPlayer.getNickName() +" sta subendo l’effetto della carta e gli equipaggi nelle cabine idonee verranno rimossi");
+        sleepSafe(600);
+
 
         //Prendo tutte le housing units
         housings.addAll(ship.getComponentPositionsFromName("CentralHousingUnit"));
@@ -63,11 +68,9 @@ public abstract class EpidemicEffect {
             broadcast(context, new ShipUpdate(ship,currentPlayer.getNickName()));
             //Eseguo ancora questo metodo con il giocatore successivo
 
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            broadcastGameMessage(context,"Effetto concluso. Tocca al prossimo giocatore.");
+            sleepSafe(600);
+
             context.nextPlayer();
             context.executePhase();
         } else {

@@ -2,14 +2,10 @@ package it.polimi.ingsw.galaxytrucker.view.Tui;
 
 import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import it.polimi.ingsw.galaxytrucker.controller.ClientController;
-import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
-import it.polimi.ingsw.galaxytrucker.enums.GameState;
-import it.polimi.ingsw.galaxytrucker.enums.TimerStatus;
+import it.polimi.ingsw.galaxytrucker.enums.*;
 import it.polimi.ingsw.galaxytrucker.model.*;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
-import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Slot;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.BatterySlot;
@@ -30,9 +26,9 @@ import it.polimi.ingsw.galaxytrucker.view.View;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 import javafx.util.Pair;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -48,7 +44,6 @@ import static it.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
  * Implements the Textual user interface.
  */
 public class Tui implements View, Observable {
-
 
     private static final String STR_INPUT_CANCELED = "CAXX";
     private static PrintStream out;
@@ -94,6 +89,11 @@ public class Tui implements View, Observable {
     @Override
     public Boolean autoShowUpdates() {
         return false;
+    }
+
+    @Override
+    public ViewType getViewType() {
+        return ViewType.TUI;
     }
 
     private volatile CompletableFuture<String> currentInputFuture = null;
@@ -427,7 +427,7 @@ public class Tui implements View, Observable {
             return;
         } else {
             menuManager.setMenuText(phase);
-            if (phase.equals(GameState.BUILDING_START) || phase.equals(GameState.SHIP_CHECK) || phase.equals(GameState.CREW_INIT) || phase.equals(GameState.FLIGHT)) {
+            if (phase.equals(GameState.BUILDING_START) || phase.equals(GameState.BUILDING_END) || phase.equals(GameState.SHIP_CHECK) || phase.equals(GameState.CREW_INIT) || phase.equals(GameState.FLIGHT)) {
                 toShowCurrentMenu();
                 handleChoiceForPhase(phase);
             }
@@ -444,6 +444,7 @@ public class Tui implements View, Observable {
     public void handleChoiceForPhase(GameState phase) {
         switch (phase) {
             case BUILDING_START -> showBuildingMenu();
+            case BUILDING_END -> showFinishedBuildingMenu();
             case SHIP_CHECK -> showCheckShipMenu();
             case CREW_INIT -> showEmbarkCrewMenu();
             case FLIGHT -> showFlightMenu();
@@ -471,6 +472,26 @@ public class Tui implements View, Observable {
         }
 
         clientController.handleBuildingMenuChoice(input);
+    }
+
+    @Override
+    public void showFinishedBuildingMenu() {
+        enableInput();
+
+        final String choiceEnd;
+        if (MenuManager.learningMatch) choiceEnd = "c";
+        else choiceEnd = "j";
+
+        final String string = "\nChoose an option (a–" + choiceEnd + ") or reprint this menu (m): ";
+        String input = readLine(string).trim().toLowerCase();
+        if (checkReset(input)) return;
+
+        while (input.equals("m") || input.equals("menu") || input.equals("?")) {
+            menuManager.showCurrentMenu();
+            input = readLine(string).trim().toLowerCase();
+        }
+
+        clientController.handleFinishedBuildingMenuChoice(input);
     }
 
     @Override
@@ -1047,9 +1068,16 @@ public class Tui implements View, Observable {
 
             AskPositionResponse askPositionResponse = new AskPositionResponse(id, chosenPos);
             clientController.safeSendMessage(askPositionResponse);
+
+//            if(validPositions.size() > 1) {
+//                menuManager.showCurrentMenu();
+//            }
         } finally {
             disableInput();
         }
+
+
+        handlePhaseUpdate(new PhaseUpdate(GameState.BUILDING_END));
     }
 
     public void showGenericMessage(String message, Boolean important) {
@@ -1634,42 +1662,27 @@ public class Tui implements View, Observable {
     }
 
     @Override
-    public void
-    showTimerInfos() {
-
-
+    public void showTimerInfos(ArrayList<TimerInfo> timerInfos) {
         new Thread(() -> {
-            ArrayList<TimerInfo> timerInfos = clientController.getSynchTimerInfos();
-
             printTimerInfo(timerInfos);
             showTimerMenu(timerInfos);
-
         }).start();
-
     }
 
 
     private void showTimerMenu(ArrayList<TimerInfo> timerInfos) {
         String input;
         boolean valid = false;
-        boolean oneActive = false;
         enableInput();
         try {
 
 
             do {
 
-
                 boolean now = false;
+                boolean canFlipHourglass = clientController.canFlipHourglass();
 
-                for (TimerInfo timerInfo : timerInfos) {
-                    if (timerInfo.getTimerStatus().equals(TimerStatus.STARTED)) {
-                        oneActive = true;
-                        break;
-                    }
-                }
-
-                if (oneActive) {
+                if (!canFlipHourglass) {
                     input = readLine("Inserisci la tua scelta (menu) : ").trim().toLowerCase();
 
                 } else
@@ -1681,12 +1694,12 @@ public class Tui implements View, Observable {
                     handleChoiceForPhase(clientController.getPhase());
                 }
 
-                if (input.equals("a")) {
+                if (input.equals("a") && canFlipHourglass) {
                     valid = true;
 
                     //vedo se e' possibile flipparne una
 
-                    clientController.sendFlipRequest(timerInfos);
+                    clientController.sendFlipRequest();
                     out.println("Timer flipped!");
                     menuManager.showCurrentMenu();
                     handleChoiceForPhase(clientController.getPhase());

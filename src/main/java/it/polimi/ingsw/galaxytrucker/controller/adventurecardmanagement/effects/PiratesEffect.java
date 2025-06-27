@@ -18,6 +18,7 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.Co
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
+import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class PiratesEffect {
         Pirates pirates = (Pirates) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
 
-        System.out.println(player.getNickName()+ " DEBUG: firePowerCheck");
+//        System.out.println(player.getNickName()+ " DEBUG: firePowerCheck");
         float piratesFirePower = pirates.getFirePower();
         float playerFirePower = player.getShip().calculateFirePower();
 
@@ -51,9 +52,11 @@ public class PiratesEffect {
 
         if (piratesFirePower > playerFirePower) {
             handlePiratesWin(context);
+            sleepSafe(600);
 
         } else if (piratesFirePower < playerFirePower) {
             handlePlayerWin(context);
+            sleepSafe(600);
 
             rewardTaken.computeIfAbsent(game, _ -> false);
             //Controllo prima se la ricompensa è già stata presa da un altro giocatore.
@@ -70,6 +73,7 @@ public class PiratesEffect {
 
         } else if (piratesFirePower == playerFirePower) {
             handleTie(context);
+            sleepSafe(600);
         }
 
         if(context.currentPlayerIsLast()) {
@@ -87,7 +91,7 @@ public class PiratesEffect {
         Pirates pirates = (Pirates) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
 
-        System.out.println("DEBUG : firePower pirates.getFirePower() < player.getShip().calculateFirePower()");
+//        System.out.println("DEBUG : firePower pirates.getFirePower() < player.getShip().calculateFirePower()");
         GameMessage personalMessage = new GameMessage("The Pirates are not going to haunt you!"); //personalMessage.setIsTurn(true);
         game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
         GameMessage info = new GameMessage();
@@ -100,7 +104,7 @@ public class PiratesEffect {
         Pirates pirates = (Pirates) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
 
-        System.out.println("DEBUG: firePower pirates.getFirePower() > player.getShip().calculateFirePower()");
+//        System.out.println("DEBUG: firePower pirates.getFirePower() > player.getShip().calculateFirePower()");
         losersPerGame.computeIfAbsent(game, _ -> new ArrayList<>());
         losersPerGame.get(game).add(player);
 
@@ -114,14 +118,17 @@ public class PiratesEffect {
     }
     private static void handleTie(CardContext context){
         Player player = context.getCurrentPlayer();
-        System.out.println("DEBUG: firePower pirates.getFirePower() == player.getShip().calculateFirePower()");
+//        System.out.println("DEBUG: firePower pirates.getFirePower() == player.getShip().calculateFirePower()");
         GameMessage personalMessage = new GameMessage("The Pirates are not going to haunt you!"); //personalMessage.setIsTurn(true);
         sendMessage(context, player, personalMessage);
+        GameMessage info = new GameMessage();
+        info.setMessage(player.getNickName() + " ha pareggiato con i Pirati.");
+        broadcastExcept(context, info, player);
 
     }
 
     public static void receivedRewardsCollectionResponse(CardContext context) {
-        System.out.println("DEBUG: receivedRewardsCollectionResponse");
+//        System.out.println("DEBUG: receivedRewardsCollectionResponse");
 
 
         CollectRewardsResponse collectRewardsResponse = (CollectRewardsResponse) context.getIncomingNetworkMessage();
@@ -164,6 +171,8 @@ public class PiratesEffect {
         ArrayList<Player> losers = losersPerGame.getOrDefault(game,null);
 
         if (losers == null || losers.isEmpty()) { //Se abbiamo finito vado alla fase finale
+            broadcastGameMessage(context, "Nessuno è stato sconfitto, nessun attacco dai Pirati.");
+            sleepSafe(600);
             losersPerGame.remove(game);
             projectileIndexes.remove(game);
             trunksPerGame.remove(game);
@@ -197,7 +206,7 @@ public class PiratesEffect {
         int projectileVictimIndex = projectileVictimIndexes.get(game);
         Player player = losers.get(projectileVictimIndex);
         context.setCurrentPlayer(player);
-        System.out.println(player.getNickName() + " DEBUG: cannonaitsStart");
+//        System.out.println(player.getNickName() + " DEBUG: cannonaitsStart");
 
         Projectile projectile = pirates.getCannonFires().get(projectileIndex);
 
@@ -225,9 +234,9 @@ public class PiratesEffect {
         Pirates pirates = (Pirates) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
         Ship playerShip = player.getShip();
-        ShipPrintUtils.printShip(playerShip);
+//        ShipPrintUtils.printShip(playerShip);
 
-        System.out.println(player.getNickName() + " DEBUG: cannonaitsFire");
+//        System.out.println(player.getNickName() + " DEBUG: cannonaitsFire");
         int projectileIndex = projectileIndexes.getOrDefault(game,0);
         int victimIdx = projectileVictimIndexes.getOrDefault(game, 0);
 
@@ -243,8 +252,9 @@ public class PiratesEffect {
         int diceRoll = getCorrectedDiceRoll(currentDiceRoll.get(game), projectile.getDirection());
 
         broadcastGameMessage(context,player.getNickName() + "  sta per essere colpito da un " + projectile.getType().name() +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
+        sleepSafe(600);
 
-        System.out.println("Stai per essere colpito da un " + projectile.getType().name()  +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
+//        System.out.println("Stai per essere colpito da un " + projectile.getType().name()  +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
 
 
         if (losersPerGame.get(game).size() == victimIdx +1 ) {
@@ -256,10 +266,18 @@ public class PiratesEffect {
         }
 
         Tile destroyedTile = game.getGameController().reactToProjectile(player, projectile, diceRoll);
-        ShipPrintUtils.printShip(playerShip);
-        resetShield(player);
+//        ShipPrintUtils.printShip(playerShip);
+        if (destroyedTile != null) {
+            ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+            sendGameMessage(context, player, " Purtroppo, sei stato colpito e hai perso un  "+destroyedTile.getMyComponent().accept(componentNameVisitor));
+        }
+        else{
+            sendGameMessage(context, player, "  Congratulazioni, sei riuscito a schivare l'attacco!");
+        }
 
+        resetShield(player);
         broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
+        sleepSafe(600);
 
         if (destroyedTile != null) {
             ArrayList<Ship> tronconi;
@@ -269,8 +287,8 @@ public class PiratesEffect {
             trunksPerGame.put(game, tronconi);
 
             if (tronconi.size() > 1) {
-                System.out.println("in tronconi size()>1");
-                System.out.println(player.getNickName() + " size tronconi " + tronconi.size());
+//                System.out.println("in tronconi size()>1");
+//                System.out.println(player.getNickName() + " size tronconi " + tronconi.size());
                 //se ho creato nuovi tronconi chiedo quale tenere
                 AskTrunkRequest askTrunkRequest = new AskTrunkRequest(tronconi);
                 context.nextPhase();
@@ -290,7 +308,7 @@ public class PiratesEffect {
     }
 
     public static void cannonaitsTrunks(CardContext context) {
-        System.out.println("DEBUG: cannonaitsTrunks");
+//        System.out.println("DEBUG: cannonaitsTrunks");
         LobbyManager game = context.getCurrentGame();
         AskTrunkResponse askTrunkResponse = (AskTrunkResponse) context.getIncomingNetworkMessage();
         int indexTrunk = askTrunkResponse.getTrunkIndex();
@@ -305,6 +323,9 @@ public class PiratesEffect {
 
         //invio a tutti la nuova nave
         broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
+
+        broadcastGameMessage(context, player.getNickName() + " ha scelto quale parte della nave tenere dopo l'attacco.");
+        sleepSafe(600);
 
         context.previousPhase(2); //cannonaitsStart
         context.executePhase();

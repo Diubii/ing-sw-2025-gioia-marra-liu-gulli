@@ -46,14 +46,17 @@ public abstract class Utils {
         FlightBoard flightBoard = game.getRealGame().getFlightBoard();
         flightBoard.movePlayer(game.getPlayerColors().get(player.getNickName()), steps, player);
         FlightBoardUpdate fbu = new FlightBoardUpdate(flightBoard);
+
         String direction = steps < 0 ? "backwards" : "forwards";
         String message = "Player " + player.getNickName() + " moved " + Math.abs(steps) + " steps " + direction + "!";
         broadcast(context, new GameMessage(message));
         broadcast(context, fbu);
+        sleepSafe(600);
+
         context.setCurrentRankedPlayers(context.getCurrentGame().getGameController().getRankedPlayers()); //Aggiorno i currentRankedPlayers del context
     }
 
-    protected static void discardCrewMembers(Player player, DiscardCrewMembersResponse discardCrewMembersResponse, int numberOfCrewMembersToBeDiscarded) {
+    protected static void discardCrewMembers(CardContext context,Player player, DiscardCrewMembersResponse discardCrewMembersResponse, int numberOfCrewMembersToBeDiscarded) {
         for (Position position : discardCrewMembersResponse.getHousingPositions()) { //Per ogni posizione (assumo posizioni duplicate per scartare più volte dalla stessa housing unit)
             Component housingUnit = player.getShip().getComponentFromPosition(position); //Prendo la housingUnit dalla position data
 
@@ -63,6 +66,14 @@ public abstract class Utils {
                 numberOfCrewMembersToBeDiscarded--;
             }
         }
+
+        ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
+        broadcast(context, shipUpdate);
+
+        String message = "Player " + player.getNickName() + " ha perso " +numberOfCrewMembersToBeDiscarded + " crew members!";
+        broadcast(context, new GameMessage(message));
+        sleepSafe(600);
+
     }
 
     /**
@@ -106,10 +117,6 @@ public abstract class Utils {
         lobbyManager.getPlayerHandlers().values().forEach(ch -> { if(ch != excludedPlayerClientHandler) ch.sendMessage(message); });
     }
 
-    protected static void broadcastExcept(CardContext context, NetworkMessage message, ClientHandler excludedPlayerClientHandler) {
-        LobbyManager lobbyManager = context.getCurrentGame();
-        lobbyManager.getPlayerHandlers().values().forEach(ch -> { if(ch != excludedPlayerClientHandler) ch.sendMessage(message); });
-    }
 
     /**
      * Checks if a player has a shield orientated the same way of the incoming projectile. Does not check for same row/column.
@@ -196,7 +203,7 @@ public abstract class Utils {
         }
     }
 
-    public static ArrayList<Good> getAndRemoveMostValuableGoods(CardContext context,Player player, int penalty ) {
+    protected static ArrayList<Good> getAndRemoveMostValuableGoods(CardContext context,Player player, int penalty ) {
         //red, yellow, green, blue
         Ship ship = player.getShip();
         ArrayList<Good> goodsToDiscard = new ArrayList<>();
@@ -253,7 +260,7 @@ public abstract class Utils {
 
     }
 
-    public static void removeBatteries(CardContext context,Player player, int batteryToDiscard) {
+       protected static void removeBatteries(CardContext context,Player player, int batteryToDiscard) {
         if (batteryToDiscard <= 0) return;
         Ship ship = player.getShip();
 
@@ -281,7 +288,7 @@ public abstract class Utils {
         }
     }
 
-    public static void resetDoubleCannon(Player player) {
+    protected static void resetDoubleCannon(Player player) {
 
         Ship ship = player.getShip();
         ArrayList<Position> doubleCannonPos = ship.getComponentPositionsFromName("DoubleCannon");
@@ -296,7 +303,7 @@ public abstract class Utils {
 
     }
 
-    public static void resetShield(Player player) {
+    protected static void resetShield(Player player) {
 
         Ship ship = player.getShip();
         ArrayList<Position>  shieldPos = ship.getComponentPositionsFromName("Shield");
@@ -310,7 +317,7 @@ public abstract class Utils {
         }
 
     }
-    public static void resetDoubleEngine(Player player) {
+    protected static void resetDoubleEngine(Player player) {
 
         Ship ship = player.getShip();
         ArrayList<Position>  doubleEnginePos = ship.getComponentPositionsFromName("DoubleEngine");
@@ -325,12 +332,22 @@ public abstract class Utils {
 
     }
 
-    public static void addDestroyedTilesInTrunc(Player player, ArrayList<Ship> trucks)  {
+    protected static void addDestroyedTilesInTrunc(Player player, ArrayList<Ship> trucks)  {
         int removed = 0;
         for (Ship ship : trucks) {
             removed += ship.remainingTiles();
         }
         player.getShip().addDestroyedTiles(removed);
+    }
+
+    protected static void sleepSafe(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+
     }
 
 

@@ -40,10 +40,7 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * The ServerController class handles the management of clients, lobbies, game tiles,
@@ -329,7 +326,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 System.err.println(e.getMessage());
                 return;
             }
+
             newGame.addPlayerHandler(clientHandler, myPlayer.getNickName());
+            if(message.isSubscribedToTimerUpdates()) newGame.getTimerSubscribers().add(clientHandler);
             newGame.getRealGame().initFlightBoard();
 
             Tile centralTile = null;
@@ -428,7 +427,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             }
 
             synchronized (myGame) {
-
                 //System.out.println("SIZE: " + myGame.getPlayerColors().size());
 
                 if (myGame.getPlayerColors().size() == myGame.getRealGame().getMaxPlayers() || myGame.getGameController().getGameState() != GameState.LOBBY) {
@@ -548,6 +546,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                 //se tutto è andato bene
                 if (result) {
+                    if(message.isSubscribedToTimerUpdates()) myGame.getTimerSubscribers().add(clientHandler);
 
                     ArrayList<ClientHandler> original = new ArrayList<>(playerHandlers);
                     playerHandlers.remove(clientHandler);
@@ -1418,12 +1417,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
 //        myGame.completePendingResponse(askTimerInfoRequest.getID());
-            TimerInfoResponse timerInfoResponse = new TimerInfoResponse(askTimerInfoRequest.getID());
+            TimerInfoResponse timerInfoResponse = new TimerInfoResponse(askTimerInfoRequest.getID(), myGame.getRealGame().getTimerInfos());
             //predo i timerInfo
 
             ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
 
-            timerInfoResponse.setTimerInfoList(timerInfos);
             clientHandler.sendMessage(timerInfoResponse);
         });
     }
@@ -1440,14 +1438,16 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
 
             ArrayList<TimerInfo> timerInfos = myGame.getRealGame().getTimerInfos();
-            TimerInfo timer = timerInfos.get(flipTimerRequest.getTimerIndex());
+            TimerInfo timer = timerInfos.stream().filter(t -> !t.isFlipped()).findFirst().orElse(null);
+
+            if (timer == null) return;
 
 //        timer.setTimerStatus(TimerStatus.STARTED);
             timer.setFlipped(true);
 
-            boolean lastTimer = (flipTimerRequest.getTimerIndex() == myGame.getRealGame().getTimerInfos().size() - 1);
+            boolean lastTimer = (timer.getIndex() == myGame.getRealGame().getTimerInfos().size() - 1);
 
-            startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()), lastTimer, flipTimerRequest.getTimerIndex());
+            startTimer(10, myGame.getGameController(), new ArrayList<>(myGame.getPlayerHandlers().values()), lastTimer, timer.getIndex());
         });
     }
 
@@ -1470,7 +1470,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     public void startTimer(int seconds, GameController gameController, ArrayList<ClientHandler> clients, boolean last, int index) {
         //mando a tutti la notifica di end_timer\
 
-        GameMessage gameMessage = new GameMessage("Timer n. "+ index + " started");
+        GameMessage gameMessage = new GameMessage("Timer n. " + (index + 1) + " started");
         broadCast(clients, gameMessage);
 
         new Thread(()->{
@@ -1489,6 +1489,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             while (secondsIn > 0){
                 try {
+                    TimerInfoResponse timerInfoResponse = new TimerInfoResponse(game.getRealGame().getTimerInfos());
+                    broadCast(game.getTimerSubscribers(), timerInfoResponse);
+
                     Thread.sleep(1000);
                     secondsIn -= 1;
                     timerinfo.setValue(secondsIn);
@@ -1498,6 +1501,9 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             }
 
             timerinfo.setTimerStatus(TimerStatus.ENDED);
+            TimerInfoResponse timerInfoResponse = new TimerInfoResponse(game.getRealGame().getTimerInfos());
+            broadCast(game.getTimerSubscribers(), timerInfoResponse);
+
             if (last){
 
                 if (!(gameController.getGameState() == GameState.BUILDING_END)) {
@@ -1508,10 +1514,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 }
 
             }
-
-
-
-
         }).start();
 
 
