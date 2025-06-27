@@ -17,6 +17,7 @@ public class CreateRoomRequest extends NetworkMessage implements Serializable {
     private final int maxPlayers;
     private final Boolean isLearningMatch;
     private final String nickName;
+    private final boolean subscribedToTimerUpdates;
 
     /**
      * Instantiates a new Create room request.
@@ -25,10 +26,11 @@ public class CreateRoomRequest extends NetworkMessage implements Serializable {
      * @param isLearningMatch the is learning match
      * @param nickName        the nick name
      */
-    public CreateRoomRequest(int maxPlayers, Boolean isLearningMatch, String nickName) {
+    public CreateRoomRequest(int maxPlayers, Boolean isLearningMatch, String nickName, boolean subscribedToTimerUpdates) {
         this.maxPlayers = maxPlayers;
         this.isLearningMatch = isLearningMatch;
         this.nickName = nickName;
+        this.subscribedToTimerUpdates = subscribedToTimerUpdates;
     }
 
     /**
@@ -61,5 +63,9 @@ public class CreateRoomRequest extends NetworkMessage implements Serializable {
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
         return visitor.visit(this);
+    }
+
+    public boolean isSubscribedToTimerUpdates() {
+        return subscribedToTimerUpdates;
     }
 }

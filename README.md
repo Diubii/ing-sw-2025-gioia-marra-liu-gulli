@@ -29,7 +29,7 @@ e bisogna assicurarsi che venga utilizzata per l'esecuzione la versione corretta
 #### Avvio tramite Jar
 
   Dopo aver scaricato la cartella del progetto è possibile avviare i Jar
-  aprendo il terminale nella cartella "Jar" ed eseguendo i seguenti comandi:
+  aprendo il terminale nella cartella <code>jar</code> ed eseguendo i seguenti comandi:
   - Per il Server  
 
   
@@ -43,15 +43,15 @@ e bisogna assicurarsi che venga utilizzata per l'esecuzione la versione corretta
   - Per la Gui (Interfaccia Grafica)
 
 
-    javaw --module-path extra\openjfx\javafx-controls;extra\openjfx\javafx-fxml;extra\openjfx\javafx-graphics;extra\openjfx\javafx-base ^ --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base ^ -jar GalaxyTrucker-GUI.jar
+    javaw --module-path extra\openjfx\javafx-controls;extra\openjfx\javafx-fxml;extra\openjfx\javafx-graphics;extra\openjfx\javafx-base --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base -jar GalaxyTrucker-GUI.jar
 
-abbiamo incluso nel progetto nella cartella dei Jar JavaFx per semplificare la procedura di avvio.
+  Sono stati inclusi nella cartella <code>extra</code> i Jar di JavaFX per semplificare la procedura di avvio.
 
 #### Avvio semplificato
 
-1. Scaricare il gioco: è possibile scaricare la cartella con gli eseguibili al [LINK](https://cdn.oci.diubi.dev/GalaxyTrucker-Jars.zip) 
+1. Scaricare il gioco: è possibile scaricare la cartella con gli eseguibili al seguente [link](https://cdn.oci.diubi.dev/GalaxyTrucker-Jars.zip) 
 2. Decomprimere la cartella appena scaricata
-3. Navigando nella cartella extra è possibile avviare Server, Tui o Gui semplicemente facendo click doppio. 
+3. Navigando nella cartella <code>extra</code> è possibile avviare Server, Tui o Gui semplicemente facendo click doppio sui file <code>.bat</code> (Windows) o <code>.sh</code> (Unix). 
 
     
 ### Copertura dei test:
@@ -64,11 +64,11 @@ Tutti i menu e la maggior parte delle interazioni sono da effettuare con il tast
 - Fase di Costruzione:
   - Prendere e piazzare le tessere con click sinistro
   - Ruotare una tessera con Q ed E oppure con il tasto destro del Mouse
-- Fase di cotrollo della nave:
+- Fase di controllo della nave:
   - Eliminare le tessere non valide con click sinistro
 - Fase di volo:
   - Prendere e piazzare le merci con click sinistro
   - Per attivare un componente prendere un segnalino batteria con click sinistro e mentre lo si ha in mano cliccare sul componente che si desidera attivare.
-  - Selezionare la navicella che si desidera visualizzare tramite il menu laterale, durante il gioco in automatico viene sempre mostrata l'ultima navicella che ha subito dei cambiamenti per effetto delle carte. E' sempre possibile tornare a visualizzare la propria navicella selezionandola. 
+  - Selezionare la navicella che si desidera visualizzare tramite il menu laterale, durante il gioco in automatico viene sempre mostrata l'ultima navicella che ha subito dei cambiamenti per effetto delle carte. È sempre possibile tornare a visualizzare la propria navicella selezionandola. 
    
 

@@ -8,6 +8,7 @@ import it.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import it.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ public class ClientModel {
     private boolean isLearningMatch;
     private ArrayList<Good> unplacedGoods = new ArrayList<>();
     private AdventureCard currentAdventureCard;
+    private final ArrayList<TimerInfo> timerInfos = new ArrayList<>();
 
     public PlayerState getPlayerState() {
         return playerState;
@@ -162,5 +164,9 @@ public class ClientModel {
 
     public void setUnplacedGoods(ArrayList<Good> unplacedGoods) {
         this.unplacedGoods = unplacedGoods;
+    }
+
+    public ArrayList<TimerInfo> getTimerInfos() {
+        return timerInfos;
     }
 }

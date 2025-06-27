@@ -18,13 +18,14 @@ public class LobbyManager {
     private final HashMap<String, Color> PlayerColors;
     private Color nextAvailableColor;
     private final HashMap<String, ClientHandler> PlayerHandlers = new HashMap<>();
-    private TileBunch tileBunch = null;
+    private final TileBunch tileBunch;
     private final GameController gameController;
     private final ArrayList<String> playerShipFinished = new ArrayList<>();
     private final ArrayList<String> playerCrewFinished = new ArrayList<>();
     private final ArrayList<PlayerInfo> playerInfos = new ArrayList<>();
     private final Set<String> readyPlayers = new HashSet<>();
     private final Set<String> earlyLandingPlayers = new HashSet<>();
+    private final ArrayList<ClientHandler> timerSubscribers = new ArrayList<>();
 
 
     private ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> pendingResponses;
@@ -223,4 +224,7 @@ public class LobbyManager {
         return (PlayerColors.entrySet().stream().filter(pair -> pair.getValue().equals(color))).map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
+    public ArrayList<ClientHandler> getTimerSubscribers() {
+        return timerSubscribers;
+    }
 }

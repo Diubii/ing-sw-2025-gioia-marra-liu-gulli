@@ -15,6 +15,7 @@ public class JoinRoomRequest extends NetworkMessage implements Serializable {
     private static final long serialVersionUID = 54L;
     private final int roomId;
     private final String nickName;
+    private final boolean subscribedToTimerUpdates;
 
     /**
      * Instantiates a new Join room request.
@@ -22,11 +23,12 @@ public class JoinRoomRequest extends NetworkMessage implements Serializable {
      * @param roomId   the room id
      * @param nickName the nick name
      */
-    public JoinRoomRequest(int roomId, String nickName) {
+    public JoinRoomRequest(int roomId, String nickName, boolean subscribedToTimerUpdates) {
 
         super();
         this.roomId = roomId;
         this.nickName = nickName;
+        this.subscribedToTimerUpdates = subscribedToTimerUpdates;
     }
 
     @Override
@@ -50,5 +52,9 @@ public class JoinRoomRequest extends NetworkMessage implements Serializable {
      */
     public String getNickName() {
         return nickName;
+    }
+
+    public boolean isSubscribedToTimerUpdates() {
+        return subscribedToTimerUpdates;
     }
 }

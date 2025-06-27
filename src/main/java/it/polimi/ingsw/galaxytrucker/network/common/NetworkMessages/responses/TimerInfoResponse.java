@@ -16,7 +16,7 @@ public class TimerInfoResponse extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L; // Unique serialization ID
 
-    private ArrayList<TimerInfo> timerInfoList; // List of TimerInfo objects
+    private final ArrayList<TimerInfo> timerInfoList; // List of TimerInfo objects
 
     @Override
     public <T> T accept(NetworkMessageVisitorsInterface<T> visitor) {
@@ -27,9 +27,9 @@ public class TimerInfoResponse extends NetworkMessage implements Serializable {
      * Instantiates a new Timer info response.
      */
 // Default constructor
-    public TimerInfoResponse() {
+    public TimerInfoResponse(ArrayList<TimerInfo> timerInfoList) {
         super(0); // Default ID
-        this.timerInfoList = new ArrayList<>();
+        this.timerInfoList = timerInfoList;
     }
 
     /**
@@ -38,28 +38,13 @@ public class TimerInfoResponse extends NetworkMessage implements Serializable {
      * @param id the id
      */
 // Parameterized constructor
-    public TimerInfoResponse(int id) {
+    public TimerInfoResponse(int id, ArrayList<TimerInfo> timerInfoList) {
         super(id); // Call parent constructor
         this.timerInfoList = new ArrayList<>(); // Initialize the list
+        this.timerInfoList.addAll(timerInfoList);
     }
 
-    /**
-     * Gets timer info list.
-     *
-     * @return the timer info list
-     */
-// Getter for TimerInfo list
     public ArrayList<TimerInfo> getTimerInfoList() {
         return timerInfoList;
-    }
-
-    /**
-     * Sets timer info list.
-     *
-     * @param timerInfoList the timer info list
-     */
-// Setter for TimerInfo list
-    public void setTimerInfoList(ArrayList<TimerInfo> timerInfoList) {
-        this.timerInfoList = timerInfoList;
     }
 }

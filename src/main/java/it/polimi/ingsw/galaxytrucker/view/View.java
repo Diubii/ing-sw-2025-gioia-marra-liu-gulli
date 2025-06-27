@@ -2,12 +2,14 @@ package it.polimi.ingsw.galaxytrucker.view;
 
 import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import it.polimi.ingsw.galaxytrucker.enums.GameState;
+import it.polimi.ingsw.galaxytrucker.enums.ViewType;
 import it.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import it.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
 import it.polimi.ingsw.galaxytrucker.exceptions.TooManyPlayersException;
 import it.polimi.ingsw.galaxytrucker.model.*;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
+import it.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 
@@ -32,6 +34,8 @@ public interface View {
      * @return
      */
     Boolean autoShowUpdates();
+
+    ViewType getViewType();
 
     void forceReset();
 
@@ -73,6 +77,8 @@ public interface View {
 
     void showFaceUpTiles();
 
+
+    void showFinishedBuildingMenu();
 
     void FetchMyShip();
 
@@ -138,7 +144,7 @@ public interface View {
 
     void askCollectRewards();
 
-    void showTimerInfos();
+    void showTimerInfos(ArrayList<TimerInfo> timerInfos);
 
     void showYouAreNowSpectating();
 
