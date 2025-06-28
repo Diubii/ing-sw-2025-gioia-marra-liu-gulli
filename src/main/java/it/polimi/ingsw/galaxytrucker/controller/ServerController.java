@@ -46,12 +46,12 @@ import java.util.concurrent.*;
  * The ServerController class handles the management of clients, lobbies, game tiles,
  * network messages, and various game-related actions. It acts as the core server-side
  * controller to manage game flow and client-server interactions.
- * <p>
+ *
  * The class also provides mechanisms for synchronously or asynchronously executing tasks
  * and manages the mapping between clients and their respective nicknames or game lobbies.
  * Its primary responsibilities include handling client requests, managing game state,
  * and broadcasting messages to clients.
- * <p>
+ *
  * ServerController extends java.rmi.server.UnicastRemoteObject and implements it.polimi.ingsw.galaxytrucker.controller.ServerControllerHandles.
  */
 public class ServerController extends UnicastRemoteObject implements ServerControllerHandles {
@@ -74,20 +74,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
     private static Integer nextLobbyIndex = 0;
 
-    /**
-     * Sets synchronous execution.
-     *
-     * @param sync the sync
-     */
     public void setSynchronousExecution(boolean sync) {
         this.synchronousExecution = sync;
     }
 
-    /**
-     * Execute.
-     *
-     * @param task the task
-     */
     public void execute(Runnable task) {
         if (synchronousExecution) {
             task.run(); //per test
@@ -96,11 +86,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         }
     }
 
-    /**
-     * Instantiates a new Server controller.
-     *
-     * @throws RemoteException the remote exception
-     */
     public ServerController() throws RemoteException {
         super();
 
@@ -126,10 +111,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      * This method reads the tiles data from a JSON file located at a specific path
      * and maps it to an ArrayList of Tile objects. If there's an issue reading or
      * deserializing the file, the error message is printed to the standard error stream.
-     * <p>
+     *
      * Note: The JSON file path is hardcoded and might need adjustment based on the
      * project's structure or deployment setup.
-     * <p>
+     *
      * Exceptions:
      * - Handles IOExceptions that might occur during file reading or parsing.
      */
@@ -206,21 +191,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
 
-    /**
-     * Gets message manager.
-     *
-     * @return the message manager
-     */
     public MessageManager getMessageManager() {
         return messageManager;
     }
 
-    /**
-     * Gets lobby from handler.
-     *
-     * @param clientHandler the client handler
-     * @return the lobby from handler
-     */
     @NeedsToBeChecked("Un po' confusionaria la query, magari si può fare una Map<ClientHandler, LobbyManager> o Map<UUID, LobbyManager>")
     public LobbyManager getLobbyFromHandler(ClientHandler clientHandler) {
 
@@ -914,6 +888,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             String nickname = getNicknameFromClientHandler(clientHandler);
 
             //Qui ha davvvero finito la fase di costruzione dicendo anche la posizione di partenza
+            myGame.addPlayerShipFinished(nickname);
 
             Color playerColor = myGame.getPlayerColors().get(nickname);
 
@@ -937,8 +912,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 } else {
                     myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos, getPlayerFromClientHandler(clientHandler));
                     myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
-                    myGame.addPlayerShipFinished(nickname);
-
                 }
 
 
@@ -1465,8 +1438,10 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      *
      * @param seconds        The duration of the timer in seconds.
      * @param gameController The GameController managing the state of the game.
-     * @param clients        The list of ClientHandler objects representing the connected clients that need                       to be notified of timer events.
-     * @param last           A boolean value indicating if this is the last timer, which may trigger a state change                       when the timer ends.
+     * @param clients        The list of ClientHandler objects representing the connected clients that need
+     *                       to be notified of timer events.
+     * @param last           A boolean value indicating if this is the last timer, which may trigger a state change
+     *                       when the timer ends.
      * @param index          The index of the timer, used to associate the timer with a specific TimerInfo object.
      */
     public void startTimer(int seconds, GameController gameController, ArrayList<ClientHandler> clients, boolean last, int index) {
@@ -1622,7 +1597,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      * Retrieves the nickname associated with a given ClientHandler.
      *
      * @param clientHandler the ClientHandler whose associated nickname is to be retrieved.
-     * @return the nickname of the client associated with the provided ClientHandler,         or null if no nickname is found for the client.
+     * @return the nickname of the client associated with the provided ClientHandler,
+     *         or null if no nickname is found for the client.
      */
     public String getNicknameFromClientHandler(ClientHandler clientHandler) {
         return clientNicknameMap.get(clientHandler.getClientID());
@@ -1665,7 +1641,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
     /**
      * Mainly used for testing
-     *
      * @return newly created roomId.
      */
     public int getLastCreatedGameId() {
@@ -1673,11 +1648,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
 
-    /**
-     * Gets heartbeats.
-     *
-     * @return the heartbeats
-     */
     public ArrayList<Heartbeat> getHeartbeats() {
         return heartbeats;
     }

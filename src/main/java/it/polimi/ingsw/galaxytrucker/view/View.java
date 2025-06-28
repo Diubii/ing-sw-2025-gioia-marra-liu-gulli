@@ -148,5 +148,6 @@ public interface View {
 
     void showYouAreNowSpectating();
 
+    void autoShowShipInTui(Ship shipView,String Nickname);
 
 }

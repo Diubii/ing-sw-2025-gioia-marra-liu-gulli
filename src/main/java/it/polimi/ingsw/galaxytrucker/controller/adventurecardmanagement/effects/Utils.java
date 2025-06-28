@@ -350,6 +350,12 @@ public abstract class Utils {
 
     }
 
+    protected static void broadcastShipUpdate(CardContext context ,Player player) {
+        ShipUpdate shipUpdate = new ShipUpdate(player.getShip(),player.getNickName());
+        shipUpdate.setShouldDisplay(true);
+        broadcast(context,shipUpdate);
+        sleepSafe(600);
+}
 
 
 

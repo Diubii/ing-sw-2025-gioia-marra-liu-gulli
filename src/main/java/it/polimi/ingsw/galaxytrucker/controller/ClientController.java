@@ -187,9 +187,16 @@ public class ClientController implements Observer {
     private Runnable getHeartbeatTask() {
         return (() -> {
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
-            safeSendMessage(heartbeatRequest);
+            boolean success = safeSendMessage(heartbeatRequest);
             //System.out.println("Sent heartbeat: " + System.currentTimeMillis());
                 //System.out.println("[ClientController] Sent heartbeat.");
+            System.out.println("[HEARTBEAT] Sent to server at " + System.currentTimeMillis());
+            if (success) {
+                System.out.println("[HEARTBEAT] Sent at: " + System.currentTimeMillis());
+            } else {
+                System.err.println("[HEARTBEAT] Failed to send!");
+            }
+
         });
     }
 
@@ -610,8 +617,8 @@ public class ClientController implements Observer {
                 }
             }
             if (update.getShouldDisplay()) {
-                view.showShip(ship, owner);
-                view.handleChoiceForPhase(phase);
+
+                view.autoShowShipInTui(ship,owner);
 
             }
             if (view.autoShowUpdates()) {

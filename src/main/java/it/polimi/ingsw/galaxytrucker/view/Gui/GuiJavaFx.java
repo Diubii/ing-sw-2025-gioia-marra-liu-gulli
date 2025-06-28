@@ -996,4 +996,9 @@ public class GuiJavaFx implements View {
             }
         });
     }
+
+    @Override
+    public void autoShowShipInTui(Ship shipView, String Nickname) {
+
+    }
 }

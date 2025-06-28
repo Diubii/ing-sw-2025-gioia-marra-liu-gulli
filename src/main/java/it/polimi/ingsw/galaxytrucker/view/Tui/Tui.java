@@ -1119,6 +1119,7 @@ public class Tui implements View, Observable {
         //Chiede finchè non dico no o finchè non termino le batterie
         while (!stop && totalBatteries > 0) {
             System.out.print("Activate " + component.name() + " specify the coordinates or type no to stop");
+            System.out.println();
             enableInput();
             String input = readLine(" input (x,y) or no: ").trim().toLowerCase();
             disableInput();
@@ -1774,6 +1775,14 @@ public class Tui implements View, Observable {
         }
     }
 
+    @Override
+    public void autoShowShipInTui(Ship shipView, String Nickname) {
+        System.out.println();
+        System.out.println("Ship di "+ Nickname);
+        System.out.println();
+        ShipPrintUtils.printShip(shipView);
+
+    }
 
     private Boolean checkReset(String input) {
         return input.equalsIgnoreCase("reset");

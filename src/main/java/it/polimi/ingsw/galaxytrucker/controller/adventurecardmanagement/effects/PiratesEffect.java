@@ -173,12 +173,13 @@ public class PiratesEffect {
         if (losers == null || losers.isEmpty()) { //Se abbiamo finito vado alla fase finale
             broadcastGameMessage(context, "Nessuno è stato sconfitto, nessun attacco dai Pirati.");
             sleepSafe(600);
+
             losersPerGame.remove(game);
             projectileIndexes.remove(game);
             trunksPerGame.remove(game);
             rewardTaken.remove(game);
             projectileVictimIndexes.remove(game);
-            broadcastGameMessage(context,"Nessuno è stato sconfitto, nessuno subirà l'attacco dei cannoni. L'effetto della carta è terminato");
+
             resetState(game);
             context.goToEndPhase();
             context.executePhase();
@@ -252,6 +253,8 @@ public class PiratesEffect {
         int diceRoll = getCorrectedDiceRoll(currentDiceRoll.get(game), projectile.getDirection());
 
         broadcastGameMessage(context,player.getNickName() + "  sta per essere colpito da un " + projectile.getType().name() +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
+
+
         sleepSafe(600);
 
 //        System.out.println("Stai per essere colpito da un " + projectile.getType().name()  +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
@@ -264,20 +267,24 @@ public class PiratesEffect {
         else {
             projectileVictimIndexes.put(game, victimIdx + 1);
         }
+        broadcastShipUpdate(context,player);
+        sleepSafe(600);
 
         Tile destroyedTile = game.getGameController().reactToProjectile(player, projectile, diceRoll);
 //        ShipPrintUtils.printShip(playerShip);
         if (destroyedTile != null) {
             ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
-            sendGameMessage(context, player, " Purtroppo, sei stato colpito e hai perso un  "+destroyedTile.getMyComponent().accept(componentNameVisitor));
-        }
-        else{
-            sendGameMessage(context, player, "  Congratulazioni, sei riuscito a schivare l'attacco!");
+            broadcastGameMessage(context, "Purtroppo, " + player.getNickName() + " è stato colpito e ha perso un " + destroyedTile.getMyComponent().accept(componentNameVisitor));
+        } else {
+            broadcastGameMessage(context, "Congratulazioni, " + player.getNickName() + " è riuscito a schivare l'attacco!");
         }
 
-        resetShield(player);
-        broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
         sleepSafe(600);
+
+        resetShield(player);
+
+        broadcastShipUpdate(context,player);
+
 
         if (destroyedTile != null) {
             ArrayList<Ship> tronconi;

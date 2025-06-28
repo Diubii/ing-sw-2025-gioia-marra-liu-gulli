@@ -133,9 +133,7 @@ class CardEffectTest {
      * <p>Responses are simulated using {@link MockResponsesFactory#forAbandonedShip_B()}.
      */
     @Test
-    void
-
-    testAbandonedShip_B() {
+    void testAbandonedShip_B() {
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Nave abbandonata", 2);
         AdventureCard card = cards.get(1);
         assertNotNull(card);

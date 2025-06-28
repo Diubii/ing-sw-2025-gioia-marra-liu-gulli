@@ -1696,18 +1696,18 @@
     "used": false
   },
   {
-    "id": 79,
+    "id": 80,
     "rotation": 0,
     "flipped": false,
     "sides": [
       "EMPTY",
+      "UNIVERSAL",
       "EMPTY",
-      "EMPTY",
-      "EMPTY"
+      "SINGLE"
     ],
     "myComponent": {
-      "type": "BatterySlot",
-      "batteriesLeft": 2,
+      "type": "Engine",
+      "enginePower": 1,
       "rotation": 0
     },
     "fixed": false,

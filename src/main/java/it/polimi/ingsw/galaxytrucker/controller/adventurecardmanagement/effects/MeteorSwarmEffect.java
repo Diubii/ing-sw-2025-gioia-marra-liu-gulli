@@ -113,21 +113,23 @@ public abstract class MeteorSwarmEffect {
 //            System.out.println("Before attack " + player.getNickName());
 //            ShipPrintUtils.printShip(player.getShip());
 
+            broadcastShipUpdate(context,player);
+            sleepSafe(600);
+
 
              Tile removedTile= game.getGameController().reactToProjectile(player, projectile, diceRoll);
-             if (removedTile != null) {
-                 ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
-                 sendGameMessage(context, player, " Purtroppo, sei stato colpito e hai perso un  "+removedTile.getMyComponent().accept(componentNameVisitor));
-             }
-             else{
-                 sendGameMessage(context, player, "  Congratulazioni, sei riuscito a schivare l'attacco!");
-             }
+            if (removedTile != null) {
+                ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
+                broadcastGameMessage(context, "Purtroppo, " + player.getNickName() + " è stato colpito e ha perso un " + removedTile.getMyComponent().accept(componentNameVisitor));
+            } else {
+                broadcastGameMessage(context, "Congratulazioni, " + player.getNickName() + " è riuscito a schivare l'attacco!");
+            }
+            sleepSafe(600);
             resetShield(player);
             resetDoubleCannon(player);
 
-            broadcast(context, new ShipUpdate(player.getShip(), player.getNickName()));
+          broadcastShipUpdate(context,player);
 
-            sleepSafe(600);
 
             ArrayList<Ship> troncs = player.getShip().getTronc();
             if(troncs.size()!=1){
