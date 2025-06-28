@@ -1586,6 +1586,11 @@ public class ClientController implements Observer {
             myModel.setUnplacedGoods(smugglers.getGoods());
             view.askLoadGoodChoice();
         }
+        if (confirm && "Stazione abbandonata".equals(getCurrentAdventureCard().getName())) {
+            AbandonedStation abandonedStation = (AbandonedStation) getCurrentAdventureCard();
+            myModel.setUnplacedGoods(abandonedStation.getGoods());
+            view.askLoadGoodChoice();
+        }
     }
 
     /**

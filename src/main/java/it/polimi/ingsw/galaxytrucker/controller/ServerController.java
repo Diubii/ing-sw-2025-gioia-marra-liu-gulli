@@ -97,14 +97,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
 
 
-//    /**
-//     * Retrieves the list of game tiles currently managed by the server.
-//     *
-//     * @return An ArrayList of Tile objects representing the current game tiles.
-//     */
-//    public ArrayList<Tile> getGameTiles() {
-//        return gameTiles;
-//    }
 
     /**
      * Populates the list of game tiles by deserializing data from a JSON file.
@@ -207,24 +199,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         return lobbyManager;
     }
 
-//    /**
-//     * Retrieves the list of lobby information managed by the server.
-//     * This method ensures thread-safe access to the lobby information list.
-//     *
-//     * @return An ArrayList containing instances of {@link LobbyInfo} that hold details about each lobby.
-//     */
-//    public ArrayList<LobbyInfo> getLobbyInfos() {
-//        synchronized (lobbyInfos) {
-//            return lobbyInfos;
-//        }
-//    }
-
-
-    /*
-     *
-     * HANDLES
-     *
-     */
 
     /**
      * Handles the nickname request sent by the client. Validates the provided nickname and
@@ -425,16 +399,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     mess = PrinterUtils.getTextWithLabel(PrinterLabels.LobbyInfo, TuiColor.GREEN, "CONNECTED TO LOBBY " + message.getRoomId());
 
 
-//                    lobbyInfos.get(0).addConnectedPlayer();
-
-
                     Color myColor = myGame.useNextAvailableColor();
                     myGame.getPlayerColors().putIfAbsent(message.getNickName(), myColor);
                     myPlayer.setColor(myColor);
 
-                    //System.out.println("4");
 
-                    //trovo la cabina centrale del colore dell'utente
                     Tile centralTile = null;
 
                     for (Tile tile : gameTiles) {

@@ -116,9 +116,8 @@ public class SmugglersEffect {
         if(collectRewardsResponse.doesWantToCollect()) {
             broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " scegle di accettare la ricompensa!"), player);
             context.nextPhase();
-            sleepSafe(600);
             sendMessage(context, player, new ShipUpdate(player.getShip(), player.getNickName()));
-
+            sleepSafe(600);
 
         }
         else{

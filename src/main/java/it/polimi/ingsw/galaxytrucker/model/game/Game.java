@@ -6,6 +6,7 @@ import it.polimi.ingsw.galaxytrucker.model.FlightBoard;
 
 import it.polimi.ingsw.galaxytrucker.model.Player;
 import it.polimi.ingsw.galaxytrucker.model.TileBunch;
+import it.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import it.polimi.ingsw.galaxytrucker.model.utils.Util;
 
@@ -259,12 +260,15 @@ public class Game {
 
 
         if (learningMatch) {
-            Decks.add(Util.createLearningDeck());
+            CardDeck learningDeck = Util.createLearningDeck();
+            Decks.add(learningDeck);
+            this.flightDeck = learningDeck;
 //            decks.addAll(Decks);
         } else {
 
             ArrayList<CardDeck> tempDecks = createBuildingCardDecks(Util.createLvl1Deck(), Util.createLvl2Deck());
             Decks = new ArrayList<>(tempDecks);
+            this.flightDeck = tempDecks.get(0);
 //            decks.addAll(Decks);
 
         }

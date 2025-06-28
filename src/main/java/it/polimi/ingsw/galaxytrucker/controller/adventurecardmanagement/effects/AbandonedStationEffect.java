@@ -47,11 +47,9 @@ public abstract class AbandonedStationEffect {
 
         if (activateAdventureCardResponse.isActivated()) {
             broadcastGameMessage(context,"Il giocatore " + currentPlayer.getNickName() + " ha accettato la ricompensa. In attesa che carichi la propria astronave...");
-
-            sleepSafe(600);
-
             context.nextPhase();
             sendMessage(context, context.getCurrentPlayer(), new ShipUpdate(context.getCurrentPlayer().getShip(), context.getCurrentPlayer().getNickName()));
+            sleepSafe(600);
         } else {
 
 
