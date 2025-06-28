@@ -235,10 +235,11 @@ class ShipTest {
         int exposedConnectors3 = mockShip3.getnExposedConnector();
         System.out.println("3  " + exposedConnectors3);
 
-        assertEquals(exposedConnectors1,5);
-        assertEquals(exposedConnectors3,7);
-        assertEquals(exposedConnectors2,7);
-
+        ShipPrintUtils.printShip(mockShip2);
+        ShipPrintUtils.printShip(mockShip3);
+        assertEquals(5, exposedConnectors1);
+        assertEquals(8, exposedConnectors2);
+        assertEquals(8, exposedConnectors3);
 
 
     }

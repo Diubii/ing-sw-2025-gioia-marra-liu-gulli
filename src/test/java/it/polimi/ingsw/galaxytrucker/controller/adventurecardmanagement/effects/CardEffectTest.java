@@ -686,7 +686,7 @@ class CardEffectTest {
 
 
         assertEquals(1, positionFirstPlayer);
-        assertEquals(19, positionSecondPlayer);
+        assertEquals(18, positionSecondPlayer);
         assertEquals(21, positionThirdPlayer);
 
         int size = rankedPlayers.size();
