@@ -33,22 +33,22 @@ e bisogna assicurarsi che venga utilizzata per l'esecuzione la versione corretta
   - Per il Server [Windows \ Unix]  
 
 
-    java -Dfile.encoding=UTF-8 -jar GalaxyTrucker-Server.jar
+    ```java -Dfile.encoding=UTF-8 -jar GalaxyTrucker-Server.jar```
 
   - Per la Tui (Interfaccia testuale) [Windows \ Unix]
 
 
-    java -Dfile.encoding=UTF-8 -jar GalaxyTrucker-TUI.jar
+    ```java -Dfile.encoding=UTF-8 -jar GalaxyTrucker-TUI.jar```
 
   - Per la Gui (Interfaccia Grafica) [Windows]
 
 
-    javaw --module-path extra\win\openjfx-win\javafx-controls;extra\win\openjfx-win\javafx-fxml;extra\win\openjfx-win\javafx-graphics;extra\win\openjfx-win\javafx-base --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base -jar GalaxyTrucker-GUI.jar
+    ```javaw --module-path extra\win\openjfx-win\javafx-controls;extra\win\openjfx-win\javafx-fxml;extra\win\openjfx-win\javafx-graphics;extra\win\openjfx-win\javafx-base --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base -jar GalaxyTrucker-GUI.jar```
 
   - Per la Gui (Interfaccia Grafica) [Unix]
 
 
-    java --module-path extra/unix/openjfx-unix/javafx-controls:extra/unix/openjfx-unix/javafx-fxml:extra/unix/openjfx-unix/javafx-graphics:extra/unix/openjfx-unix/javafx-base --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base -jar GalaxyTrucker-GUI.jar
+    ```java --module-path extra/unix/openjfx-unix/javafx-controls:extra/unix/openjfx-unix/javafx-fxml:extra/unix/openjfx-unix/javafx-graphics:extra/unix/openjfx-unix/javafx-base --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base -jar GalaxyTrucker-GUI.jar```
   
 Sono stati inclusi nella cartella <code>extra/\<platform\>/openjfx-\<platform></code> i Jar di JavaFX delle rispettive piattaforme per semplificare la procedura di avvio.
 Per Unix potrebbe essere necessario regolare i permessi di lettura delle cartelle.
