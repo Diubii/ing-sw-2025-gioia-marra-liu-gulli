@@ -50,10 +50,20 @@ public abstract class AbandonedShipEffect {
         if (activateAdventureCardResponse.isActivated()) {
             AbandonedShip abandonedShip = (AbandonedShip) context.getAdventureCard();
             context.nextPhase();
+            Player player = context.getCurrentPlayer();
 
-           sleepSafe(600);
+            int playerCrewMembersNumber = player.getShip().getnCrew();
+            int nCrewToBeDiscarded = Integer.min(playerCrewMembersNumber, abandonedShip.getRequiredCrewMembers());
+            DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(nCrewToBeDiscarded);
 
-            sendMessage(context, context.getCurrentPlayer(), new DiscardCrewMembersRequest(abandonedShip.getRequiredCrewMembers()));
+            if(nCrewToBeDiscarded!=abandonedShip.getRequiredCrewMembers()){
+                GameMessage clearAllCrewMessage = new GameMessage("Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
+                sendMessage(context,player,clearAllCrewMessage);
+            }
+
+
+            sleepSafe(600);
+            sendMessage(context, context.getCurrentPlayer(), discardCrewMembersRequest);
         } else {
 //            System.out.println("Rifiuto attivazione carta. Skippo ");
             if(context.currentPlayerIsLast()){

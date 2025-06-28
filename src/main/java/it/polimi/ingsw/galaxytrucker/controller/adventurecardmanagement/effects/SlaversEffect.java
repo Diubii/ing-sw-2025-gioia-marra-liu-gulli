@@ -44,6 +44,14 @@ public class SlaversEffect {
             int playerCrewMembersNumber = player.getShip().getnCrew();
             int nCrewToBeDiscarded = Integer.min(playerCrewMembersNumber, slavers.getPenalty());
             DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(nCrewToBeDiscarded);
+
+            if(nCrewToBeDiscarded!=slavers.getPenalty()){
+                GameMessage clearAllCrewMessage = new GameMessage("Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
+                sendMessage(context,player,clearAllCrewMessage);
+            }
+
+            sleepSafe(600);
+
             //Chiediamo l'attivazione di CommonEffects::sendDoubleEnginesActivationRequest al prossimo
             context.nextPhase();
             sendMessage(context, player, discardCrewMembersRequest);
@@ -69,7 +77,7 @@ public class SlaversEffect {
 
             return;
         }
-        else if (slaversFirePower == playerFirePower){
+        else {
 //            System.out.println("Debug" + player.getNickName() +" slaversFirePower == playerFirePower");
             GameMessage personalMessage = new GameMessage("The Slavers are not going to haunt you!"); //personalMessage.setIsTurn(true);
 
@@ -79,9 +87,15 @@ public class SlaversEffect {
 
             game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
 
-            context.previousPhase();
-            context.nextPlayer();
-            context.executePhase();
+            if(context.currentPlayerIsLast()) {
+                context.goToEndPhase();
+                context.executePhase();
+            }
+            else {
+                context.previousPhase();
+                context.nextPlayer();
+                context.executePhase();
+            }
         }
 
     }

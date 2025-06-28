@@ -74,6 +74,10 @@ public abstract class EpidemicEffect {
             context.nextPlayer();
             context.executePhase();
         } else {
+            broadcast(context, new ShipUpdate(ship,currentPlayer.getNickName()));
+            broadcastGameMessage(context,"Effetto concluso.");
+            sleepSafe(600);
+
             //Execute CommonEffects::end
             context.nextPhase();
             context.executePhase();

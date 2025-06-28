@@ -222,6 +222,12 @@ public abstract class CombatZoneEffect {
         GameMessage minCrewMemberMessage = new GameMessage(" Il giocatore "+ minEnginePowerPlayer.getNickName() + " sta scegliendo di scartare gli equipaggi, attendere che completi la selezione!");
         broadcast(context, minCrewMemberMessage);
         sleepSafe(600);
+        if(nCrewToBeDiscarded!=combatZone.getCrewMembersLost()){
+            GameMessage clearAllCrewMessage = new GameMessage("Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
+            sendMessage(context,minEnginePowerPlayer,clearAllCrewMessage);
+        }
+
+        sleepSafe(600);
 
 //        System.out.println(" Il giocatore "+ minEnginePowerPlayer.getNickName() + " sta scegliendo di scartare gli equipaggi, attendere che completi la selezione!");
 
