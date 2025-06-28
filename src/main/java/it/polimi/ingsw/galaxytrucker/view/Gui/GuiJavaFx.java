@@ -956,8 +956,14 @@ public class GuiJavaFx implements View {
     @Override
     public void askCollectRewards() {
         System.out.println("Debug: askCollectRewards");
-        //Accetta sempre... massimo poi scarta tutte le merci e via
-        controller.sendCollectRewardsResponse(true);
+        Platform.runLater(()->{
+            if (ShowCustomConfirmDialog("Vuoi prendere la ricompensa perdendo i giorni di volo indicati? ")) {
+                controller.sendCollectRewardsResponse(true);
+            } else {
+                controller.sendCollectRewardsResponse(false);
+            }
+        });
+
     }
 
 
