@@ -223,8 +223,8 @@ public abstract class CombatZoneEffect {
         broadcast(context, minCrewMemberMessage);
         sleepSafe(600);
         if(nCrewToBeDiscarded!=combatZone.getCrewMembersLost()){
-            GameMessage clearAllCrewMessage = new GameMessage("Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
-            sendMessage(context,minEnginePowerPlayer,clearAllCrewMessage);
+
+            sendGameMessage(context,minEnginePowerPlayer,"Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
         }
 
         sleepSafe(600);

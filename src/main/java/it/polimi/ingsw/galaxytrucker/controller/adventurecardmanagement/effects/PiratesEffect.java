@@ -119,8 +119,8 @@ public class PiratesEffect {
     private static void handleTie(CardContext context){
         Player player = context.getCurrentPlayer();
 //        System.out.println("DEBUG: firePower pirates.getFirePower() == player.getShip().calculateFirePower()");
-        GameMessage personalMessage = new GameMessage("The Pirates are not going to haunt you!"); //personalMessage.setIsTurn(true);
-        sendMessage(context, player, personalMessage);
+
+        sendGameMessage(context, player, "The Pirates are not going to haunt you!");
         GameMessage info = new GameMessage();
         info.setMessage(player.getNickName() + " ha pareggiato con i Pirati.");
         broadcastExcept(context, info, player);

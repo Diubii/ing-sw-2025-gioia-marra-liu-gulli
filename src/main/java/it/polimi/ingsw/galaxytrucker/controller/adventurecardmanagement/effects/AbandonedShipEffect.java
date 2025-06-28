@@ -28,11 +28,11 @@ public abstract class AbandonedShipEffect {
             sendMessage(context, player, activateAdventureCardRequest);
         } else {
 //            System.out.println("[" + player.getNickName() + "] non ha abbastanza membri dell'equipaggio per attivare questa carta. Skippo");
-            GameMessage gameMessage = new GameMessage("Non hai abbastanza membri dell'equipaggio per attivare questa carta.");
+
 
             sleepSafe(600);
 
-            sendMessage(context, player, gameMessage);
+            sendGameMessage(context, player, "Non hai abbastanza membri dell'equipaggio per attivare questa carta.");
             //Passiamo al prossimo giocatore
             if(context.currentPlayerIsLast()){
                 context.goToEndPhase();
@@ -57,8 +57,8 @@ public abstract class AbandonedShipEffect {
             DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(nCrewToBeDiscarded);
 
             if(nCrewToBeDiscarded!=abandonedShip.getRequiredCrewMembers()){
-                GameMessage clearAllCrewMessage = new GameMessage("Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
-                sendMessage(context,player,clearAllCrewMessage);
+
+                sendGameMessage(context,player,"Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
             }
 
 

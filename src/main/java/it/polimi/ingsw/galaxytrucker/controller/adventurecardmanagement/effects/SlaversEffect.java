@@ -46,8 +46,7 @@ public class SlaversEffect {
             DiscardCrewMembersRequest discardCrewMembersRequest = new DiscardCrewMembersRequest(nCrewToBeDiscarded);
 
             if(nCrewToBeDiscarded!=slavers.getPenalty()){
-                GameMessage clearAllCrewMessage = new GameMessage("Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
-                sendMessage(context,player,clearAllCrewMessage);
+                sendGameMessage(context,player,"Dato che non hai abbastanza membri dell'equipaggio, ti preghiamo di svuotare completamente il tuo equipaggio.");
             }
 
             sleepSafe(600);
