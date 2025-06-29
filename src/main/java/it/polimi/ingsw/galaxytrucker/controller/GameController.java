@@ -35,6 +35,7 @@ public class GameController {
     private Iterator<Player> rankedPlayersIterator;
     private CardContext currentCardContext;
     private boolean gameAlreadyEnded;
+    private CardDeck flightDeck;
     /**
      * Returns the current card context in use by the game controller.
      *
@@ -88,7 +89,7 @@ public class GameController {
 
     public void startFlight() throws ExecutionException, InterruptedException, IOException {
 //        cardDeckTest = Util.createLearningDeck();
-        cardDeckTest = Util.createTestDeck();
+        flightDeck = game.getRealGame().createFlightDeck(game.getRealGame().getDecks());
         game.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
 //        handleTurnBeforeDrawnCard();
     }
@@ -112,7 +113,7 @@ public class GameController {
 
         MatchInfoUpdate miu;
         if (!rankedPlayers.isEmpty()) {
-            miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), cardDeckTest.getSize());
+            miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), flightDeck.getSize());
             rankedPlayersIterator = rankedPlayers.iterator();
         } else {
             miu = new MatchInfoUpdate("", 0);
@@ -124,7 +125,7 @@ public class GameController {
 
 
     public void handleTurn() {
-        AdventureCard drawnAdventureCard = getCardDeckTest().pop();
+        AdventureCard drawnAdventureCard = flightDeck.pop();
 
         if(getPlayingPlayers().size() == 1){
             while(drawnAdventureCard.getName().equals("Zona Guerra")){
@@ -144,10 +145,9 @@ public class GameController {
         clearPlayersWithNoCrew();
         clearLappedPlayers();
 
-        CardDeck cardDeck = getCardDeckTest();
         EndTurnUpdate etu = new EndTurnUpdate();
         //inviare end turn update
-        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty() || cardDeck.getSize() == 0) {
+        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty() || flightDeck.getSize() == 0) {
             etu.setEndGame(true);
             game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(etu));
             if(!gameAlreadyEnded) {
