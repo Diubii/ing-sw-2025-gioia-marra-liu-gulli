@@ -21,6 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * A visitor that provides visual enhancements to component GUI elements based on their type and rotation.
+ * This class is used to dynamically add GUI indicators (such as crew, goods, battery levels, etc.)
+ * to the appropriate components inside a ship tile during the flight phase of the game.
+ *
+ * It modifies the given StackPane and ImageView with images or effects based on the component's status.
+ */
 public class ComponentGuiDetailsRotationVisitor implements ComponentVisitorInterface<StackPane>{
 
 

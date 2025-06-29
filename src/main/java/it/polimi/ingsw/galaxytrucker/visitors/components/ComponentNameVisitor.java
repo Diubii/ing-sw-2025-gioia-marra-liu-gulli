@@ -4,6 +4,10 @@ import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.*;
 
+/**
+ * Visitor that returns the name of the component as a string.
+ * Used for identifying or labeling different types of ship components.
+ */
 public class ComponentNameVisitor implements ComponentVisitorInterface<String> {
     @Override
     public String visit(Component component) {

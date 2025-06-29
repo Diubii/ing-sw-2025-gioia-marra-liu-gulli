@@ -586,4 +586,8 @@ public class GameController {
             }
         }
     }
+
+    public CardDeck getFlightDeck() {
+        return flightDeck;
+    }
 }
