@@ -1454,16 +1454,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             timerInfoResponse.setLast(last);
             broadCast(clients, timerInfoResponse);
 
-//            if (last){
-//
-//                if ((gameController.getGameState().isBefore( GameState.BUILDING_END))) {
-//
-//                    gameController.nextState();
-//                    PhaseUpdate update = new PhaseUpdate(GameState.BUILDING_END);
-//                    broadCast(clients, update);
-//                }
-//
-//            }
         }).start();
 
 

@@ -3,10 +3,7 @@
 
 package it.polimi.ingsw.galaxytrucker.view.Gui;
 import it.polimi.ingsw.galaxytrucker.controller.ClientController;
-import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
-import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
-import it.polimi.ingsw.galaxytrucker.enums.GameState;
-import it.polimi.ingsw.galaxytrucker.enums.ViewType;
+import it.polimi.ingsw.galaxytrucker.enums.*;
 import it.polimi.ingsw.galaxytrucker.model.*;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Good;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
@@ -958,7 +955,7 @@ public class GuiJavaFx implements View {
 
 
     @Override
-    public void showTimerInfos(ArrayList<TimerInfo> timerInfos, boolean b) {
+    public void showTimerInfos(ArrayList<TimerInfo> timerInfos, PLAYER_PHASE phase) {
         Platform.runLater(() -> {
             if(actualPageController.pageName().equals("BuildingPage")){
                 ((BuildingController) actualPageController).showTimerInfo(timerInfos);

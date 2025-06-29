@@ -2,6 +2,7 @@ package it.polimi.ingsw.galaxytrucker.view;
 
 import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import it.polimi.ingsw.galaxytrucker.enums.GameState;
+import it.polimi.ingsw.galaxytrucker.enums.PLAYER_PHASE;
 import it.polimi.ingsw.galaxytrucker.enums.ViewType;
 import it.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import it.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -142,7 +143,7 @@ public interface View {
 
     void askCollectRewards();
 
-    void showTimerInfos(ArrayList<TimerInfo> timerInfos, boolean b);
+    void showTimerInfos(ArrayList<TimerInfo> timerInfos, PLAYER_PHASE phase);
 
     void showYouAreNowSpectating();
 

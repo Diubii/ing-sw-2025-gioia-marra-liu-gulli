@@ -82,6 +82,16 @@ public class ClientController implements Observer {
     private final Boolean isSocket;
     private ScheduledFuture<?> heartbeatTask;
 
+    public boolean isRecentTimerAsked() {
+        return recentTimerAsked;
+    }
+
+    public void setRecentTimerAsked(boolean recentTimerAsked) {
+        this.recentTimerAsked = recentTimerAsked;
+    }
+
+    private boolean recentTimerAsked = false;
+
     /**
      * Returns the current game phase.
      *
@@ -530,7 +540,7 @@ public class ClientController implements Observer {
                 safeSendMessage(finishBuildingRequest);
             }
 
-            case "j" -> sendAskTimerInfoRequest();
+            case "j" -> {sendAskTimerInfoRequest(); recentTimerAsked = true;}
             case "reset" -> {}
             default ->
                 new Thread(() -> {
@@ -757,7 +767,7 @@ public class ClientController implements Observer {
     public void handleTimerInfoResponse(TimerInfoResponse timerInfoResponse) {
         myModel.getTimerInfos().clear();
         myModel.getTimerInfos().addAll(timerInfoResponse.getTimerInfoList());
-        view.showTimerInfos(myModel.getTimerInfos(), false);
+        view.showTimerInfos(myModel.getTimerInfos(), clientPhaseController.getPhase());
 
         if (timerInfoResponse.getLast()) {
             handlePhaseUpdate(new PhaseUpdate(GameState.BUILDING_END));

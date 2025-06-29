@@ -6,4 +6,8 @@ package it.polimi.ingsw.galaxytrucker.enums;
 public enum PLAYER_PHASE {
     START, LOBBY, BUILDING, BUILDING_TIMER, FINISH_BUILDING, CHECK_SHIP, CREW_CHOICE, FLIGHT;
 
+    public static Boolean isBefore(PLAYER_PHASE phase, PLAYER_PHASE otherPhase){
+        return phase.ordinal() < otherPhase.ordinal();
+    }
+
 }

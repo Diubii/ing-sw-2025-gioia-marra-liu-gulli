@@ -1853,16 +1853,18 @@ public class Tui implements View, Observable {
      * Asynchronously shows the status of all timers and provides options to flip them if allowed.
      *
      * @param timerInfos list of all current {@link TimerInfo} objects
-     * @param b
+     * @param phase
      */
     @Override
-    public void showTimerInfos(ArrayList<TimerInfo> timerInfos, boolean b) {
-        if (b) {
+    public void showTimerInfos(ArrayList<TimerInfo> timerInfos, PLAYER_PHASE phase) {
+
+        if (PLAYER_PHASE.isBefore(phase, PLAYER_PHASE.CHECK_SHIP) && clientController.isRecentTimerAsked())
             new Thread(() -> {
+                clientController.setRecentTimerAsked(false);
                 printTimerInfo(timerInfos);
                 showTimerMenu(timerInfos);
             }).start();
-        }
+
     }
 
 
