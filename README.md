@@ -22,7 +22,7 @@ Prova finale del corso di ingegneria del software - Galaxy Trucker in Java.
 
 ### Istruzioni di Avvio:
 
-Per avviare il gioco è necessario avere installata sul proprio dispositivo una versione di Java JDK superiore o uguale alla 23
+Per avviare il gioco è necessario avere installata sul proprio dispositivo una versione di [Java JDK](https://jdk.java.net/24/) superiore o uguale alla 23
 e bisogna assicurarsi che venga utilizzata per l'esecuzione la versione corretta in caso ne sia installata più di una.
 
 
@@ -78,6 +78,7 @@ Tutti i menu e la maggior parte delle interazioni sono da effettuare con il tast
 - Fase di Costruzione:
   - Prendere e piazzare le tessere con click sinistro
   - Ruotare una tessera con Q ed E oppure con il tasto destro del Mouse
+  - I timer (clessidre) sono stati ridotti a 10 secondi per facilitare le demo
 - Fase di controllo della nave:
   - Eliminare le tessere non valide con click sinistro
 - Fase di volo:
