@@ -464,6 +464,9 @@ public class Ship implements Serializable {
 
                 if ( shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
 
+
+
+
                     if (!Util.wellConnectedConnectors(this, shipBoard[i][j], shipBoard[i][j].getTile())) {
 
                         shipBoard[i][j].getTile().setWellConnected(false);

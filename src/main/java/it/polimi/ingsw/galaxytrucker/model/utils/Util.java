@@ -505,41 +505,6 @@ public class Util {
 
     }
 
-    /**
-     * Checks if two adjacent tiles are properly connected through their connectors.
-     *
-     * @param tile1Connectors   Connectors of the first tile
-     * @param tile2Connectors   Connectors of the second tile
-     * @param position1         Position of the first tile
-     * @param position2         Position of the second tile
-     * @return true if the tiles are properly connected, false otherwise
-     */
-    public static Boolean wellConnectedTiles(ArrayList<Connector> tile1Connectors, ArrayList<Connector> tile2Connectors, Position position1, Position position2) {
-
-        String relativePos;
-        Boolean wellConnected = false;
-
-        if (position1.getX() != position2.getX()) {
-            relativePos = "left-right";
-        } else relativePos = "up-down";
-
-
-        if (relativePos.equals("left-right")){
-            if (position1.getX() > position2.getX()) {
-                wellConnected = compatible(tile1Connectors.get(1), tile2Connectors.get(3)) && !tile1Connectors.get(1).equals(Connector.EMPTY);
-            } else wellConnected = compatible(tile1Connectors.get(3), tile2Connectors.get(1)) && !tile1Connectors.get(3).equals(Connector.EMPTY);
-        } else {
-            if (position1.getY() > position2.getY()) {
-                wellConnected = compatible(tile1Connectors.getFirst(), tile2Connectors.get(2)) && !tile1Connectors.getFirst().equals(Connector.EMPTY);
-
-            } else  wellConnected = compatible(tile2Connectors.getFirst(), tile1Connectors.get(2)) && !tile2Connectors.getFirst().equals(Connector.EMPTY);
-
-        }
-
-
-        return wellConnected;
-    }
-
 
     /**
      * Checks if there's a life support system of the specified color near the given position.
@@ -592,18 +557,11 @@ public class Util {
                     if (inBoundaries(x, y) && myShip.getShipBoard()[x][y].getTile() != null && compatible(myShip.getShipBoard()[x][y].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
                         Tile tempTile = myShip.getShipBoard()[x][y].getTile();
 
-//                        System.out.println("Checking side " + i + " of tile " + tile.getId() +
-//                                " vs side " + ((i + 2) % 4) + " of neighbor tile " + tempTile.getId());
-//
-//                        System.out.println("Tile side: " + tile.getSides().get(i) +
-//                                " | Neighbor side: " + tempTile.getSides().get((i + 2) % 4));
-//
-//
-//                        System.out.println("STO PER VISITARE : " + neighborPos);
-                        visitTile(tempTile, tilesID, myShip.getShipBoard()[x][y], invalidPositions, newBrokenPos, myShip);
+                        if (areTilesConnected(slot.getPosition(), tile.getSides(), neighborPos, tempTile.getSides())) {
+                            visitTile(tempTile, tilesID, myShip.getShipBoard()[x][y], invalidPositions, newBrokenPos, myShip);
+                        }
 
                     }
-//                    System.out.println("[2]I: " + i + " " + positions.size());
 
 
                 }
@@ -659,7 +617,7 @@ public class Util {
         ArrayList<Pair<Position, Tile>> realVisitableTiles = new ArrayList<>(connectedTiles.stream().filter(p -> {
             ArrayList<Connector> connectors2 = p.getValue().getSides();
 
-            return wellConnectedTiles(myConnectors,connectors2, startingPos, p.getKey());
+            return areTilesConnected(startingPos,myConnectors, p.getKey(), connectors2);
         }).toList());
 
 

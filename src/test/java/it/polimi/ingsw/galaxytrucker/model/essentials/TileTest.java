@@ -28,25 +28,28 @@ class TileTest {
         tile = new Tile(1, 0, connectors, component);
         slot = new Slot(new Position(0, 0));
         TilePrintUtils.printTile(tile);
-
     }
 
-
+    /**
+     * Tests setMyComponent method by assigning a new Cannon component to the tile.
+     * Verifies that the component is correctly updated.
+     */
     @Test
     void setMyComponent() {
-
         Cannon cannon = new Cannon(1F);
         tile.setMyComponent(cannon);
 
         assertEquals(cannon, tile.getMyComponent());
     }
 
-
+    /**
+     * Tests rotate method with a full rotation (360 degrees).
+     * Ensures that rotation resets to 0 and applies the same rotation to its component.
+     */
     @Test
     void rotate() {
         tile.rotate(360);
         assertEquals(0, tile.getRotation());
         assertEquals(0, tile.getMyComponent().getRotation());
     }
-
 }
