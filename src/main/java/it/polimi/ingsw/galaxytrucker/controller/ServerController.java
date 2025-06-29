@@ -856,9 +856,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
 
-            //Qui ha davvvero finito la fase di costruzione dicendo anche la posizione di partenza
-            myGame.addPlayerShipFinished(nickname);
-
             Color playerColor = myGame.getPlayerColors().get(nickname);
 
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
@@ -881,6 +878,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 } else {
                     myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos, getPlayerFromClientHandler(clientHandler));
                     myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
+                    //Qui ha davvvero finito la fase di costruzione dicendo anche la posizione di partenza
+                    myGame.addPlayerShipFinished(nickname);
                 }
 
 

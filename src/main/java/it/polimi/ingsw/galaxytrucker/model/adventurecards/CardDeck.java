@@ -3,6 +3,7 @@ package it.polimi.ingsw.galaxytrucker.model.adventurecards;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Represents a deck of adventure cards in the game.
@@ -99,7 +100,7 @@ public class CardDeck implements Serializable {
      * @author Alessandro Giuseppe Gioia
      */
     public void shuffle() {
-//        Collections.shuffle(cards);
+        Collections.shuffle(cards);
     }
 
     /**

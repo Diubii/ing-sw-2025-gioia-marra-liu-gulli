@@ -105,9 +105,8 @@ public class Util {
      * Creates a test deck of specific adventure cards for testing purposes.
      *
      * @return A CardDeck containing specific cards for testing
-     * @throws IOException if there's an error reading the JSON file
      */
-    public static CardDeck createTestDeck() throws IOException {
+    public static CardDeck createTestDeck() {
         ObjectMapper mapper = new ObjectMapper();
 
         String path = "cardsdata.json";
