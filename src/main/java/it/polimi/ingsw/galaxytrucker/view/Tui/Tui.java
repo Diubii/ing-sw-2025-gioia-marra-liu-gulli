@@ -1878,9 +1878,8 @@ public class Tui implements View, Observable {
             do {
 
                 boolean now = false;
-                boolean canFlipHourglass = clientController.canFlipHourglass();
 
-                if (!canFlipHourglass) {
+                if (!clientController.canFlipHourglass()) {
                     input = readLine("Inserisci la tua scelta (menu) : ").trim().toLowerCase();
 
                 } else
@@ -1892,7 +1891,7 @@ public class Tui implements View, Observable {
                     handleChoiceForPhase(clientController.getPhase());
                 }
 
-                if (input.equals("a") && canFlipHourglass) {
+                if (input.equals("a") && clientController.canFlipHourglass()) {
                     valid = true;
 
                     //vedo se e' possibile flipparne una

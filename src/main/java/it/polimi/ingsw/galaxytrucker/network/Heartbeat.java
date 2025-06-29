@@ -17,7 +17,7 @@ import java.time.Duration;
 public class Heartbeat extends Thread {
     private final ServerController serverController;
     private final ClientHandler clientHandler;
-    private final static Duration sleepDuration = Duration.ofSeconds(15);
+    private final static Duration sleepDuration = Duration.ofSeconds(5);
     private boolean canBeInterrupted = true;
     //Se non ricevo il ping, killo il thread che sta dormendo aspettando che riceva il ping
 

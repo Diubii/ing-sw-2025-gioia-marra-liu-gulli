@@ -627,7 +627,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                                 drawTileResponse.setErrorMessage("VALID");
                             }
                       }
-                }
+                    }
                 }
 
             }
@@ -1447,7 +1447,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             timerinfo.setTimerStatus(TimerStatus.ENDED);
             TimerInfoResponse timerInfoResponse = new TimerInfoResponse(game.getRealGame().getTimerInfos());
             timerInfoResponse.setLast(last);
-            broadCast(game.getTimerSubscribers(), timerInfoResponse);
+            broadCast(clients, timerInfoResponse);
 
 //            if (last){
 //

@@ -1909,18 +1909,21 @@ public class ClientController implements Observer {
             return true;
         } catch (IOException e) {
             if (isConnectionAlive.getAndSet(false)) {
-
-                if(heartbeatTask != null && !heartbeatTask.isCancelled()) {
-                    heartbeatTask.cancel(true);
-                }
-
-                myModel = new ClientModel();
-                MenuManager.clearConsole();
-                view.forceReset();
-                view.showGenericMessage("Connessione al server persa, verrai riportato alla schermata di connessione.", true);
-                new Thread(() -> view.askServerInfo()).start();
+                startOver();
             }
             return false;
         }
+    }
+
+    public void startOver(){
+        if(heartbeatTask != null && !heartbeatTask.isCancelled()) {
+            heartbeatTask.cancel(true);
+        }
+
+        myModel = new ClientModel();
+        MenuManager.clearConsole();
+        view.forceReset();
+        view.showGenericMessage("Connessione al server persa, verrai riportato alla schermata di connessione.", true);
+        new Thread(() -> view.askServerInfo()).start();
     }
 }
