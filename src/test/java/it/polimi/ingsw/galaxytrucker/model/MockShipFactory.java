@@ -19,6 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Factory for creating mock {@link Ship} instances with preset tile configurations.
+ * <p>
+ * Used mainly for testing purposes to simulate various ship setups (e.g. high firepower,
+ * shielded, vulnerable, cargo-loaded, etc.).
+ * <p>
+ * Tiles are loaded from {@code tiledata.json} and grouped by type via {@link TileRegistry}.
+ */
 public class MockShipFactory {
 
     /**

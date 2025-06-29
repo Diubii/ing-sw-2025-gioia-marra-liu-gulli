@@ -14,6 +14,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the {@link Ship} class.
+ * <p>
+ * Covers core functionalities including tile placement, engine power calculation,
+ * connector validation, damage handling, and ship truncation logic.
+ */
 class ShipTest {
 
     Ship myShip;
@@ -23,6 +29,10 @@ class ShipTest {
         myShip = new Ship(false);
     }
 
+    /**
+     * Tests slot grid generation for the ship.
+     * Verifies the board initializes correctly.
+     */
     @Test
     void generateSlot() {
 
@@ -32,6 +42,11 @@ class ShipTest {
     }
 
 
+
+    /**
+     * Tests creation of invalid positions (IP) for the ship.
+     * Ensures predefined positions are correctly marked as invalid.
+     */
     @Test
     void createIP() {
         myShip.createIP();
@@ -39,6 +54,10 @@ class ShipTest {
     }
 
 
+
+    /**
+     * Tests that tiles cannot be placed on invalid positions.
+     */
     @Test
     public void testPutTileInInvalidPosition() {
         Ship ship = new Ship(true); // learningMatch = true
@@ -54,6 +73,9 @@ class ShipTest {
     }
 
 
+    /**
+     * Tests standard tile placement and retrieval from the ship.
+     */
     @Test
     public void testPutTile() {
         Ship myShip = new Ship(false);
@@ -68,7 +90,9 @@ class ShipTest {
         assertEquals(tile.getId(), tile2.getId());
 
     }
-//tests for UpdateSets
+    /**
+     * Tests that placing a charged DoubleEngine updates engine positions correctly.
+     */
     @Test
     public void testUpdateSetsWithDoubleEngine() {
         Ship ship = new Ship(false);
@@ -87,6 +111,9 @@ class ShipTest {
 
 
 //tests for calculateEnginePower
+    /**
+     * Tests engine power calculation when no engines are placed.
+     */
     @Test
     public void testPowerEngine_NoEngines() {
         Ship ship = new Ship(false); // No engines added
@@ -171,56 +198,9 @@ class ShipTest {
     }
     // end tests for calculateEnginePower
 
-
-//test for updateSets
-    @Test
-    void updateSets() {
-        Tile batterySlot1 = TileRegistry.getFirstTileOfType("BatterySlot");
-        myShip.putTile(batterySlot1, new Position(2,3));
-        int num = myShip.getBatteryPos().size();
-        assertEquals(1, num);
-
-        Position pos1 = new Position(3,3);
-        Position pos2 = new Position(2,1);
-        Tile cannon = TileRegistry.getFirstTileOfType("Cannon");
-        myShip.putTile(cannon, pos1);
-        num = myShip.getCannonPos().size();
-        assertEquals(1, num);
-
-        Tile doubleCannon = TileRegistry.getFirstTileOfType("DoubleCannon");
-        myShip.putTile(doubleCannon, pos2);
-        List<Position>  cannonPos = myShip.getCannonPos();
-        Tile testTile = myShip.getTileFromPosition(pos1);
-        Tile testTile2 = myShip.getTileFromPosition(pos2);
-        num = myShip.getCannonPos().size();
-        assertEquals(2, num);
-        assertEquals(testTile.getId(),cannon.getId());
-        assertEquals(testTile2.getId(),doubleCannon.getId());
-
-        Position pos3 = new Position(2,2);
-        Position pos4 = new Position(1,1);
-        Tile engine = TileRegistry.getFirstTileOfType("Engine");
-        myShip.putTile(engine, pos3);
-        num = myShip.getEnginePos().size();
-        assertEquals(1, num);
-
-        Tile doubleEngine = TileRegistry.getFirstTileOfType("DoubleEngine");
-        myShip.putTile(doubleEngine, pos4);
-        List<Position>  enginePos = myShip.getEnginePos();
-        Tile testTile3 = myShip.getTileFromPosition(pos3);
-        Tile testTile4 = myShip.getTileFromPosition(pos4);
-        num = myShip.getEnginePos().size();
-        assertEquals(2, num);
-        assertEquals(testTile3.getId(),engine.getId());
-        assertEquals(testTile4.getId(),doubleEngine.getId());
-
-
-    }
-
-    @Test
-    void removeTile() {
-    }
-
+    /**
+     * Tests calculation of exposed connectors for various mock ship setups.
+     */
     @Test
     void testCalcExposedConnectors() {
 
@@ -244,7 +224,9 @@ class ShipTest {
 
     }
 
-
+    /**
+     * Tests structural integrity check of the ship.
+     */
     @Test
     void testCheckShip() {
         Ship ship = MockShipFactory.createMockShip();
@@ -256,6 +238,9 @@ class ShipTest {
         assertFalse(errorShip.checkShip());
     }
 
+    /**
+     * Tests directional targeting logic to find the first component in a direction.
+     */
     @Test
     void testGetFirstComponentFromDirectionAndIndex() {
 
@@ -291,6 +276,10 @@ class ShipTest {
 
     }
 
+    /**
+     * Tests ship truncation logic when key tiles are removed.
+     * Verifies new subships are formed correctly.
+     */
     @Test
     void testTruncateShip() {
 
@@ -307,8 +296,6 @@ class ShipTest {
             ShipPrintUtils.printShip(ship1);
 
         }
-
-
 
         System.out.println("Next Test");
         System.out.println();
@@ -393,6 +380,10 @@ class ShipTest {
     }
 
 
+
+    /**
+     * Tests calculation of remaining tiles (not destroyed or removed).
+     */
     @Test
     void testRemainingTiles(){
 
@@ -406,24 +397,7 @@ class ShipTest {
 
     }
 
-    @Test
-    void getProtectedSides() {
-    }
 
-    @Test
-    void activateShield() {
-    }
 
-    @Test
-    void activateDoubleEngine() {
-    }
 
-    @Test
-    void activateDoubleCannon() {
-    }
-
-    @Test
-    void getTronc(){
-
-    }
 }

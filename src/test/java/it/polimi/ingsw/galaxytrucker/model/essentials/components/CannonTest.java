@@ -3,6 +3,10 @@ package it.polimi.ingsw.galaxytrucker.model.essentials.components;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Verifies fire power without rotation matches the initial value.
+ */
+
 public class CannonTest {
 
     /**

@@ -8,10 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class for accessing tiles grouped by component type.
+ * <p>
+ * Used mainly for debugging, testing, or tile filtering operations.
+ */
 public class TileRegistry {
 
     private static final Map<String, List<Tile>> componentTypeMap = new HashMap<>();
-
     static {
         List<Tile> allTiles = MockShipFactory.loadAllTiles();
 
