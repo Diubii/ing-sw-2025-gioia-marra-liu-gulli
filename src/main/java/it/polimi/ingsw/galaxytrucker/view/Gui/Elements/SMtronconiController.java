@@ -30,7 +30,7 @@ public class SMtronconiController {
 
         //For each ship insert a Hbox with radioButton and "ship view"
         shipToggleGroup=new ToggleGroup();
-        int i = 1;
+        int i = 0; //0 based
         for (Ship ship : tronconi) {
             HBox shipBox = new HBox();
 
@@ -61,6 +61,7 @@ public class SMtronconiController {
             shipList.getChildren().add(shipBox);
             shipController.initialize(clientController.getMyModel().getMyInfo().getNickName(),shipContainer);
             zUtils.showShipInGrid(ship, shipController.getShipGrid(), clientController,false,true,null,null);
+            i++;
         }
     }
 
