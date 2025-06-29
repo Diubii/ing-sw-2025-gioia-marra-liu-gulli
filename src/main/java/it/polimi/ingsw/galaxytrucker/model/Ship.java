@@ -55,6 +55,7 @@ public class Ship implements Serializable {
 
     private ArrayList<Position> invalidPositions;
     public Queue<Position> brokenPositions = new LinkedList<>();
+    private int initialTiles;
 
 
     /**
@@ -141,6 +142,9 @@ public class Ship implements Serializable {
         return new ArrayList<Position>(lssPos);
     }
 
+    public int getInitialTiles() {
+        return initialTiles;
+    }
 
     public int getnExposedConnector() {
         calcExposedConnectors();
@@ -519,9 +523,12 @@ public class Ship implements Serializable {
 
                             if (al != AlienColor.EMPTY) {
                                 Boolean result1 = Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
+
                                 if (!result1) {
                                     temp.removeAlienCrew();
                                 }
+
+
 
 //                                shipBoard[i][j].getTile().setWellConnected(result);
                                 if (!result1) result = false;
@@ -645,6 +652,7 @@ public class Ship implements Serializable {
         // Lista dei vicini validi della posizione corrente
         ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 
+
         Position up = new Position(pos.getX(), pos.getY() - 1);
 
         // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
@@ -661,6 +669,7 @@ public class Ship implements Serializable {
 
                 } else {
                     brokenPos.add(up);
+//                    this.addDestroyedTiles(1);
 
                 }
             }
@@ -804,6 +813,8 @@ public class Ship implements Serializable {
                 }
 
                 // Aggiunge la nuova nave alla lista delle navi separate
+//
+                myShip.cloneStateFrom(this);
                 ships.add(myShip);
             }
 
@@ -1165,11 +1176,22 @@ public class Ship implements Serializable {
     }
 
     private void cloneStateFrom(Ship source) {
-        this.destroyedTiles = source.getDestroyedTiles();
         this.listOfGoods = new ArrayList<>(source.listOfGoods);
         this.listNotLoadedGoods = new ArrayList<>(source.listNotLoadedGoods);
-        this.nExposedConnector = source.nExposedConnector;
+        this.initialTiles = source.getInitialTiles();
+        System.out.println("cloning state from " + source.getClass().getName());
+        System.out.println("INITIAL " + this.initialTiles);
     }
 
 
+    public int getLostTiles() {
+        System.out.println("remaining tiles " +   remainingTiles());
+        System.out.println("initial " +  initialTiles);
+
+        return initialTiles - remainingTiles();
+    }
+
+    public void setInitialTiles(int initialTiles) {
+        this.initialTiles = initialTiles;
+    }
 }

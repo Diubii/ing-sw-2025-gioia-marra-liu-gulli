@@ -936,6 +936,12 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             //controllo se tutti hanno finito
             if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
 
+                for (ClientHandler handler : playerHandlers){
+                    Player player = getPlayerFromClientHandler(handler);
+                    Ship ship = player.getShip();
+                    ship.setInitialTiles(ship.remainingTiles());
+
+                }
                 //TODO MATTIA FORSE MODIFICARE QUI PER scadenza timer, ma loro nn dovrebbe risultare che hanno già tutti finito
                 myGame.getGameController().nextState();
                 System.out.println("Fase successiva: "+myGame.getGameController().getGameState().toString());
@@ -1117,6 +1123,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                 //new Thread(() -> {
                 try {
+
+
                     myGame.getGameController().startFlight();
                 } catch (ExecutionException | InterruptedException | IOException e) {
                     throw new RuntimeException(e);

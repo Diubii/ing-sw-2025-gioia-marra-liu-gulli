@@ -189,6 +189,13 @@ public class GameController {
                     int losses = calculateLossesScore(player);
                     int credits = player.getNCredits();
 
+                    System.out.println(bestLooking);
+                    System.out.println(finishOrder);
+                    System.out.println(reward);
+                    System.out.println(losses);
+                    System.out.println(credits);
+
+
                     return new PlayerScore(
                             player.getNickName(),
                             bestLooking,
@@ -204,15 +211,14 @@ public class GameController {
     private int calculateFinishOrderScore(Player player) {
         int score = 0;
         ArrayList<Player> activePlayers = getRankedPlayers();
-        if(!activePlayers.contains(player)){
-            return score;
-        }
-        else{
+        if (activePlayers.contains(player)) {
             int playerIndex = activePlayers.indexOf(player);
+            System.out.println(playerIndex + " playIndex");
             int nPlayers = game.getRealGame().getPlayers().size();
-            score= nPlayers - playerIndex;
-            return score;
+            System.out.println(nPlayers + " nPlayers");
+            score = nPlayers - playerIndex;
         }
+        return score;
 
     }
     private float calculateGoodRewardScore(Player player) {
@@ -233,8 +239,16 @@ public class GameController {
 
     private int calculateLossesScore(Player player) {
         int score = 0;
-        int LossesScore = player.getShip().getDestroyedTiles();
-        score += LossesScore;
+//        int LossesScore = player.getShip().getDestroyedTiles();
+        int numToAdd = 0;
+        Ship ship = player.getShip();
+        for (Tile t: ship.getAsideTiles()){
+            if (t != null){
+                numToAdd++;
+            }
+        }
+        int LossesScore = player.getShip().getLostTiles();
+        score += LossesScore + numToAdd;
         return score;
     }
 

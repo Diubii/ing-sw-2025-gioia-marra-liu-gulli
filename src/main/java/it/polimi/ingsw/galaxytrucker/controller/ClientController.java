@@ -190,12 +190,7 @@ public class ClientController implements Observer {
             boolean success = safeSendMessage(heartbeatRequest);
             //System.out.println("Sent heartbeat: " + System.currentTimeMillis());
                 //System.out.println("[ClientController] Sent heartbeat.");
-            System.out.println("[HEARTBEAT] Sent to server at " + System.currentTimeMillis());
-            if (success) {
-                System.out.println("[HEARTBEAT] Sent at: " + System.currentTimeMillis());
-            } else {
-                System.err.println("[HEARTBEAT] Failed to send!");
-            }
+//
 
         });
     }
