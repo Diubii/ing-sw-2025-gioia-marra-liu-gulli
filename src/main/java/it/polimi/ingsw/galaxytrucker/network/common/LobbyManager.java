@@ -34,11 +34,7 @@ public class LobbyManager {
     public final Object timerLock = new Object();
     //locks
 
-    final public Object lock5 = new Object();
 
-    public Object getLock5() {
-        return lock5;
-    }
 
 
     final Object lock1 = new Object();

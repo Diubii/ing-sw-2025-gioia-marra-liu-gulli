@@ -93,19 +93,6 @@ public class GameController {
 //        handleTurnBeforeDrawnCard();
     }
 
-//    public void handleTurnBeforeDrawnCard() {
-//        ArrayList<Player> rankedPlayers = getRankedPlayers();
-//
-//        MatchInfoUpdate miu;
-//        if (!rankedPlayers.isEmpty()) {
-//            miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), cardDeckTest.getSize());
-//            rankedPlayersIterator = rankedPlayers.iterator();
-//        } else {
-//            miu = new MatchInfoUpdate("", game.getRealGame().getFlightDeck().getSize());
-//        }
-//
-//        game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(miu)); //Mando match info update
-//    }
 
     public void sendMatchInfoUpdate() {
         ArrayList<Player> rankedPlayers = getRankedPlayers();

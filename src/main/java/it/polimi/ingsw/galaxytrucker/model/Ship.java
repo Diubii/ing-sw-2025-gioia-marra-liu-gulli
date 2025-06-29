@@ -653,6 +653,7 @@ public class Ship implements Serializable {
         ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 
 
+
         Position up = new Position(pos.getX(), pos.getY() - 1);
 
         // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
@@ -662,7 +663,7 @@ public class Ship implements Serializable {
             if (shipBoard[up.getX()][up.getY()] != null && shipBoard[up.getX()][up.getY()].getTile() != null) {
 //                System.out.println("ID: " + shipBoard[up.getX()][up.getY()].getTile().getId());
 
-                if (shipBoard[up.getX()][up.getY()].getTile().getWellConnected()) {
+                if (shipBoard[up.getX()][up.getY()].getTile().getWellConnected() ) {
 //                    System.out.println("UP OK");
 
                     villagers.add(new Pair<>(ProjectileDirection.UP, shipBoard[up.getX()][up.getY()]));
