@@ -1,6 +1,5 @@
 package it.polimi.ingsw.galaxytrucker.model.adventurecards;
 
-import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.controller.FakeClientController;
 import it.polimi.ingsw.galaxytrucker.controller.GameController;
 import it.polimi.ingsw.galaxytrucker.controller.ServerController;
@@ -9,7 +8,6 @@ import it.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import it.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import it.polimi.ingsw.galaxytrucker.view.Tui.FakeTUI;
-import it.polimi.ingsw.galaxytrucker.view.Tui.Tui;
 import it.polimi.ingsw.galaxytrucker.view.View;
 import it.polimi.ingsw.galaxytrucker.visitors.Network.ClientNetworkMessageVisitor;
 import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageCouplingVisitor;
@@ -21,6 +19,11 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * A fake implementation of {@link ClientHandler} used for testing server-client interactions.
+ * Simulates client-side behavior by handling server messages and replying with predefined mock responses.
+ * It uses visitors to process and respond to {@link NetworkMessage} instances.
+ */
 public class FakeClientHandler implements ClientHandler {
     private final ServerController serverController;
     private final FakeClientController fakeClientController;

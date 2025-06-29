@@ -6,17 +6,15 @@ import it.polimi.ingsw.galaxytrucker.model.adventurecards.FakeClientHandler;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.network.client.Client;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
-import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DrawTileRequest;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
-import it.polimi.ingsw.galaxytrucker.view.View;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.rmi.RemoteException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

@@ -7,6 +7,7 @@ import it.polimi.ingsw.galaxytrucker.view.Tui.util.PrinterUtils;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 
 import java.time.Duration;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -33,19 +34,20 @@ public class Heartbeat extends Thread {
         //this.setPriority(Thread.MAX_PRIORITY);
     }
 
+    private final AtomicBoolean active = new AtomicBoolean(true);
 
     @Override
+
     public void run() {
         try {
-            Thread.sleep(sleepDuration);
-        } catch (InterruptedException _){
+            Thread.sleep(sleepDuration.toMillis());
+        } catch (InterruptedException _) {
             return;
         }
 
-        canBeInterrupted = false;
-        String heartbeatLabel = PrinterUtils.getLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED);
-        String clientAddress = clientHandler.toString();
-        System.out.println(heartbeatLabel + " " + clientAddress + " is dead. Kicking from server.");
+        if (!active.get()) return; // evita il kick se è già stato rigenerato
+
+        System.out.println("KICKING " + clientHandler);
         serverController.removeClient(clientHandler);
     }
 
@@ -55,10 +57,10 @@ public class Heartbeat extends Thread {
      * This method should be called whenever a client responds in time.
      */
     public void regenerate() {
-        if(!canBeInterrupted) return;
+        if (!active.get()) return;
+        active.set(false);
         this.interrupt();
         serverController.startNewHeartbeat(clientHandler);
-        //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED, "Regenerated heartbeat for " + clientHandler.toString() + "."));
     }
 
     /**

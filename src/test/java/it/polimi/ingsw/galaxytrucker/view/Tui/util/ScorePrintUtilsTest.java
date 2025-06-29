@@ -6,11 +6,18 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Unit test for {@link ScorePrintUtils}, verifying correct rendering of score tables
+ * for multiple players.
+ */
 class ScorePrintUtilsTest {
+
+    /**
+     * Tests the {@link ScorePrintUtils#printScoreTable(List)} method with mock player scores
+     * to verify the table output is generated without errors.
+     */
      @Test
     void printScoreTotalTest() {
-
-
          List<PlayerScore> scores = new ArrayList<>();
 
          scores.add(new PlayerScore("Player1", 100, 100, 100, 100, 100));

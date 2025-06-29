@@ -159,8 +159,6 @@ public class ServerControllerTest {
     @Test
     public void testHandleDrawAndDiscardTileRequest() throws RemoteException {
 
-
-
         //
         DrawTileRequest drawRequest = new DrawTileRequest();
         serverController.handleDrawTileRequest(drawRequest, handler1);

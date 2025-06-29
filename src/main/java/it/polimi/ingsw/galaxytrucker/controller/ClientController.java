@@ -503,7 +503,7 @@ public class ClientController implements Observer {
 
                 } else {
                     isPlaced = false;
-                    sendShipUpdate();
+//                    sendShipUpdate();
                     view.askDrawTile();
 
                 }
@@ -914,9 +914,11 @@ public class ClientController implements Observer {
      * @param rotation number of clockwise rotations to apply
      */
     public void rotateCurrentTile(int rotation) {
-        currentTileInHand.rotate(rotation);
-        view.showTile(currentTileInHand);
-        view.showGenericMessage("Tile rotated successfully.", false);
+        if(currentTileInHand!=null) {
+            currentTileInHand.rotate(rotation);
+            view.showTile(currentTileInHand);
+            view.showGenericMessage("Tile rotated successfully.", false);
+        }
         view.showBuildingMenu();
 
     }
@@ -1677,7 +1679,6 @@ public class ClientController implements Observer {
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate) {
         safeSendMessage(crewInitUpdate);
     }
-
 
     /**
      * Gets occupied cargo holds.
