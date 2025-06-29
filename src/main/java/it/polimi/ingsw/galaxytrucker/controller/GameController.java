@@ -242,7 +242,7 @@ public class GameController {
                     int bestLooking = (player.getShip().getnExposedConnector() == minExposed && getRankedPlayers().contains(player)) ? 2 : 0;
                     int finishOrder = calculateFinishOrderScore(player);
                     double reward = calculateGoodRewardScore(player);
-                    int losses = -calculateLossesScore(player);
+                    int losses = calculateLossesScore(player);
                     int credits = player.getNCredits();
 
 //                    System.out.println(bestLooking);

@@ -91,12 +91,14 @@ public class Util {
             if (in == null) {
                 System.err.println(path + " not found.");
             } else {
-                ArrayList<AdventureCard> cards = new ArrayList<>(mapper.readValue(in, new TypeReference<ArrayList<AdventureCard>>() {}));
+                ArrayList<AdventureCard> cards = new ArrayList<>(mapper.readValue(in, new TypeReference<ArrayList<AdventureCard>>() {
+                }).stream().filter(AdventureCard::isLearningFlight).toList());
                 return new CardDeck(cards, true);
             }
         } catch (IOException e) {
             System.err.println("Error while reading " + path + " : " + e.getMessage());
         }
+
 
         return null;
     }
@@ -389,6 +391,7 @@ public class Util {
         Slot[][] TempShipBoard = s.getShipBoard();
 
         Boolean wellConnected = true;
+        Boolean isAlone = true;
 
 
         int myPosX = mySlot.getPosition().getX();
@@ -413,96 +416,93 @@ public class Util {
 //            //se ne ha uno empty allora deve avere almeno un altra collegata
 //        }
 
-        boolean  tileHasConnector = false;
+        boolean  tileHasConnector = true;
+        int numVisited = 0;
 
         if (myPosY - 1 >= 0 && TempShipBoard[myPosX][myPosY-1].getTile() != null) {
             cUp = TempShipBoard[myPosX][myPosY - 1].getTile().getSides().get(2);
             //Controlla se il connettore superiore del tile corrente è compatibile con il connettore inferiore del tile superiore
             wellConnected = compatible(cUp,T.getSides().getFirst());
-            if (wellConnected && !cUp.equals(Connector.EMPTY)) tileHasConnector = true;
             if(!wellConnected){
                 return false;
+            }
+            if (cUp.equals(Connector.EMPTY)){
+                numVisited++;
             }
         }
 
         //LEFT
 
         if (myPosX - 1 >= 0 && TempShipBoard[myPosX-1][myPosY].getTile() != null) {
+            numVisited++;
+
             cLeft = TempShipBoard[myPosX- 1][myPosY].getTile().getSides().get(1);
             //Controlla se il connettore sinistra del tile corrente è compatibile con il connettore destra del tile a sinistra
             wellConnected = compatible(cLeft,T.getSides().get(3));
-            if (wellConnected && !cLeft.equals(Connector.EMPTY)) tileHasConnector = true;
 
             if(!wellConnected){
                 return false;
+            }
+            if (cLeft.equals(Connector.EMPTY)){
+                numVisited++;
             }
         }
         //DOWN
 
         if (myPosY + 1 < 5 && TempShipBoard[myPosX][myPosY+1].getTile() != null) {
+            numVisited++;
+
             cDown = TempShipBoard[myPosX][myPosY + 1].getTile().getSides().get(0);
             //Controlla se il connettore inferiore del tile corrente è compatibile con il connettore superiore del tile inferiore
             wellConnected = compatible(cDown, T.getSides().get(2));
-            if (wellConnected && !cDown.equals(Connector.EMPTY)) tileHasConnector = true;
 
             if (!wellConnected) {
                 return false;
             }
+
+            if (cDown.equals(Connector.EMPTY)){
+                numVisited++;
+            }
+
+
         }
         //RIGHT TILE
 
         if (myPosX + 1 < 7 && TempShipBoard[myPosX+1][myPosY].getTile() != null) {
+            numVisited++;
+
             cRight = TempShipBoard[myPosX+1][myPosY].getTile().getSides().get(3);
 
 
-            if (!cRight.equals(Connector.EMPTY)) tileHasConnector = true;
             wellConnected = compatible(cRight, T.getSides().get(1));
-            if(!wellConnected){
+
+
+
+            if (!wellConnected) {
                 return false;
             }
 
-        }
-
-        boolean isToExclude = T.getMyComponent().accept(new ComponentNameVisitor()).equalsIgnoreCase("CentralHousingUnit");
-
-
-        return tileHasConnector || isToExclude;
-
-    }
-
-    /**
-     * Checks if two adjacent tiles are properly connected through their connectors.
-     *
-     * @param tile1Connectors   Connectors of the first tile
-     * @param tile2Connectors   Connectors of the second tile
-     * @param position1         Position of the first tile
-     * @param position2         Position of the second tile
-     * @return true if the tiles are properly connected, false otherwise
-     */
-    public static Boolean wellConnectedTiles(ArrayList<Connector> tile1Connectors, ArrayList<Connector> tile2Connectors, Position position1, Position position2) {
-
-        String relativePos;
-        Boolean wellConnected = false;
-
-        if (position1.getX() != position2.getX()) {
-            relativePos = "left-right";
-        } else relativePos = "up-down";
+            if (cRight.equals(Connector.EMPTY)){
+                numVisited++;
+            }
 
 
-        if (relativePos.equals("left-right")){
-            if (position1.getX() > position2.getX()) {
-                wellConnected = compatible(tile1Connectors.get(1), tile2Connectors.get(3)) && !tile1Connectors.get(1).equals(Connector.EMPTY);
-            } else wellConnected = compatible(tile1Connectors.get(3), tile2Connectors.get(1)) && !tile1Connectors.get(3).equals(Connector.EMPTY);
-        } else {
-            if (position1.getY() > position2.getY()) {
-                wellConnected = compatible(tile1Connectors.getFirst(), tile2Connectors.get(2)) && !tile1Connectors.getFirst().equals(Connector.EMPTY);
-
-            } else  wellConnected = compatible(tile2Connectors.getFirst(), tile1Connectors.get(2)) && !tile2Connectors.getFirst().equals(Connector.EMPTY);
 
         }
 
+//        boolean isToExclude = T.getMyComponent().accept(new ComponentNameVisitor()).equalsIgnoreCase("CentralHousingUnit");
 
-        return wellConnected;
+
+        //qua e' flottante
+        if (numVisited == 4){
+
+        }
+
+        return true;
+
+
+
+
     }
 
 
@@ -557,18 +557,11 @@ public class Util {
                     if (inBoundaries(x, y) && myShip.getShipBoard()[x][y].getTile() != null && compatible(myShip.getShipBoard()[x][y].getTile().getSides().get((i + 2) % 4), tile.getSides().get(i))) {
                         Tile tempTile = myShip.getShipBoard()[x][y].getTile();
 
-//                        System.out.println("Checking side " + i + " of tile " + tile.getId() +
-//                                " vs side " + ((i + 2) % 4) + " of neighbor tile " + tempTile.getId());
-//
-//                        System.out.println("Tile side: " + tile.getSides().get(i) +
-//                                " | Neighbor side: " + tempTile.getSides().get((i + 2) % 4));
-//
-//
-//                        System.out.println("STO PER VISITARE : " + neighborPos);
-                        visitTile(tempTile, tilesID, myShip.getShipBoard()[x][y], invalidPositions, newBrokenPos, myShip);
+                        if (areTilesConnected(slot.getPosition(), tile.getSides(), neighborPos, tempTile.getSides())) {
+                            visitTile(tempTile, tilesID, myShip.getShipBoard()[x][y], invalidPositions, newBrokenPos, myShip);
+                        }
 
                     }
-//                    System.out.println("[2]I: " + i + " " + positions.size());
 
 
                 }
@@ -619,10 +612,17 @@ public class Util {
     private static void checkShipStructureTileVisitor(Position startingPos, Ship myShip, ArrayList<Integer> visitedTilesId) {
 
         ArrayList<Pair<Position, Tile>> connectedTiles = myShip.getConnectedTiles(startingPos);
+        Tile myTile = myShip.getTileFromPosition(startingPos);
+        ArrayList<Connector> myConnectors = myTile.getSides();
+        ArrayList<Pair<Position, Tile>> realVisitableTiles = new ArrayList<>(connectedTiles.stream().filter(p -> {
+            ArrayList<Connector> connectors2 = p.getValue().getSides();
+
+            return areTilesConnected(startingPos,myConnectors, p.getKey(), connectors2);
+        }).toList());
 
 
-        if (!connectedTiles.isEmpty()) {
-            for (Pair<Position, Tile> connectedTile : connectedTiles) {
+        if (!realVisitableTiles.isEmpty()) {
+            for (Pair<Position, Tile> connectedTile : realVisitableTiles) {
                 if (!visitedTilesId.contains(connectedTile.getValue().getId())) {
                     visitedTilesId.add(connectedTile.getValue().getId());
                     checkShipStructureTileVisitor(connectedTile.getKey(), myShip, visitedTilesId);

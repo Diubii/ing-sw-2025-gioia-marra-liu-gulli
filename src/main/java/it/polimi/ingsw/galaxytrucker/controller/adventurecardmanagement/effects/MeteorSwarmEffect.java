@@ -129,8 +129,6 @@ public abstract class MeteorSwarmEffect {
         int projectileIndex = projectileCounters.computeIfAbsent(game, _ -> 0);
         Projectile projectile = meteorSwarm.getMeteors().get(projectileIndex);
 
-
-
         int diceRoll = diceRolls.get(game);
         needToAskTrunkReq.putIfAbsent(game,new ArrayList<>());
 

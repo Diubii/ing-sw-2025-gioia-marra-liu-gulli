@@ -78,6 +78,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
                     NetworkMessage message = (NetworkMessage) input.readObject();
                     NetworkMessageType type = message.accept(nmnv);
                     if (type.equals(NetworkMessageType.NicknameRequest)) {
+
                         NicknameRequest request = (NicknameRequest) message;
                         System.out.println("Nickname received: " + request.getNickname());
                     }

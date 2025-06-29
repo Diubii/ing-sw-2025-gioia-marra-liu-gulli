@@ -503,6 +503,7 @@ public class ClientController implements Observer {
 
                 } else {
                     isPlaced = false;
+                    sendShipUpdate();
                     view.askDrawTile();
 
                 }
@@ -798,7 +799,10 @@ public class ClientController implements Observer {
      */
     public void handleDrawFaceDownTile() {
 
+
         if (currentTileInHand == null || isPlaced) {
+
+
             sendShipUpdate();
         }
         DrawTileRequest request = new DrawTileRequest();
@@ -864,6 +868,7 @@ public class ClientController implements Observer {
      */
     public void handleChooseFaceUpTile(Tile tile) {
 
+        sendShipUpdate();
         DrawTileRequest request = new DrawTileRequest(tile);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
@@ -886,6 +891,7 @@ public class ClientController implements Observer {
      * @param slotIndex the slot index
      */
     public void handleDrawReservedTile (int slotIndex){
+        sendShipUpdate();
         DrawTileRequest request = DrawTileRequest.fromReservedSlot(slotIndex);
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
@@ -1155,7 +1161,7 @@ public class ClientController implements Observer {
                     view.showCheckShipMenu();
                 }
                 case "b" -> {
-                    if (myModel.getMyInfo().getShip().remainingTiles() > 0) {
+                    if (myModel.getMyInfo().getShip().remainingTiles() > 1) {
                         view.askRemoveTile(myModel.getMyInfo().getShip());
                     } else {
                         System.out.println("OPTION DISABLED< YOU HAVE NO TILE");
@@ -1887,6 +1893,7 @@ public class ClientController implements Observer {
         FlipTimerRequest flipTimerRequest = new FlipTimerRequest();
         safeSendMessage(flipTimerRequest);
     }
+
 
     /**
      * Safely sends a message to the server. Handles disconnections.
