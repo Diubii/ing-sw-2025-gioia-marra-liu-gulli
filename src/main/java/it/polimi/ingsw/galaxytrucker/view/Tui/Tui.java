@@ -31,9 +31,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static it.polimi.ingsw.galaxytrucker.view.Tui.util.InputUtils.parseCoordinate;
 import static it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils.printShip;
@@ -724,17 +721,21 @@ public class Tui implements View, Observable {
 
                 switch (choice) {
                     case "1": {
+//                        clientController.sendShipUpdate();
                         clientController.handleDrawFaceDownTile();
                         validInput = true;
                         break;
                     }
                     case "2": {
+                        clientController.sendShipUpdate();
+
                         clientController.startChooseTile();
                         validInput = true;
                         break;
 
                     }
                     case "3": {
+                        clientController.sendShipUpdate();
                         askPickOrPlaceReservedTile(true);
                         validInput = true;
                         break;
@@ -1852,13 +1853,16 @@ public class Tui implements View, Observable {
      * Asynchronously shows the status of all timers and provides options to flip them if allowed.
      *
      * @param timerInfos list of all current {@link TimerInfo} objects
+     * @param b
      */
     @Override
-    public void showTimerInfos(ArrayList<TimerInfo> timerInfos) {
-        new Thread(() -> {
-            printTimerInfo(timerInfos);
-            showTimerMenu(timerInfos);
-        }).start();
+    public void showTimerInfos(ArrayList<TimerInfo> timerInfos, boolean b) {
+        if (b) {
+            new Thread(() -> {
+                printTimerInfo(timerInfos);
+                showTimerMenu(timerInfos);
+            }).start();
+        }
     }
 
 

@@ -142,7 +142,7 @@ public interface View {
 
     void askCollectRewards();
 
-    void showTimerInfos(ArrayList<TimerInfo> timerInfos);
+    void showTimerInfos(ArrayList<TimerInfo> timerInfos, boolean b);
 
     void showYouAreNowSpectating();
 

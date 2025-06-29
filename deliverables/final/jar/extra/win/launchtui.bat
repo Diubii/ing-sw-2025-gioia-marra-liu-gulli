@@ -5,4 +5,4 @@ chcp 65001 > nul
 
 set JARPATH=../..
 set JARNAME=GalaxyTrucker-TUI.jar
-java -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -jar %JARPATH%\%JARNAME%
+"C:\Program Files\Java\jdk-23\bin\java.exe" ^ -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -jar %JARPATH%\%JARNAME%

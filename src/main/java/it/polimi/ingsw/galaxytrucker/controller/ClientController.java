@@ -757,7 +757,7 @@ public class ClientController implements Observer {
     public void handleTimerInfoResponse(TimerInfoResponse timerInfoResponse) {
         myModel.getTimerInfos().clear();
         myModel.getTimerInfos().addAll(timerInfoResponse.getTimerInfoList());
-        view.showTimerInfos(myModel.getTimerInfos());
+        view.showTimerInfos(myModel.getTimerInfos(), false);
 
         if (timerInfoResponse.getLast()) {
             handlePhaseUpdate(new PhaseUpdate(GameState.BUILDING_END));
@@ -914,7 +914,7 @@ public class ClientController implements Observer {
      * @param rotation number of clockwise rotations to apply
      */
     public void rotateCurrentTile(int rotation) {
-        if(currentTileInHand!=null) {
+        if (currentTileInHand != null) {
             currentTileInHand.rotate(rotation);
             view.showTile(currentTileInHand);
             view.showGenericMessage("Tile rotated successfully.", false);
@@ -1679,6 +1679,7 @@ public class ClientController implements Observer {
     public void handleCrewInitUpdate(CrewInitUpdate crewInitUpdate) {
         safeSendMessage(crewInitUpdate);
     }
+
 
     /**
      * Gets occupied cargo holds.

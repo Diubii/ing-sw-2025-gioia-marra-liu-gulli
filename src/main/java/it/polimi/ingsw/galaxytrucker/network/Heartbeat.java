@@ -36,6 +36,9 @@ public class Heartbeat extends Thread {
 
     private final AtomicBoolean active = new AtomicBoolean(true);
 
+
+    private final AtomicBoolean active = new AtomicBoolean(true);
+
     @Override
 
     public void run() {
@@ -62,6 +65,7 @@ public class Heartbeat extends Thread {
         this.interrupt();
         serverController.startNewHeartbeat(clientHandler);
     }
+
 
     /**
      * Returns the client handler associated with this heartbeat.
