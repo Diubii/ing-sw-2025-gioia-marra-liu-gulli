@@ -62,8 +62,15 @@ Per Unix potrebbe essere necessario regolare i permessi di lettura delle cartell
 
     
 ### Copertura dei test:
+![image](https://github.com/user-attachments/assets/492a3f77-3659-44c4-bab4-b9c2f5095f7d)
 
+Come mostrato nell'immagine, i test coprono l'85% delle linee della parte model e l'81% delle linee della parte controller, pertanto si può affermare che le componenti model e controller del progetto sono state testate in modo approfondito.
 
+Note:
+1. È stata creata una serie di classi di mock per facilitare il testing del controller, come ad esempio MockShipFactory, che consente di simulare navi realistiche già costruite, oppure MockResponse per simulare le risposte dell’utente.
+2. È stata implementata una classe chiamata GameTestHelper, che consente di simulare l'intero flusso di gioco fino alla fase di volo (FlightPhase) o alla fase di costruzione (BuildingPhase), così da testare comportamenti realistici in uno scenario completo.
+3. È stato simulato anche un FakeClientHandler per emulare l'invio dei messaggi, permettendo così di testare l'interazione tra client e server senza una connessione reale
+4. Gli effetti delle carte sono testati in CardEffectTest, simulando il gioco e verificando che ogni carta attivi correttamente il proprio effetto.
 ### Comandi e funzionalità automatiche:
 
 Tutti i menu e la maggior parte delle interazioni sono da effettuare con il tasto sinistro del mouse
