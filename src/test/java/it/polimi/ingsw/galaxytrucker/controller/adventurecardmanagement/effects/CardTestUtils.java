@@ -3,9 +3,11 @@ package it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.AdventureCard;
+import it.polimi.ingsw.galaxytrucker.model.utils.Util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +15,14 @@ import java.util.List;
 public class CardTestUtils {
 
     public static List<AdventureCard> loadCardsByType(String typeName, int count) {
-        URL url = CardTestUtils.class.getClassLoader().getResource("cardsdata.json");
-
-        File file = new File(url.getFile());
+        String path = "cardsdata.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
         ArrayList<AdventureCard> list = new ArrayList<>();
-
-        try {
-            list = mapper.readValue(file, new TypeReference<>() {});
+        try (InputStream in = CardTestUtils.class.getClassLoader().getResourceAsStream(path)) {
+            if(in == null) throw new IOException();
+            list = mapper.readValue(in, new TypeReference<>() {});
         }
         catch (IOException e) {
             return list;

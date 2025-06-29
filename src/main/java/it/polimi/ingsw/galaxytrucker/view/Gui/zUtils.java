@@ -163,8 +163,8 @@ public class zUtils {
                                         clientController.getMyModel().addTileToRemove(tile.getId());
                                         ship.removeTile(pos, true);
                                         showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);
-
                                     }
+
                                     break;
                                 case CREW_INIT:
 

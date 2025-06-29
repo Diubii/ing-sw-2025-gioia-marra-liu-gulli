@@ -676,7 +676,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
             Position pos = Arrays.stream(ship.getShipBoard())
                     .flatMap(Arrays::stream)
-                    .filter(Objects::nonNull).filter(slot -> slot.getTile() != null && slot.getTile().getMyComponent() != null).map(slot -> slot.getPosition()).toList().getFirst();
+                    .filter(Objects::nonNull)
+                    .filter(slot -> slot.getTile() != null && slot.getTile().getMyComponent() != null)
+                    .map(Slot::getPosition)
+                    .toList()
+                    .getFirst();
 
 
             Boolean result1 = Util.checkShipStructure(ship, pos).getKey();
