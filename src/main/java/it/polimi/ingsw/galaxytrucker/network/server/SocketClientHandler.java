@@ -18,25 +18,32 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Handles the communication between the server and a single client using sockets.
+ * Reads incoming messages, processes them using a visitor, and sends responses.
+ * Each handler runs in its own thread.
+ */
 public class SocketClientHandler implements Runnable, ClientHandler {
     private final Object inputLock;
-    private final Object outputLock;
+
 
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private final Socket clientSocket;
     private final ServerController serverController;
     NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
-
     private final UUID clientID;
-
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
-
+    /**
+     * Constructs a handler for a given client socket.
+     *
+     * @param socket     the client's socket.
+     * @param controller the server controller managing game logic.
+     */
     public SocketClientHandler(Socket socket, ServerController controller) {
         this.clientSocket = socket;
         inputLock = new Object();
-        outputLock = new Object();
         serverController = controller;
         clientID = UUID.randomUUID();
 
@@ -59,6 +66,9 @@ public class SocketClientHandler implements Runnable, ClientHandler {
         }
     }
 
+    /**
+     * Continuously reads messages from the client and delegates handling.
+     */
     private void ConnectionManager() throws IOException, ExecutionException, InterruptedException {
         serverController.startNewHeartbeat(this);
         try {
@@ -66,15 +76,11 @@ public class SocketClientHandler implements Runnable, ClientHandler {
                 synchronized (inputLock) {
 
                     NetworkMessage message = (NetworkMessage) input.readObject();
-                    //logica per gestire i messaggi
-
                     NetworkMessageType type = message.accept(nmnv);
-
                     if (type.equals(NetworkMessageType.NicknameRequest)) {
                         NicknameRequest request = (NicknameRequest) message;
                         System.out.println("Nickname received: " + request.getNickname());
                     }
-
                     if (type != NetworkMessageType.HeartbeatRequest) {
                         System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.ServerSocket, TuiColor.GREEN, "MESSAGE " + type + " RECEIVED FROM " + clientSocket.getInetAddress().toString()));
                     }
@@ -90,7 +96,6 @@ public class SocketClientHandler implements Runnable, ClientHandler {
             }
         } catch (ClassCastException | ClassNotFoundException | IOException e) {
             executor.shutdownNow();
-            //System.out.println("Invalid stream from client");
         }
         clientSocket.close();
     }
@@ -101,6 +106,7 @@ public class SocketClientHandler implements Runnable, ClientHandler {
         return clientID;
     }
 
+    @Override
     public synchronized void sendMessage(NetworkMessage message) {
         try {
             output.reset();  // Forza la riscrittura dell'intero oggetto

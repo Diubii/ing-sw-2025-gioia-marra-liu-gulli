@@ -5,7 +5,18 @@ import it.polimi.ingsw.galaxytrucker.enums.Color;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Represents a single slot (tile) on the Flight Board.
+ * <p>
+ * Each slot can optionally:
+ * <ul>
+ *   <li>Hold a player's token (position on the track).</li>
+ *   <li>Be marked as a starting position (with an order).</li>
+ *   <li>Be associated with a 2D position (if visual mapping is used).</li>
+ * </ul>
+ */
 public class FlightBoardMapSlot implements Serializable {
+
 
     @Serial
     private static final long serialVersionUID = 356098306830L;

@@ -6,6 +6,11 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Request message sent from a client to the server to draw the next adventure card.
+ * This is typically used during the flight phase, where players need to proceed
+ * through the adventure deck one card at a time.
+ */
 public class DrawAdventureCardRequest extends NetworkMessage implements Serializable {
 
     @Serial

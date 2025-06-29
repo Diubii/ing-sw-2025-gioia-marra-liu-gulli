@@ -14,8 +14,27 @@ import java.util.ArrayList;
 
 import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.*;
 
+/**
+ * The {@code SmugglersEffect} class handles the resolution of the "Smugglers" adventure card effect.
+ *
+ * <p>Players compare their ship's firepower to that of the smugglers. Based on the result:
+ * <ul>
+ *   <li>If the player loses, they lose their most valuable goods and potentially batteries.</li>
+ *   <li>If the player wins, they are offered a reward with an optional movement penalty.</li>
+ *   <li>On a tie, no effect is applied.</li>
+ * </ul>
+ *
+ * <p>The effect also coordinates network messaging for sending/receiving {@link ShipUpdate} and
+ * {@link CollectRewardsResponse} messages to handle player decisions.
+ */
 public class SmugglersEffect {
 
+    /**
+     * Executes the firepower comparison between the player and the smugglers.
+     * Handles loss, win, or tie scenarios and proceeds accordingly.
+     *
+     * @param context the {@link CardContext} containing game and player data.
+     */
     public static void firePowerCheck(CardContext context){
 
         LobbyManager game = context.getCurrentGame();
@@ -40,7 +59,6 @@ public class SmugglersEffect {
         else if (smugglerFirePower < playerFirePower){
             context.nextPhase();
             handlePlayerWin(context, game, player);
-
             return;
         }
         else  {
@@ -48,9 +66,7 @@ public class SmugglersEffect {
             handleTie( context,game, player);
 
         }
-//(smugglerFirePower > playerFirePower) ||(smugglerFirePower == playerFirePower)
         if(context.currentPlayerIsLast()){
-            //Execute CommonEffects::end
             context.goToEndPhase();
         }
         else {
@@ -59,6 +75,15 @@ public class SmugglersEffect {
 
         context.executePhase();
     }
+    /**
+     * Handles the logic for when the smugglers overpower the player.
+     * Removes goods or batteries as penalties and notifies the player.
+     *
+     * @param context  the game context.
+     * @param game     the current game instance.
+     * @param player   the affected player.
+     * @param smugglers the {@link Smugglers} adventure card.
+     */
 
     private static void handleSmugglersWin(CardContext context, LobbyManager game, Player player, Smugglers smugglers) {
         game.getPlayerHandlers().get(player.getNickName())
@@ -86,6 +111,13 @@ public class SmugglersEffect {
         GameMessage personalInfo = new GameMessage(message);
         game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalInfo);
     }
+    /**
+     * Handles the case when the player defeats the smugglers and is offered a reward.
+     *
+     * @param context the game context.
+     * @param game    the current game instance.
+     * @param player  the winning player.
+     */
 
     private static void handlePlayerWin(CardContext context, LobbyManager game, Player player) {
         game.getPlayerHandlers().get(player.getNickName())
@@ -99,6 +131,14 @@ public class SmugglersEffect {
         sendMessage(context, player, rewardRequest);
     }
 
+    /**
+     * Handles the case when the player ties with the smugglers.
+     * Sends informative messages to the player and other participants.
+     *
+     * @param context the game context.
+     * @param game    the current game instance.
+     * @param player  the tying player.
+     */
     private static void handleTie( CardContext context,LobbyManager game, Player player) {
         game.getPlayerHandlers().get(player.getNickName())
                 .sendMessage(new GameMessage("The Smugglers are not going to haunt you!"));
@@ -107,6 +147,12 @@ public class SmugglersEffect {
                 broadcastExcept(context,broadcast,player);
                 sleepSafe(600);
     }
+    /**
+     * Processes the player's response to the reward collection prompt.
+     * Advances the game state depending on the player's decision.
+     *
+     * @param context the {@link CardContext} containing the incoming message and game state.
+     */
     public static void receivedRewardsCollectionResponse(CardContext context){
 
         CollectRewardsResponse collectRewardsResponse = (CollectRewardsResponse) context.getIncomingNetworkMessage();
@@ -125,26 +171,29 @@ public class SmugglersEffect {
             sleepSafe(600);
 
             if(context.currentPlayerIsLast()){
-                //Execute CommonEffects::end
                 context.goToEndPhase();
             }
             else {
                 context.nextPlayer();
                 context.previousPhase(1);
             }
-            //Execute CommonEffects::end
             context.executePhase();
         }
     }
 
-    public static void receivedShipUpdate(CardContext context){
-        Player currentPlayer = context.getCurrentPlayer();
-//        System.out.println(currentPlayer.getNickName() + "  Debug: Received ship update response");
 
+    /**
+     * Handles the incoming {@link ShipUpdate} after a player accepts the smugglers' reward.
+     * Applies the movement penalty and ends the effect.
+     *
+     * @param context the {@link CardContext} including the updated ship state.
+     */
+
+    public static void receivedShipUpdate(CardContext context){
+//        System.out.println(currentPlayer.getNickName() + "  Debug: Received ship update response");
         Smugglers smugglers = (Smugglers) context.getAdventureCard();
         movePlayer(context, context.getCurrentPlayer(), -smugglers.getDaysLost());
 
-        //Execute CommonEffects::end
         context.nextPhase();
         context.executePhase();
     }

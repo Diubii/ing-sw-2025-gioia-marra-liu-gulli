@@ -6,11 +6,6 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
 /**
- * Represents an engine component in a system. The engine extends the behavior of a generic component
- * by introducing the concept of engine power. This power can vary depending on the state of the component,
- * such as its rotation value.
- */
-/**
  * Represents an engine component in a system.
  * The {@code Engine} class extends the behavior of the {@link Component} class
  * by introducing the concept of engine power. This allows the engine to have a power

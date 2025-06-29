@@ -6,6 +6,10 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * This request is used by the client to notify the server that it's still active.
+ * Typically part of a keep-alive mechanism to prevent disconnection due to inactivity.
+ */
 public class HeartbeatRequest extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 918273645L;

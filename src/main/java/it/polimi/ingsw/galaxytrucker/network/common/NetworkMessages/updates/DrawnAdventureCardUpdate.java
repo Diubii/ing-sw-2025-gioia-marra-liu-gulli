@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 
 import java.io.Serial;
 
+/**
+ * Network update sent when a new AdventureCard is drawn.
+ */
 public class DrawnAdventureCardUpdate extends NetworkMessage {
     @Serial
     private static final long serialVersionUID = 328742390734L;

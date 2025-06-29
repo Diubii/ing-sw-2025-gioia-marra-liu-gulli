@@ -9,6 +9,11 @@ import it.polimi.ingsw.galaxytrucker.enums.ProjectileType;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Represents a projectile in the game, such as a meteor or cannon fire.
+ * Each projectile has a type, direction, and size.
+ */
+
 public class Projectile implements Serializable {
 
     @Serial

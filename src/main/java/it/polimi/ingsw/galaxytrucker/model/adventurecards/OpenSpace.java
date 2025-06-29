@@ -6,6 +6,11 @@ import it.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisito
 
 import java.io.Serial;
 
+/**
+ * Represents an Open Space adventure card.
+ * <p>
+ * Typically used to increase movement opportunities in space during the flight phase.
+ */
 public class OpenSpace extends AdventureCard {
 
     @Serial

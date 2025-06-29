@@ -34,8 +34,6 @@ import java.io.Serializable;
 public class Component implements Serializable,Cloneable {
 
 
-//    private final String Name;
-
     private Boolean Structural;
 
     /**

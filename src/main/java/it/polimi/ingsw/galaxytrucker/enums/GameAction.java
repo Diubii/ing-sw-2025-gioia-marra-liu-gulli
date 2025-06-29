@@ -1,5 +1,8 @@
 package it.polimi.ingsw.galaxytrucker.enums;
 
+/**
+ * Represents possible actions players can perform during different game phases.
+ */
 public enum GameAction {
 
     //BUILDING ACTIONS

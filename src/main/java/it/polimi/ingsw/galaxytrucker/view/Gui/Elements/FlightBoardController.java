@@ -12,6 +12,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 
+
+/**
+ * Manages the graphical display of a FlightBoard in the GUI.
+ */
 public class FlightBoardController {
 
     private int size;

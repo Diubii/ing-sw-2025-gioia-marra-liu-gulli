@@ -8,6 +8,10 @@ import it.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisito
 import java.io.Serial;
 import java.util.ArrayList;
 
+/**
+ * Adventure card representing Smugglers.
+ * Players may gain goods if their firepower is sufficient, or suffer a penalty otherwise.
+ */
 public class Smugglers extends AdventureCard {
     @Serial
     private static final long serialVersionUID = 888888889L;

@@ -92,9 +92,6 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
 
 
-
-
-
     @Override
     public Void visit(JoinRoomResponse joinRoomResponse) {
         clientController.handleJoinRoomResponse(joinRoomResponse);

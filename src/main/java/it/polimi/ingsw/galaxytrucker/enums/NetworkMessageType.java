@@ -1,5 +1,10 @@
 package it.polimi.ingsw.galaxytrucker.enums;
 
+
+/**
+ * Lists all possible types of network messages exchanged between client and server.
+ * Covers requests, responses, and game state updates across all phases.
+ */
 public enum NetworkMessageType {
     NetworkMessage,
 

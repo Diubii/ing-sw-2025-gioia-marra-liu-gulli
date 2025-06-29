@@ -7,6 +7,10 @@ import it.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisito
 
 import java.io.Serial;
 
+/**
+ * Adventure card representing Slavers, a hostile encounter where players face
+ * a penalty and may earn or lose credits depending on their firepower.
+ */
 public class Slavers extends AdventureCard {
 
 

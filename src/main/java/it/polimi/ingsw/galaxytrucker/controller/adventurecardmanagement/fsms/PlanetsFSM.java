@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+/**
+ * FSM (Finite State Machine) for handling the logic of the "Planets" adventure card.
+ * <p>
+ * This FSM guides players through planet selection, reward collection, and ship updates.
+ */
 public class PlanetsFSM extends CardFSM {
     @Override
     public ArrayList<Consumer<CardContext>> initPhases() {

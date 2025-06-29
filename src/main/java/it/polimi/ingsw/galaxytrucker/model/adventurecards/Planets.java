@@ -8,6 +8,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisito
 import java.io.Serial;
 import java.util.ArrayList;
 
+/**
+ * Represents a Planets adventure card where players may choose a planet and collect goods.
+ */
 public class Planets extends AdventureCard {
 
 

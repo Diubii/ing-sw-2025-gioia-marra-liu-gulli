@@ -8,6 +8,11 @@ import it.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisito
 import java.io.Serial;
 import java.util.ArrayList;
 
+/**
+ * Represents a Pirates adventure card.
+ * <p>
+ * Players must defend against a certain firepower. Losing may cost them credits.
+ */
 public class Pirates extends AdventureCard {
 
 

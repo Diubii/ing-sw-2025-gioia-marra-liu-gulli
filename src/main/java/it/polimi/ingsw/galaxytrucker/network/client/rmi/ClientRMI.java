@@ -22,6 +22,11 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Implementation of the RMI client for Galaxy Trucker.
+ * Handles communication with the server using Java RMI and dispatches received messages to observers.
+ * Acts as both an RMI remote object and an {@link Observable} for message propagation.
+ */
 public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI, Observable {
 
     private final ArrayList<Observer> observers = new ArrayList<Observer>();
@@ -31,6 +36,16 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
 
     NetworkMessageNameVisitor nmnv = new NetworkMessageNameVisitor();
 
+
+    /**
+     * Constructs an RMI client and registers it with the RMI registry and server.
+     *
+     * @param address     the RMI server address
+     * @param port        the RMI registry port
+     * @param controller  the {@link ClientController} to observe game updates
+     * @throws RemoteException   if RMI setup fails
+     * @throws NotBoundException if the server object is not found in registry
+     */
     public ClientRMI(String address, int port, ClientController controller) throws RemoteException, NotBoundException {
         super();
         registry = LocateRegistry.getRegistry(address, port);
@@ -69,10 +84,7 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
         observers.add(observer);
     }
 
-    @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
+
 
     @Override
     public void notifyObservers(NetworkMessage message) throws IOException, ExecutionException, InvalidTilePosition {
@@ -81,10 +93,5 @@ public class ClientRMI extends UnicastRemoteObject implements ClientInterfaceRMI
         }
     }
 
-    @Override
-    public void notifyObservers(String message) throws IOException, ExecutionException {
-        for (Observer observer : observers) {
-            observer.update(message);
-        }
-    }
+
 }

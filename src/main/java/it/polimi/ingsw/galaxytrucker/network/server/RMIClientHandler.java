@@ -17,11 +17,24 @@ import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+
+/**
+ * Handles RMI communication with a connected client.
+ * Implements the {@link ClientHandler} interface, allowing the server to
+ * interact with RMI-based clients.
+ */
 public class RMIClientHandler implements ClientHandler, Serializable {
 
     private final UUID clientID;
     private final ClientInterfaceRMI remoteClient;
 
+
+    /**
+     * Constructs a new RMIClientHandler and registers the client for heartbeat monitoring.
+     *
+     * @param remoteClient     the remote client reference.
+     * @param serverController the server controller responsible for game logic and heartbeat management.
+     */
     public RMIClientHandler(ClientInterfaceRMI remoteClient, ServerController serverController) {
         clientID = UUID.randomUUID();
         this.remoteClient = remoteClient;

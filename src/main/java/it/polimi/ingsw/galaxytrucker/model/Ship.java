@@ -16,9 +16,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Rappresenta la nave del giocatore, composta da una griglia di {@link Slot}
- * in cui vengono posizionate le {@link Tile}. La nave può contenere vari componenti
- * come motori, batterie, cannoni e stive di carico.
+ * Represents the player's ship composed of a grid of {@link Slot}s.
+ * Tiles representing ship components are placed in slots.
+ * The ship can hold engines, batteries, cannons, cargo, housing units, etc.
+ * Handles structure validation, tile management, and ship state.
  */
 
 public class Ship implements Serializable {
@@ -58,9 +59,8 @@ public class Ship implements Serializable {
 
 
     /**
-     * Costruttore della nave.
-     *
-     * @param learningMatch Indica se la partita è in modalità apprendimento.
+     * Initializes the ship with an empty grid and component tracking structures.
+     * @param learningMatch true if the match is in tutorial mode (some positions are invalid)
      */
     public Ship(Boolean learningMatch) {
         listNotLoadedGoods = new ArrayList<>();
@@ -69,9 +69,6 @@ public class Ship implements Serializable {
         invalidPositions = createIP();
         generateSlot();
         initializePos();
-        //Tile of chosen color
-
-//        putTile();
 
     }
 
@@ -108,22 +105,8 @@ public class Ship implements Serializable {
         return shipBoard;
     }
 
-    public void updateShipBoard(Slot[][] shipB) {
-        synch = true;
-        this.shipBoard = shipB;
-    }
 
-    public ArrayList<Position> getStoragePos() {
-        return new ArrayList<Position>(storagePos);
-    }
 
-    public ArrayList<Position> getRedStoragePos() {
-        return new ArrayList<Position>(redStoragePos);
-    }
-
-    public ArrayList<Position> getHousingPos() {
-        return new ArrayList<Position>(housingPos);
-    }
 
     public ArrayList<Position> getBatteryPos() {
         return new ArrayList<Position>(batteryPos);
@@ -135,10 +118,6 @@ public class Ship implements Serializable {
 
     public ArrayList<Position> getEnginePos() {
         return new ArrayList<Position>(enginePos);
-    }
-
-    public ArrayList<Position> getLifeSSPos() {
-        return new ArrayList<Position>(lssPos);
     }
 
 
@@ -158,10 +137,6 @@ public class Ship implements Serializable {
 
     public int getDestroyedTiles() {
         return destroyedTiles;
-    }
-
-    public int getnGoods() {
-        return nGoods;
     }
 
     public int getNPurpleAlien() {

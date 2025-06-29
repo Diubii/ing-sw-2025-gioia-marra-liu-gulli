@@ -11,6 +11,11 @@ import javafx.util.Pair;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+
+/**
+ * Manages game lobby data and player state for a match.
+ * Includes player info, color assignment, handlers, timers, and locks.
+ */
 public class LobbyManager {
     private Game RealGame;
 
@@ -64,11 +69,6 @@ public class LobbyManager {
     }
 
 
-    public ArrayList<String> getPlayerShipFinished() {
-        synchronized (lock1) {
-            return playerShipFinished;
-        }
-    }
 
     public void addPlayerShipFinished(String playerShipFinished) {
         synchronized (lock1) {
@@ -79,13 +79,6 @@ public class LobbyManager {
     public int getPlayerShipFinishedSize() {
         synchronized (lock1) {
             return this.playerShipFinished.size();
-        }
-    }
-
-
-    public int getPlayerCrewFinishedSize() {
-        synchronized (lock4) {
-            return this.playerCrewFinished.size();
         }
     }
 
@@ -109,33 +102,6 @@ public class LobbyManager {
         }
     }
 
-    public void removePendingResponse(Integer id) {
-
-        synchronized (lock2) {
-            Pair<Integer, CompletableFuture<NetworkMessage>> pendingResponse = pendingResponses.stream().filter(pair -> pair.getKey().equals(id)).findFirst().orElse(null);
-
-
-            pendingResponses.remove(pendingResponse);
-        }
-
-    }
-
-    public void completePendingResponse(Integer id, NetworkMessage response) {
-        synchronized (lock2) {
-            Pair<Integer, CompletableFuture<NetworkMessage>> pendingResponse = pendingResponses.stream().filter(pair -> pair.getKey().equals(id)).findFirst().orElse(null);
-            if (pendingResponse != null) {
-                pendingResponse.getValue().complete(response);
-                pendingResponses.remove(pendingResponse);
-            } else {
-                System.err.println("Couldn't complete future related to " + response.toString() + ".");
-            }
-        }
-    }
-
-//    public  void completePendingResponse(NetworkMessage response) {
-//        pendingResponses.get().complete(response);
-//
-
     public ArrayList<Pair<Integer, CompletableFuture<NetworkMessage>>> getPendingResponses() {
 
         synchronized (lock2) {
@@ -145,9 +111,6 @@ public class LobbyManager {
     }
 
 
-    public void setRealGame(Game game) {
-        RealGame = game;
-    }
 
     public Game getRealGame() {
         return RealGame;

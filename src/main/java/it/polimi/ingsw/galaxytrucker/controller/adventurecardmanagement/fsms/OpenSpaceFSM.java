@@ -8,6 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+/**
+ * FSM (Finite State Machine) that manages the effect sequence of the "Open Space" adventure card.
+ * <p>
+ * The Open Space card requires players to possibly activate double engines
+ * to maintain or improve their position, followed by a speed-based resolution.
+ */
 public class OpenSpaceFSM extends CardFSM {
     public OpenSpaceFSM() {
         super();

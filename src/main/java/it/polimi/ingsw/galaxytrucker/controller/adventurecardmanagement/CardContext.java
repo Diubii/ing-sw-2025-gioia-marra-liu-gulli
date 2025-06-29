@@ -14,7 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Gets context for a single card. Needs to be re-instantiated to change card. Has an internal {@link CardFSM}.
+ * Represents the runtime context for handling a single {@link AdventureCard}.
+ * <p>
+ * Maintains game state, current player information, expected network responses,
+ * and drives the execution of the card's finite state machine ({@link CardFSM}).
+ * <p>
  */
 public class CardContext {
     private final AdventureCard adventureCard;
@@ -28,6 +32,12 @@ public class CardContext {
 
     private final HashMap<NetworkMessageType, Integer> expectedNumberOfNetworkMessagesPerType;
 
+    /**
+     * Constructs a new CardContext for the specified game and card.
+     *
+     * @param currentGame    the active game session
+     * @param adventureCard  the adventure card currently being resolved
+     */
     public CardContext(LobbyManager currentGame, AdventureCard adventureCard) {
         this.currentGame = currentGame;
         this.adventureCard = adventureCard;
@@ -93,10 +103,19 @@ public class CardContext {
         currentPlayerHandler = currentGame.getPlayerHandlers().get(currentPlayer.getNickName());
     }
 
+    /**
+     * @return a map tracking expected incoming network message counts per type.
+     */
     public HashMap<NetworkMessageType, Integer> getExpectedNumberOfNetworkMessagesPerType() {
         return expectedNumberOfNetworkMessagesPerType;
     }
 
+
+    /**
+     * Increments the expected number of incoming messages of a specific type.
+     *
+     * @param type the type of expected message
+     */
     public void incrementExpectedNumberOfNetworkMessages(NetworkMessageType type) {
         if(type == null) return;
         //if(type == incomingNetworkMessage.accept(new NetworkMessageNameVisitor())) executePhase();
@@ -105,6 +124,11 @@ public class CardContext {
         expectedNumberOfNetworkMessagesPerType.replace(type, currentValue + 1);
     }
 
+    /**
+     * Decrements the expected number of incoming messages of a specific type.
+     *
+     * @param type the type of message received
+     */
     public void decrementExpectedNumberOfNetworkMessages(NetworkMessageType type) {
         if(type==null) return;
 
@@ -119,35 +143,67 @@ public class CardContext {
         return incomingNetworkMessage;
     }
 
+    /**
+     * Sets the most recently received network message.
+     *
+     * @param incomingNetworkMessage the received message
+     */
     public void setIncomingNetworkMessage(NetworkMessage incomingNetworkMessage) {
         this.incomingNetworkMessage = incomingNetworkMessage;
     }
 
+    /**
+     * Resets the card FSM to its initial phase.
+     */
     public void resetFSM() {
         cardFSM.reset();
     }
 
+    /**
+     * Executes the current FSM phase.
+     */
     public void executePhase() {
         cardFSM.execute(this);
     }
 
+    /**
+     * Moves to the previous FSM phase.
+     */
     public void previousPhase() {
         cardFSM.previous();
     }
+
+    /**
+     * Moves back multiple phases.
+     *
+     * @param iterations number of phases to rewind
+     */
     public void previousPhase(int iterations){for(int i=1; i<=iterations; i++){
             cardFSM.previous();
         }
     }
 
+
+    /**
+     * Advances to the next FSM phase.
+     */
     public void nextPhase() {
         cardFSM.next();
     }
+    /**
+     * Advances multiple FSM phases.
+     *
+     * @param iterations number of phases to skip forward
+     */
     public void nextPhase(int iterations){
         for(int i = 1; i <= iterations; i++){
             cardFSM.next();
         }
     }
 
+    /**
+     * Skips to the final phase (typically used to terminate resolution early).
+     */
     public void goToEndPhase(){
         cardFSM.skipToEndState();
     }

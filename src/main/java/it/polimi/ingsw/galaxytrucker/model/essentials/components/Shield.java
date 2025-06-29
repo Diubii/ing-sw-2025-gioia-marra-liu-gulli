@@ -8,6 +8,10 @@ import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterfa
 
 import java.util.ArrayList;
 
+/**
+ * Represents a Shield component that can block incoming projectiles from specific directions
+ * when charged.
+ */
 public class Shield extends Component {
 
     private ArrayList<ProjectileDirection> protectedSides;
@@ -33,6 +37,11 @@ public class Shield extends Component {
         }
     }
 
+    /**
+     * Gets the list of directions this shield can currently protect, based on its rotation.
+     *
+     * @return rotated list of {@link ProjectileDirection}
+     */
     public ArrayList<ProjectileDirection> getProtectedSides() {
 
             int steps = ((rotation % 360) + 360) % 360 / 90;

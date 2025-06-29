@@ -13,8 +13,25 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.Ship
 
 import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.*;
 
+/**
+ * The {@code SlaversEffect} class manages the resolution of the "Slavers" adventure card effect.
+ *
+ * <p>Each player compares their ship's firepower against that of the slavers:
+ * <ul>
+ *   <li>If the player loses, they must discard a number of crew members as a penalty.</li>
+ *   <li>If the player wins, they are offered a reward that can be accepted at the cost of losing days.</li>
+ *   <li>In case of a tie, no penalties or rewards apply.</li>
+ * </ul>
+ *
+ */
 public class SlaversEffect {
 
+    /**
+     * Compares the current player's firepower with that of the slavers and handles the outcome:
+     * loss (discard crew), win (optional reward), or tie (no effect).
+     *
+     * @param context the {@link CardContext} representing current game and player state.
+     */
     public static void firePowerCheck(CardContext context){
 
         LobbyManager game = context.getCurrentGame();
@@ -99,6 +116,12 @@ public class SlaversEffect {
 
     }
 
+    /**
+     * Processes the player's response to a request for discarding crew members after losing to the slavers.
+     * Updates ship state and proceeds to the next player or ends the phase if all have responded.
+     *
+     * @param context the {@link CardContext} containing the discard response and game state.
+     */
     public static void receivedDiscardCrewMembersResponse(CardContext context){
         Slavers slavers = (Slavers) context.getAdventureCard();
         Player player = context.getCurrentPlayer();
@@ -123,6 +146,14 @@ public class SlaversEffect {
 
         }
     }
+
+    /**
+     * Processes the player's response to the optional reward offer after defeating the slavers.
+     * If accepted, the player gains credits and loses days.
+     * Afterward, the phase is ended.
+     *
+     * @param context the {@link CardContext} including the response and player state.
+     */
 
     public static void receivedRewardsCollectionResponse(CardContext context){
         CollectRewardsResponse collectRewardsResponse = (CollectRewardsResponse) context.getIncomingNetworkMessage();

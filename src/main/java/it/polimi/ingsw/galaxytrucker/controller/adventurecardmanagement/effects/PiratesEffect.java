@@ -1,6 +1,6 @@
 package it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+
 import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import it.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
@@ -17,7 +17,6 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.As
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.CollectRewardsResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
-import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.util.ArrayList;
@@ -26,7 +25,19 @@ import java.util.Random;
 
 import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.*;
 
+
+/**
+ * The {@code PiratesEffect} class manages the full logic of the "Pirates" adventure card.
+ * <p>Key phases include:
+ * <ul>
+ *   <li> Firepower Check: Players compare their ship's firepower with the pirates'. Based on the result, they either win, lose, or tie.</li>
+ *   <li> Reward Collection: The first winning player can choose to collect a reward in exchange for moving backward.</li>
+ *   <li> Cannon Fire: Players who lose the firepower check are targeted by pirate projectiles. This may lead to ship damage and fragmentation.</li>
+ *   <li> Trunk Selection: If a ship is split, the affected player chooses which part to retain.</li>
+ * </ul>
+ */
 public class PiratesEffect {
+
     private final static HashMap<LobbyManager, ArrayList<Player>> losersPerGame = new HashMap<>();
     private final static HashMap<LobbyManager, Integer> projectileIndexes = new HashMap<>();
     private final static HashMap<LobbyManager, ArrayList<Ship>> trunksPerGame = new HashMap<>();
@@ -35,7 +46,12 @@ public class PiratesEffect {
     private final static HashMap<LobbyManager, Integer> currentDiceRoll = new HashMap<>();
 
     private final static Random rand = new Random();
-
+    /**
+     * Initiates the firepower comparison between the current player and the pirates.
+     * Based on the result, either a win, loss, or tie is handled, with optional reward collection for winners.
+     *
+     * @param context the {@link CardContext} containing the current player and game state.
+     */
     public static void firePowerCheck(CardContext context) {
 
         LobbyManager game = context.getCurrentGame();
@@ -86,6 +102,11 @@ public class PiratesEffect {
         context.executePhase();
     }
 
+    /**
+     * Handles the case when the player wins the firepower comparison.
+     *
+     * @param context the {@link CardContext} for the current adventure phase.
+     */
     private static void handlePlayerWin(CardContext context) {
         LobbyManager game = context.getCurrentGame();
         Pirates pirates = (Pirates) context.getAdventureCard();
@@ -99,6 +120,11 @@ public class PiratesEffect {
         broadcastExcept(context, info, player);
 
     }
+    /**
+     * Handles the case when the pirates defeat the player.
+     *
+     * @param context the {@link CardContext} for the current adventure phase.
+     */
     private static void handlePiratesWin(CardContext context) {
         LobbyManager game = context.getCurrentGame();
         Pirates pirates = (Pirates) context.getAdventureCard();
@@ -108,7 +134,7 @@ public class PiratesEffect {
         losersPerGame.computeIfAbsent(game, _ -> new ArrayList<>());
         losersPerGame.get(game).add(player);
 
-        //dopo averlo aggiunto si notifica
+
         GameMessage personalMessage = new GameMessage("The Pirates are going to haunt you!"); //personalMessage.setIsTurn(true);
         game.getPlayerHandlers().get(player.getNickName()).sendMessage(personalMessage);
         GameMessage info = new GameMessage();
@@ -116,6 +142,11 @@ public class PiratesEffect {
         broadcastExcept(context, info, player);
 
     }
+    /**
+     * Handles a tie between the player's and pirates' firepower.
+     *
+     * @param context the {@link CardContext} for the current adventure phase.
+     */
     private static void handleTie(CardContext context){
         Player player = context.getCurrentPlayer();
 //        System.out.println("DEBUG: firePower pirates.getFirePower() == player.getShip().calculateFirePower()");
@@ -127,15 +158,18 @@ public class PiratesEffect {
 
     }
 
+    /**
+     * Handles the player's response regarding whether they want to collect the pirates' reward.
+     * Rewards are granted only to the first player who chooses to collect them.
+     *
+     * @param context the {@link CardContext} including the reward response.
+     */
     public static void receivedRewardsCollectionResponse(CardContext context) {
 //        System.out.println("DEBUG: receivedRewardsCollectionResponse");
-
-
         CollectRewardsResponse collectRewardsResponse = (CollectRewardsResponse) context.getIncomingNetworkMessage();
         Player player = context.getCurrentPlayer();
         Pirates pirates = (Pirates) context.getAdventureCard();
         LobbyManager game = context.getCurrentGame();
-
 
         if (collectRewardsResponse.doesWantToCollect() && !rewardTaken.get(game)) {
             //aggiorno i crediti
@@ -148,7 +182,6 @@ public class PiratesEffect {
         else {
             broadcastExcept(context, new GameMessage("Player " + player.getNickName() + " chose NOT to collect the rewards!"), player);
         }
-
         if(context.currentPlayerIsLast()) {
                 context.nextPhase(1); //cannonaitsStart
         }
@@ -159,8 +192,12 @@ public class PiratesEffect {
         context.executePhase();
     }
 
-
-
+    /**
+     * Starts the cannon fire phase in which pirates fire projectiles at losing players.
+     * The phase proceeds one player and one projectile at a time.
+     *
+     * @param context the {@link CardContext} for the cannon fire phase.
+     */
     public static void cannonaitsStart(CardContext context) {
 
         //dopo aver finito chiedo di tirare i dadi al primo, ma per ora per la Tui facciamo sia automatico
@@ -208,12 +245,9 @@ public class PiratesEffect {
         Player player = losers.get(projectileVictimIndex);
         context.setCurrentPlayer(player);
 //        System.out.println(player.getNickName() + " DEBUG: cannonaitsStart");
-
         Projectile projectile = pirates.getCannonFires().get(projectileIndex);
 
         if (projectileIndex < pirates.getCannonFires().size()) {
-            //Fare player.sendMessage(new YourTurnStart());
-
             ActivateComponentRequest activateShieldRequest = new ActivateComponentRequest(ActivatableComponent.Shield);
             context.nextPhase();
 
@@ -226,8 +260,13 @@ public class PiratesEffect {
 
     }
 
-    @NeedsToBeCompleted
-    //funzione get tronconi
+
+    /**
+     * Executes the cannon fire for a specific player.
+     * The player may receive damage, and if their ship splits, they must later choose a trunk to retain.
+     *
+     * @param context the {@link CardContext} for the active cannon fire.
+     */
     public static void cannonaitsFire(CardContext context) {
 
         LobbyManager game = context.getCurrentGame();
@@ -236,7 +275,6 @@ public class PiratesEffect {
         Player player = context.getCurrentPlayer();
         Ship playerShip = player.getShip();
 //        ShipPrintUtils.printShip(playerShip);
-
 //        System.out.println(player.getNickName() + " DEBUG: cannonaitsFire");
         int projectileIndex = projectileIndexes.getOrDefault(game,0);
         int victimIdx = projectileVictimIndexes.getOrDefault(game, 0);
@@ -251,15 +289,9 @@ public class PiratesEffect {
 
 
         int diceRoll = getCorrectedDiceRoll(currentDiceRoll.get(game), projectile.getDirection());
-
         broadcastGameMessage(context,player.getNickName() + "  sta per essere colpito da un " + projectile.getType().name() +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
-
-
         sleepSafe(600);
-
 //        System.out.println("Stai per essere colpito da un " + projectile.getType().name()  +" "+ projectile.getSize() +" da " + projectile.getDirection().name() + ", indice " + currentDiceRoll.get(game) + "!");
-
-
         if (losersPerGame.get(game).size() == victimIdx +1 ) {
             projectileIndexes.put(game, projectileIndex + 1);
             projectileVictimIndexes.put(game, 0);
@@ -267,6 +299,7 @@ public class PiratesEffect {
         else {
             projectileVictimIndexes.put(game, victimIdx + 1);
         }
+
         broadcastShipUpdate(context,player);
         sleepSafe(600);
 
@@ -280,11 +313,8 @@ public class PiratesEffect {
         }
 
         sleepSafe(600);
-
         resetShield(player);
-
         broadcastShipUpdate(context,player);
-
 
         if (destroyedTile != null) {
             ArrayList<Ship> tronconi;
@@ -292,7 +322,6 @@ public class PiratesEffect {
 //            se ho eliminato una tile vedo se ho creato dei tronconi
             tronconi = player.getShip().getTronc();
             trunksPerGame.put(game, tronconi);
-
             if (tronconi.size() > 1) {
 //                System.out.println("in tronconi size()>1");
 //                System.out.println(player.getNickName() + " size tronconi " + tronconi.size());
@@ -300,20 +329,23 @@ public class PiratesEffect {
                 AskTrunkRequest askTrunkRequest = new AskTrunkRequest(tronconi);
                 context.nextPhase();
                 sendMessage(context, player, askTrunkRequest);
-
             } else {
                 context.previousPhase();
                 context.executePhase();
             }
-
         }
         else{
             context.previousPhase();
             context.executePhase();
         }
-
     }
 
+    /**
+     * Handles the player's choice of which ship segment (trunk) to retain, if their ship was split.
+     * Updates the player's ship and notifies all players of the choice.
+     *
+     * @param context the {@link CardContext} with the trunk selection response.
+     */
     public static void cannonaitsTrunks(CardContext context) {
 //        System.out.println("DEBUG: cannonaitsTrunks");
         LobbyManager game = context.getCurrentGame();
@@ -337,7 +369,12 @@ public class PiratesEffect {
         context.previousPhase(2); //cannonaitsStart
         context.executePhase();
     }
-    //fare  player.sendMessage(new YourTurnEnd());
+
+    /**
+     * Clears all static tracking state related to the pirates' effect for the given game instance.
+     *
+     * @param game the {@link LobbyManager} representing the current game.
+     */
     private static void resetState(LobbyManager game) {
         losersPerGame.remove(game);
         projectileIndexes.remove(game);

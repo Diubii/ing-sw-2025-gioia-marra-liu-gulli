@@ -9,10 +9,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
- /* Represents a tile in the Galaxy Trucker game.
-        * A tile is a fundamental game element that contains a component and has connectors on its sides.
- * Tiles can be rotated, flipped, and connected to form the player's spaceship.
-        */
+/**
+ * Represents a spaceship tile with connectors and a component.
+ * <p>Tiles can be rotated or flipped and placed on the ship grid.</p>
+ */
 public class Tile implements Serializable,Cloneable {
 
     @Serial

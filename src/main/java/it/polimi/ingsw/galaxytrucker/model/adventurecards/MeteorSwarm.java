@@ -8,6 +8,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisito
 import java.io.Serial;
 import java.util.ArrayList;
 
+/**
+ * Represents a Meteor Swarm adventure card, which launches multiple meteors at players' ships.
+ */
 public class MeteorSwarm extends AdventureCard {
 
     @Serial
