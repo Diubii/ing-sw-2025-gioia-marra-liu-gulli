@@ -922,7 +922,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 broadCast(playerHandlers, new ShipUpdate(myShip, nickname));
             }
 
-            System.out.println("n gioctori che hanno finito: "+myGame.getPlayerShipFinishedSize());
+            System.out.println("N giocatori che hanno finito: " + myGame.getPlayerShipFinishedSize());
             //controllo se tutti hanno finito
             if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
 

@@ -70,6 +70,6 @@ public class RMIClientHandler implements ClientHandler, Serializable {
 
     @Override
     public String toString() {
-        return "RMI client"; //TODO: Possibile ottenere l'indirizzo?
+        return "RMI client";
     }
 }

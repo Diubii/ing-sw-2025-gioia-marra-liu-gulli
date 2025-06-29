@@ -15,6 +15,7 @@ import it.polimi.ingsw.galaxytrucker.model.adventurecards.CardDeck;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.Smugglers;
 import it.polimi.ingsw.galaxytrucker.model.essentials.*;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.GenericCargoHolds;
+import it.polimi.ingsw.galaxytrucker.model.game.Game;
 import it.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import it.polimi.ingsw.galaxytrucker.model.utils.Util;
 import it.polimi.ingsw.galaxytrucker.network.client.Client;
@@ -424,6 +425,7 @@ public class ClientController implements Observer {
 
         //System.out.println("Ricevuto phase update in clientController: " + phaseUpdate.getState().toString());
         phase = phaseUpdate.getState();
+        recentTimerAsked = false;
 
         if (phase.equals(GameState.FLIGHT)) myModel.setPlayerState(PlayerState.Playing);
         if (phase.equals(GameState.BUILDING_END)) {
@@ -447,6 +449,7 @@ public class ClientController implements Observer {
             return;
 
         }
+
         clientPhaseController.handlePhaseUpdate(phaseUpdate);
         view.handlePhaseUpdate(phaseUpdate);
     }
@@ -540,7 +543,11 @@ public class ClientController implements Observer {
                 safeSendMessage(finishBuildingRequest);
             }
 
-            case "j" -> {sendAskTimerInfoRequest(); recentTimerAsked = true;}
+            case "j" ->
+            {
+                recentTimerAsked = true;
+                sendAskTimerInfoRequest();
+            }
             case "reset" -> {}
             default ->
                 new Thread(() -> {
@@ -595,12 +602,14 @@ public class ClientController implements Observer {
 
             }
             case "c" -> {
-
                 view.askShowFaceUpTiles();
                 view.showFinishedBuildingMenu();
             }
 
-            case "j" -> sendAskTimerInfoRequest();
+            case "j" -> {
+                recentTimerAsked = true;
+                sendAskTimerInfoRequest();
+            }
             case "reset" -> {}
             default ->
                     new Thread(() -> {
@@ -769,7 +778,7 @@ public class ClientController implements Observer {
         myModel.getTimerInfos().addAll(timerInfoResponse.getTimerInfoList());
         view.showTimerInfos(myModel.getTimerInfos(), clientPhaseController.getPhase());
 
-        if (timerInfoResponse.getLast()) {
+        if (timerInfoResponse.getLast() && PLAYER_PHASE.isBefore(clientPhaseController.getPhase(), PLAYER_PHASE.FINISH_BUILDING)) {
             handlePhaseUpdate(new PhaseUpdate(GameState.BUILDING_END));
         }
     }

@@ -1857,14 +1857,12 @@ public class Tui implements View, Observable {
      */
     @Override
     public void showTimerInfos(ArrayList<TimerInfo> timerInfos, PLAYER_PHASE phase) {
-
-        if (PLAYER_PHASE.isBefore(phase, PLAYER_PHASE.CHECK_SHIP) && clientController.isRecentTimerAsked())
+        if (clientController.isRecentTimerAsked()) {
             new Thread(() -> {
-                clientController.setRecentTimerAsked(false);
                 printTimerInfo(timerInfos);
                 showTimerMenu(timerInfos);
             }).start();
-
+        }
     }
 
 
@@ -1878,6 +1876,7 @@ public class Tui implements View, Observable {
         String input;
         boolean valid = false;
         enableInput();
+        clientController.setRecentTimerAsked(false);
         try {
 
 
@@ -1892,7 +1891,6 @@ public class Tui implements View, Observable {
                     input = readLine("Inserisci la tua scelta  \n a) Flip Timer \n m) (menu/m/?)\n > ").trim().toLowerCase();
 
                 if (input.equals("m") || input.equals("menu") || input.equals("?")) {
-
                     menuManager.showCurrentMenu();
                     handleChoiceForPhase(clientController.getPhase());
                 }
