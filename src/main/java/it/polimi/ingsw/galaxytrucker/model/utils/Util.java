@@ -105,9 +105,8 @@ public class Util {
      * Creates a test deck of specific adventure cards for testing purposes.
      *
      * @return A CardDeck containing specific cards for testing
-     * @throws IOException if there's an error reading the JSON file
      */
-    public static CardDeck createTestDeck() throws IOException {
+    public static CardDeck createTestDeck() {
         ObjectMapper mapper = new ObjectMapper();
 
         String path = "cardsdata.json";
@@ -401,10 +400,26 @@ public class Util {
         Connector cRight;
         //UP TILE
 
+        boolean tileHasEmpty = false;
+
+        for (Connector c: T.getSides()){
+            if (c == Connector.EMPTY) {
+                tileHasEmpty = true;
+                break;
+            }
+        }
+
+//        if (tileHasEmpty){
+//            //se ne ha uno empty allora deve avere almeno un altra collegata
+//        }
+
+        boolean  tileHasConnector = false;
+
         if (myPosY - 1 >= 0 && TempShipBoard[myPosX][myPosY-1].getTile() != null) {
             cUp = TempShipBoard[myPosX][myPosY - 1].getTile().getSides().get(2);
             //Controlla se il connettore superiore del tile corrente è compatibile con il connettore inferiore del tile superiore
-            wellConnected = compatible(cUp,T.getSides().get(0));
+            wellConnected = compatible(cUp,T.getSides().getFirst());
+            if (wellConnected && !cUp.equals(Connector.EMPTY)) tileHasConnector = true;
             if(!wellConnected){
                 return false;
             }
@@ -416,6 +431,8 @@ public class Util {
             cLeft = TempShipBoard[myPosX- 1][myPosY].getTile().getSides().get(1);
             //Controlla se il connettore sinistra del tile corrente è compatibile con il connettore destra del tile a sinistra
             wellConnected = compatible(cLeft,T.getSides().get(3));
+            if (wellConnected && !cLeft.equals(Connector.EMPTY)) tileHasConnector = true;
+
             if(!wellConnected){
                 return false;
             }
@@ -426,6 +443,8 @@ public class Util {
             cDown = TempShipBoard[myPosX][myPosY + 1].getTile().getSides().get(0);
             //Controlla se il connettore inferiore del tile corrente è compatibile con il connettore superiore del tile inferiore
             wellConnected = compatible(cDown, T.getSides().get(2));
+            if (wellConnected && !cDown.equals(Connector.EMPTY)) tileHasConnector = true;
+
             if (!wellConnected) {
                 return false;
             }
@@ -435,13 +454,19 @@ public class Util {
         if (myPosX + 1 < 7 && TempShipBoard[myPosX+1][myPosY].getTile() != null) {
             cRight = TempShipBoard[myPosX+1][myPosY].getTile().getSides().get(3);
 
+
+            if (!cRight.equals(Connector.EMPTY)) tileHasConnector = true;
             wellConnected = compatible(cRight, T.getSides().get(1));
             if(!wellConnected){
                 return false;
             }
 
         }
-        return wellConnected;
+
+        boolean isToExclude = T.getMyComponent().accept(new ComponentNameVisitor()).equalsIgnoreCase("CentralHousingUnit");
+
+
+        return tileHasConnector || isToExclude;
 
     }
 
@@ -516,8 +541,10 @@ public class Util {
                 newBrokenPos.add(slot.getPosition());
                 return;
             } else {
+
+
+
                 tilesID.add(tile.getId());
-                //NORD
 
                 ArrayList<Position> positions = getAdjacentPositions(slot.getPosition());
                 int s = positions.size();

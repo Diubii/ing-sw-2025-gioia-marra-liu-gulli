@@ -33,6 +33,7 @@ public class GameController {
     private CardDeck cardDeckTest = new CardDeck(true);
     private CardContext currentCardContext;
     private boolean gameAlreadyEnded;
+    private CardDeck flightDeck;
     /**
      * Returns the current card context in use by the game controller.
      *
@@ -126,7 +127,8 @@ public class GameController {
      * @throws IOException          if deck initialization fails
      */
     public void startFlight() throws ExecutionException, InterruptedException, IOException {
-        cardDeckTest = Util.createTestDeck();
+//        cardDeckTest = Util.createLearningDeck();
+        flightDeck = game.getRealGame().createFlightDeck(game.getRealGame().getDecks());
         game.getRealGame().getPlayers().forEach(player -> player.setPlayerState(PlayerState.Playing));
 
     }
@@ -141,7 +143,7 @@ public class GameController {
         ArrayList<Player> rankedPlayers = getRankedPlayers();
         MatchInfoUpdate miu;
         if (!rankedPlayers.isEmpty()) {
-            miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), cardDeckTest.getSize());
+            miu = new MatchInfoUpdate(rankedPlayers.getFirst().getNickName(), flightDeck.getSize());
         } else {
             miu = new MatchInfoUpdate("", 0);
         }
@@ -156,7 +158,7 @@ public class GameController {
      * Draws the next adventure card, broadcasts it to players, and executes its effect.
      */
     public void handleTurn() {
-        AdventureCard drawnAdventureCard = getCardDeckTest().pop();
+        AdventureCard drawnAdventureCard = flightDeck.pop();
 
         if(getPlayingPlayers().size() == 1){
             while(drawnAdventureCard.getName().equals("Zona Guerra")){
@@ -180,10 +182,10 @@ public class GameController {
     public void handleEndTurn(){
         clearPlayersWithNoCrew();
         clearLappedPlayers();
-        CardDeck cardDeck = getCardDeckTest();
-        EndTurnUpdate etu = new EndTurnUpdate();
 
-        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty() || cardDeck.getSize() == 0) {
+        EndTurnUpdate etu = new EndTurnUpdate();
+        //inviare end turn update
+        if (game.getRealGame().getFlightBoard().getRankedPlayers().isEmpty() || flightDeck.getSize() == 0) {
             etu.setEndGame(true);
             game.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(etu));
             if(!gameAlreadyEnded) {
@@ -238,6 +240,13 @@ public class GameController {
                     int losses = calculateLossesScore(player);
                     int credits = player.getNCredits();
 
+                    System.out.println(bestLooking);
+                    System.out.println(finishOrder);
+                    System.out.println(reward);
+                    System.out.println(losses);
+                    System.out.println(credits);
+
+
                     return new PlayerScore(
                             player.getNickName(),
                             bestLooking,
@@ -260,15 +269,14 @@ public class GameController {
     private int calculateFinishOrderScore(Player player) {
         int score = 0;
         ArrayList<Player> activePlayers = getRankedPlayers();
-        if(!activePlayers.contains(player)){
-            return score;
-        }
-        else{
+        if (activePlayers.contains(player)) {
             int playerIndex = activePlayers.indexOf(player);
+            System.out.println(playerIndex + " playIndex");
             int nPlayers = game.getRealGame().getPlayers().size();
-            score= nPlayers - playerIndex;
-            return score;
+            System.out.println(nPlayers + " nPlayers");
+            score = nPlayers - playerIndex;
         }
+        return score;
 
     }
 
@@ -304,8 +312,16 @@ public class GameController {
      */
     private int calculateLossesScore(Player player) {
         int score = 0;
-        int LossesScore = player.getShip().getDestroyedTiles();
-        score += LossesScore;
+//        int LossesScore = player.getShip().getDestroyedTiles();
+        int numToAdd = 0;
+        Ship ship = player.getShip();
+        for (Tile t: ship.getAsideTiles()){
+            if (t != null){
+                numToAdd++;
+            }
+        }
+        int LossesScore = player.getShip().getLostTiles();
+        score += LossesScore + numToAdd;
         return score;
     }
 

@@ -845,9 +845,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
             String nickname = getNicknameFromClientHandler(clientHandler);
 
-            //Qui ha davvvero finito la fase di costruzione dicendo anche la posizione di partenza
-            myGame.addPlayerShipFinished(nickname);
-
             Color playerColor = myGame.getPlayerColors().get(nickname);
 
             ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
@@ -870,6 +867,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 } else {
                     myGame.getRealGame().getFlightBoard().positionPlayer(playerColor, realPos, getPlayerFromClientHandler(clientHandler));
                     myGame.getRealGame().getPlayer(nickname).setPlacement(askPositionResponse.getPosition());
+                    //Qui ha davvvero finito la fase di costruzione dicendo anche la posizione di partenza
+                    myGame.addPlayerShipFinished(nickname);
                 }
 
 
@@ -925,6 +924,12 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             //controllo se tutti hanno finito
             if (myGame.getPlayerShipFinishedSize() == myGame.getRealGame().getNumPlayers()) {
 
+                for (ClientHandler handler : playerHandlers){
+                    Player player = getPlayerFromClientHandler(handler);
+                    Ship ship = player.getShip();
+                    ship.setInitialTiles(ship.remainingTiles());
+
+                }
                 //TODO MATTIA FORSE MODIFICARE QUI PER scadenza timer, ma loro nn dovrebbe risultare che hanno già tutti finito
                 myGame.getGameController().nextState();
                 System.out.println("Fase successiva: "+myGame.getGameController().getGameState().toString());
@@ -1106,6 +1111,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                 //new Thread(() -> {
                 try {
+
+
                     myGame.getGameController().startFlight();
                 } catch (ExecutionException | InterruptedException | IOException e) {
                     throw new RuntimeException(e);

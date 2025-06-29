@@ -161,7 +161,7 @@ public abstract class MeteorSwarmEffect {
 
 
             ArrayList<Ship> troncs = player.getShip().getTronc();
-            if(troncs.size()!=1){
+            if(troncs.size()>1){
 
 //                System.out.println();
 //                System.out.println("asktroc need");
