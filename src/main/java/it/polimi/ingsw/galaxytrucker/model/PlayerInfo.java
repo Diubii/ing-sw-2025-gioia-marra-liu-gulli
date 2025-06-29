@@ -5,6 +5,10 @@ import it.polimi.ingsw.galaxytrucker.enums.Color;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Represents basic information about a player, including nickname, color, and their ship.
+ * Implements {@link Serializable} to allow transmission over a network or saving to file.
+ */
 public class PlayerInfo implements Serializable {
 
     @Serial

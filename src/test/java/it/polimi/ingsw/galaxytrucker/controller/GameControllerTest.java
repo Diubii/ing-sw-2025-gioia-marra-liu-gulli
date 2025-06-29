@@ -23,6 +23,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the {@link GameController} class, focused on projectile interactions,
+ * tile destruction, shield and cannon defense logic, and player management.
+ */
 public class GameControllerTest {
 
     private GameTestHelper.GameTestContext ctx;
@@ -44,6 +48,9 @@ public class GameControllerTest {
         controller = ctx.lobby.getGameController();
     }
 
+    /**
+     * Tests that a big cannon projectile destroys a tile at the expected position.
+     */
     @Test
     void testReactToProjectile_CannonFireBig_ShouldDestroyTile() {
 
@@ -69,6 +76,10 @@ public class GameControllerTest {
 
 
     }
+
+    /**
+     * Tests that a big cannon projectile aimed at an empty column does not destroy any tile.
+     */
     @Test
     void testReactToProjectile_CannonFireBig_WithoutTile() {
 
@@ -86,6 +97,9 @@ public class GameControllerTest {
 
     }
 
+    /**
+     * Tests that shields block little cannon projectiles if charged, and fail if not.
+     */
     @Test
     void testReactToProjectile_CannonFireLittle_WithShield() {
         Player playerA = ctx.lobby.getGameController().getRankedPlayers().get(0);
@@ -147,6 +161,9 @@ public class GameControllerTest {
 
     }
 
+    /**
+     * Tests defense behavior against big meteor projectiles using cannons and double cannons.
+     */
     @Test
     void testReactToProjectile_MeteorBig() {
 
@@ -225,6 +242,10 @@ public class GameControllerTest {
 
 
     }
+
+    /**
+     * Tests tile damage caused by little meteors and verifies shield effectiveness.
+     */
     @Test
     void testReactToProjectile_MeteorLittle() {
 
@@ -303,6 +324,9 @@ public class GameControllerTest {
 
     }
 
+    /**
+     * Additional tests for big meteor defense in ships with multi-directional cannons and varied layouts.
+     */
     @Test
     void testReactToProjectile_MeteorBig2() {
 
@@ -376,6 +400,11 @@ public class GameControllerTest {
 //        assertNull(destroyed4);
 
     }
+
+
+    /**
+     * Tests the ability to kick a player from the game and verifies the player count decreases.
+     */
     @Test
     void testKickPlayerFromGame(){
 

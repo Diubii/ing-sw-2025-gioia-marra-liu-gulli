@@ -5,6 +5,12 @@ import it.polimi.ingsw.galaxytrucker.enums.MenuText;
 
 import static java.lang.System.out;
 
+/**
+ * Manages the display and switching of different text-based menus
+ * in the TUI (Text User Interface) for different game phases.
+ *
+ */
+
 public class MenuManager {
     MenuText currentMenu = MenuText.NONE;
     public static Boolean learningMatch = false;

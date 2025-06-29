@@ -1,11 +1,13 @@
 package it.polimi.ingsw.galaxytrucker.controller;
 
+import it.polimi.ingsw.galaxytrucker.enums.GameState;
 import it.polimi.ingsw.galaxytrucker.model.Player;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.FakeClientHandler;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Position;
 import it.polimi.ingsw.galaxytrucker.network.client.Client;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.DrawTileRequest;
+import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
 import it.polimi.ingsw.galaxytrucker.view.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,6 +91,24 @@ public class ClientControllerTest {
         clientController1.viewAdventureCardDeck(0);
         clientController1.viewAdventureCardDeck(3);
         clientController1.viewAdventureCardDeck(4);
+
+    }
+
+
+    @Test
+    void testHandlePhaseUpdate(){
+        PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.BUILDING_END);
+
+        clientController1.handlePhaseUpdate(phaseUpdate);
+        clientController1.handleBuildingMenuChoice("reset");
+        clientController1.handleBuildingMenuChoice("a");
+
+        clientController1.handleBuildingMenuChoice("c");
+        clientController1.handleBuildingMenuChoice("d");
+        clientController1.handleBuildingMenuChoice("e");
+        clientController1.handleBuildingMenuChoice("f");
+
+
 
     }
 

@@ -342,7 +342,7 @@ class ShipTest {
         ship = MockShipFactory.createEasyDestroyedShip();
         ShipPrintUtils.printShip(ship);
 
-        ship.removeTile(new Position(3,2), false);
+        ship.removeTile(new Position(2,2), false);
         Troncons = ship.getTronc();
 
         for (Ship ship1: Troncons){
@@ -364,6 +364,32 @@ class ShipTest {
             ShipPrintUtils.printShip(ship1);
 
         }
+
+        System.out.println("Next Test");
+        System.out.println();
+        ship = MockShipFactory.createEasyDestroyedShip();
+        ShipPrintUtils.printShip(ship);
+
+        ship.removeTile(new Position(2,2), false);
+        Troncons = ship.getTronc();
+
+        for (Ship ship1: Troncons){
+            ShipPrintUtils.printShip(ship1);
+
+        }
+        System.out.println("Next Test");
+        System.out.println();
+        ship = MockShipFactory.createEasyDestroyedShip2();
+        ShipPrintUtils.printShip(ship);
+
+
+        ship.removeTile(new Position(2,2), false);
+        Troncons = ship.getTronc();
+
+        for (Ship ship1: Troncons){
+            ShipPrintUtils.printShip(ship1);
+
+        }
     }
 
 
@@ -374,6 +400,8 @@ class ShipTest {
         ShipPrintUtils.printShip(ship);
         int remainingTiles = ship.remainingTiles();
         assertEquals(7, remainingTiles);
+        System.out.println( "init Tiles " + ship.getInitialTiles());
+
 
 
     }

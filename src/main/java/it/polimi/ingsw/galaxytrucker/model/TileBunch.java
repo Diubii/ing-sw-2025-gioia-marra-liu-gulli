@@ -53,7 +53,12 @@ public class TileBunch {
     public synchronized ArrayList<Tile> getFaceUpTiles() {
         return faceUpTiles;
     }
-
+    /**
+     * Draws and removes a face-up tile by its ID.
+     *
+     * @param id the tile ID to draw
+     * @return the tile if found, or null
+     */
     public synchronized Tile drawFaceUpTile(int id) {
         if (!faceUpTiles.isEmpty()) {
             for (Tile tile : faceUpTiles) {
@@ -67,6 +72,10 @@ public class TileBunch {
     }
 
 
+    /**
+     * Draws a random tile from the hidden pile,
+     * flips it, removes it from the list, and returns it.
+     */
     public synchronized Tile drawTile() {
         if (!tiles.isEmpty()) {
             int randomIndex = rand.nextInt(tiles.size());
@@ -80,6 +89,12 @@ public class TileBunch {
 
     }
 
+
+    /**
+     * Returns a tile to the face-up pile.
+     *
+     * @param tile the tile to return
+     */
     public synchronized void returnTile(Tile tile) {
         faceUpTiles.add(tile);
     }

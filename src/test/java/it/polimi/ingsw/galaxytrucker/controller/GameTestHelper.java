@@ -15,8 +15,17 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Utility class providing methods to set up a test game environment for integration testing.
+ * It simulates players and their network communication through mocked handlers and responses.
+ */
+
 public class GameTestHelper {
 
+    /**
+     * A container class holding the essential components of a test game session,
+     * including server controller and lobby reference.
+     */
     public static class GameTestContext {
         public ServerController serverController;
         public LobbyManager lobby;
@@ -24,6 +33,14 @@ public class GameTestHelper {
         public static HashMap<String, ClientController> nicknameToClientControllerMap;
     }
 
+    /**
+     * Sets up a complete test game with all players initialized and ready to start.
+     * This includes nickname handling, game creation/joining, ship setup, and crew initialization.
+     *
+     * @param responses a map from player nicknames to predefined network responses
+     * @param players   the list of players participating in the game
+     * @return a {@link GameTestContext} containing the configured server and lobby, or null if setup fails
+     */
     public static GameTestContext setupGame(Map<String, ArrayList<NetworkMessage>> responses, ArrayList<Player> players) {
         final ServerController serverController;
         final int maxPlayers = players.size();
@@ -90,6 +107,14 @@ public class GameTestHelper {
         return context;
     }
 
+    /**
+     * Sets up a test game environment that stops before the main gameplay,
+     * ideal for testing the building phase separately.
+     *
+     * @param responses a map from player nicknames to predefined network responses
+     * @param players   the list of players participating in the game
+     * @return a {@link GameTestContext} for the building phase setup, or null if setup fails
+     */
     public static GameTestContext setupGameForBuildingPhase(Map<String, ArrayList<NetworkMessage>> responses, ArrayList<Player> players) {
         final ServerController serverController;
         final int maxPlayers = players.size();

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.galaxytrucker.model.essentials;
 
 import it.polimi.ingsw.galaxytrucker.enums.Connector;
+import it.polimi.ingsw.galaxytrucker.model.TileBunch;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import it.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,4 +50,12 @@ class TileTest {
         assertEquals(0, tile.getMyComponent().getRotation());
     }
 
+    @Test
+    void testTileBunch(){
+        TileBunch tileBunch = new TileBunch();
+        ArrayList<Tile> tiles = tileBunch.getTiles();
+        tileBunch.setTiles(tiles);
+        System.out.println(tileBunch.getRemainingTiles());
+
+    }
 }

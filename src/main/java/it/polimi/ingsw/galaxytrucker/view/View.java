@@ -80,8 +80,6 @@ public interface View {
 
     void showFinishedBuildingMenu();
 
-    void FetchMyShip();
-
     //asks_building
     void askShowFaceUpTiles();
 

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.galaxytrucker.controller;
 
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import it.polimi.ingsw.galaxytrucker.enums.*;
 import it.polimi.ingsw.galaxytrucker.model.*;
@@ -13,7 +12,6 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.components.Cannon;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.DoubleCannon;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.Shield;
 import it.polimi.ingsw.galaxytrucker.model.game.Game;
-import it.polimi.ingsw.galaxytrucker.model.utils.Util;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyManager;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
@@ -24,6 +22,13 @@ import java.util.List;
 
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Manages the overall game flow and state transitions in a Galaxy Trucker match.
+ * <p>
+ * Handles game phases, player actions, scoring, and adventure card effects.
+ * Coordinates with the LobbyManager to broadcast updates and manage player status.
+ * Ensures thread-safe state updates during gameplay.
+ */
 public class GameController {
 
     private GameState gameState;

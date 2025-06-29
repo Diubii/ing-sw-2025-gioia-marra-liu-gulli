@@ -1,6 +1,6 @@
 package it.polimi.ingsw.galaxytrucker.view.Tui;
 
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+
 import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.enums.*;
 import it.polimi.ingsw.galaxytrucker.model.*;
@@ -39,10 +39,14 @@ import static it.polimi.ingsw.galaxytrucker.view.Tui.util.InputUtils.parseCoordi
 import static it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils.printShip;
 import static it.polimi.ingsw.galaxytrucker.view.Tui.util.TilePrintUtils.printTile;
 import static it.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
-
 /**
- * Implements the Textual user interface.
+ * The Tui class implements a terminal-based Text User Interface (TUI)
+ * for the Galaxy Trucker game. It is responsible for all user interactions
+ * via the command line, including input handling, menu navigation, and
+ * communication with the ClientController.
+ *
  */
+
 public class Tui implements View, Observable {
 
     private static PrintStream out;
@@ -51,6 +55,9 @@ public class Tui implements View, Observable {
     private static final Object outputLock = new Object();
     private final ArrayList<Observer> observers = new ArrayList<>();
     private MenuManager menuManager = new MenuManager();
+    private volatile CompletableFuture<String> currentInputFuture = null;
+    private volatile boolean flag = false;
+    private volatile boolean inputEnabled = false;
 
 
     public Tui(PrintStream out, Boolean isSocket, ClientController controller) {
@@ -61,28 +68,46 @@ public class Tui implements View, Observable {
         startInputListener();
 
     }
+    /**
+     * Indicates whether the view should automatically display updates.
+     *
+     * @return false, as TUI requires manual interaction to display updates.
+     */
+
 
     @Override
     public Boolean autoShowUpdates() {
         return false;
     }
+    /**
+     * Returns the type of view implemented.
+     *
+     * @return ViewType.TUI indicating this is a Textual User Interface.
+     */
     @Override
     public ViewType getViewType() {
         return ViewType.TUI;
     }
-    private volatile CompletableFuture<String> currentInputFuture = null;
-    private volatile boolean flag = false;
-    private volatile boolean inputEnabled = false;
 
 
+    /**
+     * Enables user input for the TUI.
+     */
     public void enableInput() {
         inputEnabled = true;
     }
-
+    /**
+     * Disables user input for the TUI.
+     */
     public void disableInput() {
         inputEnabled = false;
     }
 
+    /**
+     * Starts a background thread to listen for user input from the console.
+     * Completes the current input future if input is enabled.
+     * If "RESET" is entered, sets a reset flag instead.
+     */
     public void startInputListener() {
         new Thread(() -> {
             Scanner scanner = new Scanner(System.in);
@@ -112,15 +137,18 @@ public class Tui implements View, Observable {
 
                     future.complete(line);
 
-
-//                        if (!line.equalsIgnoreCase("RESET")) {
-//                            System.out.println("Non è il tuo turno.");
-//                        }
-
                 }
             }
         }, "ConsoleInputListener").start();
     }
+
+    /**
+     * Reads a line of input from the console with a prompt.
+     * Enables input handling and waits for user response asynchronously.
+     *
+     * @param prompt the message to show before input
+     * @return the user's input as a trimmed string
+     */
     public String readLine(String prompt) {
         inputEnabled = true;
         currentInputFuture = new CompletableFuture<>();
@@ -134,6 +162,10 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Forces a reset by completing the input future with "RESET".
+     * Used to break out of input prompts gracefully.
+     */
     @Override
     public void forceReset() {
         System.out.println();
@@ -141,7 +173,10 @@ public class Tui implements View, Observable {
             currentInputFuture.complete("RESET");
         }
     }
-
+    /**
+     * Starts the TUI interface, clears the console,
+     * shows the ASCII banner, and prompts server settings.
+     */
     public void start() {
 
         MenuManager.clearConsole();
@@ -158,6 +193,11 @@ public class Tui implements View, Observable {
         askServerInfo();
     }
 
+    /**
+     * Prompts the user to enter the server address and port.
+     * Defaults to localhost:5000 (socket) or :1099 (RMI).
+     * Sends collected settings to observers.
+     */
     public void askServerInfo() {
         Map<String, String> serverInfo = new HashMap<>();
         String defaultAddress = "localhost";
@@ -191,6 +231,9 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Prompts the user to input a nickname and sends it to the controller.
+     */
     public void askNickname() {
 
         String nickname = readLine("Enter your nickname: ");
@@ -199,6 +242,10 @@ public class Tui implements View, Observable {
         clientController.handleNicknameInput(nickname);
     }
 
+    /**
+     * Asks the user whether to create a new room or join an existing one.
+     * Accepts only 'a' or 'b' as valid input.
+     */
     public void askJoinOrCreateRoom() {
         enableInput();
         try {
@@ -224,6 +271,9 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Prompts the user to set up a new room by choosing number of players and learning mode.
+     */
     public void askCreateRoom() {
         enableInput();
         try {
@@ -268,7 +318,9 @@ public class Tui implements View, Observable {
         }
     }
 
-
+    /**
+     * Prompts the user to enter a lobby ID to join an existing game.
+     */
     public void askRoomCode() {
         synchronized (outputLock) {
             out.println("\nPlease enter the Lobby ID you want to join:");
@@ -288,6 +340,12 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Displays a list of available lobbies to the player.
+     * If no lobbies are found, prompts the user to create or join a room.
+     *
+     * @param lobbies the list of available game lobbies
+     */
     public void showLobbies(List<LobbyInfo> lobbies) {
         if (lobbies.isEmpty()) {
             synchronized (outputLock) {
@@ -316,10 +374,13 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Notifies the lobby that a player has joined.
+     *
+     * @param infoPlayer the player that joined
+     */
     @Override
     public void showPlayerJoined(PlayerInfo infoPlayer) {
-
-
         out.println("Giocatore entrato nella lobby:");
         switch (infoPlayer.getColor()) {
             case RED -> System.out.println(RED + "█" + RESET + " " + infoPlayer.getNickName());
@@ -328,10 +389,12 @@ public class Tui implements View, Observable {
             case YELLOW -> System.out.println(BRIGHT_YELLOW + "█" + RESET + " " + infoPlayer.getNickName());
         }
         System.out.println();
-
         out.println();
     }
 
+    /**
+     * Utility method to print a player's nickname with their color block.
+     */
     @Override
     public void showPlayersLobby(PlayerInfo myInfo, ArrayList<PlayerInfo> infoPlayer) {
         System.out.println("Giocatori nella lobby: ");
@@ -354,6 +417,14 @@ public class Tui implements View, Observable {
         System.out.println();
     }
 
+    /**
+     * Handles a phase update sent by the server by updating the view accordingly.
+     * <p>
+     * Depending on the game phase, it may display a banner, show a menu,
+     * start a timer thread, or prompt the user for specific actions.
+     *
+     * @param phaseUpdate the {@link PhaseUpdate} object containing the new game phase
+     */
     @Override
     public void handlePhaseUpdate(PhaseUpdate phaseUpdate) {
 
@@ -375,6 +446,11 @@ public class Tui implements View, Observable {
 
     }
 
+    /**
+     * Displays the current menu in a thread-safe way by synchronizing on the output lock.
+     * <p>
+     * This method delegates the actual menu display logic to the {@link MenuManager}.
+     */
     public void toShowCurrentMenu() {
         synchronized (outputLock) {
             menuManager.showCurrentMenu();
@@ -394,6 +470,11 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Displays the building phase menu and waits for the user's input.
+     * Handles both learning and standard matches by adjusting the menu options.
+     * Supports redisplaying the menu using 'm', 'menu', or '?' commands.
+     */
     @Override
     public void showBuildingMenu() {
         enableInput();
@@ -413,6 +494,10 @@ public class Tui implements View, Observable {
 
         clientController.handleBuildingMenuChoice(input);
     }
+    /**
+     * Displays the finished building phase menu and waits for the user's input.
+     * Handles input validation and re-displaying the menu if requested.
+     */
 
     @Override
     public void showFinishedBuildingMenu() {
@@ -434,29 +519,22 @@ public class Tui implements View, Observable {
         clientController.handleFinishedBuildingMenuChoice(input);
     }
 
-    @Override
-    public void FetchMyShip() {
-        new Thread(() -> {
-            try {
-                clientController.handleFetchShip(clientController.getNickname());
-                menuManager.showCurrentMenu();
 
-
-            } catch (Exception e) {
-                showGenericMessage("Error fetching ship: " + e.getMessage() + ", please try again",false);
-                FetchMyShip();
-                //throw new RuntimeException(e);
-            }
-
-        }).start();
-    }
-
+    /**
+     * Requests to display the currently visible face-up tiles on the table.
+     * This method acts as a bridge to `showFaceUpTiles()`.
+     */
     @Override
     public void askShowFaceUpTiles() {
         showFaceUpTiles();
 
     }
 
+    /**
+     * Prompts the user to enter the ID of the adventure deck they want to view.
+     * Validates that the input is within the range 1–4. Retries until a valid input is given.
+     * Supports reset if the user types "RESET".
+     */
     @Override
     public void askViewAdventureDecks() {
         boolean valid = false;
@@ -482,6 +560,11 @@ public class Tui implements View, Observable {
         } while (!valid);
     }
 
+    /**
+     * Prompts the user to input a player's nickname to fetch their ship configuration.
+     * If an invalid or blank nickname is entered, it displays an error and retries.
+     * Input can be reset with "RESET".
+     */
     @Override
     public void askFetchShip() {
         enableInput();
@@ -506,6 +589,11 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Prompts the user to input a tile rotation angle (0, 90, 180, or 270 degrees).
+     * Parses the input and sends it to the controller. Repeats on invalid input.
+     * Allows reset via the keyword "RESET".
+     */
     @Override
     public void askRotation() {
 
@@ -533,6 +621,11 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Prompts the user to enter a tile placement position in the format (x,y).
+     * Converts coordinates to internal grid values and updates the controller.
+     * Repeats on invalid input. Supports reset with "RESET".
+     */
     @Override
     public void askPosition() {
         boolean valid = false;
@@ -557,8 +650,11 @@ public class Tui implements View, Observable {
 
     }
 
-    @NeedsToBeCompleted
-// TileView
+    /**
+     * Displays a single tile using ASCII rendering if the tile is not null.
+     *
+     * @param tile the tile to display
+     */
     @Override
     public void showTile(Tile tile) {
         if (tile != null) {
@@ -566,11 +662,19 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Called when the face-up tiles are updated.
+     * for gui
+     */
     @Override
     public void handleFaceUpTilesUpdate() {
 
     }
 
+    /**
+     * Displays the list of face-up tiles currently available to the player.
+     * If the list is empty, informs the user and reopens the building menu.
+     */
     @Override
     public void showFaceUpTiles() {
         List<Tile> faceUpTiles = clientController.getMyModel().getFaceUpTiles();
@@ -589,6 +693,16 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Prompts the user to choose how to draw a tile during the building phase:
+     * <ul>
+     *     <li>1 - Draw a random face-down tile</li>
+     *     <li>2 - Choose a tile from the face-up options</li>
+     *     <li>3 - Pick from reserved tiles</li>
+     *     <li>4 - Reclaim a previously placed but still movable tile</li>
+     * </ul>
+     * Input is validated and will loop until a valid option is chosen or "RESET" is received.
+     */
     @Override
     public void askDrawTile() {
         enableInput();
@@ -646,6 +760,11 @@ public class Tui implements View, Observable {
 
     }
 
+    /**
+     * Prompts the player to choose a face-up tile by entering its ID.
+     * Also allows the player to refresh the list of face-up tiles by typing 'R'.
+     * Handles invalid input and resets gracefully.
+     */
     public void askChooseTile() {
         enableInput();
 
@@ -697,6 +816,10 @@ public class Tui implements View, Observable {
 
     }
 
+    /**
+     * Displays the contents of the player's two reserved tile slots.
+     * If a slot is empty, it prints "Empty". Otherwise, it prints the tile.
+     */
     private void showTileSlots() {
         Tile[] reservedTiles = clientController.getReservedTiles();
 
@@ -716,6 +839,15 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Handles player interaction with reserved tiles.
+     *
+     * @param isPicking true to pick a tile from reserved slots into the hand;
+     *                  false to place the current hand tile into a reserved slot.
+     *
+     * <p>Validates input, shows current reserved tiles, and prompts for the slot index.</p>
+     * <p>If invalid conditions are met (e.g., full slots or no tile in hand), shows appropriate messages and redirects to the building menu.</p>
+     */
     public void askPickOrPlaceReservedTile(boolean isPicking) {
 
         Tile[] reservedTiles = clientController.getReservedTiles();
@@ -791,7 +923,15 @@ public class Tui implements View, Observable {
 
     }
 
-
+    /**
+     * Asks the player where to place the current tile in hand.
+     * <ul>
+     *     <li>Option 1: Place on the ship.</li>
+     *     <li>Option 2: Place into a reserved slot.</li>
+     * </ul>
+     * If there is no tile in hand, informs the user and redirects to the building menu.
+     * Handles exceptions and invalid inputs gracefully.
+     */
     @Override
     public void askTilePlacement() {
         enableInput();
@@ -835,6 +975,10 @@ public class Tui implements View, Observable {
 
     }
 
+    /**
+     * Handles the process for placing a tile on the player's ship.
+     * Displays tile info, asks for position, and confirms placement.
+     */
     private void choosePlaceTileInShip() {
         enableInput();
         try {
@@ -873,6 +1017,10 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Displays the ship check menu and handles the player's input.
+     * Provides options to view the ship, remove tiles, or confirm the check.
+     */
 
     @Override
     public void showCheckShipMenu() {
@@ -885,6 +1033,11 @@ public class Tui implements View, Observable {
             disableInput();
         }
     }
+    /**
+     * Displays the embark crew menu and handles player's input
+     * for placing crew members in cabins.
+     */
+
 
     @Override
     public void showEmbarkCrewMenu() {
@@ -899,8 +1052,13 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Asks the player to choose a tile position to remove from their ship.
+     * Validates the position and handles multiple removals if the user wishes.
+     *
+     * @param ship the ship from which a tile may be removed
+     */
     @Override
-    //Todo verificare ordine x e y
     public void askRemoveTile(Ship ship) {
 
 
@@ -965,12 +1123,24 @@ public class Tui implements View, Observable {
         showCheckShipMenu();
     }
 
-
+    /**
+     * Displays the given ship using TUI utility.
+     *
+     * @param targetShipView the ship to be displayed
+     * @param nickname       the nickname of the player owning the ship
+     */
     @Override
     public void showShip(Ship targetShipView, String nickname) {
         printShip(targetShipView);
     }
 
+    /**
+     * Asks the player to select a starting position on the flight board
+     * from the provided list of valid positions.
+     *
+     * @param validPositions the list of valid starting positions
+     * @param id             the identifier for the response context
+     */
     @Override
     public void askFlightBoardPosition(ArrayList<Integer> validPositions, int id) {
         String inputStr;
@@ -1020,31 +1190,44 @@ public class Tui implements View, Observable {
         handlePhaseUpdate(new PhaseUpdate(GameState.BUILDING_END));
     }
 
+
+    /**
+     * Displays a generic message to the player in the terminal.
+     * Important messages are shown in red, others in yellow.
+     *
+     * @param message   the message to display
+     * @param important whether the message should be emphasized
+     */
     public void showGenericMessage(String message, Boolean important) {
 
         synchronized (outputLock) {
-            System.out.print("\n"); // Torna all'inizio della riga
-//            System.out.print(" ".repeat(100)); // Cancella eventuale scrittura
-//            System.out.print("\r"); // Torna di nuovo all'inizio
+            out.println();
             if(important){
                 System.out.println(TuiColor.RED + message + TuiColor.RESET);
             }
             else{
                 System.out.println(TuiColor.YELLOW + message + TuiColor.RESET);
             }
-
-
             // Ripristina il prompt e quello che l'utente aveva scritto
             System.out.print("> ");
         }
 
     }
-
+    /**
+     * Informs the player that the game is waiting for other players before proceeding to the next phase.
+     */
     @Override
     public void showWaitOtherPlayers() {
         showGenericMessage("Attendi gli altri giocatori per avanzare alla prossima fase",false);
     }
 
+    /**
+     * Allows the player to activate a ship component by choosing its position and the battery slot to power it.
+     * Repeats until the player chooses to stop or runs out of batteries.
+     *
+     * @param myShip    the player's current ship
+     * @param component the activatable component type to activate
+     */
     @Override
     public void chooseComponent(Ship myShip, ActivatableComponent component) {
         printShip(myShip);
@@ -1110,8 +1293,13 @@ public class Tui implements View, Observable {
         clientController.handleActivateComponentResponse(component, activatedComponentPositions, usedBatteryPositions);
     }
 
-    //Non considerato che giocatore non ne abbia abbastanza, controllo lato server
-    //per fare che il giocatore perde direttamente
+    /**
+     * Allows the player to discard crew members by selecting cabin coordinates.
+     * Continues until the required number of crew members is discarded.
+     *
+     * @param myShip         the player's current ship
+     * @param nCrewToDiscard the number of crew members the player must discard
+     */
     public void chooseDiscardCrew(Ship myShip, int nCrewToDiscard) {
         ComponentNameVisitor componentNameVisitor = new ComponentNameVisitor();
         printShip(myShip);
@@ -1166,6 +1354,12 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Prompts the player to choose one of the available ship fragments after the ship has been destroyed.
+     * Displays all ship fragments and their indexes, then handles the player's selection.
+     *
+     * @param tronconi the list of ship fragments available to choose from
+     */
     public void chooseTroncone(ArrayList<Ship> tronconi) {
         //Mostro tutti i tronconi numerandoli
         System.out.println("The ship divided into pieces choose one to continue ");
@@ -1196,13 +1390,17 @@ public class Tui implements View, Observable {
         } finally {
             disableInput();
         }
-
-
         //handle response indicando numero
         clientController.handleTrunkResponse(choice-1);
 
     }
 
+    /**
+     * Allows the player to assign crew members to available cabins on the ship.
+     * The player may assign human or alien crew based on adjacent life support systems and current limits.
+     *
+     * @param myShip the player's current ship
+     */
     @Override
     public void chooseCrew(Ship myShip)  {
 
@@ -1304,6 +1502,10 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Asks the player if they want to activate the effect of an adventure card if they meet the requirements.
+     * Sends the player's decision to the server.
+     */
     @Override
     public void askActivateAdventureCard() {
         enableInput();
@@ -1318,6 +1520,10 @@ public class Tui implements View, Observable {
         disableInput();
     }
 
+    /**
+     * Asks the leader player to confirm drawing a new adventure card.
+     * Sends the draw request if the player confirms.
+     */
     @Override
     public void askDrawCard() {
         enableInput();
@@ -1330,6 +1536,12 @@ public class Tui implements View, Observable {
 
 
     // chiedere di selezionare uno dei pianeti disponibili
+    /**
+     * Prompts the player to select one of the available planets for landing.
+     * The player can also choose to skip planet selection.
+     *
+     * @param landablePlanets a map of available planets indexed by selection number
+     */
     @Override
     public void askSelectPlanetChoice(HashMap<Integer, Planet> landablePlanets) {
         int size = landablePlanets.size();
@@ -1374,6 +1586,10 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Prompts the player to choose what action to take regarding goods.
+     * Options include loading a good, discarding one, or finishing the process.
+     */
 
     @Override
     public void askLoadGoodChoice() {
@@ -1405,6 +1621,14 @@ public class Tui implements View, Observable {
 
     }
 
+
+    /**
+     * Guides the player through the process of selecting a good to load onto their ship.
+     * The player first selects a good from the list, then a valid cargo hold position on the ship.
+     *
+     * @param goods  the list of goods available for loading
+     * @param myShip the player's ship where goods will be placed
+     */
     @Override
     public void askSelectGoodToLoad(ArrayList<Good> goods, Ship myShip) {
 
@@ -1480,7 +1704,13 @@ public class Tui implements View, Observable {
         askLoadGoodChoice();
     }
 
-
+    /**
+     * Prompts the player to select a good to discard from their cargo holds.
+     * Displays the current ship and valid positions, then allows the player
+     * to select a good to remove.
+     *
+     * @param myShip the player's ship with cargo information
+     */
     @Override
     public void askSelectGoodToDiscard(Ship myShip) {
         showShip(myShip, clientController.getMyModel().getMyInfo().getNickName());
@@ -1545,6 +1775,11 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Displays the flight phase menu and handles user input for options like viewing the board,
+     * landing early, or progressing to the next turn.
+     */
+
     @Override
     public void showFlightMenu() {
         String input;
@@ -1582,12 +1817,23 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Renders the flight board to the console with all players' ships and their current status.
+     *
+     * @param flightBoard the current state of the flight board
+     * @param infoPlayers list of all player information
+     * @param myinfo info of the player viewing the board
+     */
     public void showFlightBoard(FlightBoard flightBoard, ArrayList<PlayerInfo> infoPlayers, PlayerInfo myinfo) {
 
         FlightBoardPrintUtils.printFlightBoard(flightBoard, infoPlayers, myinfo);
 
     }
 
+    /**
+     * Prompts the player to decide whether to collect rewards after winning a battle.
+     * Sends the decision to the controller.
+     */
     @Override
     public void askCollectRewards() {
         enableInput();
@@ -1602,6 +1848,11 @@ public class Tui implements View, Observable {
         disableInput();
     }
 
+    /**
+     * Asynchronously shows the status of all timers and provides options to flip them if allowed.
+     *
+     * @param timerInfos list of all current {@link TimerInfo} objects
+     */
     @Override
     public void showTimerInfos(ArrayList<TimerInfo> timerInfos) {
         new Thread(() -> {
@@ -1611,6 +1862,12 @@ public class Tui implements View, Observable {
     }
 
 
+    /**
+     * Displays the timer management menu, allowing the player to flip a timer if permitted.
+     * Offers options to go back to the menu or flip the timer depending on game state.
+     *
+     * @param timerInfos list of current {@link TimerInfo} representing timer statuses
+     */
     private void showTimerMenu(ArrayList<TimerInfo> timerInfos) {
         String input;
         boolean valid = false;
@@ -1658,10 +1915,20 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * Prints the current timer information to the console using {@link TimerPrinter}.
+     *
+     * @param timerInfos list of {@link TimerInfo} to be printed
+     */
     private void printTimerInfo(ArrayList<TimerInfo> timerInfos) {
         TimerPrinter.printTimers(timerInfos);
     }
 
+    /**
+     * Displays the list of available goods to the player during a relevant game phase.
+     *
+     * @param goods list of {@link Good} available to choose from
+     */
     public void displayGoods(List<Good> goods) {
         out.println("Merci disponibili:");
         for (int i = 0; i < goods.size(); i++) {
@@ -1670,22 +1937,42 @@ public class Tui implements View, Observable {
         out.println("[0] Salta");
     }
 
+    /**
+     * Displays the currently active Adventure Card using TUI.
+     */
     @Override
     public void showCurrentAdventureCard() {
         out.println("Carta avventura attiva: ");
         CardPrintUtils.printCard(clientController.getCurrentAdventureCard());
     }
 
+    /**
+     * Displays the final game scores in a tabular format.
+     *
+     * @param scores list of PlayerScore objects representing the final results
+     */
     @Override
     public void showEndGame(ArrayList<PlayerScore> scores) {
         ScorePrintUtils.printScoreTable(scores);
     }
+
+
+    /**
+     * Adds an observer to this TUI view.
+     *
+     * @param observer the observer to add
+     */
 
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);
     }
 
+    /**
+     * Notifies all observers with the given network message.
+     *
+     * @param message the message to notify observers with
+     */
     @Override
     public void notifyObservers(NetworkMessage message) {
         for (Observer observer : observers) {
@@ -1693,11 +1980,20 @@ public class Tui implements View, Observable {
         }
     }
 
+    /**
+     * only for gui
+     */
     @Override
     public void showYouAreNowSpectating() {
 
     }
 
+    /**
+     * Displays the ship view for a given player nickname.
+     *
+     * @param shipView the ship to display
+     * @param Nickname the name of the player whose ship is shown
+     */
     @Override
     public void autoShowShipInTui(Ship shipView, String Nickname) {
         System.out.println();
@@ -1711,6 +2007,15 @@ public class Tui implements View, Observable {
         return input.equalsIgnoreCase("reset");
     }
 
+    /**
+     * Prompts the user for a yes-only confirmation and executes the specified action if confirmed.
+     *
+     * @param prompt the message shown to the user (e.g., "Confirm action? (y): ")
+     * @param onYesAction the action to execute if the user types "y"
+     *
+     * <p>If the input is "reset", the method exits without executing the action.
+     * Otherwise, it keeps prompting until the user types "y" or "reset".</p>
+     */
 
     private void askYesConfirmation(String prompt, Runnable onYesAction) {
         boolean validInput = false;
@@ -1729,6 +2034,16 @@ public class Tui implements View, Observable {
         } while (!validInput);
     }
 
+    /**
+     * Prompts the user with a yes/no question and executes the corresponding action.
+     *
+     * @param prompt the question to display to the user (e.g., "Do you want to continue? (y/n): ")
+     * @param onYes the action to perform if the user responds with "y" or "yes"
+     * @param onNo the action to perform if the user responds with "n" or "no"
+     *
+     * <p>If the input is "reset", the method exits early.
+     * Re-prompts the user until a valid input is received.</p>
+     */
     private void askYesNoConfirmation(String prompt, Runnable onYes, Runnable onNo) {
         boolean validInput = false;
         String input;
@@ -1751,7 +2066,6 @@ public class Tui implements View, Observable {
         } while (!validInput);
 
     }
-
 
 }
 

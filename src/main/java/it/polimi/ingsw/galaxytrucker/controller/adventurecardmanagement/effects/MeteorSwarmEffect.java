@@ -1,6 +1,5 @@
 package it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects;
 
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import it.polimi.ingsw.galaxytrucker.enums.ProjectileSize;
@@ -14,12 +13,11 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.Act
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.AskTrunkRequest;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.AskTrunkResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
-import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
+
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Random;
 
 import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.*;
@@ -42,7 +40,6 @@ import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.e
 
 public abstract class MeteorSwarmEffect {
 
-    @NeedsToBeCompleted
     //È necessario aggiungere la logica per verificare se il ship si dividerà in tronconi e permettere al giocatore di scegliere.
 
     private final static HashMap<LobbyManager, Integer> projectileCounters = new HashMap<>();

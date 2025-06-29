@@ -27,6 +27,15 @@ import java.util.Random;
 
 import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.*;
 
+/**
+ * Handles the logic for resolving effects of Combat Zone adventure cards.
+ * <p>
+ * Includes all phases of a Combat Zone event, such as comparing player stats,
+ * handling component activations, resolving projectiles, and managing ship damage.
+ * Shared state is managed per game instance using static maps.
+ *
+ * This class is used internally by the {@link CardContext} during adventure card execution.
+ */
 public abstract class CombatZoneEffect {
     private final static HashMap<LobbyManager, Integer> projectileIndexes = new HashMap<>();
     private final static Random rand = new Random();
@@ -39,6 +48,9 @@ public abstract class CombatZoneEffect {
     private final static HashMap<LobbyManager, Pair<Float, Player>> minFirePowerCheckPairs = new HashMap<>();
 
 
+    /**
+     * Initializes the Combat Zone level and directs flow to the appropriate phase.
+     */
     public static void checkLevel(CardContext context) {
 
         CombatZone combatZone = (CombatZone) context.getAdventureCard();
@@ -58,6 +70,9 @@ public abstract class CombatZoneEffect {
         }
 
     }
+    /**
+     * Identifies the player with the fewest crew members and applies penalties accordingly.
+     */
     public static void minCrewMembersCheck(CardContext context) {
 
         CombatZone combatZone = (CombatZone) context.getAdventureCard();
@@ -114,6 +129,11 @@ public abstract class CombatZoneEffect {
     //PHASE 2
 
 
+    /**
+     * Sends a request to activate Double Engines if any are available and uncharged.
+     */
+
+
     public static void sendDoubleEnginesActivationRequest(CardContext context) {
 
         Player player = context.getCurrentPlayer();
@@ -137,6 +157,9 @@ public abstract class CombatZoneEffect {
         }
     }
 
+    /**
+     * Identifies the player with the lowest engine power and applies crew or goods penalties.
+     */
     public static void minEnginePowerCheck(CardContext context) {
 
 
@@ -206,6 +229,9 @@ public abstract class CombatZoneEffect {
         context.executePhase();
     }
 
+    /**
+     * Sends a request to the affected player to discard a number of crew members.
+     */
     public static void sendDiscardCrewMembersRequest(CardContext context) {
 //        System.out.println("sendDiscardCrewMembersRequest");
 //
@@ -234,6 +260,9 @@ public abstract class CombatZoneEffect {
 
 
     }
+    /**
+     * Handles the crew members discard response and transitions to the next phase.
+     */
 
     public static void receivedDiscardCrewMembersRequest(CardContext context) {
 //        System.out.println("receivedDiscardCrewMembersRequest");
@@ -258,6 +287,9 @@ public abstract class CombatZoneEffect {
     //PHASE 3
 
 
+    /**
+     * Sends a request to activate Double Cannons if any are available and uncharged.
+     */
     public static void sendDoubleCannonsActivationRequest(CardContext context) {
 
         Player player = context.getCurrentPlayer();
@@ -281,6 +313,9 @@ public abstract class CombatZoneEffect {
         }
     }
 
+    /**
+     * Identifies the player with the lowest firepower and applies penalties based on level.
+     */
     public static void minFirePowerCheck(CardContext context) {
 
         Player player = context.getCurrentPlayer();
@@ -335,6 +370,9 @@ public abstract class CombatZoneEffect {
         }
     }
 
+    /**
+     * Begins the cannon fire phase, targeting the correct player and preparing the next projectile.
+     */
     public static void cannonaitsStart(CardContext context) {
 //        System.out.println("cannonaitsStart");
 
@@ -378,6 +416,10 @@ public abstract class CombatZoneEffect {
             }
         }
     }
+
+    /**
+     * Applies the projectile effect to the player's ship, potentially splitting it into fragments.
+     */
 
     public static void cannonaitsFire(CardContext context) {
 
@@ -454,6 +496,9 @@ public abstract class CombatZoneEffect {
 
     }
 
+    /**
+     * Processes the player's choice of which ship fragment (trunk) to keep after damage strongly.
+     */
     public static void cannonaitsTrunks(CardContext context) {
 //        System.out.println("DEBUG: cannonaitsTrunks");
         LobbyManager game = context.getCurrentGame();

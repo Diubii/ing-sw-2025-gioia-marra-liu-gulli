@@ -18,12 +18,6 @@ public class Player {
     private Color color;
     private Ship ship;
     private int placement;
-
-
-    private HashMap<String, Integer> detailedScores;
-
-    private List<Good> ListOfGoods;
-    private List<Good> ListUnloadedGoods;
     private final Object shipLock = new Object();
 
     private PlayerState playerState;

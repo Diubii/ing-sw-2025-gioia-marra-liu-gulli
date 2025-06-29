@@ -600,7 +600,9 @@ public class Ship implements Serializable {
 
         }
         for(Ship ship : tronconi) {
-            ship.cloneStateFrom(this);
+            if(ship!=null) {
+                ship.cloneStateFrom(this);
+            }
         }
         //ho finito di processare le posizioni
         return tronconi;
@@ -876,8 +878,6 @@ public class Ship implements Serializable {
      * Returns the number of tiles placed in valid (non-invalid) positions.
      */
     public int remainingTiles() {
-
-
             int count = 0;
             for (int i = 0; i < shipboardMaxX; i++) {
                 for (int j = 0; j < shipboardMaxY; j++) {

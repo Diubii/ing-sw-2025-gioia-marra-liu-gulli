@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * A utility class for generating mock player responses for testing
+ * the effects of various AdventureCard scenarios.
+ */
 public class MockResponsesFactory {
     private final static String playerANickname = "A";
     private final static String playerBNickname = "B";

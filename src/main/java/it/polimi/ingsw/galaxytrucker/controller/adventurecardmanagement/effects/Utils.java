@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * This class includes common shared methods among the cards' effects methods.
  */
-public abstract class Utils {
+public abstract class   Utils {
     private final static NetworkMessageCouplingVisitor networkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
 
     /**

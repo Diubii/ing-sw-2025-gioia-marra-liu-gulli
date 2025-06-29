@@ -2,8 +2,6 @@
 // File: JavaFXView.java
 
 package it.polimi.ingsw.galaxytrucker.view.Gui;
-
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
 import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.enums.ActivatableComponent;
 import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
@@ -478,10 +476,6 @@ public class GuiJavaFx implements View {
         showBuildingMenu();
     }
 
-    @Override
-    public void FetchMyShip() {
-        //Automaticamente fatto a ogni ship update, non si può fare manualmente
-    }
 
     @Override
     public void askShowFaceUpTiles()  {

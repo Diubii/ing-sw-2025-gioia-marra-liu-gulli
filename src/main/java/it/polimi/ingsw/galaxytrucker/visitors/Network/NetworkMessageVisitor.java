@@ -1,6 +1,5 @@
 package it.polimi.ingsw.galaxytrucker.visitors.Network;
 
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import it.polimi.ingsw.galaxytrucker.controller.ServerControllerHandles;
 import it.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.SERVER_INFO;
@@ -20,9 +19,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         this.clientHandler = clientHandler;
     }
 
-    //INIT AND LOBBY
 
-    @NeedsToBeCompleted
     @Override
     public Void visit(SERVER_INFO serverInfo) {
         return null;
@@ -54,7 +51,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @NeedsToBeCompleted
+
     @Override
     public Void visit(CreateRoomRequest createRoomRequest) {
         try {
@@ -266,7 +263,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @NeedsToBeCompleted
+
     @Override
     public Void visit(ActivateAdventureCardResponse activateAdventureCardResponse) {
         try {
@@ -297,7 +294,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @NeedsToBeCompleted
+
     @Override
     public Void visit(SelectPlanetResponse selectPlanetResponse) {
         try {
@@ -318,7 +315,7 @@ public class NetworkMessageVisitor implements NetworkMessageVisitorsInterface<Vo
         return null;
     }
 
-    @NeedsToBeCompleted
+
     @Override
     public Void visit(DiscardCrewMembersResponse discardCrewMembersResponse) {
         try {

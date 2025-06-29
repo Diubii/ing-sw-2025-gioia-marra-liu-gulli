@@ -31,6 +31,9 @@ public class ServerControllerTest {
     GameTestHelper.GameTestContext context;
     ClientController clientController1, clientController2;
 
+    /**
+     * Sets up two players and initializes the test context before each test.
+     */
     @BeforeEach
     void setUp() {
         player1 = new Player("TestPlayer", 0, 1, true);

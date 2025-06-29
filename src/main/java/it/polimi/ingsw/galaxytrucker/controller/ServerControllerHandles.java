@@ -10,6 +10,13 @@ import it.polimi.ingsw.galaxytrucker.network.server.ClientHandler;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+/**
+ * Remote interface for handling all server-side request types from clients.
+ * <p>
+ * Defines methods to process gameplay actions, lobby operations, tile and crew updates,
+ * and other messages sent from clients during a Galaxy Trucker match.
+ * Each method may throw {@link RemoteException} due to RMI communication.
+ */
 public interface ServerControllerHandles extends Remote {
     void handleNicknameRequest(NicknameRequest nicknameRequest, ClientHandler clientHandler) throws RemoteException;
     void handleCreateRoomRequest(CreateRoomRequest createRoomRequest, ClientHandler clientHandler) throws RemoteException;

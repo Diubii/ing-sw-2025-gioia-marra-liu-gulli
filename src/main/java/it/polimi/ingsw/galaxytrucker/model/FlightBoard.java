@@ -1,6 +1,5 @@
 package it.polimi.ingsw.galaxytrucker.model;
 
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import it.polimi.ingsw.galaxytrucker.enums.Color;
 import it.polimi.ingsw.galaxytrucker.model.essentials.FlightBoardMap;
 

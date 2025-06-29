@@ -1,7 +1,6 @@
 package it.polimi.ingsw.galaxytrucker.controller;
 
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
+
 import it.polimi.ingsw.galaxytrucker.enums.*;
 import it.polimi.ingsw.galaxytrucker.exceptions.InvalidTilePosition;
 import it.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;

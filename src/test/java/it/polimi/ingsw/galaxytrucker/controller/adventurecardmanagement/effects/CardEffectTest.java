@@ -696,6 +696,14 @@ class CardEffectTest {
 
     }
 
+    /**
+     * Tests the Planet card whether sends the right list of planet
+     *
+     * <p>Expected behavior:</p>
+     * <ul>
+     *   <li>mock  </li>
+     * </ul>
+     */
     @Test
     void testPlanetsEffect_sendsCorrectPlanetListToPlayer(){
         List<AdventureCard> cards = CardTestUtils.loadCardsByType("Pianeti", 1);

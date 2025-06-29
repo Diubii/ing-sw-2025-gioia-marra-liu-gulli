@@ -2,8 +2,6 @@ package it.polimi.ingsw.galaxytrucker.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeChecked;
-import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.CardContext;
 import it.polimi.ingsw.galaxytrucker.enums.*;
 import it.polimi.ingsw.galaxytrucker.exceptions.PlayerAlreadyExistsException;
@@ -176,7 +174,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         return messageManager;
     }
 
-    @NeedsToBeChecked("Un po' confusionaria la query, magari si può fare una Map<ClientHandler, LobbyManager> o Map<UUID, LobbyManager>")
+
     public LobbyManager getLobbyFromHandler(ClientHandler clientHandler) {
 
         LobbyManager lobbyManager;
@@ -1019,7 +1017,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      * @param clientHandler the handler for the client making the discard request
      * @throws RemoteException if a communication-related exception occurs during the operation
      */
-    @NeedsToBeCompleted
+
     public void handleDiscardTileRequest(DiscardTileRequest discardTileRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
 

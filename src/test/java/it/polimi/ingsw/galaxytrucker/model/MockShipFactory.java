@@ -100,6 +100,7 @@ public class MockShipFactory {
         if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
     }
     public static Ship createMockShip2() {
@@ -151,6 +152,7 @@ public class MockShipFactory {
         if(modularHousingUnit3 != null ) ship.putTile(modularHousingUnit3, new Position(1, 1));
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
     }
 
@@ -190,6 +192,7 @@ public class MockShipFactory {
         if(modularHousingUnit4!= null ) ship.putTile(modularHousingUnit4, new Position(1, 2));
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
 
 
@@ -233,6 +236,7 @@ public class MockShipFactory {
         if(modularHousingUnit4!= null ) ship.putTile(modularHousingUnit4, new Position(1, 2));
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
 
 
@@ -276,6 +280,7 @@ public class MockShipFactory {
         if(modularHousingUnit4!= null ) ship.putTile(modularHousingUnit4, new Position(1, 2));
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
 
 
@@ -286,7 +291,9 @@ public class MockShipFactory {
             ModularHousingUnit unit = (ModularHousingUnit) tile.getMyComponent();
             unit.addHumanCrew();
             tile.setMyComponent(unit);
+
         }
+
     }
 
 
@@ -332,6 +339,7 @@ public class MockShipFactory {
         if(engine != null) ship.putTile(engine, new Position(4, 1));
         ship.putTile(doubleEngine, new Position(2, 4));
         ship.putTile(doubleEngine, new Position(1, 1));
+        ship.setInitialTiles(ship.remainingTiles());
 
 
         return ship;
@@ -383,6 +391,7 @@ public class MockShipFactory {
         if(shield1 != null) ship.putTile(shield1, new Position(1, 1));
         if(shield2 != null) ship.putTile(shield2, new Position(2, 4));
 
+        ship.setInitialTiles(ship.remainingTiles());
 
         return ship;
     }
@@ -426,6 +435,7 @@ public class MockShipFactory {
 
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
 
 
@@ -475,6 +485,7 @@ public class MockShipFactory {
         if(battery2!= null) ship.putTile(battery2, new Position(2, 4));
         if(cannon4!=null) ship.putTile(cannon4, new Position(3, 1));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
 
 
@@ -525,6 +536,7 @@ public class MockShipFactory {
         if(battery2!= null) ship.putTile(battery2, new Position(2, 4));
 
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
 
 
@@ -583,6 +595,7 @@ public class MockShipFactory {
         if(battery6!=null) ship.putTile(battery6, new Position(1, 2));
 
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
 
 
@@ -643,6 +656,7 @@ public class MockShipFactory {
         hold2.playerLoadGood(good3);
         hold2.playerLoadGood(good4);
 
+        ship.setInitialTiles(ship.remainingTiles());
 
         return ship;
     }
@@ -688,6 +702,7 @@ public class MockShipFactory {
         if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
     }
 
@@ -731,6 +746,7 @@ public class MockShipFactory {
         if(modularHousingUnit2 != null) ship.putTile(modularHousingUnit2, new Position(4, 2));
         if(genericCargoHold != null) ship.putTile(genericCargoHold, new Position(2, 3));
 
+        ship.setInitialTiles(ship.remainingTiles());
         return ship;
     }
 }

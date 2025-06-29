@@ -10,8 +10,20 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class for loading and filtering adventure cards from a JSON resource file,
+ * primarily used for testing purposes.
+ */
 public class CardTestUtils {
 
+    /**
+     * Loads a specific number of AdventureCard objects matching the given type name
+     * from the 'cardsdata.json' file in the resources folder.
+     *
+     * @param typeName the name of the card type to filter by.
+     * @param count the maximum number of cards to return.
+     * @return a list of matching AdventureCard objects, or an empty list if none found or error occurs.
+     */
     public static List<AdventureCard> loadCardsByType(String typeName, int count) {
         URL url = CardTestUtils.class.getClassLoader().getResource("cardsdata.json");
 
