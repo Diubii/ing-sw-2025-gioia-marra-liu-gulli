@@ -85,13 +85,13 @@ class CardEffectTest {
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forAbandonedShip_A();
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(responses, players);
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         Player first = ctx.lobby.getGameController().getRankedPlayers().getFirst();
         Player second = ctx.lobby.getGameController().getRankedPlayers().get(1);
         Player third = ctx.lobby.getGameController().getRankedPlayers().get(2);
-        System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
+        System.out.println( "Size Cart:" +ctx.lobby.getGameController().getFlightDeck().getSize());
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -101,7 +101,7 @@ class CardEffectTest {
             throw new RuntimeException(e);
         }
 
-        System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
+        System.out.println( "Size Cart:" +ctx.lobby.getGameController().getFlightDeck().getSize());
 
         //AbandonedShip Test A: A sceglie di non accettare l'effetto della carta, mentre B e C scelgono di accettarlo
         assertEquals(0, first.getNCredits());
@@ -142,12 +142,13 @@ class CardEffectTest {
         assertTrue(card instanceof AbandonedShip);
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.forAbandonedShip_B();
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(responses, players);
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         Player first = ctx.lobby.getGameController().getRankedPlayers().getFirst();
         Player second = ctx.lobby.getGameController().getRankedPlayers().get(1);
         Player third = ctx.lobby.getGameController().getRankedPlayers().get(2);
-        System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
+        System.out.println( "Size Cart:" +ctx.lobby.getGameController().getFlightDeck().getSize());
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -157,7 +158,7 @@ class CardEffectTest {
             throw new RuntimeException(e);
         }
 
-        System.out.println( "Size Cart:" +ctx.lobby.getGameController().getCardDeckTest().getSize());
+        System.out.println( "Size Cart:" +ctx.lobby.getGameController().getFlightDeck().getSize());
 
 
 
@@ -223,8 +224,8 @@ class CardEffectTest {
             handler.setMockResponses(responseList);
         });
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -295,8 +296,8 @@ class CardEffectTest {
             handler.setMockResponses(responseList);
         });
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -341,8 +342,8 @@ class CardEffectTest {
         Player second =rankedPlayers.get(1);
         Player third = rankedPlayers.get(2);
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -398,7 +399,8 @@ class CardEffectTest {
 
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(responses, players);
 
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
         Player playerA = ctx.lobby.getGameController().getRankedPlayers().getFirst();
@@ -507,8 +509,8 @@ class CardEffectTest {
                 )
         ));
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -580,8 +582,8 @@ class CardEffectTest {
         hP4_2.setHumanCrewNumber(0);
         first.replaceShip(shipA);
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -638,8 +640,8 @@ class CardEffectTest {
 
         Map<String, ArrayList<NetworkMessage>> responses = MockResponsesFactory.emptyResponsesFor(players);
         GameTestHelper.GameTestContext ctx = GameTestHelper.setupGame(responses,players);
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         ArrayList<Player> rankedPlayers = ctx.lobby.getGameController().getRankedPlayers();
 
@@ -762,8 +764,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
@@ -820,10 +822,10 @@ class CardEffectTest {
          System.out.println(PosA);
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
+        ctx.lobby.getGameController().getFlightDeck().clear();
 
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card2);
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().addCard(card2);
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
@@ -897,8 +899,8 @@ class CardEffectTest {
 
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -949,8 +951,8 @@ class CardEffectTest {
             handler.setMockResponses(responseList);
         });
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         ctx.serverController.handleDrawAdventureCardRequest(
                 new DrawAdventureCardRequest(),
                 ctx.nicknameToHandlerMap.get(playerA.getNickName())
@@ -985,8 +987,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         ctx.serverController.handleDrawAdventureCardRequest(
                 new DrawAdventureCardRequest(),
                 ctx.nicknameToHandlerMap.get(playerA.getNickName())
@@ -1023,8 +1025,8 @@ class CardEffectTest {
             handler.setMockResponses(responseList);
         });
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -1070,8 +1072,8 @@ class CardEffectTest {
             handler.setMockResponses(responseList);
         });
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         int nCrewA = playerA.getShip().getnCrew();
         int nCrewB = playerB.getShip().getnCrew();
         int nCrewC = playerC.getShip().getnCrew();
@@ -1165,8 +1167,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         FlightBoard flightBoard =  ctx.lobby.getRealGame().getFlightBoard();
 
@@ -1258,8 +1260,8 @@ class CardEffectTest {
             handler.setMockResponses(responseList);
         });
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         FlightBoard flightBoard =  ctx.lobby.getRealGame().getFlightBoard();
 
@@ -1302,8 +1304,8 @@ class CardEffectTest {
             handler.setMockResponses(responseList);
         });
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
 
         FlightBoard flightBoard =  ctx.lobby.getRealGame().getFlightBoard();
 
@@ -1347,8 +1349,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         ctx.serverController.handleDrawAdventureCardRequest(
                 new DrawAdventureCardRequest(),
                 ctx.nicknameToHandlerMap.get(playerA.getNickName())
@@ -1390,8 +1392,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         ctx.serverController.handleDrawAdventureCardRequest(
                 new DrawAdventureCardRequest(),
                 ctx.nicknameToHandlerMap.get(playerA.getNickName())
@@ -1438,8 +1440,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         ctx.serverController.handleDrawAdventureCardRequest(
                 new DrawAdventureCardRequest(),
                 ctx.nicknameToHandlerMap.get(playerA.getNickName())
@@ -1478,8 +1480,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         ctx.serverController.handleDrawAdventureCardRequest(
                 new DrawAdventureCardRequest(),
                 ctx.nicknameToHandlerMap.get(playerA.getNickName())
@@ -1521,8 +1523,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -1564,8 +1566,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),
@@ -1610,8 +1612,8 @@ class CardEffectTest {
         });
 
 
-        ctx.lobby.getGameController().getCardDeckTest().clear();
-        ctx.lobby.getGameController().getCardDeckTest().addCard(card);
+        ctx.lobby.getGameController().getFlightDeck().clear();
+        ctx.lobby.getGameController().getFlightDeck().addCard(card);
         try {
             ctx.serverController.handleDrawAdventureCardRequest(
                     new DrawAdventureCardRequest(),

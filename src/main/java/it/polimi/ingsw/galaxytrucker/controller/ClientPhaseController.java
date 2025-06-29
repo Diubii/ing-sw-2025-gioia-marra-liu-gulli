@@ -40,9 +40,11 @@ public class ClientPhaseController {
     }
 
     /**
-     * Handle phase update.
+     * Updates the client's internal phase based on the received {@link PhaseUpdate}.
+     * <p>
+     * Translates global game state into local {@code PLAYER_PHASE}.
      *
-     * @param update the update
+     * @param update the phase update from the server
      */
     public synchronized void handlePhaseUpdate(PhaseUpdate update) {
         switch (update.getState()) {

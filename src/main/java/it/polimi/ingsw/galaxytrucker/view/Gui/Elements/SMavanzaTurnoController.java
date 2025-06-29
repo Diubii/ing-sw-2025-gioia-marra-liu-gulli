@@ -5,12 +5,22 @@ import it.polimi.ingsw.galaxytrucker.view.Gui.FlightController;
 import it.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 import javafx.scene.layout.HBox;
 
+/**
+ * Handles the UI logic for advancing the turn or landing early during the flight phase.
+ */
 public class SMavanzaTurnoController {
 
     private  ClientController clientController;
     private HBox container;
     private FlightController flightController;
 
+    /**
+     * Initializes the controller with the client controller and UI container.
+     *
+     * @param clientController reference to the client controller
+     * @param container        the HBox container holding the buttons
+     * @param flightController reference to the flight board controller
+     */
     public void initialize(ClientController clientController, HBox container, FlightController flightController){
         this.clientController = clientController;
         this.container = container;

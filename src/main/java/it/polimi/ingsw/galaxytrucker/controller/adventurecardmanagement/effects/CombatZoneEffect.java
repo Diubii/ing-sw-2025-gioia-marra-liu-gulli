@@ -18,7 +18,6 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.As
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.DiscardCrewMembersResponse;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.GameMessage;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.ShipUpdate;
-import it.polimi.ingsw.galaxytrucker.view.Tui.util.ShipPrintUtils;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentNameVisitor;
 import javafx.util.Pair;
 

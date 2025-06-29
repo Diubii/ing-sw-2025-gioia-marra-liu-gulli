@@ -6,10 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
 /**
- * Classe che rappresenta un cannone doppio nel gioco Galaxy Trucker.
- * Estende la classe {@link Cannon} e implementa logica aggiuntiva per gestire lo stato "carico".
- */
-/**
  * Class representing a double cannon in the Galaxy Trucker game.
  * Extends the {@link Cannon} class and implements additional logic to manage the "charged" state.
  */

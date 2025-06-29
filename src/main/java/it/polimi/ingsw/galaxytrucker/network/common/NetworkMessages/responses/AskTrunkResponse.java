@@ -6,6 +6,10 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Response message used to indicate which trunk (segment) of a ship has been selected
+ * by a player after a ship break event.
+ */
 public class AskTrunkResponse extends NetworkMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 96243145242157961L;

@@ -34,11 +34,12 @@ public abstract class Utils {
     private final static NetworkMessageCouplingVisitor networkMessageCouplingVisitor = new NetworkMessageCouplingVisitor();
 
     /**
-     * Moves a specific player in the game's flight board and sends an update to all clients.
+     * Moves the specified player on the flight board by the given number of steps
+     * and sends the corresponding update to all clients.
      *
-     * @param context
-     * @param player
-     * @param steps
+     * @param context the current {@link CardContext} containing game state
+     * @param player the player to be moved
+     * @param steps the number of steps to move (positive for forward, negative for backward)
      */
     protected static void movePlayer(CardContext context, Player player, int steps) {
         LobbyManager game = context.getCurrentGame();
@@ -56,8 +57,20 @@ public abstract class Utils {
         context.setCurrentRankedPlayers(context.getCurrentGame().getGameController().getRankedPlayers()); //Aggiorno i currentRankedPlayers del context
     }
 
+    /**
+     * Discards the specified number of crew members from the player's ship
+     * using the positions provided in the network response.
+     *
+     * A ship update and notification are broadcast to all players.
+     *
+     * @param context the current game context
+     * @param player the player discarding crew
+     * @param discardCrewMembersResponse the response containing housing positions
+     * @param numberOfCrewMembersToBeDiscarded number of crew members to remove
+     */
     protected static void discardCrewMembers(CardContext context,Player player, DiscardCrewMembersResponse discardCrewMembersResponse, int numberOfCrewMembersToBeDiscarded) {
         for (Position position : discardCrewMembersResponse.getHousingPositions()) { //Per ogni posizione (assumo posizioni duplicate per scartare più volte dalla stessa housing unit)
+
             Component housingUnit = player.getShip().getComponentFromPosition(position); //Prendo la housingUnit dalla position data
 
             CentralHousingUnit centralHousingUnit = (CentralHousingUnit) housingUnit;
@@ -70,46 +83,65 @@ public abstract class Utils {
         ShipUpdate shipUpdate = new ShipUpdate(player.getShip(), player.getNickName());
         broadcast(context, shipUpdate);
 
-        String message = "Player " + player.getNickName() + " ha perso " +numberOfCrewMembersToBeDiscarded + " crew members!";
+        String message = "Player " + player.getNickName() + " ha perso " + discardCrewMembersResponse.getHousingPositions().size() + " crew members!";
         broadcast(context, new GameMessage(message));
         sleepSafe(600);
 
     }
 
     /**
-     * Sends a NetworkMessage to a specific player.
+     * Sends a {@link NetworkMessage} to a specific player.
      *
-     * @param context
-     * @param player
-     * @param message
+     * @param context the current game context
+     * @param player the recipient player
+     * @param message the message to send
      */
     protected static void sendMessage(CardContext context, Player player, NetworkMessage message) {
         context.incrementExpectedNumberOfNetworkMessages(message.accept(networkMessageCouplingVisitor));
         context.getCurrentGame().getPlayerHandlers().get(player.getNickName()).sendMessage(message);
     }
-
-
-//    protected static void sendMessageAndDeferGetResponse(LobbyManager lobbyManager, Player player, NetworkMessage message, ArrayList<CompletableFuture<NetworkMessage>> futures) {
-//        CompletableFuture<NetworkMessage> future =z//        ClientHandler clientHandler = lobbyManager.getPlayerHandlers().get(player.getNickName()); //Prendo il ClientHandler associato al player
-//        lobbyManager.addPendingResponse(future, message.getID()); //Notifico che sono in attesa di una risposta
-//        clientHandler.sendMessage(message); //Mando la richiesta di attivare eventuali motori doppi
-//        futures.add(future);
-//    }
+    /**
+     * Sends a game message to a single player.
+     *
+     * @param context the game context
+     * @param player the player receiving the message
+     * @param message the message content
+     */
 
     protected static void sendGameMessage(CardContext context, Player player, String message) {
         GameMessage gameMessage = new GameMessage(message);
         gameMessage.setMessage(message);
         context.getCurrentGame().getPlayerHandlers().get(player.getNickName()).sendMessage(gameMessage);
     }
-
+    /**
+     * Broadcasts a game message to all players.
+     *
+     * @param context the current game context
+     * @param message the message content
+     */
     protected static void broadcastGameMessage(CardContext context, String message) {
         broadcast(context, new GameMessage(message));
     }
+    /**
+     * Broadcasts a {@link NetworkMessage} to all players in the game.
+     *
+     * @param context the current game context
+     * @param message the message to broadcast
+     */
 
     protected static void broadcast(CardContext context, NetworkMessage message) {
         LobbyManager lobbyManager = context.getCurrentGame();
         lobbyManager.getPlayerHandlers().values().forEach(ch -> ch.sendMessage(message));
     }
+
+
+    /**
+     * Broadcasts a {@link NetworkMessage} to all players except one.
+     *
+     * @param context the current game context
+     * @param message the message to broadcast
+     * @param player the player to exclude from receiving the message
+     */
 
     protected static void broadcastExcept(CardContext context, NetworkMessage message, Player player) {
         LobbyManager lobbyManager = context.getCurrentGame();
@@ -119,11 +151,12 @@ public abstract class Utils {
 
 
     /**
-     * Checks if a player has a shield orientated the same way of the incoming projectile. Does not check for same row/column.
+     * Checks if the player has a shield oriented in the direction of the incoming projectile.
+     * This method only considers shield orientation, not the alignment with the dice roll.
      *
-     * @param player
-     * @param projectile
-     * @author Alessandro Giuseppe Gioia
+     * @param player the player to check
+     * @param projectile the incoming projectile
+     * @return true if a shield can defend against the projectile, false otherwise
      */
     protected static boolean playerCanDefendThemselvesWithAShield(Player player, Projectile projectile) {
         if (projectile.getSize() == ProjectileSize.Big) return false;
@@ -137,6 +170,7 @@ public abstract class Utils {
                             .getProtectedSides()
                             .contains(projectile.getDirection()));
     }
+
 
     protected static boolean playerCanDefendThemselvesWithASingleCannon(Player player, Projectile projectile, int diceRoll) {
         if (projectile.getType() != ProjectileType.Meteor || projectile.getSize() != ProjectileSize.Big) return false;
@@ -203,6 +237,16 @@ public abstract class Utils {
         }
     }
 
+    /**
+     * Removes and returns the most valuable goods from the player's ship, up to the specified penalty count.
+     * Goods are removed in the order: RED > YELLOW > GREEN > BLUE.
+     * A ship update is broadcast after each removal.
+     *
+     * @param context the game context
+     * @param player the affected player
+     * @param penalty the number of goods to remove
+     * @return a list of removed goods
+     */
     protected static ArrayList<Good> getAndRemoveMostValuableGoods(CardContext context,Player player, int penalty ) {
         //red, yellow, green, blue
         Ship ship = player.getShip();
@@ -260,6 +304,15 @@ public abstract class Utils {
 
     }
 
+    /**
+     * Removes a number of batteries from the player's ship, up to the given count.
+     * Sends ship updates after each successful removal.
+     *
+     * @param context the game context
+     * @param player the affected player
+     * @param batteryToDiscard number of batteries to discard
+     */
+
        protected static void removeBatteries(CardContext context,Player player, int batteryToDiscard) {
         if (batteryToDiscard <= 0) return;
         Ship ship = player.getShip();
@@ -288,6 +341,11 @@ public abstract class Utils {
         }
     }
 
+    /**
+     * Resets all double cannons on the player's ship to an uncharged state.
+     *
+     * @param player the player whose cannons are to be reset
+     */
     protected static void resetDoubleCannon(Player player) {
 
         Ship ship = player.getShip();
@@ -303,6 +361,11 @@ public abstract class Utils {
 
     }
 
+    /**
+     * Resets all shields on the player's ship to an uncharged state.
+     *
+     * @param player the player whose shields are to be reset
+     */
     protected static void resetShield(Player player) {
 
         Ship ship = player.getShip();
@@ -317,6 +380,11 @@ public abstract class Utils {
         }
 
     }
+    /**
+     * Resets all double engines on the player's ship to an uncharged state.
+     *
+     * @param player the player whose engines are to be reset
+     */
     protected static void resetDoubleEngine(Player player) {
 
         Ship ship = player.getShip();
@@ -332,6 +400,13 @@ public abstract class Utils {
 
     }
 
+    /**
+     * Calculates and adds the number of remaining tiles from a list of truncated ships
+     * to the current player's destroyed tile counter.
+     *
+     * @param player the player receiving destroyed tile points
+     * @param trucks a list of truncated {@link Ship} instances
+     */
     protected static void addDestroyedTilesInTrunc(Player player, ArrayList<Ship> trucks)  {
         int removed = 0;
         for (Ship ship : trucks) {
@@ -340,16 +415,27 @@ public abstract class Utils {
         player.getShip().addDestroyedTiles(removed);
     }
 
+    /**
+     * Sleeps the current thread safely for the given duration.
+     * If interrupted, the thread’s interrupted status is restored.
+     *
+     * @param millis duration in milliseconds
+     */
     protected static void sleepSafe(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-
-
     }
 
+    /**
+     * Broadcasts a {@link ShipUpdate} message to all players, including a display flag,
+     * and pauses briefly for UI consistency.
+     *
+     * @param context the current game context
+     * @param player the player whose ship update is to be broadcast
+     */
     protected static void broadcastShipUpdate(CardContext context ,Player player) {
         ShipUpdate shipUpdate = new ShipUpdate(player.getShip(),player.getNickName());
         shipUpdate.setShouldDisplay(true);

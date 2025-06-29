@@ -1,5 +1,9 @@
 package it.polimi.ingsw.galaxytrucker.enums;
 
+/**
+ * Player colors available in the game.
+ */
+
 public enum Color {
 
     RED("RED"),
@@ -10,16 +14,25 @@ public enum Color {
 
     private final String colorString;
 
-    // Costruttore per associare una stringa a ciascun valore
     Color(String colorString) {
         this.colorString = colorString;
     }
 
+    /**
+     * @return the color name as a string.
+     */
     public String getColorString() {
         return colorString;
     }
 
-    // Metodo per convertire una stringa nell'enum
+
+    /**
+     * Parses a string to a corresponding Color.
+     *
+     * @param text the color name
+     * @return the matching Color enum
+     * @throws IllegalArgumentException if no match is found
+     */
     public static Color fromString(String text) {
         if (text != null) {
             for (Color color : Color.values()) {

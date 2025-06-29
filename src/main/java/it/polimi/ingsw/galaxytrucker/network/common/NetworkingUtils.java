@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+/**
+ * Utility class for networking constants and methods.
+ */
 public class NetworkingUtils {
     public static final String LOOPBACK_ADDRESS = "127.0.0.1";
     public static final int SOCKET_DEFAULT_PORT = 5000;

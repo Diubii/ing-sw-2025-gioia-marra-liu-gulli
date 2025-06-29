@@ -104,19 +104,5 @@ public abstract class AdventureCard implements Serializable {
         return learningFlight;
     }
 
-    /**
-     * Checks if the effect of the card applies to all players.
-     *
-     * @return {@code true} if the effect applies to all players, otherwise {@code false}.
-     */
-    public boolean doesAffectAll() {
-        return affectsAll;
-    }
 
-    /**
-     * Checks if the player can choose to not activate the card. Used for {@link Planets}, {@link AbandonedShip} and {@link AbandonedStation}.
-     */
-    public boolean isFacultative() {
-        return facultative;
-    }
 }

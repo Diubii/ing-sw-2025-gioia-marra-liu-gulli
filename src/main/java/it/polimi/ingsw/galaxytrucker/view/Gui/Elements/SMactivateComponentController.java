@@ -10,6 +10,9 @@ import javafx.scene.layout.HBox;
 
 import java.util.ArrayList;
 
+/**
+ * Handles activation of a specific component type during the flight phase.
+ */
 public class SMactivateComponentController {
 
     @FXML private Label lblSpiegazione;
@@ -21,6 +24,14 @@ public class SMactivateComponentController {
     private ArrayList<Position> componentPositions;
     private ArrayList<Position> batteryPositions;
 
+    /**
+     * Initializes the controller with the required context.
+     *
+     * @param activatableComponent component type to activate
+     * @param continer            UI container holding this controller
+     * @param clientController     reference to the client controller
+     * @param flightController     reference to the flight phase controller
+     */
     public void initialize(ActivatableComponent activatableComponent , HBox continer , ClientController clientController , FlightController flightController) {
         //Il tipo di component per poi creare la lista per fare poi l'update.
         this.container = continer;

@@ -33,16 +33,8 @@ public class Game {
         return timerInfos;
     }
 
-    public void setTimerInfos(ArrayList<TimerInfo> timerInfos) {
-        this.timerInfos = timerInfos;
-    }
-
     private ArrayList<TimerInfo> timerInfos = new ArrayList<>();
 
-
-    private Player gameHost;
-
-    private boolean gameStarted;
     private boolean learningMatch;
 
     private ArrayList<CardDeck> Decks;
@@ -63,7 +55,6 @@ public class Game {
     public Game() {
         this.nMaxPlayer = 4;
         this.playerMap = new HashMap<>();
-//        this.playerShip = new HashMap<>();
         this.usedNicknames = new HashSet<>();
         this.playerOrder = new HashMap<>();
         this.learningMatch = false;
@@ -74,12 +65,6 @@ public class Game {
         setupTimerInfos();
 
     }
-
-    /*
-     * @authord nerd53
-     *
-     * creata funzione separata poiche non si sa se il gioco e' learningMatch fino a che il primo client non lo decide
-     * */
 
     public ArrayList<CardDeck> getDecks() {
         return Decks;
@@ -167,26 +152,11 @@ public class Game {
     }
 
 
-    public void generatelvtwoDeckes() {
-
-    }
-
-    public void reorderPlayer() {
-
-    }
-
-
     public ArrayList<Player> getPlayers() {
         synchronized (playerMap) {
             return new ArrayList<>(playerMap.values());
         }
     }
-
-//    public Ship getPlayerShip(Player player) {
-//
-//        return playerShip.get(player);
-//    }
-
     public Player getPlayer(String nickname) {
         synchronized (playerMap) {
             return playerMap.get(nickname);

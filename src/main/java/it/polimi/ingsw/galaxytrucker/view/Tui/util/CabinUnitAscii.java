@@ -2,6 +2,11 @@ package it.polimi.ingsw.galaxytrucker.view.Tui.util;
 
 import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
 
+
+/**
+ * Utility class for printing ASCII representations of cabin units
+ * with human or alien crew members for the text-based user interface (TUI).
+ */
 public class CabinUnitAscii {
 
 

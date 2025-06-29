@@ -5,6 +5,9 @@ import it.polimi.ingsw.galaxytrucker.visitors.Network.NetworkMessageVisitorsInte
 
 import java.io.Serializable;
 
+/**
+ * Response message that provides the position selected by the client.
+ */
 public class AskPositionResponse extends NetworkMessage implements Serializable {
 
 

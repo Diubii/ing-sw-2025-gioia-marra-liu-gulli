@@ -31,6 +31,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * GUI Controller for the Flight Phase of the game.
+ * <p>
+ * Manages the player's ship view, adventure cards, interaction menus,
+ * and transitions during flight events like card effects, crew loss,
+ * or ship updates.
+ */
 public class FlightController extends GenericGamePhaseSceneController {
 
     private GuiJavaFx mainViewController;
@@ -57,7 +64,6 @@ public class FlightController extends GenericGamePhaseSceneController {
     @FXML private Label name2;
     @FXML private Label name3;
     @FXML private Label name4;
-    //Todo: aggiungere crediti a player info e mostrarli di lato?
     @FXML private RadioButton radio1;
     @FXML private RadioButton radio2;
     @FXML private RadioButton radio3;

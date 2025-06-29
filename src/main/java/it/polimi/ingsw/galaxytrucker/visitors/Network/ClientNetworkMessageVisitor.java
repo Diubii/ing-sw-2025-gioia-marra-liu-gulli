@@ -13,7 +13,6 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
     @Override
     public Void visit(FlipTimerRequest flipTimerRequest) {
-        // Implementation of handling FlipTimerRequest
         return null;
     }
 
@@ -89,9 +88,6 @@ public class ClientNetworkMessageVisitor implements NetworkMessageVisitorsInterf
 
         return null;
     }
-
-
-
 
 
 

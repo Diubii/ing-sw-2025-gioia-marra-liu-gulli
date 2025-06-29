@@ -16,9 +16,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Rappresenta la nave del giocatore, composta da una griglia di {@link Slot}
- * in cui vengono posizionate le {@link Tile}. La nave può contenere vari componenti
- * come motori, batterie, cannoni e stive di carico.
+ * Represents the player's ship composed of a grid of {@link Slot}s.
+ * Tiles representing ship components are placed in slots.
+ * The ship can hold engines, batteries, cannons, cargo, housing units, etc.
+ * Handles structure validation, tile management, and ship state.
  */
 
 public class Ship implements Serializable {
@@ -59,9 +60,8 @@ public class Ship implements Serializable {
 
 
     /**
-     * Costruttore della nave.
-     *
-     * @param learningMatch Indica se la partita è in modalità apprendimento.
+     * Initializes the ship with an empty grid and component tracking structures.
+     * @param learningMatch true if the match is in tutorial mode (some positions are invalid)
      */
     public Ship(Boolean learningMatch) {
         listNotLoadedGoods = new ArrayList<>();
@@ -70,9 +70,6 @@ public class Ship implements Serializable {
         invalidPositions = createIP();
         generateSlot();
         initializePos();
-        //Tile of chosen color
-
-//        putTile();
 
     }
 
@@ -109,22 +106,8 @@ public class Ship implements Serializable {
         return shipBoard;
     }
 
-    public void updateShipBoard(Slot[][] shipB) {
-        synch = true;
-        this.shipBoard = shipB;
-    }
 
-    public ArrayList<Position> getStoragePos() {
-        return new ArrayList<Position>(storagePos);
-    }
 
-    public ArrayList<Position> getRedStoragePos() {
-        return new ArrayList<Position>(redStoragePos);
-    }
-
-    public ArrayList<Position> getHousingPos() {
-        return new ArrayList<Position>(housingPos);
-    }
 
     public ArrayList<Position> getBatteryPos() {
         return new ArrayList<Position>(batteryPos);
@@ -138,9 +121,6 @@ public class Ship implements Serializable {
         return new ArrayList<Position>(enginePos);
     }
 
-    public ArrayList<Position> getLifeSSPos() {
-        return new ArrayList<Position>(lssPos);
-    }
 
     public int getInitialTiles() {
         return initialTiles;
@@ -162,10 +142,6 @@ public class Ship implements Serializable {
 
     public int getDestroyedTiles() {
         return destroyedTiles;
-    }
-
-    public int getnGoods() {
-        return nGoods;
     }
 
     public int getNPurpleAlien() {
@@ -521,12 +497,9 @@ public class Ship implements Serializable {
 
                             if (al != AlienColor.EMPTY) {
                                 Boolean result1 = Util.CheckLifeSupportSystem(al, shipBoard[i][j].getTile(), this, shipBoard[i][j]);
-
                                 if (!result1) {
                                     temp.removeAlienCrew();
                                 }
-
-
 
 //                                shipBoard[i][j].getTile().setWellConnected(result);
                                 if (!result1) result = false;
@@ -649,8 +622,6 @@ public class Ship implements Serializable {
         // Lista dei vicini validi della posizione corrente
         ArrayList<Pair<ProjectileDirection, Slot>> villagers = new ArrayList<>();
 
-
-
         Position up = new Position(pos.getX(), pos.getY() - 1);
 
         // Controlla se ci sono slot validi sopra, sinistra, sotto e destra della posizione attuale
@@ -660,7 +631,7 @@ public class Ship implements Serializable {
             if (shipBoard[up.getX()][up.getY()] != null && shipBoard[up.getX()][up.getY()].getTile() != null) {
 //                System.out.println("ID: " + shipBoard[up.getX()][up.getY()].getTile().getId());
 
-                if (shipBoard[up.getX()][up.getY()].getTile().getWellConnected() ) {
+                if (shipBoard[up.getX()][up.getY()].getTile().getWellConnected()) {
 //                    System.out.println("UP OK");
 
                     villagers.add(new Pair<>(ProjectileDirection.UP, shipBoard[up.getX()][up.getY()]));
@@ -1174,17 +1145,23 @@ public class Ship implements Serializable {
     }
 
     private void cloneStateFrom(Ship source) {
-        this.listOfGoods = new ArrayList<>(source.listOfGoods);
-        this.listNotLoadedGoods = new ArrayList<>(source.listNotLoadedGoods);
-        this.initialTiles = source.getInitialTiles();
+        if(this.listOfGoods != null) {
+            this.listOfGoods = new ArrayList<>(source.listOfGoods);
+        }
+        if(this.listNotLoadedGoods != null) {
+            this.listNotLoadedGoods = new ArrayList<>(source.listNotLoadedGoods);
+        }
+
+            this.initialTiles = source.getInitialTiles();
+
         System.out.println("cloning state from " + source.getClass().getName());
         System.out.println("INITIAL " + this.initialTiles);
     }
 
 
     public int getLostTiles() {
-        System.out.println("remaining tiles " +   remainingTiles());
-        System.out.println("initial " +  initialTiles);
+//        System.out.println("remaining tiles " +   remainingTiles());
+//        System.out.println("initial " +  initialTiles);
 
         return initialTiles - remainingTiles();
     }

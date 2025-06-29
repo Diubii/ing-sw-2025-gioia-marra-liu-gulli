@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+/**
+ * FSM (Finite State Machine) for managing the gameplay logic of the "Slavers" adventure card.
+ * <p>
+ * Handles cannon activation, firepower checks, crew loss if defeated, and reward collection if victorious.
+ */
 public class SlaversFSM extends CardFSM {
     @Override
     public ArrayList<Consumer<CardContext>> initPhases() {

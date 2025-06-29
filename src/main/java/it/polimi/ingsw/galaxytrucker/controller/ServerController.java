@@ -60,18 +60,12 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     private final MessageManager messageManager;
     private final ArrayList<ClientHandler> clients = new ArrayList<>();
     private final HashMap<UUID, String> clientNicknameMap = new HashMap<>();
-    //private final ArrayList<String> usedNicknames = new ArrayList<>();
     private final ArrayList<LobbyInfo> lobbyInfos = new ArrayList<>();
     private final ArrayList<Heartbeat> heartbeats = new ArrayList<>();
-
     private ArrayList<Tile> gameTiles;
-
     private static final NetworkMessageNameVisitor networkMessageNameVisitor = new NetworkMessageNameVisitor();
-
     private static final ExecutorService executor = Executors.newCachedThreadPool();
-
     private boolean synchronousExecution = false;
-
     private static Integer nextLobbyIndex = 0;
 
     public void setSynchronousExecution(boolean sync) {
@@ -92,7 +86,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         this.lobbyManagers = new HashMap<>();
         messageManager = new MessageManager(this);
         initActionsAllowed();
-//        model.setRealGame(new Game(4, false));
         generateGameTiles();
     }
 
@@ -158,9 +151,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     public void removeClient(ClientHandler client) {
         String nickname = getNicknameFromClientHandler(client);
         LobbyManager game = getLobbyFromHandler(client);
-
-        //System.out.println("Removing an inactive player from a lobby");
-
         if(game != null) {
             game.getGameController().kickPlayerFromGame(nickname);
             synchronized (lobbyInfos) {
@@ -176,7 +166,6 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                 clientNicknameMap.remove(client.getClientID());
             }
         }
-
         synchronized (clients) {
             clients.remove(client);
         }

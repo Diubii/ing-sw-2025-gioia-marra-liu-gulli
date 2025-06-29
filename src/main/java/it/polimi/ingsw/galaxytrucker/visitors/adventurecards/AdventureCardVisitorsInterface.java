@@ -2,6 +2,13 @@ package it.polimi.ingsw.galaxytrucker.visitors.adventurecards;
 
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 
+/**
+ * Visitor interface for handling different types of {@link AdventureCard}.
+ * <p>
+ * This allows operations to be performed on specific card types without modifying their classes.
+ *
+ * @param <T> The result type returned by each visit method (e.g., UI element, String, etc.)
+ */
 public interface AdventureCardVisitorsInterface<T> {
     T visit(AbandonedShip abandonedShip);
 

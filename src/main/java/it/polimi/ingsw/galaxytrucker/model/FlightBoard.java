@@ -8,6 +8,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Represents the race track for ships during the flight phase.
+ * Tracks player positions and steps, and handles movement and ranking.
+ */
 public class FlightBoard implements Serializable {
 
     @Serial
@@ -29,6 +33,9 @@ public class FlightBoard implements Serializable {
         return learningMatch;
     }
 
+    /**
+     * Places a player token on the board at a valid empty slot.
+     */
     public void positionPlayer(Color token, int pos, Player player) {
         int size = flightBoardMap.getFlightBoardMapSlots().size();
         int startPos = pos;
@@ -44,6 +51,9 @@ public class FlightBoard implements Serializable {
         playerPositions.put(token, pos);
         player.setPlacement(pos);
     }
+    /**
+     * Moves a player a number of logical steps forward or backward.
+     */
 
     public void movePlayer(Color token, int steps, Player player) {
         int size = flightBoardMap.getFlightBoardMapSlots().size();
@@ -78,6 +88,10 @@ public class FlightBoard implements Serializable {
         player.setPlacement(finalPos);
     }
 
+
+    /**
+     * Returns players ordered from furthest to nearest based on logical steps.
+     */
     public ArrayList<Color> getRankedPlayers() {
         return new ArrayList<>(playerSteps.entrySet().stream()
                 .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
@@ -85,6 +99,9 @@ public class FlightBoard implements Serializable {
                 .toList());
     }
 
+    /**
+     * Removes a player token from the board and tracking maps.
+     */
     public void removePlayer(Color token) {
         if (!playerPositions.containsKey(token)) return;
         int pos = playerPositions.get(token);
@@ -92,12 +109,17 @@ public class FlightBoard implements Serializable {
         playerSteps.remove(token);
         playerPositions.remove(token);
     }
+    /**
+     * Returns the current leading player (first in ranking).
+     */
 
-    @NeedsToBeCompleted
     public Color getLeader() {
         return getRankedPlayers().getFirst();
     }
 
+    /**
+     * Checks if a player has been lapped by another player.
+     */
     public Boolean isPlayerLapped(Color token) {
         int size = flightBoardMap.getFlightBoardMapSlots().size();
         int mySteps = playerSteps.get(token);
@@ -112,19 +134,11 @@ public class FlightBoard implements Serializable {
         return false;
     }
 
+    /**
+     * Returns the list of board positions currently occupied.
+     */
     public ArrayList<Integer> getOccupiedPositions() {
         return new ArrayList<>(playerPositions.values());
-    }
-
-    public void updateAllPlayerPlacements(Map<Color, Player> colorToPlayerMap) {
-        ArrayList<Color> rankedColors = getRankedPlayers();
-        int placement = 1;
-        for (Color color : rankedColors) {
-            Player p = colorToPlayerMap.get(color);
-            if (p != null) {
-                p.setPlacement(placement++);
-            }
-        }
     }
 
     public FlightBoardMap getFlightBoardMap() {

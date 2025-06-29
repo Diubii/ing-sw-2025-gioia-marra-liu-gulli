@@ -4,11 +4,19 @@ import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 import javafx.event.ActionEvent;
 
+/**
+ * Handles the ship check request during the building phase.
+ */
 public class SMCheckShipController {
 
     private ClientController clientController;
 
 
+    /**
+     * Initializes the controller with the client controller.
+     *
+     * @param clientController reference to the client-side controller
+     */
     public void initialize(ClientController clientController) {
         this.clientController = clientController;
 

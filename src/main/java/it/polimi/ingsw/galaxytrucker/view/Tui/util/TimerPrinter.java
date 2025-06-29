@@ -4,6 +4,10 @@ import it.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 
 import java.util.ArrayList;
 
+
+/**
+ * Utility class for printing the timer in ASCII format.
+ */
 public class TimerPrinter {
 
     public static void printTimers(ArrayList<TimerInfo> timers) {

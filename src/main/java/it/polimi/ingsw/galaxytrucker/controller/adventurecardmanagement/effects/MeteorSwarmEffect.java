@@ -24,6 +24,22 @@ import java.util.Random;
 
 import static it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.effects.Utils.*;
 
+
+/**
+ * The {@code MeteorSwarmEffect} class manages the multiphase logic for resolving the "Meteor Swarm"
+ * adventure card. This effect simulates a series of projectile attacks directed at players' ships.
+ *
+ * <p>
+ * The effect includes:
+ * <ul>
+ *   <li>Generating and resolving meteor projectiles of different sizes and directions.</li>
+ *   <li>Allowing players to defend themselves with shields or cannons.</li>
+ *   <li>Handling component damage and possible ship fragmentation (into "trunks").</li>
+ *   <li>Prompting players to select which ship segment to retain if their ship splits.</li>
+ * </ul>
+ *
+ */
+
 public abstract class MeteorSwarmEffect {
 
     @NeedsToBeCompleted
@@ -36,6 +52,12 @@ public abstract class MeteorSwarmEffect {
     private static final HashMap<LobbyManager, HashMap<Player, ArrayList<Ship>>> trunkOptions = new HashMap<>();
     private static final HashMap<LobbyManager,Integer> askTrunkReceived = new HashMap<>();
 
+    /**
+     * Sends a request to eligible players to activate shield or cannon components
+     * in response to an incoming meteor. The decision depends on meteor size and ship layout.
+     *
+     * @param context the current {@link CardContext} of the game.
+     */
 
     public static void sendActivateComponentRequests(CardContext context) {
 
@@ -93,6 +115,13 @@ public abstract class MeteorSwarmEffect {
         context.executePhase();
     }
 
+    /**
+     * Executes the impact of the meteor swarm, applying damage to player ships,
+     * broadcasting results, and checking for potential ship fragmentation.
+     * Triggers trunk selection if needed.
+     *
+     * @param context the current {@link CardContext}.
+     */
     public static void unleashTheMeteorSwarm(CardContext context) {
 //        System.out.println("UnleashTheMeteorSwarm");
 
@@ -162,6 +191,13 @@ public abstract class MeteorSwarmEffect {
         sleepSafe(300);
         goToEndPhaseOrReset(context);
     }
+
+    /**
+     * Sends a request to all affected players to choose one of the surviving
+     * ship trunks, in case their ship was split by meteor damage.
+     *
+     * @param context the current {@link CardContext}.
+     */
     public static void askTrunkReq(CardContext context) {
 //        System.out.println("AskTrunkReq");
         LobbyManager game = context.getCurrentGame();
@@ -176,6 +212,14 @@ public abstract class MeteorSwarmEffect {
         }
 
     }
+
+    /**
+     * Processes a player's response to the trunk selection prompt, replacing
+     * their current ship with the selected trunk and updating the game state.
+     * Ends the trunk selection phase once all players have responded.
+     *
+     * @param context the current {@link CardContext}.
+     */
 
     public static void receivedTrunkRepo(CardContext context) {
 //        System.out.println("ReceivedTrunkRepo");
@@ -221,7 +265,12 @@ public abstract class MeteorSwarmEffect {
 
 
     }
-
+    /**
+     * Advances to the next meteor if any remain, or ends the effect phase entirely.
+     * Also handles resetting all internal state related to the meteor swarm for the game session.
+     *
+     * @param context the current {@link CardContext}.
+     */
     private static void goToEndPhaseOrReset(CardContext context) {
 //        System.out.println("GoToEndPhase Or Reset");
         LobbyManager game = context.getCurrentGame();
@@ -239,6 +288,12 @@ public abstract class MeteorSwarmEffect {
             context.executePhase();
         }
     }
+    /**
+     * Clears all internal tracking data (e.g., projectile counters, trunk maps)
+     * for a given game session.
+     *
+     * @param game the {@link LobbyManager} representing the current game.
+     */
 
     private static void resetState(LobbyManager game) {
         projectileCounters.remove(game);

@@ -5,6 +5,10 @@ import it.polimi.ingsw.galaxytrucker.annotations.NeedsToBeCompleted;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Represents the final score breakdown for a player.
+ * Stores all sub-scores and the total result.
+ */
 public class PlayerScore implements Serializable {
     @Serial
     private static final long serialVersionUID = 1019019019L;
@@ -32,7 +36,6 @@ public class PlayerScore implements Serializable {
         this.credits = credits;
         this.totalScore = bestLookingShipScore + finishOrderScore + goodRewardScore - lossesScore + credits;
     }
-    @NeedsToBeCompleted
 
 
     //getter

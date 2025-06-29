@@ -5,6 +5,9 @@ import it.polimi.ingsw.galaxytrucker.enums.TimerStatus;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Represents information about a timer used during gameplay.
+ */
 public class TimerInfo implements Serializable {
 
     @Serial
@@ -15,20 +18,22 @@ public class TimerInfo implements Serializable {
     private boolean flipped; // Boolean status
     private TimerStatus timerStatus = TimerStatus.OFF;
 
-    // Default constructor
+
+    /**
+     * Default constructor (index 0, value 0, not flipped).
+     */
     public TimerInfo() {
-        this.index = 0;
-        this.value = 0;
-        this.flipped = false;
+        this(0, 0, false);
     }
 
-    // Parameterized constructor
+    /**
+     * Constructs a timer with given index, value, and flip status.
+     */
     public TimerInfo(int index, int value, boolean flipped) {
         this.index = index;
         this.value = value;
         this.flipped = flipped;
     }
-
     // Getters and Setters
     public int getIndex() {
         return index;

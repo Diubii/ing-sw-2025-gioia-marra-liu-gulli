@@ -4,7 +4,10 @@ import it.polimi.ingsw.galaxytrucker.enums.Color;
 
 import java.util.ArrayList;
 
-//Non usato
+/**
+ * Utility class to render a rectangular flight board using ANSI colored blocks
+ * in a TUI (text-based user interface).
+ */
 public class FlightBoardTUI {
 
     // ANSI Colors

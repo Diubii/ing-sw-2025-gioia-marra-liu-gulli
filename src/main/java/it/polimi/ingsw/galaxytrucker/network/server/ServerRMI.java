@@ -16,6 +16,11 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Server-side RMI component responsible for client registration and communication.
+ * Binds itself to the RMI registry and provides access to {@link RMIClientHandler} instances
+ * mapped to each registered RMI client.
+ */
 public class ServerRMI extends UnicastRemoteObject implements ServerRMIInterface {
     ServerControllerHandles serverControllerHandles;
     private final Map<ClientInterfaceRMI, ClientHandler> clientMap = new ConcurrentHashMap<>();

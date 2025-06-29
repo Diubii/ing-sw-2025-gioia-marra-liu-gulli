@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisitorsInterface;
 
 import java.io.Serial;
-
+/**
+ * Adventure card representing a Stardust field.
+ * Affects all players by causing delays (days lost).
+ */
 public class Stardust extends AdventureCard {
 
     @Serial

@@ -9,6 +9,12 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 
+/**
+ * GUI Controller for the Main Menu Page.
+ * <p>
+ * Handles user interactions from the main menu, such as creating a new lobby,
+ * listing available lobbies, or exiting the application.
+ */
 public class MainMenuController extends GenericSceneController {
 
     @FXML private Label TxtErr;
@@ -38,6 +44,13 @@ public class MainMenuController extends GenericSceneController {
     }
 
 
+
+    /**
+     * Handles the action when the user chooses to create a new lobby.
+     * Triggers the controller to initiate lobby creation flow.
+     *
+     * @param e The action event from the button click.
+     */
     public void newLobby(ActionEvent e) {
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         try{
@@ -47,6 +60,12 @@ public class MainMenuController extends GenericSceneController {
         }
     }
 
+    /**
+     * Handles the action when the user chooses to list existing lobbies.
+     * Triggers the controller to request available rooms from the server.
+     *
+     * @param e The action event from the button click.
+     */
     public void listLobby(ActionEvent e) {
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         try{
@@ -55,7 +74,12 @@ public class MainMenuController extends GenericSceneController {
             ex.printStackTrace();
         }
     }
-
+    /**
+     * Handles the action when the user chooses to exit the game.
+     * Plays a sound and requests the main view controller to close the application.
+     *
+     * @param e The action event from the button click.
+     */
     public void exit(ActionEvent e) {
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         //Chiamate a clientController per disconnessione se serve

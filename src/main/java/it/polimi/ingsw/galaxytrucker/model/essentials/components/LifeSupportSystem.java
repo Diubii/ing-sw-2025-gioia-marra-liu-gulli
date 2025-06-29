@@ -6,6 +6,9 @@ import it.polimi.ingsw.galaxytrucker.enums.AlienColor;
 import it.polimi.ingsw.galaxytrucker.model.essentials.Component;
 import it.polimi.ingsw.galaxytrucker.visitors.components.ComponentVisitorInterface;
 
+/**
+ * Represents a life support system that supports aliens of a specific color.
+ */
 public class LifeSupportSystem extends Component {
 
     private AlienColor color;

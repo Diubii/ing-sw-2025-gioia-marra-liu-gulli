@@ -6,6 +6,10 @@ import it.polimi.ingsw.galaxytrucker.visitors.adventurecards.AdventureCardVisito
 
 import java.io.Serial;
 
+/**
+ * Represents the Epidemic adventure card, which typically affects all players
+ * by causing them to lose crew or time during the flight phase.
+ */
 public class Epidemic extends AdventureCard {
     @Serial
     private static final long serialVersionUID = 919999L;

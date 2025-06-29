@@ -13,6 +13,10 @@ import javafx.scene.layout.HBox;
 
 import java.util.ArrayList;
 
+
+/**
+ * Handles load good confirmation during the flight phase.
+ */
 public class SMloadGoodsController {
 
     private ClientController clientController;
@@ -22,6 +26,14 @@ public class SMloadGoodsController {
     private ArrayList<Good> goods;
     @FXML private FlowPane listaGoods;
 
+    /**
+     * Initializes the controller with required references.
+     *
+     * @param clientController     the client-side controller
+     * @param container            the UI container
+     * @param flightController   reference to the flight phase controller
+     * @param goods              the goods which need to be load
+     */
     public void initialize(ClientController clientController, FlightController flightController, ArrayList<Good> goods, HBox container) {
         this.clientController = clientController;
         this.flightController = flightController;
@@ -30,8 +42,6 @@ public class SMloadGoodsController {
 
         //Disegnare goods in lista
         updateGoodView();
-
-
     }
 
     /**

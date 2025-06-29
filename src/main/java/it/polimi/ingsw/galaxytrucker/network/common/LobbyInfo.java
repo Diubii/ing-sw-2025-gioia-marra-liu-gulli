@@ -3,6 +3,9 @@ package it.polimi.ingsw.galaxytrucker.network.common;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Stores basic information about a game lobby.
+ */
 public class LobbyInfo implements Serializable {
     @Serial
     private static final long serialVersionUID = 111L;
@@ -13,6 +16,15 @@ public class LobbyInfo implements Serializable {
     private final int lobbyID;
     private final boolean isLearningMatch;
 
+    /**
+     * Constructs a lobby info object.
+     *
+     * @param host             host player's nickname
+     * @param maxPlayers       max number of players allowed
+     * @param connectedPlayers current number of connected players
+     * @param lobbyID          unique lobby ID
+     * @param isLearningMatch  true if it's a learning match
+     */
     public LobbyInfo(String host, int maxPlayers, int connectedPlayers, int lobbyID,boolean isLearningMatch) {
         this.host = host;
         this.maxPlayers = maxPlayers;

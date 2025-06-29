@@ -7,6 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+/**
+ * FSM (Finite State Machine) implementation for the "Combat Zone" adventure card.
+ * <p>
+ * Defines and organizes the sequence of phases involved when this card is activated.
+ * Each phase is a method reference from {@link CombatZoneEffect}, executed in order.
+ */
 public class CombatZoneFSM extends CardFSM {
     public CombatZoneFSM() {
         super();

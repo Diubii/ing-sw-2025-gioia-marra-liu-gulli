@@ -9,9 +9,21 @@ import it.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * ServerSocket is responsible for listening to incoming client connections over TCP.
+ * Each accepted connection is handled by a {@link SocketClientHandler} in its own thread.
+ *
+ * <p>This class is typically run in a dedicated thread.</p>
+ */
 public class ServerSocket implements Runnable {
     ServerController controller;
 
+
+    /**
+     * Constructs a new ServerSocket instance.
+     *
+     * @param serverController the controller managing server-side game logic and clients.
+     */
     public ServerSocket(ServerController serverController) {
         this.controller = serverController;
     }
@@ -23,12 +35,8 @@ public class ServerSocket implements Runnable {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
                 SocketClientHandler socketClientHandler = new SocketClientHandler(socket, controller);
-                //System.out.println(controller.getClients().size());
+
                 controller.addClient(socketClientHandler);
-                //controller.addClient();
-                //System.out.println(controller.getClients().size());
-
-
                 new Thread(socketClientHandler).start();
             }
         } catch (IOException e) {

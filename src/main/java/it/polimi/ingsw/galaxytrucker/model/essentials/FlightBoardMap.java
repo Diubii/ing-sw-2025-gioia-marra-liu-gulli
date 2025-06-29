@@ -3,6 +3,10 @@ package it.polimi.ingsw.galaxytrucker.model.essentials;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+/**
+ * Represents the layout of the flight board with different start positions
+ * depending on whether it's a learning match or standard match.
+ */
 
 public class FlightBoardMap implements Serializable {
 
@@ -17,11 +21,19 @@ public class FlightBoardMap implements Serializable {
     int secondPos;
     int firstPos;
 
+    /**
+     * Constructs the flight board layout based on match type.
+     *
+     * @param learnignMatch true if it's a learning match
+     */
     public FlightBoardMap(Boolean learnignMatch) {
         if (learnignMatch) generateLearning();
         else generateLvl2();
     }
 
+    /**
+     * @return List of all slots on the flight board
+     */
     public ArrayList<FlightBoardMapSlot> getFlightBoardMapSlots() {
         return flightBoardMapSlots;
     }

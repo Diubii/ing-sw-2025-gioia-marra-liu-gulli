@@ -24,19 +24,33 @@ import javafx.scene.layout.StackPane;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Utility class for GUI operations related to displaying a ship in a GridPane.
+ * <p>
+ * It dynamically generates JavaFX UI elements to represent the ship layout,
+ * tiles, invalid/valid positions, and supports various game phases
+ * including editing, flight phase actions, and component activation.
+ */
 public class zUtils {
 
     /**
-     * Shows the ship in the gridpane creating for each gridslot this Strucure
-     * Stackpane
-     *    -> ImageView for the tile image
-     *    -> AnchorPane
-     *       -> Image for storage slots batteries ...
-     * To handle the tile orientation the stackpane is rotated
-     * and each subimage that needs it like crew or goods is counterrotated accordingly
-     * Rigs every cell with che instructions to handle the event of mouse click in every scenario of the game.
-     * @param ship
-     * @param griglia
+     * Populates a JavaFX GridPane with the graphical representation of a player's ship.
+     * <p>
+     * Depending on the game phase and state (editable, flight, discarding crew, etc.), it:
+     * <ul>
+     *     <li>Displays correct tile images and rotations</li>
+     *     <li>Marks invalid/valid slots</li>
+     *     <li>Allows interaction with components (batteries, shields, engines, etc.)</li>
+     *     <li>Handles mouse click events for editing, crew setup, and flight actions</li>
+     * </ul>
+     *
+     * @param ship                The player's ship model.
+     * @param griglia             The JavaFX GridPane to be populated.
+     * @param clientController    The main game controller handling player actions.
+     * @param editable            If true, allows modifying ship (e.g., during ship building phase).
+     * @param viewDetails         If true, displays crew/goods/batteries on top of tiles.
+     * @param flightController    The current flight phase GUI controller.
+     * @param activatableComponent The component currently being activated by the user, if any.
      */
     public static void showShipInGrid(Ship ship, GridPane griglia, ClientController clientController, Boolean editable, Boolean viewDetails, FlightController flightController, ActivatableComponent activatableComponent) {
 
