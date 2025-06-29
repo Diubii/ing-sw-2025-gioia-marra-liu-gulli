@@ -145,7 +145,7 @@ public class zUtils {
                             switch (clientController.getPhase()) {
                                 case SHIP_CHECK:
 
-                                    if (tile != null) {
+                                    if (tile != null && ship.remainingTiles() > 1) {
                                         clientController.getMyModel().addTileToRemove(tile.getId());
                                         ship.removeTile(pos, true);
                                         showShipInGrid(ship, griglia, clientController, editable, viewDetails, flightController, activatableComponent);

@@ -1095,7 +1095,7 @@ public class ClientController implements Observer {
                     view.showCheckShipMenu();
                 }
                 case "b" -> {
-                    if (myModel.getMyInfo().getShip().remainingTiles() > 0) {
+                    if (myModel.getMyInfo().getShip().remainingTiles() > 1) {
                         view.askRemoveTile(myModel.getMyInfo().getShip());
                     } else {
                         System.out.println("OPTION DISABLED< YOU HAVE NO TILE");

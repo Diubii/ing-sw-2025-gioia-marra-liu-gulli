@@ -485,10 +485,8 @@ public class Ship implements Serializable {
 
                 Position tempPos = new Position(i, j);
                 Tile tile = this.getTileFromPosition(tempPos);
-//                Boolean same = tile.ge
 
                 if ( shipBoard[i][j] != null && shipBoard[i][j].getTile() != null) {
-                    String name = shipBoard[i][j].getTile().getMyComponent().accept(new ComponentNameVisitor());
 
                     if (!Util.wellConnectedConnectors(this, shipBoard[i][j], shipBoard[i][j].getTile())) {
 
@@ -550,12 +548,13 @@ public class Ship implements Serializable {
 
     public ArrayList<Ship> getTronc() {
         ArrayList<Ship> tronconi = new ArrayList<>();
+
         tronconi.add(this);
 
         while (!brokenPositions.isEmpty()) {
 
             Position temp = brokenPositions.poll();
-//            System.out.println("TRONCONI SIZE: " + tronconi.size());
+            System.out.println("TRONCONI SIZE: " + tronconi.size());
             int size = tronconi.size();
             boolean bigger = true;
 
@@ -626,9 +625,7 @@ public class Ship implements Serializable {
 
 
         }
-        for(Ship ship : tronconi) {
-            ship.cloneStateFrom(this);
-        }
+
         //ho finito di processare le posizioni
         return tronconi;
 
@@ -824,7 +821,7 @@ public class Ship implements Serializable {
 
 
         ArrayList<Ship> finalShips = new ArrayList<>();
-        finalShips.add(null);
+//        finalShips.add(null);
         return finalShips; // Se non ci sono sezioni da separare, restituisce null
     }
 
