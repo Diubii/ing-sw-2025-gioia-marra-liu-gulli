@@ -28,8 +28,6 @@ public class NetworkMessageNameVisitor implements NetworkMessageVisitorsInterfac
         return NetworkMessageType.NicknameRequest;
     }
 
-
-
     @Override
     public NetworkMessageType visit(JoinRoomResponse response) {
         return NetworkMessageType.JoinRoomResponse;

@@ -7,6 +7,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
 
+/**
+ * Controller for a single lobby row element in the GUI lobby list.
+ * <p>
+ * Displays basic information about a lobby (ID, host, number of players, type)
+ * and provides a button to join the lobby.
+ */
 public class SingleLobbyInfoController {
 
     @FXML private Text txtId;
@@ -17,12 +23,14 @@ public class SingleLobbyInfoController {
     private Image imgType;
 
     /**
-     * Sets the lobby Row with the specified data
-     * @param ID
-     * @param host
-     * @param playerNum
-     * @param maxPlayers
-     * @param isLearningMatch
+     * Sets the content of the lobby row with the given lobby information.
+     *
+     * @param ID              the unique identifier of the lobby
+     * @param host            the nickname of the host player
+     * @param playerNum       the current number of players in the lobby
+     * @param maxPlayers      the maximum number of players allowed in the lobby
+     * @param isLearningMatch {@code true} if the lobby is a tutorial/learning match;
+     *                        {@code false} for a normal match
      */
     public void setData(int ID, String host, int playerNum, int maxPlayers, Boolean isLearningMatch) {
         txtId.setText(Integer.toString(ID));
@@ -38,6 +46,12 @@ public class SingleLobbyInfoController {
         }
     }
 
+    /**
+     * Returns the join button associated with this lobby row.
+     * Useful for registering external event handlers.
+     *
+     * @return the "Join" button
+     */
     public Button getJoinButton() {
         return btnJoin;
     }

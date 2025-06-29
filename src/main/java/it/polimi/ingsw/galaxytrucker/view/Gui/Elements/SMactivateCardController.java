@@ -4,11 +4,21 @@ import it.polimi.ingsw.galaxytrucker.controller.ClientController;
 import it.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 import javafx.scene.layout.HBox;
 
+/**
+ * Handles the activation or passing of an adventure card in the GUI.
+ */
+
 public class SMactivateCardController {
 
     private ClientController clientController;
     private HBox container;
 
+    /**
+     * Initializes the controller with the client controller and UI container.
+     *
+     * @param clientController reference to the client controller
+     * @param container        the HBox container holding the buttons
+     */
     public void initialize(ClientController clientController, HBox container){
         this.clientController = clientController;
         this.container = container;

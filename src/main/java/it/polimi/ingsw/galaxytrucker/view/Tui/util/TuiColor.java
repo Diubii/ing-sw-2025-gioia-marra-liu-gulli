@@ -1,5 +1,9 @@
 package it.polimi.ingsw.galaxytrucker.view.Tui.util;
 
+/**
+ * ANSI color codes for terminal (TUI) styling.
+ */
+
 public enum TuiColor {
     // Colori base
     RESET("\u001B[0m"),

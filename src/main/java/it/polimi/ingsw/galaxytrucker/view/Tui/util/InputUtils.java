@@ -8,6 +8,12 @@ import java.util.List;
 public class InputUtils {
 
 
+    /**
+     * Parses a string in the form "(x,y)" or "x,y" into a Position.
+     * @param input user input
+     * @return Position object
+     * @throws IllegalArgumentException if input format or values are invalid
+     */
     public static Position parseCoordinate(String input) throws IllegalArgumentException {
         if (input == null || input.isBlank()) {
             throw new IllegalArgumentException("Input is null or blank");
@@ -34,6 +40,12 @@ public class InputUtils {
 
     private static final List<Integer> VALID_ROTATIONS = Arrays.asList(90, 180, 270,0);
 
+    /**
+     * Parses a string into a valid rotation (0, 90, 180, 270).
+     * @param input rotation value
+     * @return integer angle
+     * @throws IllegalArgumentException if not a valid number or angle
+     */
     public static int parseRotation(String input) throws IllegalArgumentException {
         try {
             int rotation = Integer.parseInt(input.trim());
@@ -49,14 +61,5 @@ public class InputUtils {
         }
     }
 
-    public static boolean parseYesNo(String input) throws IllegalArgumentException {
-        input = input.trim().toLowerCase();
-        if (input.equals("y") || input.equals("yes")) {
-            return true;
-        } else if (input.equals("n") || input.equals("no")) {
-            return false;
-        } else {
-            throw new IllegalArgumentException("Invalid input. Please type 'y' or 'n'.");
-        }
-    }
+
 }

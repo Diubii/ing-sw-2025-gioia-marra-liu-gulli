@@ -3,6 +3,11 @@ package it.polimi.ingsw.galaxytrucker.visitors.adventurecards;
 import it.polimi.ingsw.galaxytrucker.controller.adventurecardmanagement.fsms.*;
 import it.polimi.ingsw.galaxytrucker.model.adventurecards.*;
 
+/**
+ * Maps each type of {@link AdventureCard} to its corresponding {@link CardFSM} handler.
+ * <p>
+ * Used to delegate adventure card logic to the correct finite state machine based on card type.
+ */
 public class AdventureCardFSMVisitor implements AdventureCardVisitorsInterface<CardFSM> {
     @Override
     public CardFSM visit(AbandonedShip abandonedShip) {

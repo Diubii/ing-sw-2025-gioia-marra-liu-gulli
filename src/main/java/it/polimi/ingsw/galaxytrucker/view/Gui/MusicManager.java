@@ -6,12 +6,29 @@ import javax.sound.sampled.Clip;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
+/**
+ * Singleton-style manager class for handling background music playback in the GUI.
+ * <p>
+ * Supports looping or one-time playback of music files located in the
+ * `/Sounds/Music/` resource directory. Also provides utility methods for
+ * stopping music and checking if music is currently playing.
+ */
+
 public class MusicManager {
     private static MusicManager instance;
     private Clip backgroundClip;
 
+    /**
+     * Protected constructor to enforce singleton usage.
+     */
     protected MusicManager() {}
 
+    /**
+     * Plays a background music file from the resources directory.
+     *
+     * @param fileName The name of the music file (e.g., "main_theme.wav").
+     * @param loop     Whether the music should loop continuously.
+     */
     public void playBackgroundMusic(String fileName, boolean loop) {
         if (backgroundClip != null && backgroundClip.isRunning()) {
             return;
@@ -34,6 +51,9 @@ public class MusicManager {
         }
     }
 
+    /**
+     * Stops the currently playing background music if it is running.
+     */
     public void stopBackgroundMusic() {
         if (backgroundClip != null && backgroundClip.isRunning()) {
             backgroundClip.stop();

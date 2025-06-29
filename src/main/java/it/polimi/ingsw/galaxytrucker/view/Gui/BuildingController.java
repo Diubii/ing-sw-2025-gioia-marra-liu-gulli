@@ -37,6 +37,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * GUI controller for the Building Phase of the game.
+ * <p>
+ * Handles ship construction, tile management, phase transitions,
+ * user interactions with ship grids, reserved tiles, adventure decks,
+ * and displays phase-specific overlays.
+ */
 public class BuildingController extends GenericGamePhaseSceneController {
 
 

@@ -9,6 +9,10 @@ import javafx.scene.layout.HBox;
 
 import java.util.ArrayList;
 
+
+/**
+ * Handles GUI logic for discarding crew members during flight phase events.
+ */
 public class SMdiscardCrewController {
 
     private int total;
@@ -21,6 +25,14 @@ public class SMdiscardCrewController {
     @FXML private Label lblConteggio;
 
 
+    /**
+     * Initializes the controller with context and required discard count.
+     *
+     * @param clientController  client-side controller
+     * @param flightController  flight phase controller
+     * @param container         UI container to clear when done
+     * @param total             number of crew to discard
+     */
     public void initialize(ClientController clientController, FlightController flightController, HBox container, int total) {
         this.clientController = clientController;
         this.container = container;

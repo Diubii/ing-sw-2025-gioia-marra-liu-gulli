@@ -13,8 +13,12 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 
 
+
 /**
- * Manages the graphical display of a FlightBoard in the GUI.
+ * Controller responsible for managing the graphical display of a {@link FlightBoard} in the GUI.
+ * <p>
+ * It dynamically creates and configures a grid to represent the board layout and updates the board
+ * view based on the current game state, including player tokens (segnalini) and board slots.
  */
 public class FlightBoardController {
 

@@ -15,9 +15,10 @@ class GameTest {
     }
 
     @Test
-    void createDecks() throws IOException {
+    void createDecks()  {
 
         Game game = new Game();
         game.createDecks();
     }
+
 }

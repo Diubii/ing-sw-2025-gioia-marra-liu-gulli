@@ -4,6 +4,9 @@ import it.polimi.ingsw.galaxytrucker.model.PlayerScore;
 
 import java.util.List;
 
+/**
+ * Utility class for printing the final score table in ASCII format.
+ */
 public class ScorePrintUtils {
 
     public static void printScoreTable(List<PlayerScore> scores) {

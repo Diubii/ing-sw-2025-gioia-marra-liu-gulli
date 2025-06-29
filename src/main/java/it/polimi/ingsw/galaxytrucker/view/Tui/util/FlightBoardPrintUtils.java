@@ -9,6 +9,10 @@ import java.util.ArrayList;
 
 import static it.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
 
+/**
+ * Utility class for printing ASCII representations of flight board
+ *for the text-based user interface (TUI).
+ */
 public class FlightBoardPrintUtils {
 
     public static String[] getCell(ArrayList<FlightBoardMapSlot> slots, int i) {

@@ -5,6 +5,10 @@ import it.polimi.ingsw.galaxytrucker.view.Gui.BuildingController;
 import it.polimi.ingsw.galaxytrucker.view.Gui.GuiJavaFx;
 import javafx.scene.layout.StackPane;
 
+
+/**
+ * Handles crew confirmation during the building phase.
+ */
 public class SMLoadCrewController {
 
     private ClientController clientController;
@@ -12,6 +16,14 @@ public class SMLoadCrewController {
     private StackPane container;
     private BuildingController buildingController;
 
+    /**
+     * Initializes the controller with required references.
+     *
+     * @param clientController     the client-side controller
+     * @param guiJavaFx            reference to the main GUI handler
+     * @param container            the UI container
+     * @param buildingController   reference to the building phase controller
+     */
     public void initialize(ClientController clientController , GuiJavaFx guiJavaFx, StackPane container, BuildingController buildingController) {
         this.guiJavaFx = guiJavaFx;
         this.clientController = clientController;

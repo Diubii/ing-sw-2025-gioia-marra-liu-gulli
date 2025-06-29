@@ -10,6 +10,9 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
+/**
+ * Displays the top 3 spied adventure cards during flight.
+ */
 public class SMSpiedCardsController {
 
     @FXML ImageView card1;
@@ -19,6 +22,12 @@ public class SMSpiedCardsController {
 
     private StackPane container;
 
+    /**
+     * Loads and displays the top 3 cards from the given deck.
+     *
+     * @param deck      the adventure card deck
+     * @param container the UI container to manage view visibility
+     */
     public void initialize(CardDeck deck, StackPane container) {
         this.container = container;
         List<ImageView> imageviews = List.of(card1, card2, card3);
@@ -32,6 +41,10 @@ public class SMSpiedCardsController {
 
     }
 
+
+    /**
+     * Closes the spied card view.
+     */
     public void close(){
         container.getChildren().remove(cardViewMenu);
     }

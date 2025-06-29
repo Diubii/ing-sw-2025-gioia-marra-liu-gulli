@@ -5,6 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
+
+/**
+ * Controller for displaying a single player's ship in the GUI.
+ * Maintains grid aspect ratio and stores player nickname.
+ */
 public class SingleShipController {
 
     @FXML private StackPane shipGridContainer;
@@ -12,6 +17,12 @@ public class SingleShipController {
 
     private String nicknameOfPlayer;
 
+    /**
+     * Initializes the ship view with player's nickname and container.
+     *
+     * @param nicknameOfPlayer the player's nickname
+     * @param shipGridContainer the container for the ship grid
+     */
     public void initialize(String nicknameOfPlayer,StackPane shipGridContainer) {
         this.nicknameOfPlayer = nicknameOfPlayer;
         double aspectRatio = 7.0 / 5.0;

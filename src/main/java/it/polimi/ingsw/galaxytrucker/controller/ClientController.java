@@ -1873,10 +1873,8 @@ public class ClientController implements Observer {
         return currentPosition;
     }
 
-
     /**
      * Get reserved tiles tile [ ].
-     *
      * @return the tile [ ]
      */
     public Tile[] getReservedTiles() {

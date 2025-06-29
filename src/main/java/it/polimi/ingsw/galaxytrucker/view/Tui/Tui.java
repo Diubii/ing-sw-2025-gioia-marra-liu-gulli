@@ -45,37 +45,13 @@ import static it.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
  */
 public class Tui implements View, Observable {
 
-    private static final String STR_INPUT_CANCELED = "CAXX";
     private static PrintStream out;
     private final Boolean isSocket;
     private final ClientController clientController;
-    //    ReadLine readLine = new ReadLine();
-    private static final Scanner scanner = new Scanner(System.in);
-    private static final Object inputLock = new Object();
     private static final Object outputLock = new Object();
-
     private final ArrayList<Observer> observers = new ArrayList<>();
-
-
-    public MenuManager getMenuManager() {
-        return menuManager;
-    }
-
-    public void setMenuManager(MenuManager menuManager) {
-        this.menuManager = menuManager;
-    }
-
     private MenuManager menuManager = new MenuManager();
 
-
-    private final Object panelLock = new Object();
-
-
-    private volatile boolean shouldExit = false;
-    private ExecutorService inputExecutor = Executors.newSingleThreadExecutor();
-
-
-    private volatile boolean viewingFaceUpTiles = false;
 
     public Tui(PrintStream out, Boolean isSocket, ClientController controller) {
         Tui.out = out;
@@ -90,27 +66,12 @@ public class Tui implements View, Observable {
     public Boolean autoShowUpdates() {
         return false;
     }
-
     @Override
     public ViewType getViewType() {
         return ViewType.TUI;
     }
-
     private volatile CompletableFuture<String> currentInputFuture = null;
-    private static final AtomicBoolean stopInput = new AtomicBoolean(false);
-
     private volatile boolean flag = false;
-
-    // Metodo per bloccare l'input manualmente
-    public static void blockInput() {
-        stopInput.set(true);
-    }
-
-    // Metodo per sbloccare l'input manualmente
-    public static void unblockInput() {
-        stopInput.set(false);
-    }
-
     private volatile boolean inputEnabled = false;
 
 
@@ -120,8 +81,6 @@ public class Tui implements View, Observable {
 
     public void disableInput() {
         inputEnabled = false;
-//        System.out.println("[DEBUG] disableInput() called.");
-//        Thread.dumpStack();
     }
 
     public void startInputListener() {
@@ -135,9 +94,7 @@ public class Tui implements View, Observable {
                         continue;
                     }
 
-//                    if ("RESET".equalsIgnoreCase(line)) {
-//                        flag = true;
-//                    }
+
                     CompletableFuture<String> future = currentInputFuture;
                     if (!inputEnabled) {
                         System.out.println("Non è il tuo turno.");
@@ -164,27 +121,10 @@ public class Tui implements View, Observable {
             }
         }, "ConsoleInputListener").start();
     }
-//    public String readLine(String prompt) throws InterruptedException, ExecutionException {
-//        System.out.print(prompt);
-//        flag = false;
-//        currentInputFuture = new CompletableFuture<>();
-//        String input = currentInputFuture.get();
-//
-//
-
-    /// /        if (input.contains("RESET")) {
-    /// /            flag = true;
-    /// /            return "RESET";
-    /// /        }
-//
-//        return input.trim();
-//    }
     public String readLine(String prompt) {
         inputEnabled = true;
         currentInputFuture = new CompletableFuture<>();
-
         System.out.print(prompt + " ");
-
         try {
             String input = currentInputFuture.get().trim();
             inputEnabled = false;
@@ -1719,9 +1659,6 @@ public class Tui implements View, Observable {
     }
 
     private void printTimerInfo(ArrayList<TimerInfo> timerInfos) {
-//        for (TimerInfo timerInfo: timerInfos){
-//            System.out.println(timerInfo.toString());
-//        }
         TimerPrinter.printTimers(timerInfos);
     }
 
@@ -1760,8 +1697,6 @@ public class Tui implements View, Observable {
     public void showYouAreNowSpectating() {
 
     }
-
-
 
     @Override
     public void autoShowShipInTui(Ship shipView, String Nickname) {
@@ -1817,16 +1752,6 @@ public class Tui implements View, Observable {
 
     }
 
-    public static boolean isValidNumberInRange(String input, int min, int max) {
-        if (input == null || input.isBlank() || input.equalsIgnoreCase("reset")) return false;
-
-        try {
-            int value = Integer.parseInt(input.trim());
-            return value >= min && value <= max;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
 
 }
 

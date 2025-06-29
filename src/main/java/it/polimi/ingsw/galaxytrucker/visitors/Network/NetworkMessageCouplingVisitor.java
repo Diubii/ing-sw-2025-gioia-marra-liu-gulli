@@ -15,6 +15,8 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(FlipTimerRequest flipTimerRequest) {
         return NetworkMessageType.FlipTimerResponse;
     }
+
+    @Override
     public NetworkMessageType visit(JoinRoomRequest joinRoomRequest) {
         return NetworkMessageType.JoinRoomResponse;
     }
@@ -23,13 +25,10 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(JoiniRoomOptionsRequest joiniRoomOptionsRequest) {
         return NetworkMessageType.JoinRoomOptionsResponse;
     }
-
     @Override
     public NetworkMessageType visit(NicknameRequest nicknameRequest) {
         return NetworkMessageType.NicknameResponse;
     }
-
-
 
     @Override
     public NetworkMessageType visit(JoinRoomResponse joinRoomResponse) {
@@ -112,8 +111,6 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(PlaceTileRequest placeTileRequest) {
         return NetworkMessageType.PlaceTileResponse;
     }
-
-
 
 
     @Override
@@ -200,7 +197,6 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(SelectPlanetResponse selectPlanetResponse) {
         return NetworkMessageType.SelectPlanetRequest;
     }
-
     @Override
     public NetworkMessageType visit(SelectedPlanetUpdate selectedPlanetUpdate) {
         return null;
@@ -210,15 +206,10 @@ public class NetworkMessageCouplingVisitor implements NetworkMessageVisitorsInte
     public NetworkMessageType visit(DiscardCrewMembersRequest discardCrewMembersRequest) {
         return NetworkMessageType.DiscardCrewMembersResponse;
     }
-
     @Override
     public NetworkMessageType visit(DiscardCrewMembersResponse discardCrewMembersResponse) {
         return NetworkMessageType.DiscardCrewMembersRequest;
     }
-
-
-
-
     @Override
     public NetworkMessageType visit(GameMessage gameMessage) {
         return null;

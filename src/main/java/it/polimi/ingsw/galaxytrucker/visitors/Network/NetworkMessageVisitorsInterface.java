@@ -5,6 +5,14 @@ import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.requests.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.responses.*;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.*;
 
+/**
+ * A generic visitor interface for handling different types of network messages.
+ * <p>
+ * Implements the Visitor design pattern to decouple message processing logic
+ * from message structure, enabling flexible handling of different message types.
+ *
+ * @param <T> The return type for each visit method (e.g., Boolean, void, response object, etc.)
+ */
 public interface NetworkMessageVisitorsInterface<T> {
     T visit(CreateRoomRequest createRoomRequest);
 

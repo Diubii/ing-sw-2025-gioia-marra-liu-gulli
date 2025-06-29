@@ -11,6 +11,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * GUI controller for the lobby creation screen.
+ * <p>
+ * Allows the user to select number of players and match type, and sends a create request to the server.
+ */
 public class CreateLobbyController extends GenericSceneController {
 
     @FXML private Text TxtErr;
@@ -38,6 +43,9 @@ public class CreateLobbyController extends GenericSceneController {
         TxtErr.setText(message);
     }
 
+    /**
+     * Returns to the main menu screen.
+     */
     public void backToMainMenu(ActionEvent e) {
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         mainViewController.askJoinOrCreateRoom(); //Main menu

@@ -13,6 +13,12 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * GUI Controller for the Lobby Page.
+ * <p>
+ * Displays player information in the lobby before the match starts.
+ * It shows nicknames, avatars, and handles dynamic updates from the model.
+ */
 public class LobbyController extends GenericSceneController {
 
     @FXML

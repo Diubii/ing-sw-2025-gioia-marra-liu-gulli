@@ -9,6 +9,10 @@ import javafx.scene.layout.VBox;
 
 import java.util.HashMap;
 
+
+/**
+ * Handles planet choice confirmation during the flight phase.
+ */
 public class SMplanetChoiceController {
 
     private HBox container;
@@ -17,11 +21,11 @@ public class SMplanetChoiceController {
     @FXML private VBox buttonsContainer;
 
     /**
-     * Adds one button for each planet with an event to triggher the response from the client to the server
-     * containing the choice
-     * @param clientController
-     * @param container
-     * @param planetChoices
+     * Initializes the controller with required references.
+     *
+     * @param clientController     the client-side controller
+     * @param container            the UI container
+     * @param planetChoices        the available planets' choices
      */
     public void initialize(ClientController clientController, HBox container, HashMap<Integer, Planet> planetChoices){
         this.container = container;

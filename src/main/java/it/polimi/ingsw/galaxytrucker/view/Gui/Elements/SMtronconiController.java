@@ -16,6 +16,9 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Displays a list of ship fragments ("tronconi") for the player to choose from after damage.
+ */
 public class SMtronconiController {
 
     ClientController clientController;
@@ -24,6 +27,13 @@ public class SMtronconiController {
 
     @FXML VBox shipList;
 
+    /**
+     * Initializes the view with ship fragments to choose from.
+     *
+     * @param clientController the client controller
+     * @param tronconi         list of ship fragments
+     * @param container        the UI container for cleanup
+     */
     public void initialize(ClientController clientController, ArrayList<Ship> tronconi, StackPane container) {
         this.container = container;
         this.clientController = clientController;

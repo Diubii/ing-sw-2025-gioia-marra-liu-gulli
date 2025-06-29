@@ -14,6 +14,13 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * GUI Controller for displaying the final scores screen at the end of the game.
+ * <p>
+ * Shows per-player score breakdown including ship beauty, finish order,
+ * losses, goods collected, credits earned, and total score.
+ */
+
 public class ScoresController extends GenericSceneController {
 
     private GuiJavaFx mainViewController;
@@ -68,6 +75,11 @@ public class ScoresController extends GenericSceneController {
 
     }
 
+    /**
+     * Updates the score screen UI with the latest scores for all players.
+     *
+     * @param scores A list of {@link PlayerScore} containing detailed score breakdowns.
+     */
     public void updateScores(ArrayList<PlayerScore> scores){
         List<ImageView> avatars = List.of(avatar1,avatar2, avatar3, avatar4);
         List<Label> names = List.of(nome1,nome2, nome3, nome4);

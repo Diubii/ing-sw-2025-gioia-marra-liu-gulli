@@ -61,10 +61,8 @@ public class GuiJavaFx implements View {
     private ClientController controller;
     //The current controller of the main node tree displayed
     private GenericSceneController actualPageController;
-
     private MusicManager musicManager;
     private Boolean firstTimeMainMenu = true;
-
     //Config variable to disable feature music and other setting during testing
     private final static Boolean testing = true;
 
@@ -967,7 +965,6 @@ public class GuiJavaFx implements View {
     }
 
 
-    @NeedsToBeChecked
     @Override
     public void showTimerInfos(ArrayList<TimerInfo> timerInfos) {
         Platform.runLater(() -> {

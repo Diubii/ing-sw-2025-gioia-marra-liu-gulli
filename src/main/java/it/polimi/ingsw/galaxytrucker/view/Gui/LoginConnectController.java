@@ -14,6 +14,12 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 
+/**
+ * GUI Controller for the Lobby page.
+ * <p>
+ * Displays current players in the lobby, their avatars, and handles UI updates
+ * before the game starts.
+ */
 public class LoginConnectController extends GenericSceneController {
 
     @FXML private Label TxtError;

@@ -13,13 +13,6 @@ import java.util.ArrayList;
 public class TilePrintUtils {
 
     private static ComponentPrintVisitor componentPrintVisitor = new ComponentPrintVisitor();
-    //Visitor per i vari component che restituisce la corretta stringa
-    //Butta fuori tipo gli interni
-    //Tile1Line
-    //Tile2Line = | ComponentTopLine | ecc
-    //ComponentTopLine da visitor
-    //ComponentMidLine da visitor
-    //ComponentBottomLine da visitor
 
     public static String[][] composeRow(ArrayList<Tile> tileList, int row, int columns, int lastRow) {
         String[][] tileRow = new String[columns][5];

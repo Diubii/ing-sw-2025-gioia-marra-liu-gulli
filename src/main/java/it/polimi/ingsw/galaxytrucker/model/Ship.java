@@ -1148,17 +1148,23 @@ public class Ship implements Serializable {
     }
 
     private void cloneStateFrom(Ship source) {
-        this.listOfGoods = new ArrayList<>(source.listOfGoods);
-        this.listNotLoadedGoods = new ArrayList<>(source.listNotLoadedGoods);
-        this.initialTiles = source.getInitialTiles();
+        if(this.listOfGoods != null) {
+            this.listOfGoods = new ArrayList<>(source.listOfGoods);
+        }
+        if(this.listNotLoadedGoods != null) {
+            this.listNotLoadedGoods = new ArrayList<>(source.listNotLoadedGoods);
+        }
+
+            this.initialTiles = source.getInitialTiles();
+
         System.out.println("cloning state from " + source.getClass().getName());
         System.out.println("INITIAL " + this.initialTiles);
     }
 
 
     public int getLostTiles() {
-        System.out.println("remaining tiles " +   remainingTiles());
-        System.out.println("initial " +  initialTiles);
+//        System.out.println("remaining tiles " +   remainingTiles());
+//        System.out.println("initial " +  initialTiles);
 
         return initialTiles - remainingTiles();
     }

@@ -29,12 +29,28 @@ public class ConfirmDialogController {
     private void handleNo() {
         dialogStage.close();
     }
+
+    /**
+     * Sets the {@link Stage} object for this dialog.
+     *
+     * @param stage the stage to associate with this dialog
+     */
     public void setDialogStage(Stage stage) {
         this.dialogStage = stage;
     }
+    /**
+     * Sets the message to be displayed in the dialog.
+     *
+     * @param message the message text to display
+     */
     public void setMessage(String message) {
         messageLabel.setText(message);
     }
+    /**
+     * Returns whether the user confirmed the action.
+     *
+     * @return {@code true} if the user clicked "Yes", {@code false} otherwise
+     */
     public boolean isConfirmed() {
         return confirmed;
     }

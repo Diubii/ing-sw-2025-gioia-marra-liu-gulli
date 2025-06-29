@@ -16,6 +16,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * GUI Controller for displaying available game lobbies.
+ * <p>
+ * Handles lobby list rendering, join actions, and transitions back to the main menu.
+ */
 public class ListLobbyController extends GenericSceneController {
 
     @FXML  private Label TxtErr;
@@ -45,11 +50,19 @@ public class ListLobbyController extends GenericSceneController {
     }
 
 
+    /**
+     * Returns to the main menu screen.
+     */
+
     public void backToMainMenu(ActionEvent e) {
         GuiJavaFx.playWavSoundEffect("ButtonClick.wav");
         mainViewController.askJoinOrCreateRoom();
     }
 
+    /**
+     * Updates the GUI with a list of available lobbies.
+     * Each lobby includes join button logic.
+     */
     public void UpdateLobbyList(List<LobbyInfo> lobbies){
         for (LobbyInfo info : lobbies) {
             try {

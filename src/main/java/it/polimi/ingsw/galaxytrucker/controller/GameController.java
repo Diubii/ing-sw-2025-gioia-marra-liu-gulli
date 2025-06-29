@@ -237,14 +237,14 @@ public class GameController {
                     int bestLooking = (player.getShip().getnExposedConnector() == minExposed && getRankedPlayers().contains(player)) ? 2 : 0;
                     int finishOrder = calculateFinishOrderScore(player);
                     double reward = calculateGoodRewardScore(player);
-                    int losses = calculateLossesScore(player);
+                    int losses = -calculateLossesScore(player);
                     int credits = player.getNCredits();
 
-                    System.out.println(bestLooking);
-                    System.out.println(finishOrder);
-                    System.out.println(reward);
-                    System.out.println(losses);
-                    System.out.println(credits);
+//                    System.out.println(bestLooking);
+//                    System.out.println(finishOrder);
+//                    System.out.println(reward);
+//                    System.out.println(losses);
+//                    System.out.println(credits);
 
 
                     return new PlayerScore(
@@ -271,9 +271,9 @@ public class GameController {
         ArrayList<Player> activePlayers = getRankedPlayers();
         if (activePlayers.contains(player)) {
             int playerIndex = activePlayers.indexOf(player);
-            System.out.println(playerIndex + " playIndex");
+
             int nPlayers = game.getRealGame().getPlayers().size();
-            System.out.println(nPlayers + " nPlayers");
+
             score = nPlayers - playerIndex;
         }
         return score;

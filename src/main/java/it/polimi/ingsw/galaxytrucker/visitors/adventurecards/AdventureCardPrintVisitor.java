@@ -9,7 +9,12 @@ import java.util.ArrayList;
 
 import static it.polimi.ingsw.galaxytrucker.view.Tui.util.TuiColor.*;
 
-
+/**
+ * Visitor that converts each {@link AdventureCard} into a formatted String array
+ * representing an ASCII-art styled card, suitable for terminal display.
+ * <p>
+ * Also includes support for learning flight flags, card level, and days lost information.
+ */
 public class AdventureCardPrintVisitor implements AdventureCardVisitorsInterface<String[]> {
 
     //18 *
