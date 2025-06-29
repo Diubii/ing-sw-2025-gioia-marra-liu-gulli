@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
+/**
+ * Unit tests for {@link Tile} behavior including component assignment and rotation.
+ */
 class TileTest {
 
     private Component component;

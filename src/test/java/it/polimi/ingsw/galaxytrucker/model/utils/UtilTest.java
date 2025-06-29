@@ -26,6 +26,12 @@ import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for utility methods in the {@link Util} class.
+ * <p>
+ * Covers deck generation, ship structure validation, boundary checks,
+ * connector compatibility, LFS adjacency logic, and tile connectivity.
+ */
 class UtilTest {
 
     private static final Logger log = LoggerFactory.getLogger(UtilTest.class);

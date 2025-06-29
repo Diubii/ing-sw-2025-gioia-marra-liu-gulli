@@ -18,7 +18,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
+/**
+ * Test suite for {@link ClientController}.
+ * Covers position setting, tile handling, ship fetch, deck viewing, and phase updates.
+ */
 public class ClientControllerTest {
 
     Player player1, player2;
@@ -52,6 +55,10 @@ public class ClientControllerTest {
         serverController = context.serverController;
     }
 
+    /**
+     * Tests setting and resetting the current tile position in hand,
+     * drawing a tile, rotating it, and displaying it.
+     */
     @Test
     void   testCurrentTileInHand(){
 
@@ -65,16 +72,13 @@ public class ClientControllerTest {
         clientController1.handleDrawFaceDownTile();
         clientController1.showTileInHand();
         clientController1.rotateCurrentTile(90);
-
-
-
         clientController1.handleDrawFaceDownTile();
-
-
-
 
     }
 
+    /**
+     * Tests fetching ship data from both known and unknown players.
+     */
     @Test
     void testHandleFetchShip(){
         clientController1.handleFetchShip("TestPlayer");
@@ -82,9 +86,13 @@ public class ClientControllerTest {
         clientController2.handleFetchShip("TestPlayersadasn");
     }
 
+
+    /**
+     * Tests viewing adventure card decks by index.
+     * Validates handling of valid and potentially invalid indexes.
+     */
     @Test
     void testViewAdventureCardDeck(){
-
 
         clientController1.viewAdventureCardDeck(0);
         clientController1.viewAdventureCardDeck(3);
@@ -93,6 +101,11 @@ public class ClientControllerTest {
     }
 
 
+
+    /**
+     * Tests handling a phase transition to BUILDING_END and
+     * simulates various building menu choices.
+     */
     @Test
     void testHandlePhaseUpdate(){
         PhaseUpdate phaseUpdate = new PhaseUpdate(GameState.BUILDING_END);
@@ -100,24 +113,11 @@ public class ClientControllerTest {
         clientController1.handlePhaseUpdate(phaseUpdate);
         clientController1.handleBuildingMenuChoice("reset");
         clientController1.handleBuildingMenuChoice("a");
-
         clientController1.handleBuildingMenuChoice("c");
         clientController1.handleBuildingMenuChoice("d");
         clientController1.handleBuildingMenuChoice("e");
         clientController1.handleBuildingMenuChoice("f");
-
-
-
     }
-
-
-
-
-
-
-
-
-
 
 }
 

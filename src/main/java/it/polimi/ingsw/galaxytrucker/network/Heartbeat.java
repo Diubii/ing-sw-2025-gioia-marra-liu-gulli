@@ -37,7 +37,6 @@ public class Heartbeat extends Thread {
     private final AtomicBoolean active = new AtomicBoolean(true);
 
 
-    private final AtomicBoolean active = new AtomicBoolean(true);
 
     @Override
 

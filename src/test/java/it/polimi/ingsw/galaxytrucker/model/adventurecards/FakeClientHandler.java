@@ -36,6 +36,12 @@ public class FakeClientHandler implements ClientHandler {
     private final UUID clientID;
 
 
+    /**
+     * Constructs a new FakeClientHandler instance for simulating client-server communication.
+     *
+     * @param serverController the server controller associated with this handler
+     * @param mockResponses    the list of predefined responses the client will send
+     */
     public FakeClientHandler(ServerController serverController, ArrayList<NetworkMessage> mockResponses) {
         clientID = UUID.randomUUID();
         this.serverController = serverController;
