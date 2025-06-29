@@ -15,7 +15,6 @@ import it.polimi.ingsw.galaxytrucker.model.essentials.Tile;
 import it.polimi.ingsw.galaxytrucker.model.essentials.components.ModularHousingUnit;
 import it.polimi.ingsw.galaxytrucker.model.game.TimerInfo;
 import it.polimi.ingsw.galaxytrucker.model.utils.Util;
-import it.polimi.ingsw.galaxytrucker.network.client.ClientModel;
 import it.polimi.ingsw.galaxytrucker.network.common.LobbyInfo;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.CrewInitUpdate;
 import it.polimi.ingsw.galaxytrucker.network.common.NetworkMessages.updates.PhaseUpdate;
@@ -44,7 +43,6 @@ import javax.sound.sampled.Clip;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -960,7 +958,7 @@ public class GuiJavaFx implements View {
 
 
     @Override
-    public void showTimerInfos(ArrayList<TimerInfo> timerInfos) {
+    public void showTimerInfos(ArrayList<TimerInfo> timerInfos, boolean b) {
         Platform.runLater(() -> {
             if(actualPageController.pageName().equals("BuildingPage")){
                 ((BuildingController) actualPageController).showTimerInfo(timerInfos);

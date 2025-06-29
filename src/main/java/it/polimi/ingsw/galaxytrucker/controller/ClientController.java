@@ -503,7 +503,7 @@ public class ClientController implements Observer {
 
                 } else {
                     isPlaced = false;
-                    sendShipUpdate();
+//                    sendShipUpdate();
                     view.askDrawTile();
 
                 }
@@ -757,7 +757,7 @@ public class ClientController implements Observer {
     public void handleTimerInfoResponse(TimerInfoResponse timerInfoResponse) {
         myModel.getTimerInfos().clear();
         myModel.getTimerInfos().addAll(timerInfoResponse.getTimerInfoList());
-        view.showTimerInfos(myModel.getTimerInfos());
+        view.showTimerInfos(myModel.getTimerInfos(), false);
 
         if (timerInfoResponse.getLast()) {
             handlePhaseUpdate(new PhaseUpdate(GameState.BUILDING_END));
@@ -878,7 +878,7 @@ public class ClientController implements Observer {
     /**
      * Reclaim tile.
      */
-    public void reclaimTile(){
+    public void     reclaimTile(){
         DrawTileRequest request = DrawTileRequest.reclaimLastTileRequest();
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
@@ -914,9 +914,11 @@ public class ClientController implements Observer {
      * @param rotation number of clockwise rotations to apply
      */
     public void rotateCurrentTile(int rotation) {
-        currentTileInHand.rotate(rotation);
-        view.showTile(currentTileInHand);
-        view.showGenericMessage("Tile rotated successfully.", false);
+        if (currentTileInHand != null) {
+            currentTileInHand.rotate(rotation);
+            view.showTile(currentTileInHand);
+            view.showGenericMessage("Tile rotated successfully.", false);
+        }
         view.showBuildingMenu();
 
     }

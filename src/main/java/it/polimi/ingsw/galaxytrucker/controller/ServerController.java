@@ -1186,12 +1186,17 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      **/
     public void handleHeartbeatRequest(HeartbeatRequest ignoredHeartbeatRequest, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
-            //System.out.println(PrinterUtils.getTextWithLabel(PrinterLabels.Heartbeat, TuiColor.BRIGHT_RED, "Received heartbeat from " + clientHandler.toString() + "."));
-            heartbeats.stream().filter(h -> h.getClientHandler().getClientID().equals(clientHandler.getClientID())).findFirst().ifPresent(h -> {
-                heartbeats.remove(h);
-                h.regenerate();
-            });
+            synchronized (heartbeats) {
+                heartbeats.stream()
+                        .filter(h -> h.getClientHandler().getClientID().equals(clientHandler.getClientID()))
+                        .findFirst()
+                        .ifPresent(h -> {
+                            heartbeats.remove(h);
+                            h.regenerate();
+                        });
+            }
         });
+
     }
 
     /**
