@@ -152,7 +152,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
         if(game != null) {
             game.getGameController().kickPlayerFromGame(nickname);
             synchronized (lobbyInfos) {
-            lobbyInfos.removeIf(l -> l.getLobbyID() == game.getGameID());
+                lobbyInfos.removeIf(l -> l.getLobbyID() == game.getGameID());
             }
             synchronized (lobbyManagers) {
                 lobbyManagers.remove(game.getGameID());
@@ -198,28 +198,28 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      */
     public void handleNicknameRequest(NicknameRequest message, ClientHandler clientHandler) throws RemoteException {
         this.execute(() -> {
-                    Boolean result = false;
-                    boolean flag = false;
+            Boolean result = false;
+            boolean flag = false;
 
-                    //get nickname & check
-                    String nickname = message.getNickname();
-                    NicknameResponse nicknameResponse = new NicknameResponse(null, message.getID());
+            //get nickname & check
+            String nickname = message.getNickname();
+            NicknameResponse nicknameResponse = new NicknameResponse(null, message.getID());
 
 
-                    //System.out.println("REQ");
-                    synchronized (clientNicknameMap) {
+            //System.out.println("REQ");
+            synchronized (clientNicknameMap) {
 
-                        if (!clientNicknameMap.containsValue(nickname)) {
-                            clientNicknameMap.put(clientHandler.getClientID(), nickname);
-                            nicknameResponse.setResponse("VALID");
-                        } else {
-                            System.out.println("[+] NOT ADDED " + message.getNickname());
-                            nicknameResponse.setResponse("INVALID");
-                        }
+                if (!clientNicknameMap.containsValue(nickname)) {
+                    clientNicknameMap.put(clientHandler.getClientID(), nickname);
+                    nicknameResponse.setResponse("VALID");
+                } else {
+                    System.out.println("[+] NOT ADDED " + message.getNickname());
+                    nicknameResponse.setResponse("INVALID");
+                }
 
-                    }
+            }
 
-                    clientHandler.sendMessage(nicknameResponse);
+            clientHandler.sendMessage(nicknameResponse);
         });
         //System.out.println("SENDING RESPONSE\n");
     }
@@ -574,49 +574,49 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                     broadCast(playerHandlers, faceUpTileUpdate);
 
                 } else {
-                  if(message.isNeedLastTile()){
-                       Tile lastTile =  targetShip.getLastTile();
-                      if (lastTile == null) {
-                          drawTileResponse = new DrawTileResponse(null, message.getID());
-                          drawTileResponse.setErrorMessage("NO_TILE");
-                      }
-                       else {
-                          if (lastTile.getFixed()) {
-                              drawTileResponse = new DrawTileResponse(null, message.getID());
-                              drawTileResponse.setErrorMessage("FIXED");
-                          } else {
-                              targetShip.removeTile(targetShip.getLastTilePosition(), true);
-                              targetShip.setLastTile(null);
-                              ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
+                    if(message.isNeedLastTile()){
+                        Tile lastTile =  targetShip.getLastTile();
+                        if (lastTile == null) {
+                            drawTileResponse = new DrawTileResponse(null, message.getID());
+                            drawTileResponse.setErrorMessage("NO_TILE");
+                        }
+                        else {
+                            if (lastTile.getFixed()) {
+                                drawTileResponse = new DrawTileResponse(null, message.getID());
+                                drawTileResponse.setErrorMessage("FIXED");
+                            } else {
+                                targetShip.removeTile(targetShip.getLastTilePosition(), true);
+                                targetShip.setLastTile(null);
+                                ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
 
-                              broadCast(playerHandlers, shipUpdate);
+                                broadCast(playerHandlers, shipUpdate);
 
-                              drawTileResponse = new DrawTileResponse(lastTile, message.getID());
-                              drawTileResponse.setErrorMessage("VALID");
-                          }
-                      }
-                  }
-                  else {
-                      if (message.isFromReserved()) {
+                                drawTileResponse = new DrawTileResponse(lastTile, message.getID());
+                                drawTileResponse.setErrorMessage("VALID");
+                            }
+                        }
+                    }
+                    else {
+                        if (message.isFromReserved()) {
 
-                          Tile[] reserverd = targetShip.getAsideTiles();
-                          int index = message.getReservedSlotIndex();
-                          Tile removedTile = reserverd[index];
-                          if (removedTile == null) {
-                              drawTileResponse = new DrawTileResponse(null, message.getID());
-                              drawTileResponse.setErrorMessage("NO_TILE_AT_INDEX");
-                          } else {
-                              reserverd[index] = null;
-                              drawTileResponse = new DrawTileResponse(removedTile, message.getID());
-                              drawTileResponse.setErrorMessage("VALID");
+                            Tile[] reserverd = targetShip.getAsideTiles();
+                            int index = message.getReservedSlotIndex();
+                            Tile removedTile = reserverd[index];
+                            if (removedTile == null) {
+                                drawTileResponse = new DrawTileResponse(null, message.getID());
+                                drawTileResponse.setErrorMessage("NO_TILE_AT_INDEX");
+                            } else {
+                                reserverd[index] = null;
+                                drawTileResponse = new DrawTileResponse(removedTile, message.getID());
+                                drawTileResponse.setErrorMessage("VALID");
 
-                              ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
-                              broadCast(playerHandlers, shipUpdate);
-                          }
+                                ShipUpdate shipUpdate = new ShipUpdate(targetShip, player.getNickName());
+                                broadCast(playerHandlers, shipUpdate);
+                            }
 
-                      }
+                        }
 
-                      else{
+                        else{
 
                             myTile = myGame.getTileBunch().drawTile();
                             if (myTile == null) {
@@ -626,7 +626,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
                                 drawTileResponse = new DrawTileResponse(myTile, message.getID());
                                 drawTileResponse.setErrorMessage("VALID");
                             }
-                      }
+                        }
                     }
                 }
 
@@ -765,9 +765,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      * @param clientHandler the handler associated with the client sending the message
      */
     public void handleAskTrunkResponse(AskTrunkResponse askTrunkResponse, ClientHandler clientHandler) {
-        LobbyManager game = getLobbyFromHandler(clientHandler);
-        game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(askTrunkResponse);
-        tryExecutePhaseAfterMessage(game, NetworkMessageType.AskTrunkResponse);
+        this.execute(() -> {
+            LobbyManager game = getLobbyFromHandler(clientHandler);
+            game.getGameController().getCurrentCardContext().setIncomingNetworkMessage(askTrunkResponse);
+            tryExecutePhaseAfterMessage(game, NetworkMessageType.AskTrunkResponse);
+        });
     }
 
     /**
@@ -1001,11 +1003,11 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
                 }
 
-                    //broadCasto la nuova nave a tutti
-                    ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
-                    ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
-                    broadCast(playerHandlers, shipUpdate);
-                    clientHandler.sendMessage(placeTileResponse);
+                //broadCasto la nuova nave a tutti
+                ArrayList<ClientHandler> playerHandlers = new ArrayList<>(myGame.getPlayerHandlers().values());
+                ShipUpdate shipUpdate = new ShipUpdate(myShip, myPlayer.getNickName());
+                broadCast(playerHandlers, shipUpdate);
+                clientHandler.sendMessage(placeTileResponse);
 
             }
 
@@ -1379,7 +1381,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
      * @throws RemoteException if a remote communication error occurs
      */
     public void handleFlipTimerRequest(FlipTimerRequest flipTimerRequest, ClientHandler clientHandler) throws RemoteException {
-       this.execute(() -> {
+        this.execute(() -> {
             LobbyManager myGame = getLobbyFromHandler(clientHandler);
 
             synchronized (myGame.timerLock) {
@@ -1439,7 +1441,8 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
             while (secondsIn > 0){
                 try {
                     TimerInfoResponse timerInfoResponse = new TimerInfoResponse(game.getRealGame().getTimerInfos());
-                    broadCast(game.getTimerSubscribers(), timerInfoResponse);
+                    if(secondsIn == seconds) broadCast(clients, timerInfoResponse);
+                    else broadCast(game.getTimerSubscribers(), timerInfoResponse);
 
                     Thread.sleep(1000);
                     secondsIn -= 1;

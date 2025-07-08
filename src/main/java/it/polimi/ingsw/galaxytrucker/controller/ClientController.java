@@ -204,7 +204,7 @@ public class ClientController implements Observer {
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
             /*boolean success =*/ safeSendMessage(heartbeatRequest);
             //System.out.println("Sent heartbeat: " + System.currentTimeMillis());
-                //System.out.println("[ClientController] Sent heartbeat.");
+            //System.out.println("[ClientController] Sent heartbeat.");
 //
 
         });
@@ -550,10 +550,10 @@ public class ClientController implements Observer {
             }
             case "reset" -> {}
             default ->
-                new Thread(() -> {
-                    view.showGenericMessage("Invalid option \"" + input + "\". Please try again.",false);
-                    view.showBuildingMenu();
-                }).start();
+                    new Thread(() -> {
+                        view.showGenericMessage("Invalid option \"" + input + "\". Please try again.",false);
+                        view.showBuildingMenu();
+                    }).start();
         }
 
     }
@@ -915,7 +915,7 @@ public class ClientController implements Observer {
         CompletableFuture<NetworkMessage> future = new CompletableFuture<>();
         setCompletableFuture(future, request.getID());
         safeSendMessage(request);
-}
+    }
 
 
     /**
@@ -1416,7 +1416,7 @@ public class ClientController implements Observer {
         ActivateAdventureCardResponse response = new ActivateAdventureCardResponse(confirm);
         if (!safeSendMessage(response)) return;
 
-        if (confirm && "AbandonedStation".equals(getCurrentAdventureCard().getName())) {
+        if (confirm && "Stazione abbandonata".equals(getCurrentAdventureCard().getName())) {
             AbandonedStation abandonedStation = (AbandonedStation) getCurrentAdventureCard();
             myModel.setUnplacedGoods(abandonedStation.getGoods());
             view.askLoadGoodChoice();
@@ -1714,7 +1714,7 @@ public class ClientController implements Observer {
             Slot slot = ship.getShipBoard()[pos.getX()][pos.getY()];
             if (slot != null && slot.getTile() != null) {
                 Component c = slot.getTile().getMyComponent();
-                if (c instanceof GenericCargoHolds hold && !hold.isEmpty()) {
+                if (c.accept(new ComponentNameVisitor()).equalsIgnoreCase("GenericCargoHolds") && ((GenericCargoHolds)c).isFull()) {
                     occupied.add(pos);
                 }
             }

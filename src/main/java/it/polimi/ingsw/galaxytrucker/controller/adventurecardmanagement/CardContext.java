@@ -120,8 +120,10 @@ public class CardContext {
         if(type == null) return;
         //if(type == incomingNetworkMessage.accept(new NetworkMessageNameVisitor())) executePhase();
 
-        int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
-        expectedNumberOfNetworkMessagesPerType.replace(type, currentValue + 1);
+        synchronized (expectedNumberOfNetworkMessagesPerType) {
+            int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
+            expectedNumberOfNetworkMessagesPerType.replace(type, currentValue + 1);
+        }
     }
 
     /**
@@ -132,8 +134,10 @@ public class CardContext {
     public void decrementExpectedNumberOfNetworkMessages(NetworkMessageType type) {
         if(type==null) return;
 
-        int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
-        expectedNumberOfNetworkMessagesPerType.replace(type, currentValue - 1);
+        synchronized (expectedNumberOfNetworkMessagesPerType) {
+            int currentValue = expectedNumberOfNetworkMessagesPerType.get(type);
+            expectedNumberOfNetworkMessagesPerType.replace(type, currentValue - 1);
+        }
     }
 
     /**
@@ -179,8 +183,8 @@ public class CardContext {
      * @param iterations number of phases to rewind
      */
     public void previousPhase(int iterations){for(int i=1; i<=iterations; i++){
-            cardFSM.previous();
-        }
+        cardFSM.previous();
+    }
     }
 
 

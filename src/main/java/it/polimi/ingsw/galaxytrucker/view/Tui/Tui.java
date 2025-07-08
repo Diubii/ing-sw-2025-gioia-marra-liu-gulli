@@ -1492,6 +1492,7 @@ public class Tui implements View, Observable {
                     }
                 }
             } finally {
+                showGenericMessage("Finito di caricare crew, waiting alters ",false);
                 disableInput();
             }
         }
